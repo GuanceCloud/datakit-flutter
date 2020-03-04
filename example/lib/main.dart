@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
 
@@ -48,7 +48,24 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              FlatButton(
+                child: Text("同步"),
+                onPressed: () async {
+                  FTMobileAgentFlutter.config(
+                      "http://10.100.64.106:19457/v1/write/metrics",
+                      "accid",
+                      "accsk");
+                  var success = await FTMobileAgentFlutter.track(
+                      "flutter_mobile_track_ios", {"key": "value"});
+                  print("request success: $success");
+                },
+              )
+            ],
+          ),
         ),
       ),
     );

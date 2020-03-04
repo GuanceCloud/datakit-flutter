@@ -5,13 +5,17 @@ import androidx.annotation.NonNull
 import com.ft.sdk.FTSDKConfig
 import com.ft.sdk.FTSdk
 import com.ft.sdk.FTTrack
+import com.ft.sdk.garble.SyncCallback
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
+import kotlinx.coroutines.runBlocking
 import org.json.JSONObject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 /** AgentPlugin */
 public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
@@ -59,7 +63,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
                 val serverUrl: String = call.argument<String>("serverUrl")!!
                 val akId: String? = call.argument<String>("akId")
                 val akSecret: String? = call.argument<String>("akSecret")
-                ft_config(serverUrl, akId, akSecret)
+                ftConfig(serverUrl, akId, akSecret)
                 result.success(null)
 
             }
@@ -67,7 +71,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
                 val field = call.argument<String>("field")!!
                 val tags = call.argument<Map<String, Any>>("tags")
                 val values = call.argument<Map<String, Any>>("values")
-                result.success(ft_track(field, tags, values))
+                result.success(runBlocking { return@runBlocking ftTrackSync(field, tags, values) })
             }
             else -> {
                 result.notImplemented()
@@ -75,20 +79,26 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    private fun ft_config(serverUrl: String, akId: String?, akSecret: String?) {
+    private fun ftConfig(serverUrl: String, akId: String?, akSecret: String?) {
         val enableRequestSigning = akId != null && akSecret != null
         val config = FTSDKConfig(serverUrl, enableRequestSigning, akId, akSecret)
         FTSdk.install(config, application)
     }
 
-    private fun ft_track(field: String, tags: Map<String, Any?>?, values: Map<String, Any?>?): Boolean {
-        if (tags != null) {
-            FTTrack.getInstance().track(field, JSONObject(tags), JSONObject(values))
-        } else {
-            FTTrack.getInstance().trackValues(field, JSONObject(values))
-        }
-        return true
+    private suspend fun ftTrackSync(field: String, tags: Map<String, Any?>?, values: Map<String, Any?>?): Boolean = suspendCoroutine { cont ->
+        ftTrack(field, tags, values, SyncCallback {
 
+            cont.resume(it)
+        })
+    }
+
+
+    private fun ftTrack(field: String, tags: Map<String, Any?>?, values: Map<String, Any?>?, callback: SyncCallback) {
+        if (tags != null) {
+            FTTrack.getInstance().trackImmediate(field, JSONObject(tags), JSONObject(values), callback)
+        } else {
+            FTTrack.getInstance().trackImmediate(field, JSONObject(), JSONObject(values), callback)
+        }
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
