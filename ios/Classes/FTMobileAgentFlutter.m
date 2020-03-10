@@ -1,5 +1,5 @@
 #import "FTMobileAgentFlutter.h"
-#if __has_include(<ft_mobile_agent_flutter/FTMobileAgentFlutter-Swift.h>)
+#if __has_include(<ft_mobile_agent_flutter/ft_mobile_agent_flutter-Swift.h>)
 #import <ft_mobile_agent_flutter/ft_mobile_agent_flutter-Swift.h>
 #else
 // Support project import fallback if the generated compatibility header
