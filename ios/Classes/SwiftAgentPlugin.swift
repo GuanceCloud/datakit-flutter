@@ -19,7 +19,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         if(call.arguments is Dictionary<String, Any>){
             let args = call.arguments as! Dictionary<String, Any>
             if (call.method == SwiftAgentPlugin.METHOD_CONFIG) {
-                self.ftConfig(metricsUrl: args["serverUrl"] as! String, akId: args["akId"] as? String, akSecret:(args["akSecret"] as! String) )
+                self.ftConfig(metricsUrl: args["serverUrl"] as! String, akId: args["akId"] as? String, akSecret:(args["akSecret"] as? String),datakitUUID: args["datakitUUID"] as? String )
                 result(nil)
             } else if (call.method == SwiftAgentPlugin.METHOD_TRACK) {
                 result(self.ftTrack(measurement: args["measurement"] as! String, tags: args["tags"] as? Dictionary<String, Any>, fields: args["fields"] as! Dictionary<String, Any>))
@@ -42,11 +42,15 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     ///   - metricsUrl: 服务器地址
     ///   - akId: access key
     ///   - akSecret: access secret
-    private func ftConfig(metricsUrl:String,akId:String?,akSecret:String?) {
+    private func ftConfig(metricsUrl:String,akId:String?,akSecret:String?,datakitUUID:String?) {
         let enableRequestSigning = akId != nil && akSecret != nil
         let config: FTMobileConfig = FTMobileConfig(metricsUrl: metricsUrl, akId: akId!, akSecret: akSecret!, enableRequestSigning: enableRequestSigning)
+        
 //        config.enableAutoTrack = true
-        config.enableLog = true
+//        config.enableLog = true
+        if(datakitUUID != nil){
+          config.xDataKitUUID = datakitUUID!
+        }
         FTMobileAgent.start(withConfigOptions: config)
 
     }

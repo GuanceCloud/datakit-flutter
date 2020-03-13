@@ -65,7 +65,8 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
                 val serverUrl: String = call.argument<String>("serverUrl")!!
                 val akId: String? = call.argument<String>("akId")
                 val akSecret: String? = call.argument<String>("akSecret")
-                ftConfig(serverUrl, akId, akSecret)
+                val datakitUUID: String? = call.argument<String>("datakitUUID")
+                ftConfig(serverUrl, akId, akSecret, datakitUUID)
                 result.success(null)
 
             }
@@ -85,9 +86,12 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    private fun ftConfig(serverUrl: String, akId: String?, akSecret: String?) {
+    private fun ftConfig(serverUrl: String, akId: String?, akSecret: String?, datakitUUID: String?) {
         val enableRequestSigning = akId != null && akSecret != null
         val config = FTSDKConfig(serverUrl, enableRequestSigning, akId, akSecret)
+        if (datakitUUID != null) {
+            config.setXDataKitUUID(datakitUUID)
+        }
         FTSdk.install(config)
     }
 

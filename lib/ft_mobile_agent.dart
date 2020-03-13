@@ -13,13 +13,17 @@ class FTMobileAgentFlutter {
   ///
   /// 设置配置
   static Future<void> config(String serverUrl,
-      [String akId, String akSecret]) async {
+      [String akId, String akSecret, String datakitUUID]) async {
     Map<String, dynamic> map = {};
     map["serverUrl"] = serverUrl;
 
     if (akId != null && akSecret != null) {
       map["akId"] = akId;
       map["akSecret"] = akSecret;
+    }
+
+    if (datakitUUID != null) {
+      map["datakitUUID"] = datakitUUID;
     }
     _channel.invokeMethod(METHOD_CONFIG, map);
   }
