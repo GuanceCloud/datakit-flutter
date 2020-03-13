@@ -59,8 +59,12 @@ class _MyAppState extends State<MyApp> {
                       "http://10.100.64.106:19457/v1/write/metrics",
                       "accid",
                       "accsk");
-                  var success = await FTMobileAgentFlutter.track(
-                      "flutter_mobile_track_ios", {"key": "value"});
+                  var success = await FTMobileAgentFlutter.trackList([
+                    {
+                      "measurement": "flutter_list_test",
+                      "fields": {"key": "value"}
+                    },
+                  ]);
                   print("request success: $success");
                 },
               )

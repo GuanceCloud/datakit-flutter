@@ -4,8 +4,9 @@ import FTMobileAgent
 
 public class SwiftAgentPlugin: NSObject, FlutterPlugin {
 
-    static let METHOD_CONFIG = "ft_config"
-    static let METHOD_TRACK = "ft_track"
+    static let METHOD_CONFIG = "ftConfig"
+    static let METHOD_TRACK = "ftTrack"
+    static let METHOD_TRACK_LIST = "ftTrackList"
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "ft_mobile_agent_flutter", binaryMessenger: registrar.messenger())
@@ -21,8 +22,13 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 self.ftConfig(metricsUrl: args["serverUrl"] as! String, akId: args["akId"] as? String, akSecret:(args["akSecret"] as! String) )
                 result(nil)
             } else if (call.method == SwiftAgentPlugin.METHOD_TRACK) {
-                result(self.ftTrack(field: args["field"] as! String, tags: args["tags"] as? Dictionary<String, Any>, values: args["values"] as! Dictionary<String, Any>))
-            }else{
+                result(self.ftTrack(measurement: args["measurement"] as! String, tags: args["tags"] as? Dictionary<String, Any>, fields: args["fields"] as! Dictionary<String, Any>))
+            }else if(call.method == SwiftAgentPlugin.METHOD_TRACK_LIST){
+                let list = args["list"] as! Array<Dictionary<String,Any?>>
+                result(self.ftTrackList(items: list))
+            }
+            
+            else{
                 result(FlutterMethodNotImplemented)
             }
         }else{
@@ -39,7 +45,8 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     private func ftConfig(metricsUrl:String,akId:String?,akSecret:String?) {
         let enableRequestSigning = akId != nil && akSecret != nil
         let config: FTMobileConfig = FTMobileConfig(metricsUrl: metricsUrl, akId: akId!, akSecret: akSecret!, enableRequestSigning: enableRequestSigning)
-        config.enableAutoTrack = true
+//        config.enableAutoTrack = true
+        config.enableLog = true
         FTMobileAgent.start(withConfigOptions: config)
 
     }
@@ -47,28 +54,59 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     
     /// 上报数据
     /// - Parameters:
-    ///   - field: 指标类型
+    ///   - measurement: 指标类型
     ///   - tags: 标签
-    ///   - values: 值
-    private func ftTrack(field:String,tags:Dictionary<String, Any>?,values:Dictionary<String, Any>) ->Bool{
+    ///   - fields: 值
+    private func ftTrack(measurement:String,tags:Dictionary<String, Any>?,fields:Dictionary<String, Any>) ->Bool{
         
         let group = DispatchGroup()
         var result = false
         group.enter()
         if(tags != nil){
-          FTMobileAgent.sharedInstance().trackImmediate(field, tags: tags,values: values){
+          FTMobileAgent.sharedInstance().trackImmediate(measurement, tags: tags,field: fields){
               (success) -> () in
             result = success
             group.leave()
              
           }
         }else{
-          FTMobileAgent.sharedInstance().trackImmediate(field,values: values){
+          FTMobileAgent.sharedInstance().trackImmediate(measurement,field: fields){
               (success) -> () in
             result = success
             group.leave()
           }
         }
+        group.wait()
+        
+        return result
+    }
+    
+    private func ftTrackList(items:Array<Dictionary<String,Any?>>) ->Bool{
+        
+        
+        let group = DispatchGroup()
+        var result = false
+        group.enter()
+        
+        let beans:NSMutableArray = []
+        for dic in items{
+            let bean = FTTrackBean()
+            bean.measurement = dic["measurement"] as! String
+            if(dic["tags"] != nil){
+                bean.tags = dic["tags"] as! Dictionary
+            }
+
+            bean.field = dic["fields"] as! Dictionary
+            beans.add(bean)
+
+        }
+        
+        FTMobileAgent.sharedInstance().trackImmediateList(beans as! [FTTrackBean]){
+                     (success) -> () in
+                   result = success
+                   group.leave()
+                    
+                 }
         group.wait()
         
         return result

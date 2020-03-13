@@ -6,6 +6,7 @@ import com.ft.sdk.FTSDKConfig
 import com.ft.sdk.FTSdk
 import com.ft.sdk.FTTrack
 import com.ft.sdk.garble.SyncCallback
+import com.ft.sdk.garble.bean.TrackBean
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -50,8 +51,9 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
             channel.setMethodCallHandler(FTMobileAgentFlutter())
         }
 
-        const val METHOD_CONFIG = "ft_config"
-        const val METHOD_TRACK = "ft_track"
+        const val METHOD_CONFIG = "ftConfig"
+        const val METHOD_TRACK = "ftTrack"
+        const val METHOD_TRACK_LIST = "ftTrackList"
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -68,10 +70,14 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
 
             }
             METHOD_TRACK -> {
-                val field = call.argument<String>("field")!!
+                val measurement = call.argument<String>("measurement")!!
                 val tags = call.argument<Map<String, Any>>("tags")
-                val values = call.argument<Map<String, Any>>("values")
-                result.success(runBlocking { return@runBlocking ftTrackSync(field, tags, values) })
+                val fields = call.argument<Map<String, Any>>("fields")
+                result.success(runBlocking { return@runBlocking ftTrackSync(measurement, tags, fields) })
+            }
+            METHOD_TRACK_LIST -> {
+                val list = call.argument<List<Map<String, Any?>>>("list")
+                result.success(runBlocking { return@runBlocking list?.let { ftTrackListSync(it) } })
             }
             else -> {
                 result.notImplemented()
@@ -82,23 +88,45 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
     private fun ftConfig(serverUrl: String, akId: String?, akSecret: String?) {
         val enableRequestSigning = akId != null && akSecret != null
         val config = FTSDKConfig(serverUrl, enableRequestSigning, akId, akSecret)
-        FTSdk.install(config, application)
+        FTSdk.install(config)
     }
 
-    private suspend fun ftTrackSync(field: String, tags: Map<String, Any?>?, values: Map<String, Any?>?): Boolean = suspendCoroutine { cont ->
-        ftTrack(field, tags, values, SyncCallback {
+    private suspend fun ftTrackSync(measurement: String, tags: Map<String, Any?>?, fields: Map<String, Any?>?): Boolean = suspendCoroutine { cont ->
+        ftTrack(measurement, tags, fields, SyncCallback {
+
+            cont.resume(it)
+        })
+    }
+
+    private suspend fun ftTrackListSync(array: List<Map<String, Any?>>): Boolean = suspendCoroutine { cont ->
+        ftTrackList(array, SyncCallback {
 
             cont.resume(it)
         })
     }
 
 
-    private fun ftTrack(field: String, tags: Map<String, Any?>?, values: Map<String, Any?>?, callback: SyncCallback) {
+    private fun ftTrack(measurement: String, tags: Map<String, Any?>?, fields: Map<String, Any?>?, callback: SyncCallback) {
         if (tags != null) {
-            FTTrack.getInstance().trackImmediate(field, JSONObject(tags), JSONObject(values), callback)
+            FTTrack.getInstance().trackImmediate(measurement, JSONObject(tags), JSONObject(fields), callback)
         } else {
-            FTTrack.getInstance().trackImmediate(field, JSONObject(), JSONObject(values), callback)
+            FTTrack.getInstance().trackImmediate(measurement, JSONObject(), JSONObject(fields), callback)
         }
+    }
+
+    private fun ftTrackList(array: List<Map<String, Any?>>, callback: SyncCallback) {
+        val beans: MutableList<TrackBean> = mutableListOf()
+        array.forEach {
+            val measurement = it["measurement"] as String
+            val fields = it["fields"] as Map<*, *>
+            var tags: Map<*, *>? = null
+            if (it["tags"] != null) {
+                tags = it["tags"] as Map<*, *>
+
+            }
+            beans.add(TrackBean(measurement, if (tags == null) null else JSONObject(tags), JSONObject(fields), 0))
+        }
+        FTTrack.getInstance().trackImmediate(beans, callback)
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {

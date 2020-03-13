@@ -3,8 +3,9 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 class FTMobileAgentFlutter {
-  static const METHOD_CONFIG = "ft_config";
-  static const METHOD_TRACK = "ft_track";
+  static const METHOD_CONFIG = "ftConfig";
+  static const METHOD_TRACK = "ftTrack";
+  static const METHOD_TRACK_LIST = "ftTrackList";
 
   static const MethodChannel _channel =
       const MethodChannel('ft_mobile_agent_flutter');
@@ -24,15 +25,21 @@ class FTMobileAgentFlutter {
   }
 
   ///上报数据
-  static Future<bool> track(String field, Map<String, dynamic> values,
+  static Future<bool> track(String measurement, Map<String, dynamic> fields,
       [Map<String, dynamic> tags]) async {
     Map<String, dynamic> map = {};
-    map["field"] = field;
-    map["values"] = values;
+    map["measurement"] = measurement;
+    map["fields"] = fields;
 
     if (tags != null) {
       map["tags"] = tags;
     }
     return await _channel.invokeMethod(METHOD_TRACK, map);
+  }
+
+  static Future<bool> trackList(List<Map<String, dynamic>> list) async {
+    Map<String, dynamic> map = {};
+    map["list"] = list;
+    return await _channel.invokeMethod(METHOD_TRACK_LIST, map);
   }
 }
