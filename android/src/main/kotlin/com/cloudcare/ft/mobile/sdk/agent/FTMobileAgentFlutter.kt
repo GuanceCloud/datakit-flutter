@@ -128,7 +128,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
                 tags = it["tags"] as Map<*, *>
 
             }
-            beans.add(TrackBean(measurement, if (tags == null) null else JSONObject(tags), JSONObject(fields), 0))
+            beans.add(TrackBean(measurement, if (tags == null) null else JSONObject(tags), JSONObject(fields)))
         }
         FTTrack.getInstance().trackImmediate(beans, callback)
     }

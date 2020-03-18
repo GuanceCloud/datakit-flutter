@@ -62,7 +62,8 @@ class _MyAppState extends State<MyApp> {
                   var success = await FTMobileAgentFlutter.trackList([
                     {
                       "measurement": "flutter_list_test",
-                      "fields": {"key": "value"}
+                      "fields": {"test": "value1"},
+                      "tags":{"test":"test"}
                     },
                   ]);
                   print("request success: $success");
