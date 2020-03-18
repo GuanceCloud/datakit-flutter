@@ -58,12 +58,12 @@ class _MyAppState extends State<MyApp> {
                   FTMobileAgentFlutter.config(
                       "http://10.100.64.106:19457/v1/write/metrics",
                       "accid",
-                      "accsk");
+                      "accsk","flutter_datakit");
                   var success = await FTMobileAgentFlutter.trackList([
                     {
                       "measurement": "flutter_list_test",
-                      "fields": {"test": "value1"},
-                      "tags":{"test":"test"}
+                      "fields": {"test": "中文"},
+                      "tags":{"test":"中文测试"}
                     },
                   ]);
                   print("request success: $success");
