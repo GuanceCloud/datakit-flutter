@@ -29,7 +29,7 @@ class FTMobileAgentFlutter {
   }
 
   ///上报数据
-  static Future<bool> track(String measurement, Map<String, dynamic> fields,
+  static Future<Map<dynamic, dynamic>> track(String measurement, Map<String, dynamic> fields,
       [Map<String, dynamic> tags]) async {
     Map<String, dynamic> map = {};
     map["measurement"] = measurement;
@@ -41,7 +41,9 @@ class FTMobileAgentFlutter {
     return await _channel.invokeMethod(METHOD_TRACK, map);
   }
 
-  static Future<bool> trackList(List<Map<String, dynamic>> list) async {
+  ///上报列表
+  static Future<Map<dynamic, dynamic>> trackList(
+      List<Map<String, dynamic>> list) async {
     Map<String, dynamic> map = {};
     map["list"] = list;
     return await _channel.invokeMethod(METHOD_TRACK_LIST, map);

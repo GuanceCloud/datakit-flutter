@@ -53,20 +53,21 @@ class _MyAppState extends State<MyApp> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               FlatButton(
-                child: Text("同步"),
+                child: Text("同步1"),
                 onPressed: () async {
-                  FTMobileAgentFlutter.config(
+                  await FTMobileAgentFlutter.config(
                       "http://10.100.64.106:19457/v1/write/metrics",
                       "accid",
-                      "accsk","flutter_datakit");
-                  var success = await FTMobileAgentFlutter.trackList([
+                      "accsk",
+                      "flutter_datakit");
+                  var result = await FTMobileAgentFlutter.trackList([
                     {
                       "measurement": "flutter_list_test",
                       "fields": {"test": "中文"},
-                      "tags":{"test":"中文测试"}
+                      "tags": {"test": "中文测试"}
                     },
                   ]);
-                  print("request success: $success");
+                  print("request success: $result");
                 },
               )
             ],

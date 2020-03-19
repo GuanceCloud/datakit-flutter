@@ -47,7 +47,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         let config: FTMobileConfig = FTMobileConfig(metricsUrl: metricsUrl, akId: akId!, akSecret: akSecret!, enableRequestSigning: enableRequestSigning)
         
 //        config.enableAutoTrack = true
-//        config.enableLog = true
+        config.enableLog = true
         if(datakitUUID != nil){
           config.xDataKitUUID = datakitUUID!
         }
@@ -61,35 +61,34 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     ///   - measurement: 指标类型
     ///   - tags: 标签
     ///   - fields: 值
-    private func ftTrack(measurement:String,tags:Dictionary<String, Any>?,fields:Dictionary<String, Any>) ->Bool{
+    private func ftTrack(measurement:String,tags:Dictionary<String, Any>?,fields:Dictionary<String, Any>) ->Dictionary<String,Any>{
         
         let group = DispatchGroup()
-        var result = false
+        var result:Dictionary<String,Any>?=nil;
         group.enter()
         if(tags != nil){
-          FTMobileAgent.sharedInstance().trackImmediate(measurement, tags: tags,field: fields){
-              (success) -> () in
-            result = success
+            FTMobileAgent.sharedInstance().trackImmediate(measurement, tags: tags!,field: fields){
+              (code,response) -> () in
+            result = ["code":code,"response":response]
             group.leave()
              
           }
         }else{
           FTMobileAgent.sharedInstance().trackImmediate(measurement,field: fields){
-              (success) -> () in
-            result = success
+              (code,response) -> () in
+            result = ["code":code,"response":response]
             group.leave()
           }
         }
         group.wait()
-        
-        return result
+        return result!
     }
     
-    private func ftTrackList(items:Array<Dictionary<String,Any?>>) ->Bool{
+    private func ftTrackList(items:Array<Dictionary<String,Any?>>) ->Dictionary<String,Any>{
         
         
         let group = DispatchGroup()
-        var result = false
+        var result:Dictionary<String,Any>?=nil;
         group.enter()
         
         let beans:NSMutableArray = []
@@ -106,14 +105,14 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         }
         
         FTMobileAgent.sharedInstance().trackImmediateList(beans as! [FTTrackBean]){
-                     (success) -> () in
-                   result = success
+                     (code,response) -> () in
+            result = ["code":code,"response":response]
                    group.leave()
                     
                  }
         group.wait()
         
-        return result
+        return result!
     }
 
 

@@ -58,9 +58,6 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         when (call.method) {
-            "getPlatformVersion" -> {
-                result.success("Android ${android.os.Build.VERSION.RELEASE}")
-            }
             METHOD_CONFIG -> {
                 val serverUrl: String = call.argument<String>("serverUrl")!!
                 val akId: String? = call.argument<String>("akId")
@@ -95,17 +92,15 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
         FTSdk.install(config)
     }
 
-    private suspend fun ftTrackSync(measurement: String, tags: Map<String, Any?>?, fields: Map<String, Any?>?): Boolean = suspendCoroutine { cont ->
-        ftTrack(measurement, tags, fields, SyncCallback {
-
-            cont.resume(it)
+    private suspend fun ftTrackSync(measurement: String, tags: Map<String, Any?>?, fields: Map<String, Any?>?): Map<String, Any> = suspendCoroutine { cont ->
+        ftTrack(measurement, tags, fields, SyncCallback { code, response ->
+            cont.resume(mapOf("code" to code, "response" to response))
         })
     }
 
-    private suspend fun ftTrackListSync(array: List<Map<String, Any?>>): Boolean = suspendCoroutine { cont ->
-        ftTrackList(array, SyncCallback {
-
-            cont.resume(it)
+    private suspend fun ftTrackListSync(array: List<Map<String, Any?>>): Map<String, Any> = suspendCoroutine { cont ->
+        ftTrackList(array, SyncCallback { code, response ->
+            cont.resume(mapOf("code" to code, "response" to response))
         })
     }
 
