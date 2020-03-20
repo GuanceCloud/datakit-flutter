@@ -44,7 +44,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     ///   - akSecret: access secret
     private func ftConfig(metricsUrl:String,akId:String?,akSecret:String?,datakitUUID:String?) {
         let enableRequestSigning = akId != nil && akSecret != nil
-        let config: FTMobileConfig = FTMobileConfig(metricsUrl: metricsUrl, akId: akId!, akSecret: akSecret!, enableRequestSigning: enableRequestSigning)
+        let config: FTMobileConfig = FTMobileConfig(metricsUrl: metricsUrl, akId: akId, akSecret: akSecret, enableRequestSigning: enableRequestSigning)
         
 //        config.enableAutoTrack = true
         config.enableLog = true
