@@ -54,6 +54,10 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
         const val METHOD_CONFIG = "ftConfig"
         const val METHOD_TRACK = "ftTrack"
         const val METHOD_TRACK_LIST = "ftTrackList"
+        const val METHOD_TRACK_FLOW_CHART = "ftTrackFlowChart"
+        const val METHOD_BIND_USER = "ftBindUser"
+        const val METHOD_UNBIND_USER = "ftUnBindUser"
+        const val METHOD_STOP_SDK = "ftStopSdk"
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -76,6 +80,24 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
             METHOD_TRACK_LIST -> {
                 val list = call.argument<List<Map<String, Any?>>>("list")
                 result.success(runBlocking { return@runBlocking list?.let { ftTrackListSync(it) } })
+            }
+            METHOD_TRACK_FLOW_CHART -> {
+
+            }
+            METHOD_BIND_USER -> {
+                val name = call.argument<String>("name")!!
+                val id = call.argument<String>("id")!!
+                val extras = call.argument<Map<String,Any>>("extras")
+                ftBindUser(name,id,extras)
+                result.success(null)
+            }
+            METHOD_UNBIND_USER -> {
+                FTSdk.get().unbindUserData()
+                result.success(null)
+            }
+            METHOD_STOP_SDK -> {
+                FTSdk.get().shutDown()
+                result.success(null)
             }
             else -> {
                 result.notImplemented()
@@ -126,6 +148,10 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
             beans.add(TrackBean(measurement, if (tags == null) null else JSONObject(tags), JSONObject(fields)))
         }
         FTTrack.getInstance().trackImmediate(beans, callback)
+    }
+
+    private fun ftBindUser(name:String,id:String,extras:Map<String,Any?>?){
+        FTSdk.get().bindUserData(name,id, JSONObject(extras))
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
