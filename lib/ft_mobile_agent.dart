@@ -6,6 +6,10 @@ class FTMobileAgentFlutter {
   static const METHOD_CONFIG = "ftConfig";
   static const METHOD_TRACK = "ftTrack";
   static const METHOD_TRACK_LIST = "ftTrackList";
+  static const METHOD_TRACK_FLOW_CHART = "ftTrackFlowChart";
+  static const METHOD_BIND_USER = "ftBindUser";
+  static const METHOD_UNBIND_USER = "ftUnBindUser";
+  static const METHOD_STOP_SDK = "ftStopSdk";
 
   static const MethodChannel _channel =
       const MethodChannel('ft_mobile_agent_flutter');
