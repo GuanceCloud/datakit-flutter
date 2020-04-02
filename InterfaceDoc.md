@@ -10,45 +10,113 @@ DataFlux Flutter SDK 接口规范
 [4、主动埋点后台上传](#4主动埋点后台上传)
 
 [5、停止SDK后台正在执行的操作](#5停止sdk后台正在执行的操作)
+
+[6、SDK 初始化配置](#6sdk-初始化配置)
+
+[7、主动埋点一条数据（异步回调结果）](#7主动埋点一条数据异步回调结果)
+
+[8、主动埋点上传一组数据（异步回调结果）](#8主动埋点上传一组数据异步回调结果)
 # 接口详情
 
 ## 1、绑定用户
-    方法名：ftBindUser
-    
-    参数1：name        类型：String
-    参数2：id          类型：String
-    参数3：extras      类型：Map<String,Object>
-    
-    返回值：无
+方法名：ftBindUser
+
+返回值：无
+
+参数表
+
+| 参数名  |        类型         | 是否必须 |
+|:------:|:------------------:|:------:|
+|  name  |       String       |   是    |
+|   id   |       String       |   是    |
+| extras | Map<String,Object> |   否    |
+
 ## 2、解绑用户
-	方法名：ftUnBindUser
-	
-	参数：无
-	返回值：无
+方法名：ftUnBindUser
+
+返回值：无
+
+参数：无
 
 ## 3、上报流程图数据
-	方法名：ftTrackFlowChart
-	
-	参数1：production          类型：String
-	参数2：traceId             类型：String
-	参数3：name                类型：String
-	参数4：parent              类型：String
-	参数5：duration            类型：long
-	参数6：tags                类型：Map<String,Object>
-	参数7：fields              类型：Map<String,Object>
-	
-	返回值：无
+方法名：ftTrackFlowChart
+
+返回值：无
+
+参数表
+
+|   参数名    |        类型         | 是否必须 |
+|:----------:|:------------------:|:------:|
+| production |       String       |   是    |
+|  traceId   |       String       |   是    |
+|    name    |       String       |   是    |
+|  duration  |        long        |   是    |
+|   parent   |       String       |   否    |
+|    tags    | Map<String,Object> |   否    |
+|   fields   | Map<String,Object> |   否    |
+
 
 ## 4、主动埋点后台上传
-	方法名：ftTrackBackground
-	
-	参数1：measurement         类型：String
-	参数2：tags                类型：Map<String,Object>
-	参数3：fields              类型：Map<String,Object>	
-	
-	返回值：无
+方法名：ftTrackBackground
+
+返回值：无
+
+参数表
+
+|    参数名    |        类型         | 是否必须 |
+|:-----------:|:------------------:|:------:|
+| measurement |       String       |   是    |
+|   fields    | Map<String,Object> |   是    |
+|    tags     | Map<String,Object> |   否    |
+
 
 ## 5、停止SDK后台正在执行的操作
-	方法名：ftStopSdk
-	参数：无
-	返回值：无
+方法名：ftStopSdk
+
+返回值：无
+
+参数：无
+
+## 6、SDK 初始化配置
+方法名：ftConfig
+
+返回值：无
+
+参数表
+
+|    参数名     |  类型   | 是否必须 |
+|:------------:|:------:|:------:|
+|  serverUrl   | String |   是    |
+|     akId     | String |   否    |
+|   akSecret   | String |   否    |
+| datakitUUID  | String |   否    |
+|  enableLog   |  bool  |   否    |
+| needBindUser |  bool  |   否    |
+
+
+## 7、主动埋点一条数据（异步回调结果）
+方法名：ftTrack
+
+返回值：Map<String, Object>
+
+参数表
+
+|    参数名    |         类型         | 是否必须 |
+|:-----------:|:-------------------:|:------:|
+| measurement |       String        |   是    |
+|   fields    | Map<String, Object> |   是    |
+|    tags     | Map<String, Object> |   否    |
+
+
+## 8、主动埋点上传一组数据（异步回调结果）
+
+方法名：ftTrackList
+
+返回值：Map<String, Object>
+
+参数表
+
+| 参数名 |            类型            | 是否必须 |
+|:-----:|:-------------------------:|:------:|
+| list  | List<Map<String, Object>> |   是    |
+
