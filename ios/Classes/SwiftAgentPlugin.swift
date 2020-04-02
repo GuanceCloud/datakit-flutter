@@ -7,7 +7,11 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     static let METHOD_CONFIG = "ftConfig"
     static let METHOD_TRACK = "ftTrack"
     static let METHOD_TRACK_LIST = "ftTrackList"
-
+    static let METHOD_TRACK_FLOW_CHART = "ftTrackFlowChart"
+    static let METHOD_BIND_USER = "ftBindUser"
+    static let METHOD_UNBIND_USER = "ftUnBindUser"
+    static let METHOD_STOP_SDK = "ftStopSdk"
+    
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "ft_mobile_agent_flutter", binaryMessenger: registrar.messenger())
         let instance = SwiftAgentPlugin()
@@ -114,6 +118,52 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         
         return result!
     }
-
-
+    /// 上报流程图
+    /// - Parameters:
+    ///   - production: 指标类型
+    ///   - traceId: 标签
+    ///   - name:流程节点名称
+    ///   - parent:当前流程节点的上一个流程节点的名称
+    ///   - duration:持续时间
+    ///   - tags:标签
+    ///   - fields: 值
+    private func ftTrackFlowChart(production:String,traceId:String,name:String,parent:String?,duration:Int,tags:Dictionary<String, Any>?,fields:Dictionary<String, Any>?){
+        if(tags != nil){
+            FTMobileAgent.sharedInstance().flowTrack(production,traceId:traceId,name:name,parent:parent!,tags:tags!, duration:duration,field:fields!)
+        }else{
+            FTMobileAgent.sharedInstance().flowTrack(production,traceId:traceId,name:name,parent:parent!, tags: tags!,duration:duration,field:fields!)
+        }
+    }
+    
+    /// 主动埋点后台上传
+    /// - Parameters:
+    ///   - measurement:指标类型
+    ///   - tags:标签
+    ///   - fields: 值
+    private func ftTrackBackground(measurement:String,tags:Dictionary<String, Any>?,fields:Dictionary<String, Any>){
+        if(tags != nil){
+            FTMobileAgent.sharedInstance().trackBackgroud(measurement,tags:tags!,field:fields)
+        }else{
+            FTMobileAgent.sharedInstance().trackBackgroud(measurement,field:fields)
+        }
+    }
+    /// 绑定用户
+    /// - Parameters:
+    ///   - name:用户名
+    ///   - id:用户id
+    ///   - extras:用户其他信息
+    private func ftBindUser(name:String,id:String,extras:Dictionary<String, Any>?){
+        FTMobileAgent.sharedInstance().bindUser(withName: name,id:id,exts:extras!)
+    }
+    
+    /// 用户登出
+    private func ftUnBindUser(){
+        FTMobileAgent.sharedInstance().logout()
+    }
+    
+    /// 停止SDK后台正在执行的操作
+    private func ftStopSdk(){
+        FTMobileAgent.sharedInstance().resetInstance()
+    }
+    
 }
