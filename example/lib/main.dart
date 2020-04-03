@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
+import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 
 void main() => runApp(MyApp());
 
