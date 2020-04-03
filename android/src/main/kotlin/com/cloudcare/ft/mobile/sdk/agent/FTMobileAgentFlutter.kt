@@ -54,6 +54,11 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
         const val METHOD_CONFIG = "ftConfig"
         const val METHOD_TRACK = "ftTrack"
         const val METHOD_TRACK_LIST = "ftTrackList"
+        const val METHOD_TRACK_FLOW_CHART = "ftTrackFlowChart"
+        const val METHOD_TRACK_BACKGROUND = "ftTrackBackground"
+        const val METHOD_BIND_USER = "ftBindUser"
+        const val METHOD_UNBIND_USER = "ftUnBindUser"
+        const val METHOD_STOP_SDK = "ftStopSdk"
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -63,7 +68,9 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
                 val akId: String? = call.argument<String>("akId")
                 val akSecret: String? = call.argument<String>("akSecret")
                 val datakitUUID: String? = call.argument<String>("datakitUUID")
-                ftConfig(serverUrl, akId, akSecret, datakitUUID)
+                val enableLog: Boolean? = call.argument<Boolean>("enableLog")
+                val needBindUser: Boolean? = call.argument<Boolean>("needBindUser")
+                ftConfig(serverUrl, akId, akSecret, datakitUUID,enableLog,needBindUser)
                 result.success(null)
 
             }
@@ -77,18 +84,58 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
                 val list = call.argument<List<Map<String, Any?>>>("list")
                 result.success(runBlocking { return@runBlocking list?.let { ftTrackListSync(it) } })
             }
+            METHOD_TRACK_FLOW_CHART -> {
+                val production = call.argument<String>("production")
+                val traceId = call.argument<String>("traceId")
+                val name = call.argument<String>("name")
+                val parent = call.argument<String>("parent")
+                val duration = call.argument<Long>("duration")!!
+                val tags = call.argument<Map<String, Any>>("tags")
+                val fields = call.argument<Map<String, Any>>("fields")
+                val tagsJS = if (tags != null) JSONObject(tags) else null
+                val fieldsJS = if (fields != null) JSONObject(fields) else null
+
+                FTTrack.getInstance().trackFlowChart(production, traceId, name, parent, duration, tagsJS, fieldsJS)
+            }
+            METHOD_TRACK_BACKGROUND -> {
+                val measurement = call.argument<String>("measurement")!!
+                val tags = call.argument<Map<String, Any>>("tags")!!
+                val fields = call.argument<Map<String, Any>>("fields")
+                val fieldsJS = if (fields != null) JSONObject(fields) else null
+                FTTrack.getInstance().trackBackground(measurement,JSONObject(tags),fieldsJS)
+            }
+            METHOD_BIND_USER -> {
+                val name = call.argument<String>("name")!!
+                val id = call.argument<String>("id")!!
+                val extras = call.argument<Map<String, Any>>("extras")
+                ftBindUser(name, id, extras)
+                result.success(null)
+            }
+            METHOD_UNBIND_USER -> {
+                FTSdk.get().unbindUserData()
+                result.success(null)
+            }
+            METHOD_STOP_SDK -> {
+                FTSdk.get().shutDown()
+                result.success(null)
+            }
             else -> {
                 result.notImplemented()
             }
         }
     }
 
-    private fun ftConfig(serverUrl: String, akId: String?, akSecret: String?, datakitUUID: String?) {
+    private fun ftConfig(serverUrl: String, akId: String?, akSecret: String?, datakitUUID: String?,enableLog:Boolean?,needBindUser:Boolean?) {
         val enableRequestSigning = akId != null && akSecret != null
         val config = FTSDKConfig(serverUrl, enableRequestSigning, akId, akSecret)
         if (datakitUUID != null) {
             config.setXDataKitUUID(datakitUUID)
         }
+        config.apply {
+            isDebug = enableLog?:false
+            isNeedBindUser = needBindUser?:false
+        }
+
         FTSdk.install(config)
     }
 
@@ -126,6 +173,10 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
             beans.add(TrackBean(measurement, if (tags == null) null else JSONObject(tags), JSONObject(fields)))
         }
         FTTrack.getInstance().trackImmediate(beans, callback)
+    }
+
+    private fun ftBindUser(name: String, id: String, extras: Map<String, Any?>?) {
+        FTSdk.get().bindUserData(name, id, JSONObject(extras))
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
