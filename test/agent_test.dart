@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
 
 void main() {
   const MethodChannel channel = MethodChannel('ft_mobile_agent_flutter');
