@@ -3,13 +3,34 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
 
 void main() {
-  const MethodChannel channel = MethodChannel('agent');
-
+  const MethodChannel channel = MethodChannel('ft_mobile_agent_flutter');
   TestWidgetsFlutterBinding.ensureInitialized();
-
-  setUp(() {
+  const METHOD_CONFIG = "ftConfig";
+  const METHOD_TRACK = "ftTrack";
+  const METHOD_TRACK_LIST = "ftTrackList";
+  const METHOD_TRACK_FLOW_CHART = "ftTrackFlowChart";
+  const METHOD_TRACK_BACKGROUND = "ftTrackBackground";
+  const METHOD_BIND_USER = "ftBindUser";
+  const METHOD_UNBIND_USER = "ftUnBindUser";
+  const METHOD_STOP_SDK = "ftStopSdk";
+  dynamic resultCode;
+  setUp(() async {
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      return '42';
+      switch (methodCall.method) {
+        case METHOD_CONFIG:
+        case METHOD_TRACK_FLOW_CHART:
+        case METHOD_TRACK_BACKGROUND:
+        case METHOD_BIND_USER:
+        case METHOD_UNBIND_USER:
+        case METHOD_STOP_SDK:
+          resultCode = true;
+          return null;
+        case METHOD_TRACK:
+        case METHOD_TRACK_LIST:
+          return resultCode;
+        default:
+          return null;
+      }
     });
   });
 
@@ -17,7 +38,67 @@ void main() {
     channel.setMockMethodCallHandler(null);
   });
 
-  test('getPlatformVersion', () async {
-//    expect(await FTMobileAgentFlutter.platformVersion, '42');
+  /// 测试配置
+  test("config", () async {
+    FTMobileAgentFlutter.config("http://10.100.64.106:19457/v1/write/metrics",
+        "accid", "accsk", "flutter_datakit", true, false);
+    expect(resultCode, isTrue);
+  });
+
+  /// 测试异步上传埋点数据
+  test('trackOneData', () async {
+    resultCode = {
+      "code": "200",
+      "response": {"code": 200, "errorCode": "", "message": ""}
+    };
+    var result = await FTMobileAgentFlutter.track('flutter_list_test',{'platform': 'flutter'},{'method': '直接同步'});
+    expect(result, resultCode);
+  });
+
+  /// 测试异步上传埋点数据
+  test('trackList', () async {
+    resultCode = {
+      "code": "200",
+      "response": {"code": 200, "errorCode": "", "message": ""}
+    };
+    var arguments = [
+      {
+        'measurement': 'flutter_list_test',
+        'fields': {'platform': 'flutter'},
+        'tags': {'method': '直接同步'}
+      },
+    ];
+    var result = await FTMobileAgentFlutter.trackList(arguments);
+    expect(result, resultCode);
+  });
+
+  /// 测试流程图上报
+  test("trackFlowChart",() async{
+    FTMobileAgentFlutter.trackFlowChart("flutter_agent", "trace-001", "name", 1000);
+    expect(resultCode, isTrue);
+  });
+
+  /// 测试主动后台上报
+  test("trackBackground",() async{
+    FTMobileAgentFlutter.trackBackground('flutter_list_test',{'platform': 'flutter'},fields:{'method': '直接同步'});
+    expect(resultCode, isTrue);
+  });
+
+  /// 测试绑定用户
+  test("bindUser",() async{
+    FTMobileAgentFlutter.bindUser('flutter_list_test','flutter',extras:{'method': '直接同步'});
+    expect(resultCode, isTrue);
+  });
+
+  /// 测试解绑用户
+  test("unbindUser",() async{
+    FTMobileAgentFlutter.unbindUser();
+    expect(resultCode, isTrue);
+  });
+
+  /// 测试停止SDK操作
+  test("stopSDK",() async{
+    FTMobileAgentFlutter.stopSDK();
+    expect(resultCode, isTrue);
   });
 }
