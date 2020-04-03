@@ -19,7 +19,7 @@ class FTMobileAgentFlutter {
   ///
   /// 设置配置
   static Future<void> config(String serverUrl,
-      [String akId, String akSecret, String datakitUUID]) async {
+      [String akId, String akSecret, String datakitUUID,bool enableLog,bool needBindUser]) async {
     Map<String, dynamic> map = {};
     map["serverUrl"] = serverUrl;
 
@@ -30,6 +30,14 @@ class FTMobileAgentFlutter {
 
     if (datakitUUID != null) {
       map["datakitUUID"] = datakitUUID;
+    }
+
+    if (enableLog != null) {
+      map["enableLog"] = enableLog;
+    }
+
+    if (needBindUser != null) {
+      map["needBindUser"] = needBindUser;
     }
     _channel.invokeMethod(METHOD_CONFIG, map);
   }

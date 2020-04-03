@@ -52,28 +52,122 @@ class _MyAppState extends State<MyApp> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              FlatButton(
-                child: Text("同步1"),
-                onPressed: () async {
-                  await FTMobileAgentFlutter.config(
-                      "http://10.100.64.106:19457/v1/write/metrics",
-                      "accid",
-                      "accsk",
-                      "flutter_datakit");
-                  var result = await FTMobileAgentFlutter.trackList([
-                    {
-                      "measurement": "flutter_list_test",
-                      "fields": {"test": "中文"},
-                      "tags": {"test": "中文测试"}
-                    },
-                  ]);
-                  print("request success: $result");
-                },
-              )
+              _buildConfigWidget(),
+              _buildSyncImmediateWidget(),
+              _buildSyncWidget(),
+              _buildFlowChartWidget(),
+              _buildBindUserWidget(),
+              _buildUnBindUserWidget(),
+              _buildStopSDKWidget()
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildConfigWidget() {
+    return RaisedButton(
+      child: Text("设置配置"),
+      onPressed: () {
+        FTMobileAgentFlutter.config(
+            "http://10.100.64.106:19457/v1/write/metrics",
+            "accid",
+            "accsk",
+            "flutter_datakit",
+            true,
+            false);
+      },
+    );
+  }
+
+  Widget _buildSyncImmediateWidget() {
+    return RaisedButton(
+      child: Text("同步（直接上传）"),
+      onPressed: () async {
+        var result = await FTMobileAgentFlutter.trackList([
+          {
+            "measurement": "flutter_list_test",
+            "fields": {"platform": "flutter"},
+            "tags": {"method": "直接同步"}
+          },
+        ]);
+        print("request success: $result");
+      },
+    );
+  }
+
+  Widget _buildSyncWidget() {
+    return RaisedButton(
+      child: Text("同步（后台执行）"),
+      onPressed: () {
+        FTMobileAgentFlutter.trackBackground(
+            "flutter_list_test", {"method": "后台同步"},
+            fields: {"platform": "flutter"});
+      },
+    );
+  }
+
+  Widget _buildFlowChartWidget() {
+    return RaisedButton(
+      child: Text("同步流程图数据"),
+      onPressed: () {
+        FTMobileAgentFlutter.trackFlowChart(
+            "flutter_agent", "trace-001", "开始", 1000);
+        FTMobileAgentFlutter.trackFlowChart(
+            "flutter_agent", "trace-001", "流程一", 1000,
+            parent: "开始");
+        FTMobileAgentFlutter.trackFlowChart(
+            "flutter_agent", "trace-001", "流程二", 1000,
+            parent: "流程一");
+        FTMobileAgentFlutter.trackFlowChart(
+            "flutter_agent", "trace-001", "选择", 1000,
+            parent: "流程二");
+        FTMobileAgentFlutter.trackFlowChart(
+            "flutter_agent", "trace-001", "流程三", 1000,
+            parent: "选择");
+        FTMobileAgentFlutter.trackFlowChart(
+            "flutter_agent", "trace-001", "流程四", 1000,
+            parent: "选择");
+        FTMobileAgentFlutter.trackFlowChart(
+            "flutter_agent", "trace-001", "流程五", 1000,
+            parent: "流程三");
+        FTMobileAgentFlutter.trackFlowChart(
+            "flutter_agent", "trace-001", "流程五", 1000,
+            parent: "流程四");
+        FTMobileAgentFlutter.trackFlowChart(
+            "flutter_agent", "trace-001", "结束", 1000,
+            parent: "流程五");
+      },
+    );
+  }
+
+  Widget _buildBindUserWidget() {
+    return RaisedButton(
+      child: Text("绑定用户"),
+      onPressed: () {
+        FTMobileAgentFlutter.bindUser(
+            "flutter_demo", "id_001",
+            extras: {"platform": "flutter"});
+      },
+    );
+  }
+
+  Widget _buildUnBindUserWidget() {
+    return RaisedButton(
+      child: Text("解绑用户"),
+      onPressed: () {
+        FTMobileAgentFlutter.unbindUser();
+      },
+    );
+  }
+
+  Widget _buildStopSDKWidget() {
+    return RaisedButton(
+      child: Text("停止正在执行的操作"),
+      onPressed: () {
+        FTMobileAgentFlutter.stopSDK();
+      },
     );
   }
 }
