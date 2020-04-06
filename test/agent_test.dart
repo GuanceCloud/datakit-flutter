@@ -40,8 +40,14 @@ void main() {
 
   /// 测试配置
   test("config", () async {
-    FTMobileAgentFlutter.config("http://10.100.64.106:19457/v1/write/metrics",
-        "accid", "accsk", "flutter_datakit", true, false);
+    FTMobileAgentFlutter.configX(
+        Config("http://10.100.64.106:19457/v1/write/metrics")
+            .setAK("accid", "accsk")
+            .setDataKit("flutter_datakit")
+            .setEnableLog(true)
+            .setNeedBindUser(false)
+            .setMonitorType(MonitorType.BATTERY | MonitorType.NETWORK)
+    );
     expect(resultCode, isTrue);
   });
 

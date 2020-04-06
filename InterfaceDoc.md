@@ -92,6 +92,7 @@ DataFlux Flutter SDK 接口规范
 | datakitUUID  | String |   否    |
 |  enableLog   |  bool  |   否    |
 | needBindUser |  bool  |   否    |
+| monitorType  |  int   |   否    |
 
 
 ## 7、主动埋点一条数据（异步回调结果）

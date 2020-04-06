@@ -70,7 +70,8 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
                 val datakitUUID: String? = call.argument<String>("datakitUUID")
                 val enableLog: Boolean? = call.argument<Boolean>("enableLog")
                 val needBindUser: Boolean? = call.argument<Boolean>("needBindUser")
-                ftConfig(serverUrl, akId, akSecret, datakitUUID,enableLog,needBindUser)
+                val monitorType: Int? = call.argument<Int>("monitorType")
+                ftConfig(serverUrl, akId, akSecret, datakitUUID,enableLog,needBindUser,monitorType)
                 result.success(null)
 
             }
@@ -125,11 +126,14 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    private fun ftConfig(serverUrl: String, akId: String?, akSecret: String?, datakitUUID: String?,enableLog:Boolean?,needBindUser:Boolean?) {
+    private fun ftConfig(serverUrl: String, akId: String?, akSecret: String?, datakitUUID: String?,enableLog:Boolean?,needBindUser:Boolean?,monitorType:Int?) {
         val enableRequestSigning = akId != null && akSecret != null
         val config = FTSDKConfig(serverUrl, enableRequestSigning, akId, akSecret)
         if (datakitUUID != null) {
             config.setXDataKitUUID(datakitUUID)
+        }
+        if(monitorType != null){
+            config.setMonitorType(monitorType)
         }
         config.apply {
             isDebug = enableLog?:false

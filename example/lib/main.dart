@@ -1,7 +1,4 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
 
 void main() => runApp(MyApp());
@@ -12,7 +9,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   void initState() {
     super.initState();
@@ -48,13 +44,25 @@ class _MyAppState extends State<MyApp> {
     return RaisedButton(
       child: Text("设置配置"),
       onPressed: () {
-        FTMobileAgentFlutter.config(
+        /// 配置方法一
+        FTMobileAgentFlutter.configX(
+            Config("http://10.100.64.106:19457/v1/write/metrics")
+                .setAK("accid", "accsk")
+                .setDataKit("flutter_datakit")
+                .setEnableLog(true)
+                .setNeedBindUser(false)
+                .setMonitorType(MonitorType.BATTERY | MonitorType.NETWORK)
+        );
+
+        /// 配置方法二
+        /**FTMobileAgentFlutter.config(
             "http://10.100.64.106:19457/v1/write/metrics",
-            "accid",
-            "accsk",
-            "flutter_datakit",
-            true,
-            false);
+            akId: "accid",
+            akSecret: "accsk",
+            dataKitUUID: "flutter_datakit",
+            enableLog: true,
+            needBindUser: false,
+            monitorType: MonitorType.ALL);*/
       },
     );
   }
@@ -124,8 +132,7 @@ class _MyAppState extends State<MyApp> {
     return RaisedButton(
       child: Text("绑定用户"),
       onPressed: () {
-        FTMobileAgentFlutter.bindUser(
-            "flutter_demo", "id_001",
+        FTMobileAgentFlutter.bindUser("flutter_demo", "id_001",
             extras: {"platform": "flutter"});
       },
     );
