@@ -300,12 +300,14 @@ static Future<void> trackBackground(
 |tags|Map|自定义标签|否|
 |fields|Map| 自定义指标|是|
 
-### 3.错误码
-> 
-  NetWorkException = 101,            //网络问题
-  InvalidParamsException = 102,      //参数问题
-  FileIOException = 103,             //文件 IO 问题
-  UnkownException = 104,             //未知问题
+### 3.错误码   
+| 字段 | 值 |说明|
+|:--------:|:--------:|:--------:|
+|NetWorkException|101|网络问题|
+|InvalidParamsException|102|参数问题|
+|FileIOException|103| 文件 IO 问题|
+|UnkownException|104| 未知问题|
+
 
 ## 注意事项
 ### 1. 关于 iOS端 GPU 使用率获取
