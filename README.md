@@ -314,17 +314,17 @@ static Future<void> trackBackground(
 - iOS    
   - GPU
  获取 **GPU使用率**，需要使用到 `IOKit.framework ` 私有库，**可能会影响 AppStore 上架**。如果需要此功能，需要在你的应用安装 `IOKit.framework ` 私有库。导入后，请在编译时加入 `FT_TRACK_GPUUSAGE` 标志，SDK将会为你获取GPU使用率。    
-  XCode设置方法 :    
+  
+    XCode设置方法 :    
   
    ```objective-c
-Build Settings > Apple LLVM 7.0 - Preprocessing > Processor Macros >
-Release : FT_TRACK_GPUUSAGE=1
- ```    
- 
+ Build Settings > Apple LLVM 7.0 - Preprocessing > Processor Macros >
+ Release : FT_TRACK_GPUUSAGE=1
+   ```    
  - CPU
    CPU 温度获取不到。    
    
-   
+
 - android 
   - GPU    
     GPU 中的频率和使用率的值通过读取设备中配置文件获取，有些设备可能获取不到或只能在 root 下获取。
@@ -334,6 +334,7 @@ Release : FT_TRACK_GPUUSAGE=1
 ### 2.关于查询指标 IMEI
 - iOS
    因为隐私问题，苹果用户在 iOS5 以后禁用代码直接获取 IMEI 的值。所以 iOS sdk 中不支持获取 IMEI。
+
 
 
 
