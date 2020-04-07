@@ -125,9 +125,8 @@ static Future<Map<dynamic, dynamic>> track(
   
 - 返回值    
 
-   回调方法 onResponse(int code,String response) 中 code 表示网络请求返回的返回码，response 为服务端返回的信息。
-code 的值除了 HTTP 协议中规定的返回码，FT SDK 中额外规定了 4 种类型的错误码，他们是 101，102，103，104，他们分别
-代表的意思是网络问题、参数问题、IO异常和未知错误
+   返回 Map 中 code 表示网络请求返回的返回码，response 为服务端返回的信息。
+code 的值除了 HTTP 协议中规定的返回码，FT SDK 中额外规定了 4 种类型的[错误码](#3错误码)，他们是 101，102，103，104，他们分别代表的意思是网络问题、参数问题、IO异常和未知错误。
    
 ### 3. 上报流程图
 -  方法
@@ -267,7 +266,7 @@ static Future<void> trackBackground(
   FTMobileAgentFlutter.stopSDK();
 ```
 
-## 参数
+## 参数与错误码
 ### 1. Config 可配置参数
 
 | 字段 | 类型 |说明|是否必须|
@@ -301,7 +300,12 @@ static Future<void> trackBackground(
 |tags|Map|自定义标签|否|
 |fields|Map| 自定义指标|是|
 
-
+### 3.错误码
+> 
+  NetWorkException = 101,            //网络问题
+  InvalidParamsException = 102,      //参数问题
+  FileIOException = 103,             //文件 IO 问题
+  UnkownException = 104,             //未知问题
 
 ## 注意事项
 ### 1. 关于 iOS端 GPU 使用率获取
