@@ -125,7 +125,7 @@ static Future<Map<dynamic, dynamic>> track(
   
 - 返回值    
 
-   返回 Map 中 code 表示网络请求返回的返回码，response 为服务端返回的信息。
+   返回 Map 中 `code` 表示网络请求返回的返回码，`response` 为服务端返回的信息。
 code 的值除了 HTTP 协议中规定的返回码，FT SDK 中额外规定了 4 种类型的[错误码](#3错误码)，他们是 101，102，103，104，他们分别代表的意思是网络问题、参数问题、IO异常和未知错误。
    
 ### 3. 上报流程图
@@ -309,15 +309,26 @@ static Future<void> trackBackground(
 |UnkownException|104| 未知问题|
 
 
-## 注意事项
-### 1. 关于 iOS端 GPU 使用率获取
- 获取GPU使用率，需要使用到 `IOKit.framework ` 私有库，**可能会影响 AppStore 上架**。如果需要此功能，需要在你的应用安装 `IOKit.framework ` 私有库。导入后，请在编译时加入 `FT_TRACK_GPUUSAGE` 标志，SDK将会为你获取GPU使用率。
+## 常见问题
+### 1. 关于监控项中有些参数获取不到问题说明
+- iOS    
+  - GPU
+ 获取 **GPU使用率** ，需要使用到 `IOKit.framework ` 私有库，**可能会影响 AppStore 上架**。如果需要此功能，需要在你的应用安装 `IOKit.framework ` 私有库。导入后，请在编译时加入 `FT_TRACK_GPUUSAGE` 标志，SDK将会为你获取GPU使用率。
   XCode设置方法 :
 
    ```objective-c
 Build Settings > Apple LLVM 7.0 - Preprocessing > Processor Macros >
 Release : FT_TRACK_GPUUSAGE=1
- ```
+ ```    
+ - CPU
+   CPU 温度获取不到。
+   
+- android 
+  - GPU    
+    GPU 中的频率和使用率的值通过读取设备中配置文件获取，有些设备可能获取不到或只能在 root 下获取。
+  - CPU  
+    CPU 温度有些设备可能获取不到（每种手机可能 CPU 温度文件存储位置不同），如果你有这样的问题欢迎在 Issue 中提出这问题，并把你的机型贴出来，以便我们完善 CPU 温度文件配置。
+
 ### 2.关于查询指标 IMEI
 - iOS
    因为隐私问题，苹果用户在 iOS5 以后禁用代码直接获取 IMEI 的值。所以 iOS sdk 中不支持获取 IMEI。
