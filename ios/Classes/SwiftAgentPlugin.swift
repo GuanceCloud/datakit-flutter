@@ -95,7 +95,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         for dic in items{
             let bean = FTTrackBean()
             bean.measurement = dic["measurement"] as! String
-            if(dic["tags"] != nil){
+            if((dic["tags"] as? Dictionary<String,Any?>)  != nil){
                 bean.tags = dic["tags"] as! Dictionary
             }
 
