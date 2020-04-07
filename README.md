@@ -81,7 +81,7 @@ import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
  ```
 
 ### 2. 上报数据 与 上报列表
-1.  上报数据
+-  上报数据
 
    ```dart
 /**
@@ -95,7 +95,7 @@ static Future<Map<dynamic, dynamic>> track(
       [Map<String, dynamic> tags]) async
    ```    
 
-2. 上报列表
+- 上报列表（[TrackBean](##2trackbean)）
 
   ```dart
 /**
@@ -107,7 +107,7 @@ static Future<Map<dynamic, dynamic>> track(
 
   ```    
 
-3. 使用示例    
+- 使用示例    
 
   ```dart
    //上报数据
@@ -122,7 +122,7 @@ static Future<Map<dynamic, dynamic>> track(
   print("request success: $resultTrackList");
    ```    
   
-4. 返回值
+- 返回值
    回调方法 onResponse(int code,String response) 中 code 表示网络请求返回的返回码，response 为服务端返回的信息。
 code 的值除了 HTTP 协议中规定的返回码，FT SDK 中额外规定了 4 种类型的错误码，他们是 101，102，103，104，他们分别
 代表的意思是网络问题、参数问题、IO异常和未知错误
@@ -209,7 +209,8 @@ static Future<void> trackBackground(
 ### 5. 用户的绑定与注销
    FT SDK 提供了绑定用户和注销用户的方法，[Config](#1-config-可配置参数) 属性`needBindUser` 为 YES 时（默认为 NO），用户登录的状态下，才会进行数据的传输。如果不需要绑定用户，请设置 `needBindUser` 为 NO 。
 
-1. 绑定用户
+- 绑定用户    
+
  ```dart
  /**
   * 绑定用户信息
@@ -220,7 +221,8 @@ static Future<void> trackBackground(
   static Future<void> bindUser(String name, String id,
       {Map<String, dynamic> extras}) async
   ```
-2. 解绑用户
+  
+- 解绑用户
 
     ```dart
  /**
@@ -230,7 +232,7 @@ static Future<void> trackBackground(
 
  ```
 
-3. 使用示例
+- 使用示例
 
     ```dart
  //绑定用户
