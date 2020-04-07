@@ -78,9 +78,10 @@ class FTMobileAgentFlutter {
 
   ///上报列表
   static Future<Map<dynamic, dynamic>> trackList(
-      List<Map<String, dynamic>> list) async {
+      List<TrackBean> list) async {
     Map<String, dynamic> map = {};
-    map["list"] = list;
+    List<Map<String,dynamic>> convertList = list.map((e)=>e.convertMap()).toList();
+    map["list"] = convertList;
     return await _channel.invokeMethod(METHOD_TRACK_LIST, map);
   }
 
@@ -109,13 +110,13 @@ class FTMobileAgentFlutter {
 
   ///主动埋点数据上报（后台运行）
   static Future<void> trackBackground(
-      String measurement, Map<String, dynamic> tags,
-      {Map<String, dynamic> fields}) async {
+      String measurement, Map<String, dynamic> fields,
+      {Map<String, dynamic> tags}) async {
     Map<String, dynamic> map = {};
     map["measurement"] = measurement;
-    map["tags"] = tags;
-    if (fields != null) {
-      map["fields"] = fields;
+    map["fields"] = fields;
+    if (tags != null) {
+      map["tags"] = tags;
     }
     return await _channel.invokeMethod(METHOD_TRACK_BACKGROUND, map);
   }
@@ -202,4 +203,19 @@ class MonitorType {
   static const int NETWORK = 1 << 5;
   static const int CAMERA = 1 << 6;
   static const int LOCATION = 1 << 7;
+}
+
+/// 主动埋点数据类
+class TrackBean{
+  String measurement;
+  Map<String, dynamic> tags;
+  Map<String, dynamic> fields;
+  TrackBean(this.measurement,this.fields,{this.tags});
+  Map<String,dynamic> convertMap(){
+    return {
+      "measurement":measurement,
+      "fields":fields,
+      "tags":tags
+    };
+  }
 }

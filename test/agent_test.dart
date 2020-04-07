@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
+import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 
 void main() {
   const MethodChannel channel = MethodChannel('ft_mobile_agent_flutter');
@@ -57,7 +57,8 @@ void main() {
       "code": "200",
       "response": {"code": 200, "errorCode": "", "message": ""}
     };
-    var result = await FTMobileAgentFlutter.track('flutter_list_test',{'platform': 'flutter'},{'method': '直接同步'});
+    var result = await FTMobileAgentFlutter.track(
+        'flutter_list_test', {'platform': 'flutter'}, {'method': '直接同步'});
     expect(result, resultCode);
   });
 
@@ -68,42 +69,41 @@ void main() {
       "response": {"code": 200, "errorCode": "", "message": ""}
     };
     var arguments = [
-      {
-        'measurement': 'flutter_list_test',
-        'fields': {'platform': 'flutter'},
-        'tags': {'method': '直接同步'}
-      },
+      TrackBean("flutter_list_test",{"platform": "flutter"}),
+      TrackBean("flutter_list_test",{"platform": "flutter"},tags:{"method": "直接同步"}),
     ];
     var result = await FTMobileAgentFlutter.trackList(arguments);
     expect(result, resultCode);
   });
 
   /// 测试流程图上报
-  test("trackFlowChart",() async{
-    FTMobileAgentFlutter.trackFlowChart("flutter_agent", "trace-001", "name", 1000);
+  test("trackFlowChart", () async {
+    FTMobileAgentFlutter.trackFlowChart(
+        "flutter_agent", "trace-001", "name", 1000);
     expect(resultCode, isTrue);
   });
 
   /// 测试主动后台上报
   test("trackBackground",() async{
-    FTMobileAgentFlutter.trackBackground('flutter_list_test',{'platform': 'flutter'},fields:{'method': '直接同步'});
+    FTMobileAgentFlutter.trackBackground('flutter_list_test',{'platform': 'flutter'},tags:{'method': '直接同步'});
     expect(resultCode, isTrue);
   });
 
   /// 测试绑定用户
-  test("bindUser",() async{
-    FTMobileAgentFlutter.bindUser('flutter_list_test','flutter',extras:{'method': '直接同步'});
+  test("bindUser", () async {
+    FTMobileAgentFlutter.bindUser('flutter_list_test', 'flutter',
+        extras: {'method': '直接同步'});
     expect(resultCode, isTrue);
   });
 
   /// 测试解绑用户
-  test("unbindUser",() async{
+  test("unbindUser", () async {
     FTMobileAgentFlutter.unbindUser();
     expect(resultCode, isTrue);
   });
 
   /// 测试停止SDK操作
-  test("stopSDK",() async{
+  test("stopSDK", () async {
     FTMobileAgentFlutter.stopSDK();
     expect(resultCode, isTrue);
   });

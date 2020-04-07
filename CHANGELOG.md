@@ -1,3 +1,5 @@
-## 0.0.1
+## 0.0.1-dev.1
 
-* TODO: Describe initial release.
+* 用户自定义埋点
+* 流程图上报方法
+* 监控项目关联
