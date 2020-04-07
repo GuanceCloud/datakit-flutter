@@ -314,14 +314,14 @@ static Future<void> trackBackground(
 - iOS    
   - GPU
  获取 **GPU使用率** ，需要使用到 `IOKit.framework ` 私有库，**可能会影响 AppStore 上架**。如果需要此功能，需要在你的应用安装 `IOKit.framework ` 私有库。导入后，请在编译时加入 `FT_TRACK_GPUUSAGE` 标志，SDK将会为你获取GPU使用率。
-  XCode设置方法 :
-
-   ```objective-c
+  XCode设置方法 :    
+  ```objective-c
 Build Settings > Apple LLVM 7.0 - Preprocessing > Processor Macros >
 Release : FT_TRACK_GPUUSAGE=1
  ```    
  - CPU
-   CPU 温度获取不到。
+   CPU 温度获取不到。    
+   
    
 - android 
   - GPU    
