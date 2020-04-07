@@ -123,7 +123,8 @@ static Future<Map<dynamic, dynamic>> track(
   print("request success: $resultTrackList");
    ```    
   
-- 返回值
+- 返回值    
+
    回调方法 onResponse(int code,String response) 中 code 表示网络请求返回的返回码，response 为服务端返回的信息。
 code 的值除了 HTTP 协议中规定的返回码，FT SDK 中额外规定了 4 种类型的错误码，他们是 101，102，103，104，他们分别
 代表的意思是网络问题、参数问题、IO异常和未知错误
@@ -134,7 +135,7 @@ code 的值除了 HTTP 协议中规定的返回码，FT SDK 中额外规定了 4
  ```dart
 /**
  * 上报流程图
- *  @param production   指标集 命名只能包含英文字母、数字、中划线和下划线，最长 40 个字符，区分大小写
+ * @param production   指标集 命名只能包含英文字母、数字、中划线和下划线，最长 40 个字符，区分大小写
  * @param traceId   标示一个流程单的唯一 ID
  * @param name      流程节点名称
  * @param duration  流程单在当前流程节点滞留时间或持续时间，毫秒为单位
@@ -208,7 +209,7 @@ static Future<void> trackBackground(
 
 
 ### 5. 用户的绑定与注销
-   FT SDK 提供了绑定用户和注销用户的方法，[Config](#1-config-可配置参数) 属性`needBindUser` 为 YES 时（默认为 NO），用户登录的状态下，才会进行数据的传输。如果不需要绑定用户，请设置 `needBindUser` 为 NO 。
+   FT SDK 提供了绑定用户和注销用户的方法，[Config](#1-config-可配置参数) 属性`needBindUser` 为 YES 时（默认为 NO），用户绑定的状态下，才会进行数据的传输。
 
 - 绑定用户    
 
@@ -221,21 +222,21 @@ static Future<void> trackBackground(
   */
   static Future<void> bindUser(String name, String id,
       {Map<String, dynamic> extras}) async
-  ```
+  ```    
   
-- 解绑用户
-
-    ```dart
+- 解绑用户   
+ 
+ ```dart
  /**
   * 注销用户信息
   */
  static Future<void> unbindUser() async
+  ```    
 
- ```
 
-- 使用示例
+- 使用示例   
 
-    ```dart
+   ```dart
  //绑定用户
  FTMobileAgentFlutter.bindUser("flutter_demo", "id_001",
             extras: {"platform": "flutter"});
@@ -311,7 +312,9 @@ static Future<void> trackBackground(
 Build Settings > Apple LLVM 7.0 - Preprocessing > Processor Macros >
 Release : FT_TRACK_GPUUSAGE=1
  ```
-
+### 2.关于查询指标 IMEI
+- iOS
+   因为隐私问题，苹果用户在 iOS5 以后禁用代码直接获取 IMEI 的值。所以 iOS sdk 中不支持获取 IMEI。
 
 
 
