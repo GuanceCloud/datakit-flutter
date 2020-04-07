@@ -55,7 +55,8 @@ import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
       bool enableLog,
       bool needBindUser,
       int monitorType}) async
-  ```
+ ```    
+  
 - 使用示例
 
  ```dart
@@ -95,7 +96,7 @@ static Future<Map<dynamic, dynamic>> track(
       [Map<String, dynamic> tags]) async
    ```    
 
-- 上报列表（[TrackBean](##2trackbean)）
+- 上报列表（[TrackBean](#2trackbean)）
 
   ```dart
 /**
