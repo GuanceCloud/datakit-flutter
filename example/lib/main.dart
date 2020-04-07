@@ -73,11 +73,8 @@ class _MyAppState extends State<MyApp> {
       child: Text("同步（直接上传）"),
       onPressed: () async {
         var result = await FTMobileAgentFlutter.trackList([
-          {
-            "measurement": "flutter_list_test",
-            "fields": {"platform": "flutter"},
-            "tags": {"method": "直接同步"}
-          },
+          TrackBean("flutter_list_test",{"platform": "flutter"}),
+          TrackBean("flutter_list_test",{"platform": "flutter"},tags:{"method": "直接同步"}),
         ]);
         print("request success: $result");
       },
@@ -90,7 +87,7 @@ class _MyAppState extends State<MyApp> {
       onPressed: () {
         FTMobileAgentFlutter.trackBackground(
             "flutter_list_test", {"method": "后台同步"},
-            fields: {"platform": "flutter"});
+            tags: {"platform": "flutter"});
       },
     );
   }
