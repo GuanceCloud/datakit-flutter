@@ -68,11 +68,8 @@ void main() {
       "response": {"code": 200, "errorCode": "", "message": ""}
     };
     var arguments = [
-      {
-        'measurement': 'flutter_list_test',
-        'fields': {'platform': 'flutter'},
-        'tags': {'method': '直接同步'}
-      },
+      TrackBean("flutter_list_test",{"platform": "flutter"}),
+      TrackBean("flutter_list_test",{"platform": "flutter"},tags:{"method": "直接同步"}),
     ];
     var result = await FTMobileAgentFlutter.trackList(arguments);
     expect(result, resultCode);
@@ -86,7 +83,7 @@ void main() {
 
   /// 测试主动后台上报
   test("trackBackground",() async{
-    FTMobileAgentFlutter.trackBackground('flutter_list_test',{'platform': 'flutter'},fields:{'method': '直接同步'});
+    FTMobileAgentFlutter.trackBackground('flutter_list_test',{'platform': 'flutter'},tags:{'method': '直接同步'});
     expect(resultCode, isTrue);
   });
 
