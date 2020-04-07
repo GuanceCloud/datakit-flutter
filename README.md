@@ -29,7 +29,7 @@ dependencies:
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
 ```
 ### 1. 初始化配置
- 设置 [Config](#1采集数据配置) 的属性 ，启动 SDK。
+ 设置 [Config](#1-config-可配置参数) 的属性 ，启动 SDK。
 - 方法一
 
  ```dart
@@ -83,7 +83,7 @@ import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
 ### 2. 上报数据 与 上报列表
 1.  上报数据
 
-  ```dart
+   ```dart
 /**
  * 上报数据
  * @param measurement      当前数据点所属的指标集
@@ -93,11 +93,11 @@ import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
 static Future<Map<dynamic, dynamic>> track(
       String measurement, Map<String, dynamic> fields,
       [Map<String, dynamic> tags]) async
-   ```
+   ```    
 
 2. 上报列表
 
- ```dart
+  ```dart
 /**
  * 主动埋点，可多条上传。   立即上传 回调上传结果
  * @param trackList     主动埋点数据数组
@@ -105,11 +105,11 @@ static Future<Map<dynamic, dynamic>> track(
  static Future<Map<dynamic, dynamic>> trackList(
       List<TrackBean> list) async
 
- ```
+  ```    
 
 3. 使用示例    
 
- ```dart
+  ```dart
    //上报数据
   var resultTrack = await FTMobileAgentFlutter.track('flutter_track_test', {"platform": "flutter"});    
   print("request success: $resultTrack");
@@ -120,7 +120,7 @@ static Future<Map<dynamic, dynamic>> track(
           TrackBean("flutter_list_test",{"platform": "flutter"},tags:{"method": "直接同步"}),
         ]);
   print("request success: $resultTrackList");
-  ```
+   ```    
   
 4. 返回值
    回调方法 onResponse(int code,String response) 中 code 表示网络请求返回的返回码，response 为服务端返回的信息。
@@ -207,7 +207,7 @@ static Future<void> trackBackground(
 
 
 ### 5. 用户的绑定与注销
-   FT SDK 提供了绑定用户和注销用户的方法，[Config](#1采集数据配置) 属性`needBindUser` 为 YES 时（默认为 NO），用户登录的状态下，才会进行数据的传输。如果不需要绑定用户，请设置 `needBindUser` 为 NO 。
+   FT SDK 提供了绑定用户和注销用户的方法，[Config](#1-config-可配置参数) 属性`needBindUser` 为 YES 时（默认为 NO），用户登录的状态下，才会进行数据的传输。如果不需要绑定用户，请设置 `needBindUser` 为 NO 。
 
 1. 绑定用户
  ```dart
@@ -308,6 +308,7 @@ static Future<void> trackBackground(
 Build Settings > Apple LLVM 7.0 - Preprocessing > Processor Macros >
 Release : FT_TRACK_GPUUSAGE=1
  ```
+
 
 
 
