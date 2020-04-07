@@ -24,11 +24,11 @@ dependencies:
 - iOS
 
 
-##使用
+## 使用
 ```dart
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
 ```
-###1. 初始化配置
+### 1. 初始化配置
  设置 [Config](#1采集数据配置) 的属性 ，启动 SDK。
 - 方法一
 
@@ -80,7 +80,7 @@ import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
             monitorType: MonitorType.ALL);
  ```
 
-###2. 上报数据 与 上报列表
+### 2. 上报数据 与 上报列表
 1.  上报数据
 
   ```dart
@@ -127,7 +127,7 @@ static Future<Map<dynamic, dynamic>> track(
 code 的值除了 HTTP 协议中规定的返回码，FT SDK 中额外规定了 4 种类型的错误码，他们是 101，102，103，104，他们分别
 代表的意思是网络问题、参数问题、IO异常和未知错误
    
-###3. 上报流程图
+### 3. 上报流程图
 -  方法
 
  ```dart
@@ -149,8 +149,9 @@ static Future<void> trackFlowChart(
 
  ```
 
-- 使用示例
-```dart
+- 使用示例    
+
+ ```dart
 FTMobileAgentFlutter.trackFlowChart(
             "flutter_agent", "trace-001", "开始", 1000);
         FTMobileAgentFlutter.trackFlowChart(
@@ -177,10 +178,11 @@ FTMobileAgentFlutter.trackFlowChart(
         FTMobileAgentFlutter.trackFlowChart(
             "flutter_agent", "trace-001", "结束", 1000,
             parent: "流程五");
-```
+ ```
 
-###4. 主动埋点数据上报（后台运行）
--  方法
+### 4. 主动埋点数据上报（后台运行）
+-  方法    
+
   ```dart
  /**
   * 追踪自定义事件。 存储数据库，等待上传
@@ -195,7 +197,8 @@ static Future<void> trackBackground(
  ```
 
 
- - 使用示例
+ - 使用示例    
+ 
   ```dart
   FTMobileAgentFlutter.trackBackground(
             "flutter_list_test", {"method": "后台同步"},
@@ -203,7 +206,7 @@ static Future<void> trackBackground(
 ```
 
 
-###5. 用户的绑定与注销
+### 5. 用户的绑定与注销
    FT SDK 提供了绑定用户和注销用户的方法，[Config](#1采集数据配置) 属性`needBindUser` 为 YES 时（默认为 NO），用户登录的状态下，才会进行数据的传输。如果不需要绑定用户，请设置 `needBindUser` 为 NO 。
 
 1. 绑定用户
@@ -243,7 +246,7 @@ static Future<void> trackBackground(
 
 
 
-###6. 停止 SDK 后台正在执行的操作
+### 6. 停止 SDK 后台正在执行的操作
 -  方法
 
  ```dart
@@ -260,7 +263,7 @@ static Future<void> trackBackground(
   FTMobileAgentFlutter.stopSDK();
 ```
 
-##参数
+## 参数
 ### 1. Config 可配置参数
 
 | 字段 | 类型 |说明|是否必须|
@@ -296,8 +299,8 @@ static Future<void> trackBackground(
 
 
 
-##注意事项
-###1. 关于 iOS端 GPU 使用率获取
+## 注意事项
+### 1. 关于 iOS端 GPU 使用率获取
  获取GPU使用率，需要使用到 `IOKit.framework ` 私有库，**可能会影响 AppStore 上架**。如果需要此功能，需要在你的应用安装 `IOKit.framework ` 私有库。导入后，请在编译时加入 `FT_TRACK_GPUUSAGE` 标志，SDK将会为你获取GPU使用率。
   XCode设置方法 :
 
