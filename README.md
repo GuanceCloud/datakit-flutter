@@ -8,7 +8,6 @@
 
   * [功能](#功能)
   * [安装](#安装)
-  * [配置](#配置)
   * [使用](#使用)
     + [1. 初始化配置](#1-初始化配置)
     + [2. 上报数据 与 上报列表](2-上报数据-与-上报列表)
@@ -20,8 +19,7 @@
     + [2.TrackBean](#2trackbean)
     + [3.错误码](#3错误码)
   * [常见问题](#常见问题)
-    + [1. 关于监控项中有些参数获取不到问题说明](#1-关于监控项中有些参数获取不到问题说明)
-    + [2.关于查询指标 IMEI](#2关于查询指标-imei)
+   
 
 
 ## 功能
@@ -32,27 +30,22 @@
 
 ```dart
 dependencies:
-  ft_mobile_agent_flutter: "^1.0.0"
+  ft_mobile_agent_flutter: "^0.0.1-dev.1"
 
 ```
-
-## 配置
-- 安卓系统
-
-- iOS
-   
 
 ## 使用
 ```dart
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
 ```
 ### 1. 初始化配置
- 设置 [Config](#1-config-可配置参数) 的属性 ，启动 SDK。
-- 方法一
+ 设置 [Config](#1-config-可配置参数) 的属性 ，启动 SDK。    
+ 
+ - 方法一
 
  ```dart
  static void configX(Config con)
-```
+ ```
 
 - 方法二
 
@@ -214,9 +207,7 @@ static Future<void> trackBackground(
       {Map<String, dynamic> tags}) async
 
  ```
-
-
- - 使用示例    
+- 使用示例    
  
   ```dart
   FTMobileAgentFlutter.trackBackground(
@@ -262,23 +253,17 @@ static Future<void> trackBackground(
   FTMobileAgentFlutter.unbindUser();
   ```
 
-
-
-
-
-
 ### 6. 停止 SDK 后台正在执行的操作
 -  方法
 
- ```dart
+   ```dart
  /**
   * 关闭 SDK 正在做的操作
   */
  static Future<void> stopSDK() async
- ```
-
-
- - 使用示例
+   ```    
+ 
+- 使用示例
 
   ```dart
   FTMobileAgentFlutter.stopSDK();
@@ -296,7 +281,8 @@ static Future<void> trackBackground(
 |monitorType |int|采集数据|否|
 |needBindUser|bool|是否开启绑定用户数据|否（默认NO）|
 
-**monitorType** 可设置:
+**monitorType** 可设置:    
+
  ```dart
  class MonitorType {
      static const int ALL = 1;
@@ -307,9 +293,10 @@ static Future<void> trackBackground(
      static const int NETWORK  = 1 << 5;   // 网络的信号强度、网络速度、类型、代理
      static const int CAMERA   = 1 << 6;   // 前置/后置 像素
      static const int LOCATION = 1 << 7;   // 位置信息  eg:上海
-  }
+  }    
+  
+ ```    
 
-```
 ### 2.TrackBean
 
 | 字段 | 类型 |说明|是否必须|
@@ -328,33 +315,10 @@ static Future<void> trackBackground(
 
 
 ## 常见问题
-### 1. 关于监控项中有些参数获取不到问题说明    
+    
 
-- iOS    
-  - GPU    
- 获取 **GPU使用率**，需要使用到 `IOKit.framework ` 私有库，**可能会影响 AppStore 上架**。如果需要此功能，需要在你的应用安装 `IOKit.framework ` 私有库。导入后，请在编译时加入 `FT_TRACK_GPUUSAGE` 标志，SDK将会为你获取GPU使用率。    
-  XCode设置方法 :    
-  
-    ```objective-c
- Build Settings > Apple LLVM 7.0 - Preprocessing > Processor Macros >
- Release : FT_TRACK_GPUUSAGE=1
-    ```    
-   
- - CPU    
-   CPU 温度获取不到。     
-   
-   
-- android 
-  - GPU    
-    GPU 中的频率和使用率的值通过读取设备中配置文件获取，有些设备可能获取不到或只能在 root 下获取。
-  - CPU  
-    CPU 温度有些设备可能获取不到（每种手机可能 CPU 温度文件存储位置不同），如果你有这样的问题欢迎在 Issue 中提出这问题，并把你的机型贴出来，以便我们完善 CPU 温度文件配置。
-
-### 2.关于查询指标 IMEI    
-
-- iOS
-   因为隐私问题，苹果用户在 iOS5 以后禁用代码直接获取 IMEI 的值。所以 iOS sdk 中不支持获取 IMEI。
-
+- [iOS 相关](https://github.com/CloudCare/dataflux-sdk-ios/blob/master/README.md)
+- [Android 相关](https://github.com/CloudCare/dataflux-sdk-android/blob/master/README.md)
 
 
 
