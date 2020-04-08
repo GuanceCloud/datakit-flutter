@@ -317,8 +317,8 @@ static Future<void> trackBackground(
 ## 常见问题
     
 
-- [iOS 相关](https://github.com/CloudCare/dataflux-sdk-ios/blob/master/README.md)
-- [Android 相关](https://github.com/CloudCare/dataflux-sdk-android/blob/master/README.md)
+- [iOS 相关](https://github.com/CloudCare/dataflux-sdk-ios#%E4%B9%9D%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
+- [Android 相关](https://github.com/CloudCare/dataflux-sdk-android#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
 
 
 
