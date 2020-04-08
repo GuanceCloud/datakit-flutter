@@ -4,42 +4,29 @@
 
 # agent
 
-基于 ft ios android 调用的 plugin
+基于 **ft ios android** 调用的 **plugin**
 
-  * [功能](#功能)
-  * [安装](#安装)
   * [使用](#使用)
     + [1. 初始化配置](#1-初始化配置)
     + [2. 上报数据 与 上报列表](2-上报数据-与-上报列表)
     + [3. 上报流程图](#3-上报流程图)
     + [4. 主动埋点数据上报（后台运行）](#4-主动埋点数据上报后台运行)
     + [5. 用户的绑定与注销](#5-用户的绑定与注销)
+    + [6. 停止 SDK 后台正在执行的操作](#6-停止-sdk-后台正在执行的操作)
+    + [7. 使用示例](#7-使用示例)
   * [参数与错误码](#参数与错误码)
     + [1. Config 可配置参数](#1-config-可配置参数)
-    + [2.TrackBean](#2trackbean)
-    + [3.错误码](#3错误码)
+    + [2. TrackBean](#2-trackbean)
+    + [3. 错误码](#3-错误码)
   * [常见问题](#常见问题)
-   
 
 
-## 功能
-## 安装
-
-将此添加到包的pubspec.yaml文件中：
-
-
-```dart
-dependencies:
-  ft_mobile_agent_flutter: "^0.0.1-dev.1"
-
-```
-
-## 使用
+## 使用 
 ```dart
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
 ```
 ### 1. 初始化配置
- 设置 [Config](#1-config-可配置参数) 的属性 ，启动 SDK。    
+ 设置 [Config](#1-config-可配置参数) 的属性 ，启动 **SDK**。    
  
  - 方法一
 
@@ -67,30 +54,6 @@ import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
       bool needBindUser,
       int monitorType}) async
  ```    
-  
-- 使用示例
-
- ```dart
-   /// 配置方法一
-        FTMobileAgentFlutter.configX(
-            Config("Your App metricsUrl")
-                .setAK("Your App akId", "Your App akSecret")
-                .setDataKit("flutter_datakit")
-                .setEnableLog(true)
-                .setNeedBindUser(false)
-                .setMonitorType(MonitorType.BATTERY | MonitorType.NETWORK)
-        );
-
-  /// 配置方法二
-         FTMobileAgentFlutter.config(
-            "Your App metricsUrl",
-            akId: "Your App akId",
-            akSecret: "Your App akSecret",
-            dataKitUUID: "flutter_datakit",
-            enableLog: true,
-            needBindUser: false,
-            monitorType: MonitorType.ALL);
- ```
 
 ### 2. 上报数据 与 上报列表
 -  上报数据
@@ -119,25 +82,11 @@ static Future<Map<dynamic, dynamic>> track(
 
   ```    
 
-- 使用示例    
-
-  ```dart
-   //上报数据
-  var resultTrack = await FTMobileAgentFlutter.track('flutter_track_test', {"platform": "flutter"});    
-  print("request success: $resultTrack");
-   //
-   //上报列表
-  var resultTrackList = await FTMobileAgentFlutter.trackList([
-          TrackBean("flutter_list_test",{"platform": "flutter"}),
-          TrackBean("flutter_list_test",{"platform": "flutter"},tags:{"method": "直接同步"}),
-        ]);
-  print("request success: $resultTrackList");
-   ```    
   
 - 返回值    
 
-   返回 Map 中 `code` 表示网络请求返回的返回码，`response` 为服务端返回的信息。
-code 的值除了 HTTP 协议中规定的返回码，FT SDK 中额外规定了 4 种类型的[错误码](#3错误码)，他们是 101，102，103，104，他们分别代表的意思是网络问题、参数问题、IO异常和未知错误。
+   返回 **Map** 中 `code` 表示网络请求返回的返回码，`response` 为服务端返回的信息。
+`code` 的值除了 **HTTP** 协议中规定的返回码，**FT SDK** 中额外规定了 4 种类型的 [错误码](#3错误码)，他们是 101，102，103，104，他们分别代表的意思是网络问题、参数问题、IO异常和未知错误。
    
 ### 3. 上报流程图
 -  方法
@@ -146,12 +95,12 @@ code 的值除了 HTTP 协议中规定的返回码，FT SDK 中额外规定了 4
 /**
  * 上报流程图
  * @param production   指标集 命名只能包含英文字母、数字、中划线和下划线，最长 40 个字符，区分大小写
- * @param traceId   标示一个流程单的唯一 ID
- * @param name      流程节点名称
- * @param duration  流程单在当前流程节点滞留时间或持续时间，毫秒为单位
- * @param parent    当前流程节点的上一个流程节点的名称，如果是流程的第一个节点，可不上报 （可选）
- * @param tags      自定义标签 （可选）
- * @param fields    自定义指标 （可选）
+ * @param traceId      标示一个流程单的唯一 ID
+ * @param name         流程节点名称
+ * @param duration     流程单在当前流程节点滞留时间或持续时间，毫秒为单位
+ * @param parent       当前流程节点的上一个流程节点的名称，如果是流程的第一个节点，可不上报 （可选）
+ * @param tags         自定义标签 （可选）
+ * @param fields       自定义指标 （可选）
  */
 static Future<void> trackFlowChart(
       String production, String traceId, String name, int duration,
@@ -159,37 +108,6 @@ static Future<void> trackFlowChart(
       Map<String, dynamic> tags,
       Map<String, dynamic> fields}) async
 
- ```
-
-- 使用示例    
-
- ```dart
-FTMobileAgentFlutter.trackFlowChart(
-            "flutter_agent", "trace-001", "开始", 1000);
-        FTMobileAgentFlutter.trackFlowChart(
-            "flutter_agent", "trace-001", "流程一", 1000,
-            parent: "开始");
-        FTMobileAgentFlutter.trackFlowChart(
-            "flutter_agent", "trace-001", "流程二", 1000,
-            parent: "流程一");
-        FTMobileAgentFlutter.trackFlowChart(
-            "flutter_agent", "trace-001", "选择", 1000,
-            parent: "流程二");
-        FTMobileAgentFlutter.trackFlowChart(
-            "flutter_agent", "trace-001", "流程三", 1000,
-            parent: "选择");
-        FTMobileAgentFlutter.trackFlowChart(
-            "flutter_agent", "trace-001", "流程四", 1000,
-            parent: "选择");
-        FTMobileAgentFlutter.trackFlowChart(
-            "flutter_agent", "trace-001", "流程五", 1000,
-            parent: "流程三");
-        FTMobileAgentFlutter.trackFlowChart(
-            "flutter_agent", "trace-001", "流程五", 1000,
-            parent: "流程四");
-        FTMobileAgentFlutter.trackFlowChart(
-            "flutter_agent", "trace-001", "结束", 1000,
-            parent: "流程五");
  ```
 
 ### 4. 主动埋点数据上报（后台运行）
@@ -200,24 +118,17 @@ FTMobileAgentFlutter.trackFlowChart(
   * 追踪自定义事件。 存储数据库，等待上传
   * @param measurement      指标（必填）
   * @param field            指标值（必填）
-  * @param tags            标签（选填）
+  * @param tags             标签（选填）
   */
 static Future<void> trackBackground(
       String measurement, Map<String, dynamic> fields,
       {Map<String, dynamic> tags}) async
 
  ```
-- 使用示例    
- 
-  ```dart
-  FTMobileAgentFlutter.trackBackground(
-            "flutter_list_test", {"method": "后台同步"},
-            fields: {"platform": "flutter"});
-```
 
 
 ### 5. 用户的绑定与注销
-   FT SDK 提供了绑定用户和注销用户的方法，[Config](#1-config-可配置参数) 属性`needBindUser` 为 YES 时（默认为 NO），用户绑定的状态下，才会进行数据的传输。
+   **FT SDK** 提供了绑定用户和注销用户的方法，[Config](#1-config-可配置参数) 属性`needBindUser` 为 `YES ` 时（默认为 `NO`），用户绑定的状态下，才会进行数据的传输。
 
 - 绑定用户    
 
@@ -241,33 +152,19 @@ static Future<void> trackBackground(
  static Future<void> unbindUser() async
   ```    
 
-
-- 使用示例   
-
-   ```dart
- //绑定用户
- FTMobileAgentFlutter.bindUser("flutter_demo", "id_001",
-            extras: {"platform": "flutter"});
-
- //解绑用户
-  FTMobileAgentFlutter.unbindUser();
-  ```
-
 ### 6. 停止 SDK 后台正在执行的操作
 -  方法
 
-   ```dart
+  ```dart
  /**
   * 关闭 SDK 正在做的操作
   */
  static Future<void> stopSDK() async
-   ```    
- 
-- 使用示例
+  ```    
+       
+### 7. 使用示例
+   [方法使用示例](https://pub.dev/packages/ft_mobile_agent_flutter#-example-tab-)
 
-  ```dart
-  FTMobileAgentFlutter.stopSDK();
-```
 
 ## 参数与错误码
 ### 1. Config 可配置参数
@@ -297,7 +194,7 @@ static Future<void> trackBackground(
   
  ```    
 
-### 2.TrackBean
+### 2. TrackBean
 
 | 字段 | 类型 |说明|是否必须|
 |:--------:|:--------:|:--------:|:--------:|
@@ -305,13 +202,13 @@ static Future<void> trackBackground(
 |tags|Map|自定义标签|否|
 |fields|Map| 自定义指标|是|
 
-### 3.错误码   
+### 3. 错误码   
 | 字段 | 值 |说明|
 |:--------:|:--------:|:--------:|
-|NetWorkException|101|网络问题|
-|InvalidParamsException|102|参数问题|
-|FileIOException|103| 文件 IO 问题|
-|UnkownException|104| 未知问题|
+| NetWorkException |101|网络问题|
+| InvalidParamsException |102|参数问题|
+| FileIOException |103| 文件 IO 问题|
+| UnknownException |104| 未知问题|
 
 
 ## 常见问题
