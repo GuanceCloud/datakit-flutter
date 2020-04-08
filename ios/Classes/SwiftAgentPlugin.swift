@@ -23,7 +23,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         if(call.arguments is Dictionary<String, Any>){
             let args = call.arguments as! Dictionary<String, Any>
             if (call.method == SwiftAgentPlugin.METHOD_CONFIG) {
-                self.ftConfig(metricsUrl: args["serverUrl"] as! String, akId: args["akId"] as? String, akSecret:(args["akSecret"] as? String),datakitUUID: args["datakitUUID"] as? String, needBindUser: (args["needBindUser"] as! Bool),monitorType: (args["monitorType"] as! Int))
+                self.ftConfig(metricsUrl: args["serverUrl"] as! String, akId: args["akId"] as? String, akSecret:(args["akSecret"] as? String),datakitUUID: args["datakitUUID"] as? String, needBindUser: (args["needBindUser"] as? Bool),monitorType: (args["monitorType"] as? Int))
                 result(nil)
             } else if (call.method == SwiftAgentPlugin.METHOD_TRACK) {
                 result(self.ftTrack(measurement: args["measurement"] as! String, tags: args["tags"] as? Dictionary<String, Any>, fields: args["fields"] as! Dictionary<String, Any>))
@@ -40,7 +40,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 self.ftStopSdk()
                 result(nil)
             }else if(call.method == SwiftAgentPlugin.METHOD_TRACK_FLOW_CHART){
-                self.ftTrackFlowChart(production: args["production"] as! String, traceId: args["production"] as! String, name: args["name"] as! String, parent: args["parent"] as? String, duration: args["duration"] as! Int, tags: args["tags"] as? Dictionary<String, Any>, fields: (args["fields"] as! Dictionary<String, Any>))
+                self.ftTrackFlowChart(production: args["production"] as! String, traceId: args["production"] as! String, name: args["name"] as! String, parent: args["parent"] as? String, duration: args["duration"] as! Int, tags: args["tags"] as? Dictionary<String, Any>, fields: (args["fields"] as? Dictionary<String, Any>))
                 result(nil)
             }
             
@@ -64,9 +64,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         
 //        config.enableAutoTrack = true
         config.enableLog = true
-        config.needBindUser = needBindUser!
+        config.needBindUser = needBindUser ?? false
         if((monitorType) != nil){
-         config.monitorInfoType = FTMonitorInfoType(rawValue: monitorType!);
+            config.monitorInfoType = FTMonitorInfoType(rawValue: monitorType!);
         }
         if(datakitUUID != nil){
           config.xDataKitUUID = datakitUUID!
@@ -126,7 +126,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         
         FTMobileAgent.sharedInstance().trackImmediateList(beans as! [FTTrackBean]){
                      (code,response) -> () in
-            result = ["code":code,"response":response!]
+            result = ["code":code,"response":response]
                    group.leave()
                     
                  }
@@ -145,9 +145,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     ///   - fields: 值
     private func ftTrackFlowChart(production:String,traceId:String,name:String,parent:String?,duration:Int,tags:Dictionary<String, Any>?,fields:Dictionary<String, Any>?){
         if(tags != nil){
-            FTMobileAgent.sharedInstance().flowTrack(production,traceId:traceId,name:name,parent:parent!,tags:tags!, duration:duration,field:fields!)
+            FTMobileAgent.sharedInstance().flowTrack(production,traceId:traceId,name:name,parent:parent,tags:tags, duration:duration,field:fields)
         }else{
-            FTMobileAgent.sharedInstance().flowTrack(production,traceId:traceId,name:name,parent:parent!, tags: tags!,duration:duration,field:fields!)
+            FTMobileAgent.sharedInstance().flowTrack(production,traceId:traceId,name:name,parent:parent, tags: tags,duration:duration,field:fields)
         }
     }
     
@@ -158,7 +158,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     ///   - fields: 值
     private func ftTrackBackground(measurement:String,tags:Dictionary<String, Any>?,fields:Dictionary<String, Any>){
         if(tags != nil){
-            FTMobileAgent.sharedInstance().trackBackgroud(measurement,tags:tags!,field:fields)
+            FTMobileAgent.sharedInstance().trackBackgroud(measurement,tags:tags,field:fields)
         }else{
             FTMobileAgent.sharedInstance().trackBackgroud(measurement,field:fields)
         }
@@ -169,7 +169,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     ///   - id:用户id
     ///   - extras:用户其他信息
     private func ftBindUser(name:String,id:String,extras:Dictionary<String, Any>?){
-        FTMobileAgent.sharedInstance().bindUser(withName: name,id:id,exts:extras!)
+        FTMobileAgent.sharedInstance().bindUser(withName: name,id:id,exts:extras)
     }
     
     /// 用户登出
