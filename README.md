@@ -6,23 +6,22 @@
 
 基于 ft ios android 调用的 plugin
 
-- [Dataflux-SDK-flutter](#dataflux-sdk-flutter)
-- [agent](#agent)
   * [功能](#功能)
   * [安装](#安装)
   * [配置](#配置)
   * [使用](#使用)
-    + [1. 初始化配置](#1初始化配置)
-    + [2. 上报数据 与 上报列表](#2上报数据 与 上报列表)
-    + [3. 上报流程图](#3上报流程图)
-    + [4. 主动埋点数据上报（后台运行）](#4主动埋点数据上报（后台运行）)
-    + [5. 用户的绑定与注销](#5用户的绑定与注销)
+    + [1. 初始化配置](#1-初始化配置)
+    + [2. 上报数据 与 上报列表](#2-上报数据 与 上报列表)
+    + [3. 上报流程图](#3-上报流程图)
+    + [4. 主动埋点数据上报（后台运行）](#4-主动埋点数据上报（后台运行）)
+    + [5. 用户的绑定与注销](#5-用户的绑定与注销)
   * [参数与错误码](#参数与错误码)
     + [1. Config 可配置参数](#1-config可配置参数)
     + [2.TrackBean](#2trackbean)
     + [3.错误码](#3错误码)
   * [常见问题](#常见问题)
-    + [1. 关于监控项中有些参数获取不到问题说明](#1关于监控项中有些参数获取不到问题说明)
+    + [1. 关于监控项中有些参数获取不到问题说明](#1-关于监控项中有些参数获取不到问题说明)
+    + [2.关于查询指标 IMEI](#2关于查询指标-imei)
 
 
 ## 功能
@@ -329,7 +328,8 @@ static Future<void> trackBackground(
 
 
 ## 常见问题
-### 1. 关于监控项中有些参数获取不到问题说明
+### 1. 关于监控项中有些参数获取不到问题说明    
+
 - iOS    
   - GPU    
  获取 **GPU使用率**，需要使用到 `IOKit.framework ` 私有库，**可能会影响 AppStore 上架**。如果需要此功能，需要在你的应用安装 `IOKit.framework ` 私有库。导入后，请在编译时加入 `FT_TRACK_GPUUSAGE` 标志，SDK将会为你获取GPU使用率。    
@@ -338,7 +338,7 @@ static Future<void> trackBackground(
     ```objective-c
  Build Settings > Apple LLVM 7.0 - Preprocessing > Processor Macros >
  Release : FT_TRACK_GPUUSAGE=1
-   ```    
+    ```    
    
  - CPU    
    CPU 温度获取不到。     
@@ -350,7 +350,8 @@ static Future<void> trackBackground(
   - CPU  
     CPU 温度有些设备可能获取不到（每种手机可能 CPU 温度文件存储位置不同），如果你有这样的问题欢迎在 Issue 中提出这问题，并把你的机型贴出来，以便我们完善 CPU 温度文件配置。
 
-### 2.关于查询指标 IMEI
+### 2.关于查询指标 IMEI    
+
 - iOS
    因为隐私问题，苹果用户在 iOS5 以后禁用代码直接获取 IMEI 的值。所以 iOS sdk 中不支持获取 IMEI。
 
