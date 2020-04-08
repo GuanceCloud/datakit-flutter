@@ -7,7 +7,11 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     static let METHOD_CONFIG = "ftConfig"
     static let METHOD_TRACK = "ftTrack"
     static let METHOD_TRACK_LIST = "ftTrackList"
-
+    static let METHOD_TRACK_FLOW_CHART = "ftTrackFlowChart"
+    static let METHOD_BIND_USER = "ftBindUser"
+    static let METHOD_UNBIND_USER = "ftUnBindUser"
+    static let METHOD_STOP_SDK = "ftStopSdk"
+    
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "ft_mobile_agent_flutter", binaryMessenger: registrar.messenger())
         let instance = SwiftAgentPlugin()
@@ -19,13 +23,25 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         if(call.arguments is Dictionary<String, Any>){
             let args = call.arguments as! Dictionary<String, Any>
             if (call.method == SwiftAgentPlugin.METHOD_CONFIG) {
-                self.ftConfig(metricsUrl: args["serverUrl"] as! String, akId: args["akId"] as? String, akSecret:(args["akSecret"] as? String),datakitUUID: args["datakitUUID"] as? String )
+                self.ftConfig(metricsUrl: args["serverUrl"] as! String, akId: args["akId"] as? String, akSecret:(args["akSecret"] as? String),datakitUUID: args["datakitUUID"] as? String, needBindUser: (args["needBindUser"] as! Bool),monitorType: (args["monitorType"] as! Int))
                 result(nil)
             } else if (call.method == SwiftAgentPlugin.METHOD_TRACK) {
                 result(self.ftTrack(measurement: args["measurement"] as! String, tags: args["tags"] as? Dictionary<String, Any>, fields: args["fields"] as! Dictionary<String, Any>))
             }else if(call.method == SwiftAgentPlugin.METHOD_TRACK_LIST){
                 let list = args["list"] as! Array<Dictionary<String,Any?>>
                 result(self.ftTrackList(items: list))
+            }else if(call.method == SwiftAgentPlugin.METHOD_UNBIND_USER){
+                self.ftUnBindUser()
+                result(nil)
+            }else if(call.method == SwiftAgentPlugin.METHOD_BIND_USER){
+                self.ftBindUser(name: args["name"] as! String, id: args["id"] as! String, extras: args["extras"] as? Dictionary<String, Any>)
+                result(nil)
+            }else if(call.method == SwiftAgentPlugin.METHOD_STOP_SDK){
+                self.ftStopSdk()
+                result(nil)
+            }else if(call.method == SwiftAgentPlugin.METHOD_TRACK_FLOW_CHART){
+                self.ftTrackFlowChart(production: args["production"] as! String, traceId: args["production"] as! String, name: args["name"] as! String, parent: args["parent"] as? String, duration: args["duration"] as! Int, tags: args["tags"] as? Dictionary<String, Any>, fields: (args["fields"] as! Dictionary<String, Any>))
+                result(nil)
             }
             
             else{
@@ -42,12 +58,16 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     ///   - metricsUrl: 服务器地址
     ///   - akId: access key
     ///   - akSecret: access secret
-    private func ftConfig(metricsUrl:String,akId:String?,akSecret:String?,datakitUUID:String?) {
+    private func ftConfig(metricsUrl:String,akId:String?,akSecret:String?,datakitUUID:String?,needBindUser:Bool?,monitorType:Int?) {
         let enableRequestSigning = akId != nil && akSecret != nil
         let config: FTMobileConfig = FTMobileConfig(metricsUrl: metricsUrl, akId: akId, akSecret: akSecret, enableRequestSigning: enableRequestSigning)
         
 //        config.enableAutoTrack = true
         config.enableLog = true
+        config.needBindUser = needBindUser!
+        if((monitorType) != nil){
+         config.monitorInfoType = FTMonitorInfoType(rawValue: monitorType!);
+        }
         if(datakitUUID != nil){
           config.xDataKitUUID = datakitUUID!
         }
@@ -106,7 +126,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         
         FTMobileAgent.sharedInstance().trackImmediateList(beans as! [FTTrackBean]){
                      (code,response) -> () in
-            result = ["code":code,"response":response]
+            result = ["code":code,"response":response!]
                    group.leave()
                     
                  }
@@ -114,6 +134,52 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         
         return result!
     }
-
-
+    /// 上报流程图
+    /// - Parameters:
+    ///   - production: 指标类型
+    ///   - traceId: 标签
+    ///   - name:流程节点名称
+    ///   - parent:当前流程节点的上一个流程节点的名称
+    ///   - duration:持续时间
+    ///   - tags:标签
+    ///   - fields: 值
+    private func ftTrackFlowChart(production:String,traceId:String,name:String,parent:String?,duration:Int,tags:Dictionary<String, Any>?,fields:Dictionary<String, Any>?){
+        if(tags != nil){
+            FTMobileAgent.sharedInstance().flowTrack(production,traceId:traceId,name:name,parent:parent!,tags:tags!, duration:duration,field:fields!)
+        }else{
+            FTMobileAgent.sharedInstance().flowTrack(production,traceId:traceId,name:name,parent:parent!, tags: tags!,duration:duration,field:fields!)
+        }
+    }
+    
+    /// 主动埋点后台上传
+    /// - Parameters:
+    ///   - measurement:指标类型
+    ///   - tags:标签
+    ///   - fields: 值
+    private func ftTrackBackground(measurement:String,tags:Dictionary<String, Any>?,fields:Dictionary<String, Any>){
+        if(tags != nil){
+            FTMobileAgent.sharedInstance().trackBackgroud(measurement,tags:tags!,field:fields)
+        }else{
+            FTMobileAgent.sharedInstance().trackBackgroud(measurement,field:fields)
+        }
+    }
+    /// 绑定用户
+    /// - Parameters:
+    ///   - name:用户名
+    ///   - id:用户id
+    ///   - extras:用户其他信息
+    private func ftBindUser(name:String,id:String,extras:Dictionary<String, Any>?){
+        FTMobileAgent.sharedInstance().bindUser(withName: name,id:id,exts:extras!)
+    }
+    
+    /// 用户登出
+    private func ftUnBindUser(){
+        FTMobileAgent.sharedInstance().logout()
+    }
+    
+    /// 停止SDK后台正在执行的操作
+    private func ftStopSdk(){
+        FTMobileAgent.sharedInstance().resetInstance()
+    }
+    
 }
