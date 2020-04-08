@@ -31,14 +31,8 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             }else if(call.method == SwiftAgentPlugin.METHOD_TRACK_LIST){
                 let list = args["list"] as! Array<Dictionary<String,Any?>>
                 result(self.ftTrackList(items: list))
-            }else if(call.method == SwiftAgentPlugin.METHOD_UNBIND_USER){
-                self.ftUnBindUser()
-                result(nil)
             }else if(call.method == SwiftAgentPlugin.METHOD_BIND_USER){
                 self.ftBindUser(name: args["name"] as! String, id: args["id"] as! String, extras: args["extras"] as? Dictionary<String, Any>)
-                result(nil)
-            }else if(call.method == SwiftAgentPlugin.METHOD_STOP_SDK){
-                self.ftStopSdk()
                 result(nil)
             }else if(call.method == SwiftAgentPlugin.METHOD_TRACK_FLOW_CHART){
                 self.ftTrackFlowChart(production: args["production"] as! String, traceId: args["production"] as! String, name: args["name"] as! String, parent: args["parent"] as? String, duration: args["duration"] as! Int, tags: args["tags"] as? Dictionary<String, Any>, fields: (args["fields"] as? Dictionary<String, Any>))
@@ -51,8 +45,14 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             else{
                 result(FlutterMethodNotImplemented)
             }
+        }else if(call.method == SwiftAgentPlugin.METHOD_STOP_SDK){
+            self.ftStopSdk()
+            result(nil)
+        }else if(call.method == SwiftAgentPlugin.METHOD_UNBIND_USER){
+            self.ftUnBindUser()
+            result(nil)
         }else{
-           result(FlutterMethodNotImplemented)
+             result(FlutterMethodNotImplemented)
         }
     }
 
