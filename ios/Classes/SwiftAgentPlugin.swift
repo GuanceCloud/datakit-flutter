@@ -45,6 +45,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 result(nil)
             }else if(call.method == SwiftAgentPlugin.METHOD_TRACK_BACKGROUND){
                 self.ftTrackBackground(measurement: args["measurement"] as! String, tags: args["tags"] as? Dictionary<String, Any>, fields: (args["fields"] as! Dictionary<String, Any>))
+                 result(nil)
             }
             
             else{
