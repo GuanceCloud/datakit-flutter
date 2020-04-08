@@ -1,24 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: HomeRoute(),
+    );
+  }
+
+}
+class HomeRoute extends StatefulWidget {
+  @override
+  _HomeState createState() => _HomeState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _HomeState extends State<HomeRoute> {
+  var permissions = [Permission.location,Permission.camera,Permission.storage,Permission.phone];
   @override
   void initState() {
     super.initState();
+    requestPermission(permissions);
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
@@ -33,11 +47,10 @@ class _MyAppState extends State<MyApp> {
               _buildFlowChartWidget(),
               _buildBindUserWidget(),
               _buildUnBindUserWidget(),
-              _buildStopSDKWidget()
+              _buildStopSDKWidget(),
             ],
           ),
         ),
-      ),
     );
   }
 
@@ -52,7 +65,7 @@ class _MyAppState extends State<MyApp> {
                 .setDataKit("flutter_datakit")
                 .setEnableLog(true)
                 .setNeedBindUser(false)
-                .setMonitorType(MonitorType.BATTERY | MonitorType.NETWORK)
+                .setMonitorType(MonitorType.BATTERY | MonitorType.NETWORK | MonitorType.LOCATION)
         );
 
         /// 配置方法二
@@ -152,5 +165,46 @@ class _MyAppState extends State<MyApp> {
         FTMobileAgentFlutter.stopSDK();
       },
     );
+  }
+
+  void _showPermissionTip(String tip){
+    showDialog<Null>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context){
+          return AlertDialog(
+            title: Text("警告"),
+            content: Text("你拒绝了\n$tip 权限，拒绝后将无法使用"),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: (){
+                  Navigator.of(context).pop();
+                  requestPermission(permissions);
+                },
+                child: Text("重新请求"),
+              ),
+              FlatButton(
+                onPressed: (){
+                  Navigator.of(context).pop();
+                },
+                child: Text("拒绝"),
+              )
+            ],
+          );
+        }
+    );
+  }
+
+  Future<void> requestPermission(List<Permission> permission) async {
+    final status = await permission.request();
+    status.removeWhere((permission,state)=> state.isGranted);
+    var tip = "";
+    if(status.isNotEmpty){
+      status.forEach((permission,state){
+        state.isUndetermined;
+        tip+=permission.toString()+"\n";
+      });
+      _showPermissionTip(tip);
+    }
   }
 }
