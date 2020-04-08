@@ -100,10 +100,10 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
             }
             METHOD_TRACK_BACKGROUND -> {
                 val measurement = call.argument<String>("measurement")!!
-                val tags = call.argument<Map<String, Any>>("tags")!!
-                val fields = call.argument<Map<String, Any>>("fields")
-                val fieldsJS = if (fields != null) JSONObject(fields) else null
-                FTTrack.getInstance().trackBackground(measurement,JSONObject(tags),fieldsJS)
+                val fields = call.argument<Map<String, Any>>("fields")!!
+                val tags = call.argument<Map<String, Any>>("tags")
+                val tagsJS = if (tags != null) JSONObject(tags) else null
+                FTTrack.getInstance().trackBackground(measurement,tagsJS,JSONObject(fields))
             }
             METHOD_BIND_USER -> {
                 val name = call.argument<String>("name")!!
