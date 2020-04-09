@@ -41,5 +41,14 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>用于采集码上报地理位置信息</string>
+	<key>NSLocationUsageDescription</key>
+	<string>用于采集码上报地理位置信息</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>用于采集码上报地理位置信息</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>用于采集码上报地理位置信息</string>
 </dict>
 </plist>
