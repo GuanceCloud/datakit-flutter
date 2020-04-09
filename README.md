@@ -39,12 +39,14 @@ import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
  ```dart
  /**
   * @method 指定初始化方法
-  * @param metricsUrl FT-GateWay metrics
-  * @param akId               access key ID
+  * @param metricsUrl     FT-GateWay metrics
+  * @param akId           access key ID
   * @param akSecret       access key Secret
   * @param enableLog      是否打印日志
   * @param needBindUser   是否需要绑定用户
   * @param monitorType    监控类型
+  * @param useGeoKey      是否使用高德作为地址解析器
+  * @param geoKey         高德 key
   */
  static Future<void> config(String serverUrl,
       {String akId,
@@ -52,7 +54,9 @@ import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
       String dataKitUUID,
       bool enableLog,
       bool needBindUser,
-      int monitorType}) async
+      int monitorType,
+      bool useGeoKey,
+      String geoKey}) async
  ```    
 
 ### 2. 上报数据 与 上报列表
