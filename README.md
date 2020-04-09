@@ -45,8 +45,8 @@ import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
   * @param enableLog      是否打印日志
   * @param needBindUser   是否需要绑定用户
   * @param monitorType    监控类型
-  * @param useGeoKey      是否使用高德作为地址解析器
-  * @param geoKey         高德 key
+  * @param useGeoKey      是否使用高德作为地址解析器(该参数仅对 Android 平台有效)
+  * @param geoKey         高德 key(该参数仅对 Android 平台有效)
   */
  static Future<void> config(String serverUrl,
       {String akId,
