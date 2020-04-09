@@ -13,8 +13,9 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.json.JSONObject
+import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -79,11 +80,11 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
                 val measurement = call.argument<String>("measurement")!!
                 val tags = call.argument<Map<String, Any>>("tags")
                 val fields = call.argument<Map<String, Any>>("fields")
-                result.success(runBlocking { return@runBlocking ftTrackSync(measurement, tags, fields) })
+                ftTrackSync(result,measurement, tags, fields)
             }
             METHOD_TRACK_LIST -> {
                 val list = call.argument<List<Map<String, Any?>>>("list")
-                result.success(runBlocking { return@runBlocking list?.let { ftTrackListSync(it) } })
+                list?.let { ftTrackListSync(result,it) }
             }
             METHOD_TRACK_FLOW_CHART -> {
                 val production = call.argument<String>("production")
@@ -143,16 +144,26 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
         FTSdk.install(config)
     }
 
-    private suspend fun ftTrackSync(measurement: String, tags: Map<String, Any?>?, fields: Map<String, Any?>?): Map<String, Any> = suspendCoroutine { cont ->
-        ftTrack(measurement, tags, fields, SyncCallback { code, response ->
-            cont.resume(mapOf("code" to code, "response" to response))
-        })
+    private fun ftTrackSync(result: Result,measurement: String, tags: Map<String, Any?>?, fields: Map<String, Any?>?){
+        GlobalScope.launch {
+            ftTrack(measurement, tags, fields, SyncCallback { code, response ->
+                val map = mapOf("code" to code, "response" to response)
+                GlobalScope.launch(Dispatchers.Main) {
+                    result.success(map)
+                }
+            })
+        }
     }
 
-    private suspend fun ftTrackListSync(array: List<Map<String, Any?>>): Map<String, Any> = suspendCoroutine { cont ->
-        ftTrackList(array, SyncCallback { code, response ->
-            cont.resume(mapOf("code" to code, "response" to response))
-        })
+    private fun ftTrackListSync(result: Result,array: List<Map<String, Any?>>){
+        GlobalScope.launch {
+            ftTrackList(array, SyncCallback { code, response ->
+                val map = mapOf("code" to code, "response" to response)
+                GlobalScope.launch(Dispatchers.Main) {
+                    result.success(map)
+                }
+            })
+        }
     }
 
 

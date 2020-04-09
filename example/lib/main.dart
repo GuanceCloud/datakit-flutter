@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
@@ -27,7 +29,11 @@ class _HomeState extends State<HomeRoute> {
   @override
   void initState() {
     super.initState();
-    requestPermission(permissions);
+    if(Platform.isAndroid) {
+      requestPermission(permissions);
+    }else if(Platform.isIOS){
+      requestPermission([Permission.location]);
+    }
   }
 
   @override
@@ -43,6 +49,7 @@ class _HomeState extends State<HomeRoute> {
             children: <Widget>[
               _buildConfigWidget(),
               _buildSyncImmediateWidget(),
+              _buildSyncListImmediateWidget(),
               _buildSyncWidget(),
               _buildFlowChartWidget(),
               _buildBindUserWidget(),
@@ -57,7 +64,7 @@ class _HomeState extends State<HomeRoute> {
   Widget _buildConfigWidget() {
     return RaisedButton(
       child: Text("设置配置"),
-      onPressed: () {
+      onPressed: () async {
         /// 配置方法一
         FTMobileAgentFlutter.configX(
             Config("http://10.100.64.106:19457/v1/write/metrics")
@@ -83,7 +90,18 @@ class _HomeState extends State<HomeRoute> {
 
   Widget _buildSyncImmediateWidget() {
     return RaisedButton(
-      child: Text("同步（直接上传）"),
+      child: Text("同步一条数据（直接上传）"),
+      onPressed: () async {
+        var result = await FTMobileAgentFlutter.track(
+          "flutter_list_test",{"platform": "flutter"},{"method": "直接同步"});
+        print("request success: $result");
+      },
+    );
+  }
+
+  Widget _buildSyncListImmediateWidget() {
+    return RaisedButton(
+      child: Text("同步一组数据（直接上传）"),
       onPressed: () async {
         var result = await FTMobileAgentFlutter.trackList([
           TrackBean("flutter_list_test",{"platform": "flutter"}),

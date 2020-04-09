@@ -16,9 +16,9 @@ class FTMobileAgentFlutter {
       const MethodChannel('ft_mobile_agent_flutter');
 
   /// 设置配置一
-  static void configX(Config con) {
+  static void configX(Config con) async {
     if (con != null) {
-      config(con.serverUrl,
+      await config(con.serverUrl,
           akId: con.akId,
           akSecret: con.akSecret,
           dataKitUUID: con.dataKitUUID,
