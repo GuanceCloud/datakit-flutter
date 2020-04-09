@@ -72,6 +72,7 @@ class _HomeState extends State<HomeRoute> {
                 .setDataKit("flutter_datakit")
                 .setEnableLog(true)
                 .setNeedBindUser(false)
+                .setGeoKey(true, "46f60b8b6963de515749001b92a866c0")
                 .setMonitorType(MonitorType.BATTERY | MonitorType.NETWORK | MonitorType.LOCATION)
         );
 

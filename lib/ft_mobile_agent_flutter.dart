@@ -18,13 +18,17 @@ class FTMobileAgentFlutter {
   /// 设置配置一
   static Future<void> configX(Config con) async {
     if (con != null) {
-      await config(con.serverUrl,
-          akId: con.akId,
-          akSecret: con.akSecret,
-          dataKitUUID: con.dataKitUUID,
-          enableLog: con.enableLog,
-          needBindUser: con.needBindUser,
-          monitorType: con.monitorType);
+      await config(
+        con.serverUrl,
+        akId: con.akId,
+        akSecret: con.akSecret,
+        dataKitUUID: con.dataKitUUID,
+        enableLog: con.enableLog,
+        needBindUser: con.needBindUser,
+        monitorType: con.monitorType,
+        useGeoKey: con.useGeoKey,
+        geoKey: con.getKey,
+      );
     }
   }
 
@@ -35,7 +39,9 @@ class FTMobileAgentFlutter {
       String dataKitUUID,
       bool enableLog,
       bool needBindUser,
-      int monitorType}) async {
+      int monitorType,
+      bool useGeoKey,
+      String geoKey}) async {
     Map<String, dynamic> map = {};
     map["serverUrl"] = serverUrl;
 
@@ -59,6 +65,14 @@ class FTMobileAgentFlutter {
     if (monitorType != null) {
       map["monitorType"] = monitorType;
     }
+
+    if (useGeoKey != null) {
+      map["useGeoKey"] = useGeoKey;
+    }
+
+    if (geoKey != null) {
+      map["geoKey"] = geoKey;
+    }
     await _channel.invokeMethod(METHOD_CONFIG, map);
   }
 
@@ -77,10 +91,10 @@ class FTMobileAgentFlutter {
   }
 
   ///上报列表
-  static Future<Map<dynamic, dynamic>> trackList(
-      List<TrackBean> list) async {
+  static Future<Map<dynamic, dynamic>> trackList(List<TrackBean> list) async {
     Map<String, dynamic> map = {};
-    List<Map<String,dynamic>> convertList = list.map((e)=>e.convertMap()).toList();
+    List<Map<String, dynamic>> convertList =
+        list.map((e) => e.convertMap()).toList();
     map["list"] = convertList;
     return await _channel.invokeMethod(METHOD_TRACK_LIST, map);
   }
@@ -152,12 +166,20 @@ class Config {
   bool _enableLog;
   bool _needBindUser;
   int _monitorType;
+  bool _useGeoKey;
+  String _getKey;
 
   Config(this.serverUrl);
 
   Config setAK(String _akId, String _akSecret) {
     this._akId = _akId;
     this._akSecret = _akSecret;
+    return this;
+  }
+
+  Config setGeoKey(bool _useGeoKey, String _getKey) {
+    this._useGeoKey = _useGeoKey;
+    this._getKey = _getKey;
     return this;
   }
 
@@ -192,6 +214,10 @@ class Config {
   String get akSecret => _akSecret;
 
   String get akId => _akId;
+
+  String get getKey => _getKey;
+
+  bool get useGeoKey => _useGeoKey;
 }
 
 class MonitorType {
@@ -206,16 +232,14 @@ class MonitorType {
 }
 
 /// 主动埋点数据类
-class TrackBean{
+class TrackBean {
   String measurement;
   Map<String, dynamic> tags;
   Map<String, dynamic> fields;
-  TrackBean(this.measurement,this.fields,{this.tags});
-  Map<String,dynamic> convertMap(){
-    return {
-      "measurement":measurement,
-      "fields":fields,
-      "tags":tags
-    };
+
+  TrackBean(this.measurement, this.fields, {this.tags});
+
+  Map<String, dynamic> convertMap() {
+    return {"measurement": measurement, "fields": fields, "tags": tags};
   }
 }

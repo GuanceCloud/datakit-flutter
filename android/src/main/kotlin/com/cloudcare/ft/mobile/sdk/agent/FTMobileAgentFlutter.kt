@@ -72,7 +72,9 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
                 val enableLog: Boolean? = call.argument<Boolean>("enableLog")
                 val needBindUser: Boolean? = call.argument<Boolean>("needBindUser")
                 val monitorType: Int? = call.argument<Int>("monitorType")
-                ftConfig(serverUrl, akId, akSecret, datakitUUID,enableLog,needBindUser,monitorType)
+                val useGeoKey: Boolean? = call.argument<Boolean>("useGeoKey")
+                val geoKey: String? = call.argument<String>("geoKey")
+                ftConfig(serverUrl, akId, akSecret, datakitUUID,enableLog,needBindUser,monitorType,useGeoKey,geoKey)
                 result.success(null)
             }
             METHOD_TRACK -> {
@@ -128,7 +130,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    private fun ftConfig(serverUrl: String, akId: String?, akSecret: String?, datakitUUID: String?,enableLog:Boolean?,needBindUser:Boolean?,monitorType:Int?) {
+    private fun ftConfig(serverUrl: String, akId: String?, akSecret: String?, datakitUUID: String?,enableLog:Boolean?,needBindUser:Boolean?,monitorType:Int?,useGeoKey:Boolean?,geoKey:String?) {
         val enableRequestSigning = akId != null && akSecret != null
         val config = FTSDKConfig(serverUrl, enableRequestSigning, akId, akSecret)
         if (datakitUUID != null) {
@@ -140,6 +142,11 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
         config.apply {
             isDebug = enableLog?:false
             isNeedBindUser = needBindUser?:false
+            useGeoKey?.let { use->
+                geoKey?.let {key->
+                    setGeoKey(use,key)
+                }
+            }
         }
 
         FTSdk.install(config)
