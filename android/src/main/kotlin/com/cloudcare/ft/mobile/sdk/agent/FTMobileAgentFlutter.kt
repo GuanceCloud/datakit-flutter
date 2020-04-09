@@ -74,7 +74,6 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
                 val monitorType: Int? = call.argument<Int>("monitorType")
                 ftConfig(serverUrl, akId, akSecret, datakitUUID,enableLog,needBindUser,monitorType)
                 result.success(null)
-
             }
             METHOD_TRACK -> {
                 val measurement = call.argument<String>("measurement")!!
@@ -98,6 +97,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
                 val fieldsJS = if (fields != null) JSONObject(fields) else null
 
                 FTTrack.getInstance().trackFlowChart(production, traceId, name, parent, duration, tagsJS, fieldsJS)
+                result.success(null)
             }
             METHOD_TRACK_BACKGROUND -> {
                 val measurement = call.argument<String>("measurement")!!
@@ -105,6 +105,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
                 val tags = call.argument<Map<String, Any>>("tags")
                 val tagsJS = if (tags != null) JSONObject(tags) else null
                 FTTrack.getInstance().trackBackground(measurement,tagsJS,JSONObject(fields))
+                result.success(null)
             }
             METHOD_BIND_USER -> {
                 val name = call.argument<String>("name")!!

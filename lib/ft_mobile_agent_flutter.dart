@@ -16,7 +16,7 @@ class FTMobileAgentFlutter {
       const MethodChannel('ft_mobile_agent_flutter');
 
   /// 设置配置一
-  static void configX(Config con) async {
+  static Future<void> configX(Config con) async {
     if (con != null) {
       await config(con.serverUrl,
           akId: con.akId,
@@ -59,7 +59,7 @@ class FTMobileAgentFlutter {
     if (monitorType != null) {
       map["monitorType"] = monitorType;
     }
-    _channel.invokeMethod(METHOD_CONFIG, map);
+    await _channel.invokeMethod(METHOD_CONFIG, map);
   }
 
   ///上报数据
