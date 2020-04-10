@@ -73,7 +73,7 @@ class _HomeState extends State<HomeRoute> {
                 .setEnableLog(true)
                 .setNeedBindUser(false)
                 .setGeoKey(true, "46f60b8b6963de515749001b92a866c0")
-                .setMonitorType(MonitorType.BATTERY | MonitorType.NETWORK | MonitorType.LOCATION)
+                .setMonitorType(MonitorType.BATTERY | MonitorType.NETWORK | MonitorType.LOCATION | MonitorType.GPU)
         );
 
         /// 配置方法二

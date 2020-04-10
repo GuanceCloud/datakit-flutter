@@ -1,26 +1,29 @@
 package com.cloudcare.ft.mobile.sdk.agent
 
 import android.app.Application
+import android.view.ViewGroup
 import androidx.annotation.NonNull
 import com.ft.sdk.FTSDKConfig
 import com.ft.sdk.FTSdk
 import com.ft.sdk.FTTrack
+import com.ft.sdk.MonitorType
 import com.ft.sdk.garble.SyncCallback
 import com.ft.sdk.garble.bean.TrackBean
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.json.JSONObject
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 /** AgentPlugin */
-public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
+public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
     /// The MethodChannel that will the communication between Flutter and native Android
     ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -28,12 +31,33 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
 
     private lateinit var application: Application
-
+    private var viewGroup: ViewGroup? = null
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "ft_mobile_agent_flutter")
         channel.setMethodCallHandler(this)
         application = flutterPluginBinding.applicationContext as Application
+    }
+
+    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+        try {
+            val activity = binding.activity
+            val temp = activity.window.decorView.rootView
+            if (temp is ViewGroup) {
+                viewGroup = temp
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onDetachedFromActivity() {
+    }
+
+    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+    }
+
+    override fun onDetachedFromActivityForConfigChanges() {
     }
 
     // This static function is optional and equivalent to onAttachedToEngine. It supports the old
@@ -74,18 +98,21 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
                 val monitorType: Int? = call.argument<Int>("monitorType")
                 val useGeoKey: Boolean? = call.argument<Boolean>("useGeoKey")
                 val geoKey: String? = call.argument<String>("geoKey")
-                ftConfig(serverUrl, akId, akSecret, datakitUUID,enableLog,needBindUser,monitorType,useGeoKey,geoKey)
+                ftConfig(serverUrl, akId, akSecret, datakitUUID, enableLog, needBindUser, monitorType, useGeoKey, geoKey)
+                if(monitorType?.or(MonitorType.ALL) == monitorType || monitorType?.or(MonitorType.GPU) == monitorType){
+                    FTSdk.get().setGpuRenderer(viewGroup)
+                }
                 result.success(null)
             }
             METHOD_TRACK -> {
                 val measurement = call.argument<String>("measurement")!!
                 val tags = call.argument<Map<String, Any>>("tags")
                 val fields = call.argument<Map<String, Any>>("fields")
-                ftTrackSync(result,measurement, tags, fields)
+                ftTrackSync(result, measurement, tags, fields)
             }
             METHOD_TRACK_LIST -> {
                 val list = call.argument<List<Map<String, Any?>>>("list")
-                list?.let { ftTrackListSync(result,it) }
+                list?.let { ftTrackListSync(result, it) }
             }
             METHOD_TRACK_FLOW_CHART -> {
                 val production = call.argument<String>("production")
@@ -106,7 +133,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
                 val fields = call.argument<Map<String, Any>>("fields")!!
                 val tags = call.argument<Map<String, Any>>("tags")
                 val tagsJS = if (tags != null) JSONObject(tags) else null
-                FTTrack.getInstance().trackBackground(measurement,tagsJS,JSONObject(fields))
+                FTTrack.getInstance().trackBackground(measurement, tagsJS, JSONObject(fields))
                 result.success(null)
             }
             METHOD_BIND_USER -> {
@@ -130,21 +157,21 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    private fun ftConfig(serverUrl: String, akId: String?, akSecret: String?, datakitUUID: String?,enableLog:Boolean?,needBindUser:Boolean?,monitorType:Int?,useGeoKey:Boolean?,geoKey:String?) {
+    private fun ftConfig(serverUrl: String, akId: String?, akSecret: String?, datakitUUID: String?, enableLog: Boolean?, needBindUser: Boolean?, monitorType: Int?, useGeoKey: Boolean?, geoKey: String?) {
         val enableRequestSigning = akId != null && akSecret != null
         val config = FTSDKConfig(serverUrl, enableRequestSigning, akId, akSecret)
         if (datakitUUID != null) {
             config.setXDataKitUUID(datakitUUID)
         }
-        if(monitorType != null){
+        if (monitorType != null) {
             config.setMonitorType(monitorType)
         }
         config.apply {
-            isDebug = enableLog?:false
-            isNeedBindUser = needBindUser?:false
-            useGeoKey?.let { use->
-                geoKey?.let {key->
-                    setGeoKey(use,key)
+            isDebug = enableLog ?: false
+            isNeedBindUser = needBindUser ?: false
+            useGeoKey?.let { use ->
+                geoKey?.let { key ->
+                    setGeoKey(use, key)
                 }
             }
         }
@@ -152,7 +179,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
         FTSdk.install(config)
     }
 
-    private fun ftTrackSync(result: Result,measurement: String, tags: Map<String, Any?>?, fields: Map<String, Any?>?){
+    private fun ftTrackSync(result: Result, measurement: String, tags: Map<String, Any?>?, fields: Map<String, Any?>?) {
         GlobalScope.launch {
             ftTrack(measurement, tags, fields, SyncCallback { code, response ->
                 val map = mapOf("code" to code, "response" to response)
@@ -163,7 +190,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    private fun ftTrackListSync(result: Result,array: List<Map<String, Any?>>){
+    private fun ftTrackListSync(result: Result, array: List<Map<String, Any?>>) {
         GlobalScope.launch {
             ftTrackList(array, SyncCallback { code, response ->
                 val map = mapOf("code" to code, "response" to response)
