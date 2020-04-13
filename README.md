@@ -30,13 +30,13 @@ import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
  
  - 方法一
 
- ```dart
+```dart
  static void configX(Config con)
- ```
+```
 
 - 方法二
 
- ```dart
+```dart
  /**
   * @method 指定初始化方法
   * @param metricsUrl     FT-GateWay metrics
@@ -57,12 +57,12 @@ import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
       int monitorType,
       bool useGeoKey,
       String geoKey}) async
- ```    
+```
 
 ### 2. 上报数据 与 上报列表
 -  上报数据
 
-   ```dart
+```dart
 /**
  * 上报数据
  * @param measurement      当前数据点所属的指标集
@@ -72,11 +72,11 @@ import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
 static Future<Map<dynamic, dynamic>> track(
       String measurement, Map<String, dynamic> fields,
       [Map<String, dynamic> tags]) async
-   ```    
+```
 
 - 上报列表（[TrackBean](#2-trackbean)）
 
-  ```dart
+```dart
 /**
  * 主动埋点，可多条上传。   立即上传 回调上传结果
  * @param trackList     主动埋点数据数组
@@ -84,7 +84,7 @@ static Future<Map<dynamic, dynamic>> track(
  static Future<Map<dynamic, dynamic>> trackList(
       List<TrackBean> list) async
 
-  ```    
+```
 
   
 - 返回值    
@@ -95,7 +95,7 @@ static Future<Map<dynamic, dynamic>> track(
 ### 3. 上报流程图
 -  方法
 
- ```dart
+```dart
 /**
  * 上报流程图
  * @param production   指标集 命名只能包含英文字母、数字、中划线和下划线，最长 40 个字符，区分大小写
@@ -112,12 +112,12 @@ static Future<void> trackFlowChart(
       Map<String, dynamic> tags,
       Map<String, dynamic> fields}) async
 
- ```
+```
 
 ### 4. 主动埋点数据上报（后台运行）
 -  方法    
 
-  ```dart
+```dart
  /**
   * 追踪自定义事件。 存储数据库，等待上传
   * @param measurement      指标（必填）
@@ -128,7 +128,7 @@ static Future<void> trackBackground(
       String measurement, Map<String, dynamic> fields,
       {Map<String, dynamic> tags}) async
 
- ```
+```
 
 
 ### 5. 用户的绑定与注销
@@ -136,7 +136,7 @@ static Future<void> trackBackground(
 
 - 绑定用户    
 
- ```dart
+```dart
  /**
   * 绑定用户信息
   * @param name     用户名
@@ -145,26 +145,26 @@ static Future<void> trackBackground(
   */
   static Future<void> bindUser(String name, String id,
       {Map<String, dynamic> extras}) async
-  ```    
+```
   
 - 解绑用户   
  
- ```dart
+```dart
  /**
   * 注销用户信息
   */
  static Future<void> unbindUser() async
-  ```    
+```
 
 ### 6. 停止 SDK 后台正在执行的操作
 -  方法
 
-  ```dart
+```dart
  /**
   * 关闭 SDK 正在做的操作
   */
  static Future<void> stopSDK() async
-  ```    
+```
        
 ### 7. 使用示例
    [方法使用示例](https://pub.dev/packages/ft_mobile_agent_flutter#-example-tab-)
@@ -184,7 +184,7 @@ static Future<void> trackBackground(
 
 **monitorType** 可设置:    
 
- ```dart
+```dart
  class MonitorType {
      static const int ALL = 1;
      static const int BATTERY  = 1 << 1;   // 电池总量、使用量
@@ -196,7 +196,7 @@ static Future<void> trackBackground(
      static const int LOCATION = 1 << 7;   // 位置信息  eg:上海
   }    
   
- ```    
+```
 
 ### 2. TrackBean
 
