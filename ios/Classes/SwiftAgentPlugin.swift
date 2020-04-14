@@ -22,48 +22,48 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
 
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        var args = Dictionary<String,Any>()
         if(call.arguments is Dictionary<String, Any>){
-            let args = call.arguments as! Dictionary<String, Any>
-            if (call.method == SwiftAgentPlugin.METHOD_CONFIG) {
-                self.ftConfig(metricsUrl: args["serverUrl"] as! String, akId: args["akId"] as? String, akSecret:(args["akSecret"] as? String),datakitUUID: args["datakitUUID"] as? String, enableLog: args["enableLog"] as? Bool, needBindUser: (args["needBindUser"] as? Bool),monitorType: (args["monitorType"] as? Int))
-                result(nil)
-            } else if (call.method == SwiftAgentPlugin.METHOD_TRACK) {
-                DispatchQueue.global(qos: .userInitiated).async {
-                    
-                    let resultDic = self.ftTrack(measurement: args["measurement"] as! String, tags: args["tags"] as? Dictionary<String, Any>, fields: args["fields"] as! Dictionary<String, Any>)
-                    DispatchQueue.main.async {
-                        result(resultDic)
-                    }
-                }
+            args = call.arguments as! Dictionary<String, Any>
+        }
+        
+        if (call.method == SwiftAgentPlugin.METHOD_CONFIG) {
+            self.ftConfig(metricsUrl: args["serverUrl"] as! String, akId: args["akId"] as? String, akSecret:(args["akSecret"] as? String),datakitUUID: args["datakitUUID"] as? String, enableLog: args["enableLog"] as? Bool, needBindUser: (args["needBindUser"] as? Bool),monitorType: (args["monitorType"] as? Int))
+            result(nil)
+        } else if (call.method == SwiftAgentPlugin.METHOD_TRACK) {
+            DispatchQueue.global(qos: .userInitiated).async {
                 
-            }else if(call.method == SwiftAgentPlugin.METHOD_TRACK_LIST){
-                
-                let list = args["list"] as! Array<Dictionary<String,Any?>>
-                DispatchQueue.global(qos: .userInitiated).async {
-                    let resultDic = self.ftTrackList(items: list)
-                    DispatchQueue.main.async {
-                        result(resultDic)
-                    }
-                }
-            }else if(call.method == SwiftAgentPlugin.METHOD_BIND_USER){
-                self.ftBindUser(name: args["name"] as! String, id: args["id"] as! String, extras: args["extras"] as? Dictionary<String, Any>)
-                result(nil)
-            }else if(call.method == SwiftAgentPlugin.METHOD_TRACK_FLOW_CHART){
-                self.ftTrackFlowChart(production: args["production"] as! String, traceId: args["production"] as! String, name: args["name"] as! String, parent: args["parent"] as? String, duration: args["duration"] as! Int, tags: args["tags"] as? Dictionary<String, Any>, fields: (args["fields"] as? Dictionary<String, Any>))
-                result(nil)
-            }else if(call.method == SwiftAgentPlugin.METHOD_TRACK_BACKGROUND){
-                self.ftTrackBackground(measurement: args["measurement"] as! String, tags: args["tags"] as? Dictionary<String, Any>, fields: (args["fields"] as! Dictionary<String, Any>))
-                 result(nil)
-            }else if(call.method == SwiftAgentPlugin.METHOD_START_LOCATION){
-                FTMobileAgent.startLocation { (code, message) in
-                    var resultDic = Dictionary<String,Any>()
-                    resultDic = ["code":code,"response":message]
+                let resultDic = self.ftTrack(measurement: args["measurement"] as! String, tags: args["tags"] as? Dictionary<String, Any>, fields: args["fields"] as! Dictionary<String, Any>)
+                DispatchQueue.main.async {
                     result(resultDic)
                 }
-                
-            }else{
-                result(FlutterMethodNotImplemented)
             }
+            
+        }else if(call.method == SwiftAgentPlugin.METHOD_TRACK_LIST){
+            
+            let list = args["list"] as! Array<Dictionary<String,Any?>>
+            DispatchQueue.global(qos: .userInitiated).async {
+                let resultDic = self.ftTrackList(items: list)
+                DispatchQueue.main.async {
+                    result(resultDic)
+                }
+            }
+        }else if(call.method == SwiftAgentPlugin.METHOD_BIND_USER){
+            self.ftBindUser(name: args["name"] as! String, id: args["id"] as! String, extras: args["extras"] as? Dictionary<String, Any>)
+            result(nil)
+        }else if(call.method == SwiftAgentPlugin.METHOD_TRACK_FLOW_CHART){
+            self.ftTrackFlowChart(production: args["production"] as! String, traceId: args["production"] as! String, name: args["name"] as! String, parent: args["parent"] as? String, duration: args["duration"] as! Int, tags: args["tags"] as? Dictionary<String, Any>, fields: (args["fields"] as? Dictionary<String, Any>))
+            result(nil)
+        }else if(call.method == SwiftAgentPlugin.METHOD_TRACK_BACKGROUND){
+            self.ftTrackBackground(measurement: args["measurement"] as! String, tags: args["tags"] as? Dictionary<String, Any>, fields: (args["fields"] as! Dictionary<String, Any>))
+            result(nil)
+        }else if(call.method == SwiftAgentPlugin.METHOD_START_LOCATION){
+            FTMobileAgent.startLocation { (code, message) in
+                var resultDic = Dictionary<String,Any>()
+                resultDic = ["code":code,"response":message]
+                result(resultDic)
+            }
+            
         }else if(call.method == SwiftAgentPlugin.METHOD_STOP_SDK){
             self.ftStopSdk()
             result(nil)
@@ -71,7 +71,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             self.ftUnBindUser()
             result(nil)
         }else{
-             result(FlutterMethodNotImplemented)
+            result(FlutterMethodNotImplemented)
         }
     }
 
