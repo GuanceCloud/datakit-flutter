@@ -12,6 +12,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     static let METHOD_UNBIND_USER = "ftUnBindUser"
     static let METHOD_STOP_SDK = "ftStopSdk"
     static let METHOD_TRACK_BACKGROUND = "ftTrackBackground"
+    static let METHOD_START_LOCATION  = "ftStartLocation"
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "ft_mobile_agent_flutter", binaryMessenger: registrar.messenger())
@@ -40,8 +41,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             }else if(call.method == SwiftAgentPlugin.METHOD_TRACK_BACKGROUND){
                 self.ftTrackBackground(measurement: args["measurement"] as! String, tags: args["tags"] as? Dictionary<String, Any>, fields: (args["fields"] as! Dictionary<String, Any>))
                  result(nil)
+            }else if(call.method == SwiftAgentPlugin.METHOD_START_LOCATION){
+                result(self.ftStartLocation());
             }
-            
             else{
                 result(FlutterMethodNotImplemented)
             }
@@ -51,6 +53,8 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         }else if(call.method == SwiftAgentPlugin.METHOD_UNBIND_USER){
             self.ftUnBindUser()
             result(nil)
+        }else if(call.method == SwiftAgentPlugin.METHOD_START_LOCATION){
+            result(self.ftStartLocation());
         }else{
              result(FlutterMethodNotImplemented)
         }
@@ -136,6 +140,17 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                  }
         group.wait()
         
+        return result!
+    }
+    private func ftStartLocation() ->Dictionary<String,Any>{
+        let group = DispatchGroup()
+        var result:Dictionary<String,Any>?=nil;
+        group.enter()
+        FTMobileAgent.startLocation { (code, message) in
+             result = ["code":code,"message":message]
+                       group.leave()
+        }
+        group.wait()
         return result!
     }
     /// 上报流程图
