@@ -13,6 +13,7 @@ void main() {
   const METHOD_BIND_USER = "ftBindUser";
   const METHOD_UNBIND_USER = "ftUnBindUser";
   const METHOD_STOP_SDK = "ftStopSdk";
+  const METHOD_START_LOCATION = "ftStartLocation";
   dynamic resultCode;
   setUp(() async {
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
@@ -27,6 +28,7 @@ void main() {
           return null;
         case METHOD_TRACK:
         case METHOD_TRACK_LIST:
+        case METHOD_START_LOCATION:
           return resultCode;
         default:
           return null;
@@ -106,5 +108,15 @@ void main() {
   test("stopSDK", () async {
     FTMobileAgentFlutter.stopSDK();
     expect(resultCode, isTrue);
+  });
+
+  /// 测试定位
+  test('startLocation', () async {
+    resultCode = {
+      "code": 0,
+      "message": ""
+    };
+    var result = await FTMobileAgentFlutter.startLocation();
+    expect(result, resultCode);
   });
 }
