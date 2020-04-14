@@ -28,10 +28,23 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 self.ftConfig(metricsUrl: args["serverUrl"] as! String, akId: args["akId"] as? String, akSecret:(args["akSecret"] as? String),datakitUUID: args["datakitUUID"] as? String, enableLog: args["enableLog"] as? Bool, needBindUser: (args["needBindUser"] as? Bool),monitorType: (args["monitorType"] as? Int))
                 result(nil)
             } else if (call.method == SwiftAgentPlugin.METHOD_TRACK) {
-                result(self.ftTrack(measurement: args["measurement"] as! String, tags: args["tags"] as? Dictionary<String, Any>, fields: args["fields"] as! Dictionary<String, Any>))
+                DispatchQueue.global(qos: .userInitiated).async {
+                    
+                    let resultDic = self.ftTrack(measurement: args["measurement"] as! String, tags: args["tags"] as? Dictionary<String, Any>, fields: args["fields"] as! Dictionary<String, Any>)
+                    DispatchQueue.main.async {
+                        result(resultDic)
+                    }
+                }
+                
             }else if(call.method == SwiftAgentPlugin.METHOD_TRACK_LIST){
+                
                 let list = args["list"] as! Array<Dictionary<String,Any?>>
-                result(self.ftTrackList(items: list))
+                DispatchQueue.global(qos: .userInitiated).async {
+                    let resultDic = self.ftTrackList(items: list)
+                    DispatchQueue.main.async {
+                        result(resultDic)
+                    }
+                }
             }else if(call.method == SwiftAgentPlugin.METHOD_BIND_USER){
                 self.ftBindUser(name: args["name"] as! String, id: args["id"] as! String, extras: args["extras"] as? Dictionary<String, Any>)
                 result(nil)
@@ -42,9 +55,13 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 self.ftTrackBackground(measurement: args["measurement"] as! String, tags: args["tags"] as? Dictionary<String, Any>, fields: (args["fields"] as! Dictionary<String, Any>))
                  result(nil)
             }else if(call.method == SwiftAgentPlugin.METHOD_START_LOCATION){
-                result(self.ftStartLocation());
-            }
-            else{
+                FTMobileAgent.startLocation { (code, message) in
+                    var resultDic = Dictionary<String,Any>()
+                    resultDic = ["code":code,"response":message]
+                    result(resultDic)
+                }
+                
+            }else{
                 result(FlutterMethodNotImplemented)
             }
         }else if(call.method == SwiftAgentPlugin.METHOD_STOP_SDK){
@@ -53,8 +70,6 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         }else if(call.method == SwiftAgentPlugin.METHOD_UNBIND_USER){
             self.ftUnBindUser()
             result(nil)
-        }else if(call.method == SwiftAgentPlugin.METHOD_START_LOCATION){
-            result(self.ftStartLocation());
         }else{
              result(FlutterMethodNotImplemented)
         }
@@ -142,17 +157,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         
         return result!
     }
-    private func ftStartLocation() ->Dictionary<String,Any>{
-        let group = DispatchGroup()
-        var result:Dictionary<String,Any>?=nil;
-        group.enter()
-        FTMobileAgent.startLocation { (code, message) in
-             result = ["code":code,"message":message]
-                       group.leave()
-        }
-        group.wait()
-        return result!
-    }
+    
     /// 上报流程图
     /// - Parameters:
     ///   - production: 指标类型
