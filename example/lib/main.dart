@@ -17,21 +17,28 @@ class MyApp extends StatelessWidget {
       home: HomeRoute(),
     );
   }
-
 }
+
 class HomeRoute extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<HomeRoute> {
-  var permissions = [Permission.location,Permission.camera,Permission.storage,Permission.phone];
+  var permissions = [
+    Permission.location,
+    Permission.camera,
+    Permission.storage,
+    Permission.phone
+  ];
+  var locationState = "";
+
   @override
   void initState() {
     super.initState();
-    if(Platform.isAndroid) {
+    if (Platform.isAndroid) {
       requestPermission(permissions);
-    }else if(Platform.isIOS){
+    } else if (Platform.isIOS) {
       requestPermission([Permission.location]);
     }
   }
@@ -39,10 +46,11 @@ class _HomeState extends State<HomeRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
-        body: Center(
+      appBar: AppBar(
+        title: const Text('Plugin example app'),
+      ),
+      body: SingleChildScrollView(
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -55,9 +63,12 @@ class _HomeState extends State<HomeRoute> {
               _buildBindUserWidget(),
               _buildUnBindUserWidget(),
               _buildStopSDKWidget(),
+              _buildStartLocationWidget(),
+              _buildGeoStartLocationWidget(),
             ],
           ),
         ),
+      ),
     );
   }
 
@@ -73,8 +84,10 @@ class _HomeState extends State<HomeRoute> {
                 .setEnableLog(true)
                 .setNeedBindUser(false)
                 .setGeoKey(true, "46f60b8b6963de515749001b92a866c0")
-                .setMonitorType(MonitorType.BATTERY | MonitorType.NETWORK | MonitorType.LOCATION | MonitorType.GPU)
-        );
+                .setMonitorType(MonitorType.BATTERY |
+                    MonitorType.NETWORK |
+                    MonitorType.LOCATION |
+                    MonitorType.GPU));
 
         /// 配置方法二
         /**FTMobileAgentFlutter.config(
@@ -94,7 +107,7 @@ class _HomeState extends State<HomeRoute> {
       child: Text("同步一条数据（直接上传）"),
       onPressed: () async {
         var result = await FTMobileAgentFlutter.track(
-          "flutter_list_test",{"platform": "flutter"},{"method": "直接同步"});
+            "flutter_list_test", {"platform": "flutter"}, {"method": "直接同步"});
         print("request success: $result");
       },
     );
@@ -105,8 +118,9 @@ class _HomeState extends State<HomeRoute> {
       child: Text("同步一组数据（直接上传）"),
       onPressed: () async {
         var result = await FTMobileAgentFlutter.trackList([
-          TrackBean("flutter_list_test",{"platform": "flutter"}),
-          TrackBean("flutter_list_test",{"platform": "flutter"},tags:{"method": "直接同步"}),
+          TrackBean("flutter_list_test", {"platform": "flutter"}),
+          TrackBean("flutter_list_test", {"platform": "flutter"},
+              tags: {"method": "直接同步"}),
         ]);
         print("request success: $result");
       },
@@ -186,42 +200,72 @@ class _HomeState extends State<HomeRoute> {
     );
   }
 
-  void _showPermissionTip(String tip){
+  Widget _buildStartLocationWidget() {
+    return RaisedButton(
+      child: Text("定位异步通知结果" + locationState),
+      onPressed: () async {
+        var result = await FTMobileAgentFlutter.startLocation();
+        if (result != null) {
+          setState(() {
+            locationState =
+                "-code:${result['code']},message:${result['message']}";
+          });
+        }
+      },
+    );
+  }
+
+  Widget _buildGeoStartLocationWidget() {
+    return RaisedButton(
+      child: Text("（仅 Android ）高德定位异步通知结果" + locationState),
+      onPressed: () async {
+        var result = await FTMobileAgentFlutter.startLocation(
+            geoKey: "46f60b8b6963de515749001b92a866c0");
+        if (result != null) {
+          setState(() {
+            locationState =
+                "-code:${result['code']},message:${result['message']}";
+          });
+        }
+      },
+    );
+  }
+
+  void _showPermissionTip(String tip) {
     showDialog<Null>(
         context: context,
         barrierDismissible: false,
-        builder: (BuildContext context){
+        builder: (BuildContext context) {
           return AlertDialog(
             title: Text("警告"),
             content: Text("你拒绝了\n$tip 权限，拒绝后将无法使用"),
             actions: <Widget>[
               FlatButton(
-                onPressed: (){
+                onPressed: () {
                   Navigator.of(context).pop();
                   requestPermission(permissions);
                 },
                 child: Text("重新请求"),
               ),
               FlatButton(
-                onPressed: (){
+                onPressed: () {
                   Navigator.of(context).pop();
                 },
                 child: Text("拒绝"),
               )
             ],
           );
-        }
-    );
+        });
   }
 
   Future<void> requestPermission(List<Permission> permission) async {
     final status = await permission.request();
-    status.removeWhere((permission,state)=> state.isGranted);
+    status.removeWhere((permission, state) => state.isGranted);
     var tip = "";
-    if(status.isNotEmpty){
-      status.forEach((permission,state){
+    if (status.isNotEmpty) {
+      status.forEach((permission, state) {
         state.isUndetermined;
-        tip+=permission.toString()+"\n";
+        tip += permission.toString() + "\n";
       });
       _showPermissionTip(tip);
     }

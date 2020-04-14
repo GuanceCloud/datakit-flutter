@@ -84,6 +84,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
         const val METHOD_BIND_USER = "ftBindUser"
         const val METHOD_UNBIND_USER = "ftUnBindUser"
         const val METHOD_STOP_SDK = "ftStopSdk"
+        const val METHOD_START_LOCATION = "ftStartLocation"
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -150,6 +151,12 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
             METHOD_STOP_SDK -> {
                 FTSdk.get().shutDown()
                 result.success(null)
+            }
+            METHOD_START_LOCATION -> {
+                val geoKey = call.argument<String>("geoKey")
+                FTSdk.startLocation(geoKey) { code, response ->
+                    result.success(mapOf("code" to code,"message" to response))
+                }
             }
             else -> {
                 result.notImplemented()

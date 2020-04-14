@@ -121,3 +121,17 @@ DataFlux Flutter SDK 接口规范
 |:-----:|:-------------------------:|:------:|
 | list  | List<Map<String, Object>> |   是    |
 
+## 9、定位回调方法
+
+方法名：ftStartLocation
+
+返回值：Map<String,Object>
+
+参数表
+
+| 参数名 | 类型  | 是否必须 |
+|:---:|:---:|:----:|
+|   geoKey  |  String   |    否  |
+
+
+

@@ -11,6 +11,7 @@ class FTMobileAgentFlutter {
   static const METHOD_BIND_USER = "ftBindUser";
   static const METHOD_UNBIND_USER = "ftUnBindUser";
   static const METHOD_STOP_SDK = "ftStopSdk";
+  static const METHOD_START_LOCATION = "ftStartLocation";
 
   static const MethodChannel _channel =
       const MethodChannel('ft_mobile_agent_flutter');
@@ -155,6 +156,11 @@ class FTMobileAgentFlutter {
   ///停止 SDK 后台正在执行的操作
   static Future<void> stopSDK() async {
     return await _channel.invokeMethod(METHOD_STOP_SDK);
+  }
+
+  ///开启定位，异步回调通知结果
+  static Future<Map<dynamic,dynamic>> startLocation({String geoKey}) async {
+    return await _channel.invokeMethod(METHOD_START_LOCATION);
   }
 }
 
