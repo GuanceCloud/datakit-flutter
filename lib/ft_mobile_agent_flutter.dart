@@ -160,7 +160,9 @@ class FTMobileAgentFlutter {
 
   ///开启定位，异步回调通知结果
   static Future<Map<dynamic,dynamic>> startLocation({String geoKey}) async {
-    return await _channel.invokeMethod(METHOD_START_LOCATION);
+    Map<String, dynamic> map = {};
+    map["geoKey"] = geoKey;
+    return await _channel.invokeMethod(METHOD_START_LOCATION,map);
   }
 }
 
