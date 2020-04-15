@@ -1,6 +1,6 @@
 name: ft_mobile_agent_flutter
 description: 基于 ft ios android 调用的 plugin
-version: 0.0.1-dev.3
+version: 0.0.1-dev.4
 homepage: https://www.dataflux.cn/
 
 environment:
