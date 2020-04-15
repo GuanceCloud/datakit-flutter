@@ -8,12 +8,13 @@
 
   * [使用](#使用)
     + [1. 初始化配置](#1-初始化配置)
-    + [2. 上报数据 与 上报列表](#2-上报数据-与-上报列表)
-    + [3. 上报流程图](#3-上报流程图)
-    + [4. 主动埋点数据上报（后台运行）](#4-主动埋点数据上报后台运行)
-    + [5. 用户的绑定与注销](#5-用户的绑定与注销)
-    + [6. 停止 SDK 后台正在执行的操作](#6-停止-sdk-后台正在执行的操作)
-    + [7. 使用示例](#7-使用示例)
+    + [2. 位置信息状态获取](#2-位置信息状态获取)
+    + [3. 上报数据 与 上报列表](#3-上报数据-与-上报列表)
+    + [4. 上报流程图](#4-上报流程图)
+    + [5. 主动埋点数据上报（后台运行）](#5-主动埋点数据上报后台运行)
+    + [6. 用户的绑定与注销](#6-用户的绑定与注销)
+    + [7. 停止 SDK 后台正在执行的操作](#7-停止-sdk-后台正在执行的操作)
+    + [8. 使用示例](#8-使用示例)
   * [参数与错误码](#参数与错误码)
     + [1. Config 可配置参数](#1-config-可配置参数)
     + [2. TrackBean](#2-trackbean)
@@ -59,7 +60,21 @@ import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
       String geoKey}) async
 ```
 
-### 2. 上报数据 与 上报列表
+### 2. 位置信息状态获取
+
+```dart
+/**
+ * @method 位置信息状态获取 来判断位置信息是否获取成功
+ * @param geoKey      使用高德作为地址解析器(该参数仅对 Android 平台有效)
+ */
+static Future<Map<dynamic,dynamic>> startLocation({String geoKey}) async
+```
+- 返回值    
+
+   返回 **Map** 中 `code` 表示[错误码](#3-错误码)，`message` 表示错误信息。
+`code = 0` ： 位置信息获取成功。
+
+### 3. 上报数据 与 上报列表
 -  上报数据
 
 ```dart
@@ -92,7 +107,7 @@ static Future<Map<dynamic, dynamic>> track(
    返回 **Map** 中 `code` 表示网络请求返回的返回码，`response` 为服务端返回的信息。
 `code` 的值除了 **HTTP** 协议中规定的返回码， **FT SDK** 中额外规定了 4 种类型的 [错误码](#3-错误码)，他们是 101，102，103，104，他们分别代表的意思是网络问题、参数问题、IO异常和未知错误。
    
-### 3. 上报流程图
+### 4. 上报流程图
 -  方法
 
 ```dart
@@ -114,7 +129,7 @@ static Future<void> trackFlowChart(
 
 ```
 
-### 4. 主动埋点数据上报（后台运行）
+### 5. 主动埋点数据上报（后台运行）
 -  方法    
 
 ```dart
@@ -131,7 +146,7 @@ static Future<void> trackBackground(
 ```
 
 
-### 5. 用户的绑定与注销
+### 6. 用户的绑定与注销
    **FT SDK** 提供了绑定用户和注销用户的方法，[Config](#1-config-可配置参数) 属性`needBindUser` 为 `YES ` 时（默认为 `NO`），用户绑定的状态下，才会进行数据的传输。
 
 - 绑定用户    
@@ -156,7 +171,7 @@ static Future<void> trackBackground(
  static Future<void> unbindUser() async
 ```
 
-### 6. 停止 SDK 后台正在执行的操作
+### 7. 停止 SDK 后台正在执行的操作
 -  方法
 
 ```dart
@@ -166,7 +181,7 @@ static Future<void> trackBackground(
  static Future<void> stopSDK() async
 ```
        
-### 7. 使用示例
+### 8. 使用示例
    [方法使用示例](https://pub.dev/packages/ft_mobile_agent_flutter#-example-tab-)
 
 
