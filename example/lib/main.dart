@@ -32,6 +32,7 @@ class _HomeState extends State<HomeRoute> {
     Permission.phone
   ];
   var locationState = "";
+  var locationStateGeo = "";
 
   @override
   void initState() {
@@ -217,13 +218,13 @@ class _HomeState extends State<HomeRoute> {
 
   Widget _buildGeoStartLocationWidget() {
     return RaisedButton(
-      child: Text("（仅 Android ）高德定位异步通知结果" + locationState),
+      child: Text("（仅 Android ）高德定位异步通知结果" + locationStateGeo),
       onPressed: () async {
         var result = await FTMobileAgentFlutter.startLocation(
             geoKey: "46f60b8b6963de515749001b92a866c0");
         if (result != null) {
           setState(() {
-            locationState =
+            locationStateGeo =
                 "-code:${result['code']},message:${result['message']}";
           });
         }
