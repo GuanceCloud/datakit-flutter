@@ -16,6 +16,13 @@ DataFlux Flutter SDK 接口规范
 [7、主动埋点一条数据（异步回调结果）](#7主动埋点一条数据异步回调结果)
 
 [8、主动埋点上传一组数据（异步回调结果）](#8主动埋点上传一组数据异步回调结果)
+
+[9、定位回调方法](#9定位回调方法)
+
+[10、开启监控周期上报](#10开启监控周期上报)
+
+[11、关闭监控周期上报](#11关闭监控周期上报)
+
 # 接口详情
 
 ## 1、绑定用户
@@ -93,6 +100,11 @@ DataFlux Flutter SDK 接口规范
 |  enableLog   |  bool  |   否    |
 | needBindUser |  bool  |   否    |
 | monitorType  |  int   |   否    |
+|  useGeoKey   |  bool  |   否    |
+|    geoKey    | String |   否    |
+|   product    | String |   否    |
+
+
 
 
 ## 7、主动埋点一条数据（异步回调结果）
@@ -133,5 +145,25 @@ DataFlux Flutter SDK 接口规范
 |:---:|:---:|:----:|
 |   geoKey  |  String   |    否  |
 
+## 10、开启监控周期上报
+
+方法名：ftStartMonitor
+
+返回值：无
+
+参数表
+
+|     参数名     |   类型   | 是否必须 |      说明      |
+|:-----------:|:------:|:----:|:------------:|
+|   geoKey    | String |  否   | Android 端特有  |
+|  useGeoKey  |  bool  |  否   | Android 端特有  |
+|   period    |  int   |  否   | 周期，单位秒，默认10秒 |
+| monitorType |  int   |  否   |     监控类型     |
+
+## 11、关闭监控周期上报
+
+方法名：ftStopMonitor
+
+返回值：无
 
 
