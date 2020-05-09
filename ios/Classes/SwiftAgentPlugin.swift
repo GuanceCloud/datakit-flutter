@@ -73,7 +73,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             self.ftUnBindUser()
             result(nil)
         }else if(call.method == SwiftAgentPlugin.METHOD_START_MONITOR){
-            self.ftStartMonitor()
+            self.ftStartMonitor(period: args["period"] as! Int, monitorType: args["monitorType"] as! Int)
             result(nil)
         }else if(call.method == SwiftAgentPlugin.METHOD_STOP_MONITOR){
             self.ftStopMonitor()
@@ -204,8 +204,13 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         FTMobileAgent.sharedInstance().bindUser(withName: name,id:id,exts:extras)
     }
     
-    private func ftStartMonitor(){
-        FTMobileAgent.sharedInstance().startMonitorFlush()
+    private func ftStartMonitor(period:Int?,monitorType:Int?){
+        if((monitorType) != nil){
+            FTMobileAgent.sharedInstance().startMonitorFlush(withInterval: period ?? 10, monitorType: FTMonitorInfoType(rawValue: monitorType!))
+        }else{
+            FTMobileAgent.sharedInstance().setMonitorFlushInterval(period ?? 10)
+            FTMobileAgent.sharedInstance().stopMonitorFlush()
+        }
     }
     
     private func ftStopMonitor(){
