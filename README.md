@@ -13,8 +13,9 @@
     + [4. 上报流程图](#4-上报流程图)
     + [5. 主动埋点数据上报（后台运行）](#5-主动埋点数据上报后台运行)
     + [6. 用户的绑定与注销](#6-用户的绑定与注销)
-    + [7. 停止 SDK 后台正在执行的操作](#7-停止-sdk-后台正在执行的操作)
-    + [8. 使用示例](#8-使用示例)
+    + [7. 监控项周期上报](#7-监控项周期上报)
+    + [8. 停止 SDK 后台正在执行的操作](#8-停止-sdk-后台正在执行的操作)
+    + [9. 使用示例](#9-使用示例)
   * [参数与错误码](#参数与错误码)
     + [1. Config 可配置参数](#1-config-可配置参数)
     + [2. TrackBean](#2-trackbean)
@@ -170,8 +171,31 @@ static Future<void> trackBackground(
   */
  static Future<void> unbindUser() async
 ```
+### 7. 监控项周期上报
+**FT SDK** 提供了监控项周期上报的开始与停止方法。监控项类型可直接由[Config](#1-config-可配置参数) 中的属性 `monitorType` 来设置，也可通过开启监控周期上报方法设置。   
 
-### 7. 停止 SDK 后台正在执行的操作
+- 开启监控周期上报    
+
+```dart
+/**
+  * 开启监控周期上报  
+  * @param monitorType     监控项类型
+  * @param geoKey          使用高德作为地址解析器(该参数仅对 Android 平台有效)
+  * @param useGeoKey       是否使用高德作为地址解析器
+  * @param period          上传周期
+  */
+ static Future<void> startMonitor(int monitorType,{String geoKey,bool useGeoKey,int period}) async 
+```
+   
+-  停止监控周期上报 
+ 
+```dart
+/**
+  * 停止监控周期上报 
+  */
+ static Future<void> stopMonitor() async
+```
+### 8. 停止 SDK 后台正在执行的操作
 -  方法
 
 ```dart
@@ -181,7 +205,7 @@ static Future<void> trackBackground(
  static Future<void> stopSDK() async
 ```
        
-### 8. 使用示例
+### 9. 使用示例
    [方法使用示例](https://pub.dev/packages/ft_mobile_agent_flutter#-example-tab-)
 
 
@@ -202,13 +226,25 @@ static Future<void> trackBackground(
 ```dart
  class MonitorType {
      static const int ALL = 1;
-     static const int BATTERY  = 1 << 1;   // 电池总量、使用量
-     static const int MEMORY   = 1 << 2;   // 内存总量、使用率
-     static const int CPU      = 1 << 3;   // CPU型号、占用率
-     static const int GPU      = 1 << 4;   // GPU型号、占用率
-     static const int NETWORK  = 1 << 5;   // 网络的信号强度、网络速度、类型、代理
-     static const int CAMERA   = 1 << 6;   // 前置/后置 像素
-     static const int LOCATION = 1 << 7;   // 位置信息  eg:上海
+     static const int BATTERY   = 1 << 1;   // 电池总量、使用量
+     static const int MEMORY    = 1 << 2;   // 内存总量、使用率
+     static const int CPU       = 1 << 3;   // CPU型号、占用率
+     static const int GPU       = 1 << 4;   // GPU型号、占用率
+     static const int NETWORK   = 1 << 5;   // 网络的信号强度、网络速度、类型、代理
+     static const int CAMERA    = 1 << 6;   // 前置/后置 像素
+     static const int LOCATION  = 1 << 7;   // 位置信息  eg:上海
+     static const int SYSTEM    = 1 << 8;   // 开机时间、设备名 
+     static const int SENSOR    = 1 << 9;   // 屏幕亮度、当天步数、距离传感器、陀螺仪三轴旋转角速度、三轴线性加速度、三轴地磁强度
+     static const int BLUETOOTH = 1 << 10;  // 蓝牙状态、已配对设备列表
+     static const int SENSOR_BRIGHTNESS   = 1 << 11;  // 屏幕亮度
+     static const int SENSOR_STEP         = 1 << 12;  // 当天步数
+     static const int SENSOR_PROXIMITY    = 1 << 13;  // 距离传感器
+     static const int SENSOR_ROTATION     = 1 << 14;  // 陀螺仪三轴旋转角速度
+     static const int SENSOR_ACCELERATION = 1 << 15;  // 三轴线性加速度
+     static const int SENSOR_MAGNETIC     = 1 << 16;  // 三轴地磁强度
+     static const int SENSOR_LIGHT        = 1 << 17;  // 环境光感参数
+     static const int SENSOR_TORCH        = 1 << 18;  // 手电筒亮度级别0-1
+     static const int FPS                 = 1 << 19;  // 每秒传输帧数
   }    
   
 ```
