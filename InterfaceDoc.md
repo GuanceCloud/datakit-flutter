@@ -158,7 +158,7 @@ DataFlux Flutter SDK 接口规范
 |   geoKey    | String |  否   | Android 端特有  |
 |  useGeoKey  |  bool  |  否   | Android 端特有  |
 |   period    |  int   |  否   | 周期，单位秒，默认10秒 |
-| monitorType |  int   |  否   |     监控类型     |
+| monitorType |  int   |  是   |     监控类型     |
 
 ## 11、关闭监控周期上报
 

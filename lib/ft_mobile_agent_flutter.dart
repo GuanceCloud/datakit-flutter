@@ -174,7 +174,7 @@ class FTMobileAgentFlutter {
   }
 
   ///开启监控周期上报
-  static Future<void> startMonitor({String geoKey,bool useGeoKey,int period,int monitorType}) async {
+  static Future<void> startMonitor(int monitorType,{String geoKey,bool useGeoKey,int period}) async {
     Map<String,dynamic> map = {};
     map["geoKey"] = geoKey;
     map["useGeoKey"] = useGeoKey;

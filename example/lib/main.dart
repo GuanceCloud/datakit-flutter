@@ -207,10 +207,9 @@ class _HomeState extends State<HomeRoute> {
     return RaisedButton(
       child: Text("开启监控项周期上传"),
       onPressed: () {
-        FTMobileAgentFlutter.startMonitor(
+        FTMobileAgentFlutter.startMonitor(MonitorType.ALL,
             geoKey: "46f60b8b6963de515749001b92a866c0",
             useGeoKey: true,
-            monitorType: MonitorType.ALL,
             period: 10);
       },
     );
