@@ -12,7 +12,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     static let METHOD_STOP_SDK = "ftStopSdk"
     static let METHOD_TRACK_BACKGROUND = "ftTrackBackground"
     static let METHOD_START_LOCATION  = "ftStartLocation"
-    
+    static let METHOD_START_MONITOR = "ftStartMonitor"
+    static let METHOD_STOP_MONITOR = "ftStopMonitor"
+
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "ft_mobile_agent_flutter", binaryMessenger: registrar.messenger())
         let instance = SwiftAgentPlugin()
@@ -65,6 +67,12 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             result(nil)
         }else if(call.method == SwiftAgentPlugin.METHOD_UNBIND_USER){
             self.ftUnBindUser()
+            result(nil)
+        }else if(call.method == SwiftAgentPlugin.METHOD_START_MONITOR){
+            self.ftStartMonitor(period: args["period"] as? Int, monitorType: args["monitorType"] as? Int)
+            result(nil)
+        }else if(call.method == SwiftAgentPlugin.METHOD_STOP_MONITOR){
+            self.ftStopMonitor()
             result(nil)
         }else{
             result(FlutterMethodNotImplemented)
@@ -173,6 +181,19 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     ///   - extras:用户其他信息
     private func ftBindUser(name:String,id:String,extras:Dictionary<String, Any>?){
         FTMobileAgent.sharedInstance().bindUser(withName: name,id:id,exts:extras)
+    }
+    /// 启动监控项周期上传
+    private func ftStartMonitor(period:Int?,monitorType:Int?){
+        if((monitorType) != nil){
+            FTMobileAgent.sharedInstance().startMonitorFlush(withInterval: period ?? 10, monitorType: FTMonitorInfoType(rawValue: monitorType!))
+        }else{
+            FTMobileAgent.sharedInstance().setMonitorFlushInterval(period ?? 10)
+            FTMobileAgent.sharedInstance().stopMonitorFlush()
+        }
+    }
+    /// 关闭监控项周期上传
+    private func ftStopMonitor(){
+        FTMobileAgent.sharedInstance().stopMonitorFlush()
     }
     
     /// 用户登出

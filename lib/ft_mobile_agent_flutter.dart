@@ -11,6 +11,8 @@ class FTMobileAgentFlutter {
   static const METHOD_UNBIND_USER = "ftUnBindUser";
   static const METHOD_STOP_SDK = "ftStopSdk";
   static const METHOD_START_LOCATION = "ftStartLocation";
+  static const METHOD_START_MONITOR = "ftStartMonitor";
+  static const METHOD_STOP_MONITOR = "ftStopMonitor";
 
   static const MethodChannel _channel =
       const MethodChannel('ft_mobile_agent_flutter');
@@ -28,6 +30,7 @@ class FTMobileAgentFlutter {
         monitorType: con.monitorType,
         useGeoKey: con.useGeoKey,
         geoKey: con.getKey,
+        product:con.product
       );
     }
   }
@@ -41,7 +44,8 @@ class FTMobileAgentFlutter {
       bool needBindUser,
       int monitorType,
       bool useGeoKey,
-      String geoKey}) async {
+      String geoKey,
+      String product}) async {
     Map<String, dynamic> map = {};
     map["serverUrl"] = serverUrl;
 
@@ -72,6 +76,10 @@ class FTMobileAgentFlutter {
 
     if (geoKey != null) {
       map["geoKey"] = geoKey;
+    }
+
+    if(product != null) {
+      map["product"] = product;
     }
     await _channel.invokeMethod(METHOD_CONFIG, map);
   }
@@ -141,6 +149,21 @@ class FTMobileAgentFlutter {
     map["geoKey"] = geoKey;
     return await _channel.invokeMethod(METHOD_START_LOCATION,map);
   }
+
+  ///开启监控周期上报
+  static Future<void> startMonitor(int monitorType,{String geoKey,bool useGeoKey,int period}) async {
+    Map<String,dynamic> map = {};
+    map["geoKey"] = geoKey;
+    map["useGeoKey"] = useGeoKey;
+    map["period"] = period;
+    map["monitorType"] = monitorType;
+    return await _channel.invokeMethod(METHOD_START_MONITOR,map);
+  }
+
+  ///停止监控周期上报
+  static Future<void> stopMonitor() async{
+    return await _channel.invokeMethod(METHOD_STOP_MONITOR);
+  }
 }
 
 class Config {
@@ -153,6 +176,7 @@ class Config {
   int _monitorType;
   bool _useGeoKey;
   String _getKey;
+  String _product;
 
   Config(this.serverUrl);
 
@@ -188,6 +212,11 @@ class Config {
     return this;
   }
 
+  Config setProduct(String _product){
+    this._product = _product;
+    return this;
+  }
+
   int get monitorType => _monitorType;
 
   bool get needBindUser => _needBindUser;
@@ -203,6 +232,8 @@ class Config {
   String get getKey => _getKey;
 
   bool get useGeoKey => _useGeoKey;
+
+  String get product => _product;
 }
 
 class MonitorType {
@@ -214,6 +245,18 @@ class MonitorType {
   static const int NETWORK = 1 << 5;
   static const int CAMERA = 1 << 6;
   static const int LOCATION = 1 << 7;
+  static const int SYSTEM = 1<<8;
+  static const int SENSOR = 1<<9;
+  static const int BLUETOOTH = 1<<10;
+  static const int SENSOR_BRIGHTNESS = 1 << 11;
+  static const int SENSOR_STEP = 1 << 12;
+  static const int SENSOR_PROXIMITY = 1 << 13;
+  static const int SENSOR_ROTATION = 1 << 14;
+  static const int SENSOR_ACCELERATION = 1 << 15;
+  static const int SENSOR_MAGNETIC = 1 << 16;
+  static const int SENSOR_LIGHT = 1 << 17;
+  static const int SENSOR_TORCH = 1 << 18;
+  static const int FPS = 1 << 19;
 }
 
 /// 主动埋点数据类

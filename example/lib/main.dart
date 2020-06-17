@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -65,6 +64,8 @@ class _HomeState extends State<HomeRoute> {
               _buildStopSDKWidget(),
               _buildStartLocationWidget(),
               _buildGeoStartLocationWidget(),
+              _buildStartMonitorWidget(),
+              _buildStopMonitorWidget()
             ],
           ),
         ),
@@ -78,12 +79,13 @@ class _HomeState extends State<HomeRoute> {
       onPressed: () async {
         /// 配置方法一
         FTMobileAgentFlutter.configX(
-            Config("http://10.100.64.106:19457/v1/write/metrics")
+            Config("http://172.16.0.12:32758/v1/write/metrics?token=tkn_4c4f9f29f39c493199bb5abe7df6af21")
                 .setAK("accid", "accsk")
                 .setDataKit("flutter_datakit")
                 .setEnableLog(true)
                 .setNeedBindUser(false)
                 .setGeoKey(true, "46f60b8b6963de515749001b92a866c0")
+                .setProduct("flutter_demo")
                 .setMonitorType(MonitorType.BATTERY |
                     MonitorType.NETWORK |
                     MonitorType.LOCATION |
@@ -162,6 +164,27 @@ class _HomeState extends State<HomeRoute> {
       child: Text("停止正在执行的操作"),
       onPressed: () {
         FTMobileAgentFlutter.stopSDK();
+      },
+    );
+  }
+
+  Widget _buildStartMonitorWidget() {
+    return RaisedButton(
+      child: Text("开启监控项周期上传"),
+      onPressed: () {
+        FTMobileAgentFlutter.startMonitor(MonitorType.ALL,
+            geoKey: "46f60b8b6963de515749001b92a866c0",
+            useGeoKey: true,
+            period: 10);
+      },
+    );
+  }
+
+  Widget _buildStopMonitorWidget() {
+    return RaisedButton(
+      child: Text("停止监控项周期上传"),
+      onPressed: () {
+        FTMobileAgentFlutter.stopMonitor();
       },
     );
   }

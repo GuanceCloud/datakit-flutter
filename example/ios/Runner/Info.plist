@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSMotionUsageDescription</key>
+	<string>用于采集监控项传感器数据</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>用于采集监控项上传蓝牙相关信息</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>用于采集监控项上传蓝牙相关信息</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -41,7 +47,6 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>用于采集码上报地理位置信息</string>
 	<key>NSLocationUsageDescription</key>

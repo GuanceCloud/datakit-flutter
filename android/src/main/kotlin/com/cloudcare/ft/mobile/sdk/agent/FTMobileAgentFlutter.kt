@@ -3,10 +3,7 @@ package com.cloudcare.ft.mobile.sdk.agent
 import android.app.Application
 import android.view.ViewGroup
 import androidx.annotation.NonNull
-import com.ft.sdk.FTSDKConfig
-import com.ft.sdk.FTSdk
-import com.ft.sdk.FTTrack
-import com.ft.sdk.MonitorType
+import com.ft.sdk.*
 import com.ft.sdk.garble.SyncCallback
 import com.ft.sdk.garble.bean.TrackBean
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -84,6 +81,8 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
         const val METHOD_UNBIND_USER = "ftUnBindUser"
         const val METHOD_STOP_SDK = "ftStopSdk"
         const val METHOD_START_LOCATION = "ftStartLocation"
+        const val METHOD_START_MONITOR = "ftStartMonitor"
+        const val METHOD_STOP_MONITOR = "ftStopMonitor"
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -98,7 +97,8 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 val monitorType: Int? = call.argument<Int>("monitorType")
                 val useGeoKey: Boolean? = call.argument<Boolean>("useGeoKey")
                 val geoKey: String? = call.argument<String>("geoKey")
-                ftConfig(serverUrl, akId, akSecret, datakitUUID, enableLog, needBindUser, monitorType, useGeoKey, geoKey)
+                val product: String? = call.argument<String>("product")
+                ftConfig(serverUrl, akId, akSecret, datakitUUID, enableLog, needBindUser, monitorType, useGeoKey, geoKey,product)
                 if(monitorType?.or(MonitorType.ALL) == monitorType || monitorType?.or(MonitorType.GPU) == monitorType){
                     FTSdk.get().setGpuRenderer(viewGroup)
                 }
@@ -144,13 +144,38 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                     result.success(mapOf("code" to code,"message" to response))
                 }
             }
+            METHOD_START_MONITOR ->{
+                val geoKey = call.argument<String>("geoKey")
+                val useGeoKey = call.argument<Boolean>("useGeoKey")
+                val monitorType = call.argument<Int>("monitorType")
+                val period = call.argument<Int>("period")
+                geoKey?.let {
+                    FTMonitor.get().setGeoKey(it)
+                }
+                useGeoKey?.let {
+                    FTMonitor.get().setUseGeoKey(useGeoKey)
+                }
+                monitorType?.let {
+                    FTMonitor.get().setMonitorType(it)
+                }
+                period?.let {
+                    FTMonitor.get().setPeriod(it)
+                }
+                FTMonitor.get().start()
+                result.success(null)
+            }
+
+            METHOD_STOP_MONITOR -> {
+                FTMonitor.get().release()
+                result.success(null)
+            }
             else -> {
                 result.notImplemented()
             }
         }
     }
 
-    private fun ftConfig(serverUrl: String, akId: String?, akSecret: String?, datakitUUID: String?, enableLog: Boolean?, needBindUser: Boolean?, monitorType: Int?, useGeoKey: Boolean?, geoKey: String?) {
+    private fun ftConfig(serverUrl: String, akId: String?, akSecret: String?, datakitUUID: String?, enableLog: Boolean?, needBindUser: Boolean?, monitorType: Int?, useGeoKey: Boolean?, geoKey: String?,product:String?) {
         val enableRequestSigning = akId != null && akSecret != null
         val config = FTSDKConfig(serverUrl, enableRequestSigning, akId, akSecret)
         if (datakitUUID != null) {
@@ -162,6 +187,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
         config.apply {
             isDebug = enableLog ?: false
             isNeedBindUser = needBindUser ?: false
+            setProduct(product)
             useGeoKey?.let { use ->
                 geoKey?.let { key ->
                     setGeoKey(use, key)
