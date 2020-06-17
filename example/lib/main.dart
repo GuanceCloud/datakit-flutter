@@ -60,7 +60,6 @@ class _HomeState extends State<HomeRoute> {
               _buildSyncImmediateWidget(),
               _buildSyncListImmediateWidget(),
               _buildSyncWidget(),
-              _buildFlowChartWidget(),
               _buildBindUserWidget(),
               _buildUnBindUserWidget(),
               _buildStopSDKWidget(),
@@ -135,40 +134,6 @@ class _HomeState extends State<HomeRoute> {
         FTMobileAgentFlutter.trackBackground(
             "flutter_list_test", {"method": "后台同步"},
             tags: {"platform": "flutter"});
-      },
-    );
-  }
-
-  Widget _buildFlowChartWidget() {
-    return RaisedButton(
-      child: Text("同步流程图数据"),
-      onPressed: () {
-        FTMobileAgentFlutter.trackFlowChart(
-            "flutter_agent", "trace-001", "开始", 1000);
-        FTMobileAgentFlutter.trackFlowChart(
-            "flutter_agent", "trace-001", "流程一", 1000,
-            parent: "开始");
-        FTMobileAgentFlutter.trackFlowChart(
-            "flutter_agent", "trace-001", "流程二", 1000,
-            parent: "流程一");
-        FTMobileAgentFlutter.trackFlowChart(
-            "flutter_agent", "trace-001", "选择", 1000,
-            parent: "流程二");
-        FTMobileAgentFlutter.trackFlowChart(
-            "flutter_agent", "trace-001", "流程三", 1000,
-            parent: "选择");
-        FTMobileAgentFlutter.trackFlowChart(
-            "flutter_agent", "trace-001", "流程四", 1000,
-            parent: "选择");
-        FTMobileAgentFlutter.trackFlowChart(
-            "flutter_agent", "trace-001", "流程五", 1000,
-            parent: "流程三");
-        FTMobileAgentFlutter.trackFlowChart(
-            "flutter_agent", "trace-001", "流程五", 1000,
-            parent: "流程四");
-        FTMobileAgentFlutter.trackFlowChart(
-            "flutter_agent", "trace-001", "结束", 1000,
-            parent: "流程五");
       },
     );
   }
