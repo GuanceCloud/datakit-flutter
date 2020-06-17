@@ -6,7 +6,6 @@ class FTMobileAgentFlutter {
   static const METHOD_CONFIG = "ftConfig";
   static const METHOD_TRACK = "ftTrack";
   static const METHOD_TRACK_LIST = "ftTrackList";
-  static const METHOD_TRACK_FLOW_CHART = "ftTrackFlowChart";
   static const METHOD_TRACK_BACKGROUND = "ftTrackBackground";
   static const METHOD_BIND_USER = "ftBindUser";
   static const METHOD_UNBIND_USER = "ftUnBindUser";
@@ -100,28 +99,6 @@ class FTMobileAgentFlutter {
     return await _channel.invokeMethod(METHOD_TRACK_LIST, map);
   }
 
-  ///上报流程图
-  static Future<void> trackFlowChart(
-      String production, String traceId, String name, int duration,
-      {String parent,
-      Map<String, dynamic> tags,
-      Map<String, dynamic> fields}) async {
-    Map<String, dynamic> map = {};
-    map["production"] = production;
-    map["traceId"] = traceId;
-    map["name"] = name;
-    map["duration"] = duration;
-    if (parent != null) {
-      map["parent"] = parent;
-    }
-    if (tags != null) {
-      map["tags"] = tags;
-    }
-    if (fields != null) {
-      map["fields"] = fields;
-    }
-    return await _channel.invokeMethod(METHOD_TRACK_FLOW_CHART, map);
-  }
 
   ///主动埋点数据上报（后台运行）
   static Future<void> trackBackground(

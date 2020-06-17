@@ -7,18 +7,18 @@
 基于 **ft ios android** 调用的 **plugin**
 
   * [使用](#使用)
-    + [1. 初始化配置](#1-初始化配置)
-    + [2. 位置信息状态获取](#2-位置信息状态获取)
-    + [3. 上报数据 与 上报列表](#3-上报数据-与-上报列表)
-    + [4. 上报流程图](#4-上报流程图)
-    + [5. 主动埋点数据上报（后台运行）](#5-主动埋点数据上报后台运行)
-    + [6. 用户的绑定与注销](#6-用户的绑定与注销)
-    + [7. 停止 SDK 后台正在执行的操作](#7-停止-sdk-后台正在执行的操作)
-    + [8. 使用示例](#8-使用示例)
+    + [初始化配置](#初始化配置)
+    + [位置信息状态获取](#位置信息状态获取)
+    + [上报数据 与 上报列表](#上报数据-与-上报列表)
+    + [上报流程图](#上报流程图)
+    + [主动埋点数据上报（后台运行）](#主动埋点数据上报后台运行)
+    + [用户的绑定与注销](#用户的绑定与注销)
+    + [停止 SDK 后台正在执行的操作](#停止-sdk-后台正在执行的操作)
+    + [使用示例](#使用示例)
   * [参数与错误码](#参数与错误码)
-    + [1. Config 可配置参数](#1-config-可配置参数)
-    + [2. TrackBean](#2-trackbean)
-    + [3. 错误码](#3-错误码)
+    + [Config 可配置参数](#config-可配置参数)
+    + [TrackBean](#trackbean)
+    + [错误码](#错误码)
   * [常见问题](#常见问题)
 
 
@@ -26,8 +26,8 @@
 ```dart
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
 ```
-### 1. 初始化配置
- 设置 [Config](#1-config-可配置参数) 的属性 ，启动 **SDK**。    
+### 初始化配置
+ 设置 [Config](#config-可配置参数) 的属性 ，启动 **SDK**。    
  
  - 方法一
 
@@ -60,7 +60,7 @@ import 'package:ft_mobile_agent_flutter/ft_mobile_agent.dart';
       String geoKey}) async
 ```
 
-### 2. 位置信息状态获取
+### 位置信息状态获取
 
 ```dart
 /**
@@ -71,10 +71,10 @@ static Future<Map<dynamic,dynamic>> startLocation({String geoKey}) async
 ```
 - 返回值    
 
-   返回 **Map** 中 `code` 表示[错误码](#3-错误码)，`message` 表示错误信息。
+   返回 **Map** 中 `code` 表示[错误码](#错误码)，`message` 表示错误信息。
 `code = 0` ： 位置信息获取成功。
 
-### 3. 上报数据 与 上报列表
+### 上报数据 与 上报列表
 -  上报数据
 
 ```dart
@@ -89,7 +89,7 @@ static Future<Map<dynamic, dynamic>> track(
       [Map<String, dynamic> tags]) async
 ```
 
-- 上报列表（[TrackBean](#2-trackbean)）
+- 上报列表（[TrackBean](#trackbean)）
 
 ```dart
 /**
@@ -105,9 +105,9 @@ static Future<Map<dynamic, dynamic>> track(
 - 返回值    
 
    返回 **Map** 中 `code` 表示网络请求返回的返回码，`response` 为服务端返回的信息。
-`code` 的值除了 **HTTP** 协议中规定的返回码， **FT SDK** 中额外规定了 4 种类型的 [错误码](#3-错误码)，他们是 101，102，103，104，他们分别代表的意思是网络问题、参数问题、IO异常和未知错误。
+`code` 的值除了 **HTTP** 协议中规定的返回码， **FT SDK** 中额外规定了 4 种类型的 [错误码](#错误码)，他们是 101，102，103，104，他们分别代表的意思是网络问题、参数问题、IO异常和未知错误。
    
-### 4. 上报流程图
+### 上报流程图
 -  方法
 
 ```dart
@@ -129,7 +129,7 @@ static Future<void> trackFlowChart(
 
 ```
 
-### 5. 主动埋点数据上报（后台运行）
+### 主动埋点数据上报（后台运行）
 -  方法    
 
 ```dart
@@ -146,8 +146,8 @@ static Future<void> trackBackground(
 ```
 
 
-### 6. 用户的绑定与注销
-   **FT SDK** 提供了绑定用户和注销用户的方法，[Config](#1-config-可配置参数) 属性`needBindUser` 为 `YES ` 时（默认为 `NO`），用户绑定的状态下，才会进行数据的传输。
+### 用户的绑定与注销
+   **FT SDK** 提供了绑定用户和注销用户的方法，[Config](#config-可配置参数) 属性`needBindUser` 为 `YES ` 时（默认为 `NO`），用户绑定的状态下，才会进行数据的传输。
 
 - 绑定用户    
 
@@ -171,7 +171,7 @@ static Future<void> trackBackground(
  static Future<void> unbindUser() async
 ```
 
-### 7. 停止 SDK 后台正在执行的操作
+### 停止 SDK 后台正在执行的操作
 -  方法
 
 ```dart
@@ -181,12 +181,12 @@ static Future<void> trackBackground(
  static Future<void> stopSDK() async
 ```
        
-### 8. 使用示例
+### 使用示例
    [方法使用示例](https://pub.dev/packages/ft_mobile_agent_flutter#-example-tab-)
 
 
 ## 参数与错误码
-### 1. Config 可配置参数
+### Config 可配置参数
 
 | 字段 | 类型 |说明|是否必须|
 |:--------:|:--------:|:--------:|:--------:|
@@ -213,7 +213,7 @@ static Future<void> trackBackground(
   
 ```
 
-### 2. TrackBean
+### TrackBean
 
 | 字段 | 类型 |说明|是否必须|
 |:--------:|:--------:|:--------:|:--------:|
@@ -221,7 +221,7 @@ static Future<void> trackBackground(
 |tags|Map|自定义标签|否|
 |fields|Map| 自定义指标|是|
 
-### 3. 错误码   
+### 错误码   
 | 字段 | 值 |说明|
 |:--------:|:--------:|:--------:|
 | NetWorkException |101|网络问题|

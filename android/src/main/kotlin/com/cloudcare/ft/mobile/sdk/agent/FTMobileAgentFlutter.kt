@@ -79,7 +79,6 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
         const val METHOD_CONFIG = "ftConfig"
         const val METHOD_TRACK = "ftTrack"
         const val METHOD_TRACK_LIST = "ftTrackList"
-        const val METHOD_TRACK_FLOW_CHART = "ftTrackFlowChart"
         const val METHOD_TRACK_BACKGROUND = "ftTrackBackground"
         const val METHOD_BIND_USER = "ftBindUser"
         const val METHOD_UNBIND_USER = "ftUnBindUser"
@@ -115,20 +114,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 val list = call.argument<List<Map<String, Any?>>>("list")
                 list?.let { ftTrackListSync(result, it) }
             }
-            METHOD_TRACK_FLOW_CHART -> {
-                val production = call.argument<String>("production")
-                val traceId = call.argument<String>("traceId")
-                val name = call.argument<String>("name")
-                val parent = call.argument<String>("parent")
-                val duration = call.argument<Long>("duration")!!
-                val tags = call.argument<Map<String, Any>>("tags")
-                val fields = call.argument<Map<String, Any>>("fields")
-                val tagsJS = if (tags != null) JSONObject(tags) else null
-                val fieldsJS = if (fields != null) JSONObject(fields) else null
 
-                FTTrack.getInstance().trackFlowChart(production, traceId, name, parent, duration, tagsJS, fieldsJS)
-                result.success(null)
-            }
             METHOD_TRACK_BACKGROUND -> {
                 val measurement = call.argument<String>("measurement")!!
                 val fields = call.argument<Map<String, Any>>("fields")!!

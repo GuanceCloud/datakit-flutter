@@ -1,13 +1,12 @@
 import Flutter
 import UIKit
-import FTMobileAgent
+import FTMobileSDK
 
 public class SwiftAgentPlugin: NSObject, FlutterPlugin {
 
     static let METHOD_CONFIG = "ftConfig"
     static let METHOD_TRACK = "ftTrack"
     static let METHOD_TRACK_LIST = "ftTrackList"
-    static let METHOD_TRACK_FLOW_CHART = "ftTrackFlowChart"
     static let METHOD_BIND_USER = "ftBindUser"
     static let METHOD_UNBIND_USER = "ftUnBindUser"
     static let METHOD_STOP_SDK = "ftStopSdk"
@@ -28,7 +27,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         }
         
         if (call.method == SwiftAgentPlugin.METHOD_CONFIG) {
-            self.ftConfig(metricsUrl: args["serverUrl"] as! String, akId: args["akId"] as? String, akSecret:(args["akSecret"] as? String),datakitUUID: args["datakitUUID"] as? String, enableLog: args["enableLog"] as? Bool, needBindUser: (args["needBindUser"] as? Bool),monitorType: (args["monitorType"] as? Int))
+            self.ftConfig(metricsUrl: args["serverUrl"] as! String, akId: args["akId"] as? String, akSecret:(args["akSecret"] as? String),datakitUUID: args["datakitUUID"] as? String, enableLog: args["enableLog"] as? Bool, needBindUser: (args["needBindUser"] as? Bool),monitorType: (args["monitorType"] as? Int),datawayToken:(args["monitorType"] as? String) )
             result(nil)
         } else if (call.method == SwiftAgentPlugin.METHOD_TRACK) {
             DispatchQueue.global(qos: .userInitiated).async {
@@ -50,9 +49,6 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             }
         }else if(call.method == SwiftAgentPlugin.METHOD_BIND_USER){
             self.ftBindUser(name: args["name"] as! String, id: args["id"] as! String, extras: args["extras"] as? Dictionary<String, Any>)
-            result(nil)
-        }else if(call.method == SwiftAgentPlugin.METHOD_TRACK_FLOW_CHART){
-            self.ftTrackFlowChart(production: args["production"] as! String, traceId: args["production"] as! String, name: args["name"] as! String, parent: args["parent"] as? String, duration: args["duration"] as! Int, tags: args["tags"] as? Dictionary<String, Any>, fields: (args["fields"] as? Dictionary<String, Any>))
             result(nil)
         }else if(call.method == SwiftAgentPlugin.METHOD_TRACK_BACKGROUND){
             self.ftTrackBackground(measurement: args["measurement"] as! String, tags: args["tags"] as? Dictionary<String, Any>, fields: (args["fields"] as! Dictionary<String, Any>))
@@ -81,9 +77,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     ///   - metricsUrl: 服务器地址
     ///   - akId: access key
     ///   - akSecret: access secret
-    private func ftConfig(metricsUrl:String,akId:String?,akSecret:String?,datakitUUID:String?,enableLog:Bool?,needBindUser:Bool?,monitorType:Int?) {
+    private func ftConfig(metricsUrl:String,akId:String?,akSecret:String?,datakitUUID:String?,enableLog:Bool?,needBindUser:Bool?,monitorType:Int?,datawayToken:String?) {
         let enableRequestSigning = akId != nil && akSecret != nil
-        let config: FTMobileConfig = FTMobileConfig(metricsUrl: metricsUrl, akId: akId, akSecret: akSecret, enableRequestSigning: enableRequestSigning)
+        let config: FTMobileConfig = FTMobileConfig(metricsUrl: metricsUrl, datawayToken:datawayToken,  akId: akId, akSecret: akSecret, enableRequestSigning: enableRequestSigning)
         
 //        config.enableAutoTrack = true
         config.enableLog = true
@@ -158,23 +154,6 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         return result!
     }
     
-    /// 上报流程图
-    /// - Parameters:
-    ///   - production: 指标类型
-    ///   - traceId: 标签
-    ///   - name:流程节点名称
-    ///   - parent:当前流程节点的上一个流程节点的名称
-    ///   - duration:持续时间
-    ///   - tags:标签
-    ///   - fields: 值
-    private func ftTrackFlowChart(production:String,traceId:String,name:String,parent:String?,duration:Int,tags:Dictionary<String, Any>?,fields:Dictionary<String, Any>?){
-        if(tags != nil){
-            FTMobileAgent.sharedInstance().flowTrack(production,traceId:traceId,name:name,parent:parent,tags:tags, duration:duration,field:fields)
-        }else{
-            FTMobileAgent.sharedInstance().flowTrack(production,traceId:traceId,name:name,parent:parent, tags: tags,duration:duration,field:fields)
-        }
-    }
-    
     /// 主动埋点后台上传
     /// - Parameters:
     ///   - measurement:指标类型
@@ -182,9 +161,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     ///   - fields: 值
     private func ftTrackBackground(measurement:String,tags:Dictionary<String, Any>?,fields:Dictionary<String, Any>){
         if(tags != nil){
-            FTMobileAgent.sharedInstance().trackBackgroud(measurement,tags:tags,field:fields)
+            FTMobileAgent.sharedInstance().trackBackground(measurement,tags:tags,field:fields)
         }else{
-            FTMobileAgent.sharedInstance().trackBackgroud(measurement,field:fields)
+            FTMobileAgent.sharedInstance().trackBackground(measurement,field:fields)
         }
     }
     /// 绑定用户
