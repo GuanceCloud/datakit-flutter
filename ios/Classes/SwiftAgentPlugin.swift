@@ -29,7 +29,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         }
         
         if (call.method == SwiftAgentPlugin.METHOD_CONFIG) {
-            self.ftConfig(metricsUrl: args["serverUrl"] as! String, akId: args["akId"] as? String, akSecret:(args["akSecret"] as? String),datakitUUID: args["datakitUUID"] as? String, enableLog: args["enableLog"] as? Bool, needBindUser: (args["needBindUser"] as? Bool),monitorType: (args["monitorType"] as? Int),datawayToken:(args["monitorType"] as? String) )
+            self.ftConfig(metricsUrl: args["serverUrl"] as! String, akId: args["akId"] as? String, akSecret:(args["akSecret"] as? String),datakitUUID: args["datakitUUID"] as? String, enableLog: args["enableLog"] as? Bool, needBindUser: (args["needBindUser"] as? Bool),monitorType: (args["monitorType"] as? Int),datawayToken:(args["token"] as? String) )
             result(nil)
         } else if (call.method == SwiftAgentPlugin.METHOD_TRACK) {
             DispatchQueue.global(qos: .userInitiated).async {
