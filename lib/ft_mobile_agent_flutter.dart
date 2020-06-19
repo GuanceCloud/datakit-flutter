@@ -30,7 +30,7 @@ class FTMobileAgentFlutter {
         monitorType: con.monitorType,
         useGeoKey: con.useGeoKey,
         geoKey: con.getKey,
-        product:con.product
+        token: con._token
       );
     }
   }
@@ -45,7 +45,7 @@ class FTMobileAgentFlutter {
       int monitorType,
       bool useGeoKey,
       String geoKey,
-      String product}) async {
+      String token}) async {
     Map<String, dynamic> map = {};
     map["serverUrl"] = serverUrl;
 
@@ -78,9 +78,10 @@ class FTMobileAgentFlutter {
       map["geoKey"] = geoKey;
     }
 
-    if(product != null) {
-      map["product"] = product;
+    if(token !=null ){
+      map["token"] = token;
     }
+
     await _channel.invokeMethod(METHOD_CONFIG, map);
   }
 
@@ -176,7 +177,7 @@ class Config {
   int _monitorType;
   bool _useGeoKey;
   String _getKey;
-  String _product;
+  String _token;
 
   Config(this.serverUrl);
 
@@ -212,10 +213,11 @@ class Config {
     return this;
   }
 
-  Config setProduct(String _product){
-    this._product = _product;
+  Config setToken(String token){
+    this._token = token;
     return this;
   }
+
 
   int get monitorType => _monitorType;
 
@@ -232,8 +234,6 @@ class Config {
   String get getKey => _getKey;
 
   bool get useGeoKey => _useGeoKey;
-
-  String get product => _product;
 }
 
 class MonitorType {

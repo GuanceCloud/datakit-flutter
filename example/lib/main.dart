@@ -79,13 +79,13 @@ class _HomeState extends State<HomeRoute> {
       onPressed: () async {
         /// 配置方法一
         FTMobileAgentFlutter.configX(
-            Config("http://172.16.0.12:32758/v1/write/metrics?token=tkn_4c4f9f29f39c493199bb5abe7df6af21")
+            Config("http://172.16.0.12:32758")
                 .setAK("accid", "accsk")
                 .setDataKit("flutter_datakit")
                 .setEnableLog(true)
                 .setNeedBindUser(false)
+                .setToken("tkn_4c4f9f29f39c493199bb5abe7df6af21")
                 .setGeoKey(true, "46f60b8b6963de515749001b92a866c0")
-                .setProduct("flutter_demo")
                 .setMonitorType(MonitorType.BATTERY |
                     MonitorType.NETWORK |
                     MonitorType.LOCATION |

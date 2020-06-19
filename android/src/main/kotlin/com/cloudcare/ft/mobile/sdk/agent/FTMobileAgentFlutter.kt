@@ -98,8 +98,9 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 val useGeoKey: Boolean? = call.argument<Boolean>("useGeoKey")
                 val geoKey: String? = call.argument<String>("geoKey")
                 val product: String? = call.argument<String>("product")
-                ftConfig(serverUrl, akId, akSecret, datakitUUID, enableLog, needBindUser, monitorType, useGeoKey, geoKey,product)
-                if(monitorType?.or(MonitorType.ALL) == monitorType || monitorType?.or(MonitorType.GPU) == monitorType){
+                val token: String? = call.argument<String>("token")
+                ftConfig(serverUrl, akId, akSecret, datakitUUID, enableLog, needBindUser, monitorType, useGeoKey, geoKey, product, token)
+                if (monitorType?.or(MonitorType.ALL) == monitorType || monitorType?.or(MonitorType.GPU) == monitorType) {
                     FTSdk.get().setGpuRenderer(viewGroup)
                 }
                 result.success(null)
@@ -141,10 +142,10 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
             METHOD_START_LOCATION -> {
                 val geoKey = call.argument<String>("geoKey")
                 FTSdk.startLocation(geoKey) { code, response ->
-                    result.success(mapOf("code" to code,"message" to response))
+                    result.success(mapOf("code" to code, "message" to response))
                 }
             }
-            METHOD_START_MONITOR ->{
+            METHOD_START_MONITOR -> {
                 val geoKey = call.argument<String>("geoKey")
                 val useGeoKey = call.argument<Boolean>("useGeoKey")
                 val monitorType = call.argument<Int>("monitorType")
@@ -175,7 +176,9 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
         }
     }
 
-    private fun ftConfig(serverUrl: String, akId: String?, akSecret: String?, datakitUUID: String?, enableLog: Boolean?, needBindUser: Boolean?, monitorType: Int?, useGeoKey: Boolean?, geoKey: String?,product:String?) {
+    private fun ftConfig(serverUrl: String, akId: String?, akSecret: String?, datakitUUID: String?,
+                         enableLog: Boolean?, needBindUser: Boolean?, monitorType: Int?, useGeoKey: Boolean?,
+                         geoKey: String?, product: String?, token: String?) {
         val enableRequestSigning = akId != null && akSecret != null
         val config = FTSDKConfig(serverUrl, enableRequestSigning, akId, akSecret)
         if (datakitUUID != null) {
@@ -187,7 +190,9 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
         config.apply {
             isDebug = enableLog ?: false
             isNeedBindUser = needBindUser ?: false
-            setProduct(product)
+            token?.let {
+                setDataWayToken(token)
+            }
             useGeoKey?.let { use ->
                 geoKey?.let { key ->
                     setGeoKey(use, key)
@@ -198,7 +203,8 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
         FTSdk.install(config)
     }
 
-    private fun ftTrackSync(result: Result, measurement: String, tags: Map<String, Any?>?, fields: Map<String, Any?>?) {
+    private fun ftTrackSync(result: Result, measurement: String, tags: Map<String, Any?>?,
+                            fields: Map<String, Any?>?) {
         GlobalScope.launch {
             ftTrack(measurement, tags, fields, SyncCallback { code, response ->
                 val map = mapOf("code" to code, "response" to response)

@@ -8,7 +8,6 @@ void main() {
   const METHOD_CONFIG = "ftConfig";
   const METHOD_TRACK = "ftTrack";
   const METHOD_TRACK_LIST = "ftTrackList";
-  const METHOD_TRACK_FLOW_CHART = "ftTrackFlowChart";
   const METHOD_TRACK_BACKGROUND = "ftTrackBackground";
   const METHOD_BIND_USER = "ftBindUser";
   const METHOD_UNBIND_USER = "ftUnBindUser";
@@ -19,7 +18,6 @@ void main() {
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
       switch (methodCall.method) {
         case METHOD_CONFIG:
-        case METHOD_TRACK_FLOW_CHART:
         case METHOD_TRACK_BACKGROUND:
         case METHOD_BIND_USER:
         case METHOD_UNBIND_USER:
@@ -43,11 +41,12 @@ void main() {
   /// 测试配置
   test("config", () async {
     FTMobileAgentFlutter.configX(
-        Config("http://10.100.64.106:19457/v1/write/metrics")
+        Config("http://10.100.64.106:19457")
             .setAK("accid", "accsk")
             .setDataKit("flutter_datakit")
             .setEnableLog(true)
             .setNeedBindUser(false)
+            .setToken("tkn_4c4f9f29f39c493199bb5abe7df6af21")
             .setMonitorType(MonitorType.BATTERY | MonitorType.NETWORK)
     );
     expect(resultCode, isTrue);
@@ -78,12 +77,6 @@ void main() {
     expect(result, resultCode);
   });
 
-  /// 测试流程图上报
-  test("trackFlowChart", () async {
-    FTMobileAgentFlutter.trackFlowChart(
-        "flutter_agent", "trace-001", "name", 1000);
-    expect(resultCode, isTrue);
-  });
 
   /// 测试主动后台上报
   test("trackBackground",() async{
