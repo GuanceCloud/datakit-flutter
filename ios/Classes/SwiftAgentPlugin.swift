@@ -93,7 +93,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         config.enableLog = true
         config.needBindUser = needBindUser ?? false
         if((monitorType) != nil){
-            config.monitorInfoType = FTMonitorInfoType(rawValue: monitorType!);
+            config.monitorInfoType = FTMonitorInfoType(rawValue: UInt(monitorType!));
         }
         if(datakitUUID != nil){
           config.xDataKitUUID = datakitUUID!
@@ -185,7 +185,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     /// 启动监控项周期上传
     private func ftStartMonitor(period:Int?,monitorType:Int?){
         if((monitorType) != nil){
-            FTMobileAgent.sharedInstance().startMonitorFlush(withInterval: period ?? 10, monitorType: FTMonitorInfoType(rawValue: monitorType!))
+            FTMobileAgent.sharedInstance().startMonitorFlush(withInterval: period ?? 10, monitorType: FTMonitorInfoType(rawValue: UInt(monitorType!)))
         }else{
             FTMobileAgent.sharedInstance().setMonitorFlushInterval(period ?? 10)
             FTMobileAgent.sharedInstance().stopMonitorFlush()

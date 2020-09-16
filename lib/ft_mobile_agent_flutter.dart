@@ -237,7 +237,7 @@ class Config {
 }
 
 class MonitorType {
-  static const int ALL = 1;
+  static const int ALL = 0xFFFFFFFF;
   static const int BATTERY = 1 << 1;
   static const int MEMORY = 1 << 2;
   static const int CPU = 1 << 3;
