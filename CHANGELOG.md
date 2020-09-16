@@ -1,3 +1,7 @@
+## 0.0.1-dev.5
+* 更新 Android iOS Dataflux SDK
+
+---
 ## 0.0.1-dev.4
 * 优化地理位置获取的方法
 
