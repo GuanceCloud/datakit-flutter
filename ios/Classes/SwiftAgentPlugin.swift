@@ -182,9 +182,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     ///   - fields: 值
     private func ftTrackBackground(measurement:String,tags:Dictionary<String, Any>?,fields:Dictionary<String, Any>){
         if(tags != nil){
-            FTMobileAgent.sharedInstance().trackBackgroud(measurement,tags:tags,field:fields)
+            FTMobileAgent.sharedInstance().trackBackground(measurement,tags:tags,field:fields)
         }else{
-            FTMobileAgent.sharedInstance().trackBackgroud(measurement,field:fields)
+            FTMobileAgent.sharedInstance().trackBackground(measurement, field: fields)
         }
     }
     /// 绑定用户
