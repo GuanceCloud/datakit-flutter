@@ -16,7 +16,6 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-import io.flutter.plugin.common.PluginRegistry.Registrar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -34,7 +33,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
     private var viewGroup: ViewGroup? = null
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "ft_mobile_agent_flutter")
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "ft_mobile_agent_flutter")
         channel.setMethodCallHandler(this)
         application = flutterPluginBinding.applicationContext as Application
     }
@@ -70,12 +69,6 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
     // depending on the user's project. onAttachedToEngine or registerWith must both be defined
     // in the same class.
     companion object {
-        @JvmStatic
-        fun registerWith(registrar: Registrar) {
-            val channel = MethodChannel(registrar.messenger(), "ft_mobile_agent_flutter")
-            channel.setMethodCallHandler(FTMobileAgentFlutter())
-        }
-
         const val METHOD_CONFIG = "ftConfig"
         const val METHOD_TRACK = "ftTrack"
         const val METHOD_TRACK_LIST = "ftTrackList"
@@ -100,7 +93,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 val useGeoKey: Boolean? = call.argument<Boolean>("useGeoKey")
                 val geoKey: String? = call.argument<String>("geoKey")
                 ftConfig(serverUrl, akId, akSecret, datakitUUID, enableLog, needBindUser, monitorType, useGeoKey, geoKey)
-                if(monitorType?.or(MonitorType.ALL) == monitorType || monitorType?.or(MonitorType.GPU) == monitorType){
+                if (monitorType?.or(MonitorType.ALL) == monitorType || monitorType?.or(MonitorType.GPU) == monitorType) {
                     FTSdk.get().setGpuRenderer(viewGroup)
                 }
                 result.success(null)
@@ -155,7 +148,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
             METHOD_START_LOCATION -> {
                 val geoKey = call.argument<String>("geoKey")
                 FTSdk.startLocation(geoKey) { code, response ->
-                    result.success(mapOf("code" to code,"message" to response))
+                    result.success(mapOf("code" to code, "message" to response))
                 }
             }
             else -> {
