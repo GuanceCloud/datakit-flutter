@@ -1,3 +1,7 @@
+## 0.0.2-dev.1
+* 适配新 rum SDK
+
+---
 ## 0.0.1-dev.5
 * 更新 Android iOS Dataflux SDK
 
