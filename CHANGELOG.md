@@ -1,5 +1,6 @@
-## 0.0.2-dev.1
+## 1.0.1-dev.1
 * 适配新 rum SDK
+* null safety
 
 ---
 ## 0.0.1-dev.5
