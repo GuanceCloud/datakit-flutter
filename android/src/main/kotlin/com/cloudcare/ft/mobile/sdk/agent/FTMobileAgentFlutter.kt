@@ -13,7 +13,6 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-import io.flutter.plugin.common.PluginRegistry.Registrar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -31,7 +30,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
     private var viewGroup: ViewGroup? = null
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "ft_mobile_agent_flutter")
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "ft_mobile_agent_flutter")
         channel.setMethodCallHandler(this)
         application = flutterPluginBinding.applicationContext as Application
     }
@@ -67,12 +66,6 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
     // depending on the user's project. onAttachedToEngine or registerWith must both be defined
     // in the same class.
     companion object {
-        @JvmStatic
-        fun registerWith(registrar: Registrar) {
-            val channel = MethodChannel(registrar.messenger(), "ft_mobile_agent_flutter")
-            channel.setMethodCallHandler(FTMobileAgentFlutter())
-        }
-
         const val METHOD_CONFIG = "ftConfig"
         const val METHOD_TRACK = "ftTrack"
         const val METHOD_TRACK_LIST = "ftTrackList"

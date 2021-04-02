@@ -161,7 +161,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         
         return result!
     }
-    
+
     /// 主动埋点后台上传
     /// - Parameters:
     ///   - measurement:指标类型
@@ -195,7 +195,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     private func ftStopMonitor(){
         FTMobileAgent.sharedInstance().stopMonitorFlush()
     }
-    
+
     /// 用户登出
     private func ftUnBindUser(){
         FTMobileAgent.sharedInstance().logout()

@@ -74,12 +74,12 @@ class _HomeState extends State<HomeRoute> {
   }
 
   Widget _buildConfigWidget() {
-    return RaisedButton(
+    return ElevatedButton(
       child: Text("设置配置"),
       onPressed: () async {
         /// 配置方法一
         FTMobileAgentFlutter.configX(
-            Config("http://172.16.0.12:32758")
+            Config("http://10.100.64.106:19457/v1/write/metrics")
                 .setAK("accid", "accsk")
                 .setDataKit("flutter_datakit")
                 .setEnableLog(true)
@@ -105,7 +105,7 @@ class _HomeState extends State<HomeRoute> {
   }
 
   Widget _buildSyncImmediateWidget() {
-    return RaisedButton(
+    return ElevatedButton(
       child: Text("同步一条数据（直接上传）"),
       onPressed: () async {
         var result = await FTMobileAgentFlutter.track(
@@ -116,7 +116,7 @@ class _HomeState extends State<HomeRoute> {
   }
 
   Widget _buildSyncListImmediateWidget() {
-    return RaisedButton(
+    return ElevatedButton(
       child: Text("同步一组数据（直接上传）"),
       onPressed: () async {
         var result = await FTMobileAgentFlutter.trackList([
@@ -130,7 +130,7 @@ class _HomeState extends State<HomeRoute> {
   }
 
   Widget _buildSyncWidget() {
-    return RaisedButton(
+    return ElevatedButton(
       child: Text("同步（后台执行）"),
       onPressed: () {
         FTMobileAgentFlutter.trackBackground(
@@ -141,7 +141,7 @@ class _HomeState extends State<HomeRoute> {
   }
 
   Widget _buildBindUserWidget() {
-    return RaisedButton(
+    return ElevatedButton(
       child: Text("绑定用户"),
       onPressed: () {
         FTMobileAgentFlutter.bindUser("flutter_demo", "id_001",
@@ -151,7 +151,7 @@ class _HomeState extends State<HomeRoute> {
   }
 
   Widget _buildUnBindUserWidget() {
-    return RaisedButton(
+    return ElevatedButton(
       child: Text("解绑用户"),
       onPressed: () {
         FTMobileAgentFlutter.unbindUser();
@@ -160,7 +160,7 @@ class _HomeState extends State<HomeRoute> {
   }
 
   Widget _buildStopSDKWidget() {
-    return RaisedButton(
+    return ElevatedButton(
       child: Text("停止正在执行的操作"),
       onPressed: () {
         FTMobileAgentFlutter.stopSDK();
@@ -190,7 +190,7 @@ class _HomeState extends State<HomeRoute> {
   }
 
   Widget _buildStartLocationWidget() {
-    return RaisedButton(
+    return ElevatedButton(
       child: Text("定位异步通知结果" + locationState),
       onPressed: () async {
         var result = await FTMobileAgentFlutter.startLocation();
@@ -205,7 +205,7 @@ class _HomeState extends State<HomeRoute> {
   }
 
   Widget _buildGeoStartLocationWidget() {
-    return RaisedButton(
+    return ElevatedButton(
       child: Text("（仅 Android ）高德定位异步通知结果" + locationStateGeo),
       onPressed: () async {
         var result = await FTMobileAgentFlutter.startLocation(
@@ -229,14 +229,14 @@ class _HomeState extends State<HomeRoute> {
             title: Text("警告"),
             content: Text("你拒绝了\n$tip 权限，拒绝后将无法使用"),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                   requestPermission(permissions);
                 },
                 child: Text("重新请求"),
               ),
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -253,7 +253,7 @@ class _HomeState extends State<HomeRoute> {
     var tip = "";
     if (status.isNotEmpty) {
       status.forEach((permission, state) {
-        state.isUndetermined;
+        state.isGranted;
         tip += permission.toString() + "\n";
       });
       _showPermissionTip(tip);
