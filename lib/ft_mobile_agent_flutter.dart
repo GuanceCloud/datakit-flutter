@@ -23,7 +23,7 @@ class FTMobileAgentFlutter {
     Map<String, dynamic> map = {};
     map["content"] = content;
     map["status"] = status.index;
-    return await _channel.invokeListMethod(METHOD_LOGGING, map);
+    await _channel.invokeListMethod(METHOD_LOGGING, map);
   }
 }
 
