@@ -3,9 +3,7 @@ package com.cloudcare.ft.mobile.sdk.agent
 import android.app.Application
 import android.view.ViewGroup
 import androidx.annotation.NonNull
-import com.ft.sdk.FTLogger
-import com.ft.sdk.FTSDKConfig
-import com.ft.sdk.FTSdk
+import com.ft.sdk.*
 import com.ft.sdk.garble.bean.Status
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
@@ -64,16 +62,156 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
     // in the same class.
     companion object {
         const val METHOD_CONFIG = "ftConfig"
+
+        const val METHOD_BIND_USER = "ftBindUser"
+        const val METHOD_UNBIND_USER = "ftUnBindUser"
+
+        const val METHOD_LOG_CONFIG = "ftLogConfig"
         const val METHOD_LOGGING = "ftLogging"
+
+        const val METHOD_RUM_CONFIG = "ftRumConfig"
+        const val METHOD_RUM_ADD_ACTION = "ftRumAddAction"
+        const val METHOD_RUM_START_VIEW = "ftRumStartView"
+        const val METHOD_RUM_STOP_VIEW = "ftRumStopView"
+        const val METHOD_RUM_ADD_ERROR = "ftRumAddError"
+        const val METHOD_RUM_START_RESOURCE = "ftRumStartResource"
+        const val METHOD_RUM_STOP_RESOURCE = "ftRumStopResource"
+
+        const val METHOD_TRACE_CONFIG = "ftTraceConfig"
+        const val METHOD_TRACE = "ftTrace"
+        const val METHOD_GET_TRACE_HEADER = "ftTraceGetHeader"
+
+
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         when (call.method) {
             METHOD_CONFIG -> {
                 val metricsUrl: String = call.argument<String>("metricsUrl")!!
-                FTSdk.install(FTSDKConfig.builder(metricsUrl).setDebug(true))
+                val useOAID: Boolean? = call.argument<Boolean>("useOAID")
+                val debug: Boolean? = call.argument<Boolean>("debug")
+                val datakitUUID: String? = call.argument<String>("datakitUUID")
+                val env: Int? = call.argument<Int>("env")
+                val envType: EnvType = when (env) {
+                    EnvType.PROD.ordinal -> {
+                        EnvType.PROD
+                    }
+                    EnvType.GRAY.ordinal -> {
+                        EnvType.GRAY
+                    }
+                    EnvType.PRE.ordinal -> {
+                        EnvType.PRE
+                    }
+                    EnvType.COMMON.ordinal -> {
+                        EnvType.COMMON
+                    }
+                    EnvType.LOCAL.ordinal -> {
+                        EnvType.LOCAL
+                    }
+                    else -> EnvType.PROD
+                }
+                val sdkConfig = FTSDKConfig.builder(metricsUrl).setEnv(envType)
+
+                if (debug != null) {
+                    sdkConfig.isDebug = debug
+                }
+                if (datakitUUID != null) {
+                    sdkConfig.setXDataKitUUID(datakitUUID)
+                }
+                if (useOAID != null) {
+                    sdkConfig.isUseOAID = useOAID;
+                }
+
+                FTSdk.install(sdkConfig)
                 result.success(null)
             }
+            METHOD_RUM_CONFIG -> {
+                val rumAppId: String = call.argument<String>("rumAppId")!!
+                val sampleRate: Float? = call.argument<Float>("sampleRate")
+                val enableUserAction: Boolean? = call.argument<Boolean>("enableUserAction")
+                val monitorType: Int? = call.argument<Int>("monitorType")
+
+                val rumConfig = FTRUMConfig().setRumAppId(rumAppId)
+                if (sampleRate != null) {
+                    rumConfig.samplingRate = sampleRate
+                }
+
+                if (enableUserAction != null) {
+                    rumConfig.isEnableTraceUserAction = enableUserAction
+                }
+                if (monitorType != null) {
+                    rumConfig.extraMonitorTypeWithError = monitorType
+                }
+
+                FTSdk.initRUMWithConfig(rumConfig)
+            }
+            METHOD_RUM_ADD_ACTION -> {
+
+            }
+            METHOD_RUM_START_VIEW -> {
+
+            }
+            METHOD_RUM_STOP_VIEW -> {
+
+            }
+            METHOD_RUM_ADD_ERROR -> {
+
+            }
+
+            METHOD_RUM_START_RESOURCE -> {
+
+            }
+
+            METHOD_RUM_STOP_RESOURCE -> {
+
+            }
+
+            METHOD_LOG_CONFIG -> {
+                val sampleRate: Float? = call.argument<Float>("sampleRate")
+                val serviceName: String? = call.argument<String>("serviceName")
+                val logTypeArr: List<Int>? = call.argument<List<Int>>("logType")
+                val enableLinkRumData: Boolean? = call.argument<Boolean>("enableLinkRumData")
+                val enableCustomLog: Boolean? = call.argument<Boolean>("enableCustomLog")
+//                val enableConsoleLog: Boolean? = call.argument<Boolean>("enableLinkRumData")
+
+                val logCacheDiscard: LogCacheDiscard =
+                        when (call.argument<Int>("logCacheDiscard")) {
+                            0 -> LogCacheDiscard.DISCARD
+                            1 -> LogCacheDiscard.DISCARD_OLDEST
+                            else -> LogCacheDiscard.DISCARD
+                        }
+
+                val logConfig = FTLoggerConfig()
+                        .setEnableCustomLog(true)
+                        .setLogCacheDiscardStrategy(logCacheDiscard)
+
+                if (sampleRate != null) {
+                    logConfig.samplingRate = sampleRate
+                }
+                if (serviceName != null) {
+                    logConfig.serviceName = serviceName
+                }
+
+                if (logTypeArr != null) {
+                    val arr: Array<Status?> = arrayOfNulls(logTypeArr.size)
+
+                    logTypeArr.forEachIndexed { index, it ->
+                        arr[index] = Status.values().find { status -> it == status.ordinal }!!
+                    }
+                    logConfig.setLogLevelFilters(arr)
+                }
+
+                if (enableLinkRumData != null) {
+                    logConfig.isEnableLinkRumData = enableLinkRumData
+                }
+                if (enableCustomLog != null) {
+                    logConfig.isEnableCustomLog = enableCustomLog
+                }
+
+                FTSdk.initLogWithConfig(logConfig)
+            }
+
+
             METHOD_LOGGING -> {
                 val content: String = call.argument<String>("content")!!
                 val status: Status = when (call.argument<Int>("status")) {
@@ -87,7 +225,19 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
 
                 FTLogger.getInstance().logBackground(content, status)
             }
+            METHOD_TRACE_CONFIG -> {
+                result.success(null)
+            }
+            METHOD_TRACE -> {
 
+            }
+            METHOD_BIND_USER -> {
+
+
+            }
+            METHOD_UNBIND_USER -> {
+
+            }
             else -> {
                 result.notImplemented()
             }

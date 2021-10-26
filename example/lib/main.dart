@@ -6,6 +6,9 @@ import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
 
+const serverUrl = String.fromEnvironment("SERVER_URL");
+const appId = String.fromEnvironment("APP_ID");
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -64,8 +67,12 @@ class _HomeState extends State<HomeRoute> {
       child: Text("设置配置"),
       onPressed: () async {
         ///配置
-        FTMobileAgentFlutter.config(
-            "http://172.16.5.9:9529");
+        FTMobileFlutter.sdkConfig(serverUrl: serverUrl, debug: true);
+
+        FTLogger()
+            .logConfig(serviceName: "flutter_agent", enableCustomLog: true);
+
+        FTRUMManager().setConfig(rumAppId: appId);
       },
     );
   }
@@ -74,7 +81,7 @@ class _HomeState extends State<HomeRoute> {
     return ElevatedButton(
       child: Text("日志输出"),
       onPressed: () {
-        FTMobileAgentFlutter.logging("log content", FTLogStatus.info);
+        FTLogger().logging("log content", FTLogStatus.info);
       },
     );
   }

@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 
 void main() {
   const MethodChannel channel = MethodChannel('ft_mobile_agent_flutter');
@@ -28,5 +27,4 @@ void main() {
   tearDown(() {
     channel.setMockMethodCallHandler(null);
   });
-
 }
