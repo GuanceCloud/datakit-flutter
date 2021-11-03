@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 import 'const.dart';
 
 class FTRUMManager {
@@ -30,7 +32,7 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumAddAction, map);
   }
 
-  Future<void> starview(String viewName, String viewReferer) async {
+  Future<void> starView(String viewName, String viewReferer) async {
     Map<String, dynamic> map = {};
     map["viewName"] = viewName;
     map["viewReferer"] = viewReferer;
@@ -41,10 +43,22 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumStopView);
   }
 
-  Future<void> addError(String crash, String message, AppState state) async {
+  ///其它异常捕获与日志收集
+  Future<void> addError(Object obj, StackTrace stack, AppState state) async {
+    if(obj is FlutterErrorDetails) {
+      return await addFlutterError(obj, state);
+    }
     Map<String, dynamic> map = {};
-    map["crash"] = crash;
-    map["message"] = message;
+    map["crash"] = stack.toString();
+    map["message"] = obj.toString();
+    map["appState"] = state.index;
+    await channel.invokeMethod(methodRumAddError, map);
+  }
+  ///Flutter框架异常捕获
+  Future<void> addFlutterError(FlutterErrorDetails error, AppState state) async {
+    Map<String, dynamic> map = {};
+    map["stack"] = error.stack.toString();
+    map["message"] = error.exceptionAsString();
     map["appState"] = state.index;
     await channel.invokeMethod(methodRumAddError, map);
   }

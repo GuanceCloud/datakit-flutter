@@ -86,19 +86,20 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
 
         } else if (call.method == SwiftAgentPlugin.METHOD_RUM_ADD_ACTION) {
             let actionName = args["actionName"] as! String
-
+            FTMonitorManager.sharedInstance().rumManger.addClickAction(withName: actionName)
         } else if (call.method == SwiftAgentPlugin.METHOD_RUM_START_VIEW) {
-            let actionName = args["actionName"] as! String
             let viewName = args["viewName"] as! String
-            let viewId = args["viewId"] as! String
             let viewReferrer = args["viewReferrer"] as! String
             let loadDuration = args["loadDuration"] as! Int
-
+            FTMonitorManager.sharedInstance().rumManger.startView(withName: viewName, viewReferrer: viewReferrer, loadDuration: NSNumber.init(value: loadDuration))
 
         } else if (call.method == SwiftAgentPlugin.METHOD_RUM_STOP_VIEW) {
-            FTMonitorManager.sharedInstance().rumManger.stopView(withViewID: "")
+            FTMonitorManager.sharedInstance().rumManger.stopView()
         } else if (call.method == SwiftAgentPlugin.METHOD_RUM_ADD_ERROR) {
-
+            let stack = args["stack"] as! String
+            let message = args["message"] as! String
+            let appState = args["appState"] as! Int
+            FTMonitorManager.sharedInstance().rumManger.addError(withType: "flutter", situation: "", message: message, stack: stack)
         } else if (call.method == SwiftAgentPlugin.METHOD_RUM_START_RESOURCE) {
 
         } else if (call.method == SwiftAgentPlugin.METHOD_RUM_STOP_RESOURCE) {

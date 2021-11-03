@@ -1,13 +1,28 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-void main() => runApp(MyApp());
-
 const serverUrl = String.fromEnvironment("SERVER_URL");
 const appId = String.fromEnvironment("APP_ID");
+
+Future<Null> main() async {
+  var onError = FlutterError.onError; //先将 onError 保存起来
+  FlutterError.onError = (FlutterErrorDetails details) async {
+    onError?.call(details); //调用默认的onError
+
+  };
+
+  runZonedGuarded((){
+    runApp(MyApp());
+  }, (Object error, StackTrace stack){
+
+  });
+}
+
+
+
 
 class MyApp extends StatelessWidget {
   @override
