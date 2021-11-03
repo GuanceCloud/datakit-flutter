@@ -146,12 +146,19 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 FTSdk.initRUMWithConfig(rumConfig)
             }
             METHOD_RUM_ADD_ACTION -> {
+                val actionName: String? = call.argument<String>("actionName")
+                val actionType: String? = call.argument<String>("actionType")
+                FTRUMGlobalManager.get().startAction(actionName, actionType)
 
             }
             METHOD_RUM_START_VIEW -> {
+                val viewName: String? = call.argument<String>("viewName")
+                val viewReferrer: String? = call.argument<String>("viewReferrer")
 
+                FTRUMGlobalManager.get().startView(viewName, viewReferrer)
             }
             METHOD_RUM_STOP_VIEW -> {
+                FTRUMGlobalManager.get().stopView()
 
             }
             METHOD_RUM_ADD_ERROR -> {
@@ -159,6 +166,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
             }
 
             METHOD_RUM_START_RESOURCE -> {
+
 
             }
 
@@ -226,17 +234,39 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 FTLogger.getInstance().logBackground(content, status)
             }
             METHOD_TRACE_CONFIG -> {
+                val sampleRate: Float? = call.argument<Float>("sampleRate")
+                val traceType = call.argument<Int>("traceType")
+                val enableLinkRUMData = call.argument<Boolean>("enableLinkRUMData")
+
+                val traceConfig = FTTraceConfig()
+                if (sampleRate != null) {
+                    traceConfig.samplingRate = sampleRate
+                }
+
+                if (traceType != null) {
+                    traceConfig.traceType = when (traceType) {
+                        0 -> TraceType.DDTRACE
+                        1 -> TraceType.ZIPKIN
+                        else -> TraceType.JAEGER
+                    }
+                }
+
+                if (enableLinkRUMData != null) {
+                    traceConfig.isEnableLinkRUMData = enableLinkRUMData
+                }
+
+                FTSdk.initTraceWithConfig(traceConfig)
                 result.success(null)
             }
             METHOD_TRACE -> {
 
             }
             METHOD_BIND_USER -> {
-
-
+                val userId: String? = call.argument<String>("userId")
+                FTSdk.bindRumUserData(userId!!)
             }
             METHOD_UNBIND_USER -> {
-
+                FTSdk.unbindRumUserData()
             }
             else -> {
                 result.notImplemented()

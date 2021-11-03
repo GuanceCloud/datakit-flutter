@@ -20,6 +20,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     static let METHOD_RUM_ADD_ERROR = "ftRumAddError"
     static let METHOD_RUM_START_RESOURCE = "ftRumStartResource"
     static let METHOD_RUM_STOP_RESOURCE = "ftRumStopResource"
+    static let METHOD_RUM_RESOURCE_CONTENT = "ftRumResourceContent"
 
     static let METHOD_TRACE_CONFIG = "ftTraceConfig"
     static let METHOD_TRACE = "ftTrace"
@@ -84,11 +85,18 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             result(nil)
 
         } else if (call.method == SwiftAgentPlugin.METHOD_RUM_ADD_ACTION) {
+            let actionName = args["actionName"] as! String
 
         } else if (call.method == SwiftAgentPlugin.METHOD_RUM_START_VIEW) {
+            let actionName = args["actionName"] as! String
+            let viewName = args["viewName"] as! String
+            let viewId = args["viewId"] as! String
+            let viewReferrer = args["viewReferrer"] as! String
+            let loadDuration = args["loadDuration"] as! Int
+
 
         } else if (call.method == SwiftAgentPlugin.METHOD_RUM_STOP_VIEW) {
-
+            FTMonitorManager.sharedInstance().rumManger.stopView(withViewID: "")
         } else if (call.method == SwiftAgentPlugin.METHOD_RUM_ADD_ERROR) {
 
         } else if (call.method == SwiftAgentPlugin.METHOD_RUM_START_RESOURCE) {
@@ -135,29 +143,27 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         } else if (call.method == SwiftAgentPlugin.METHOD_TRACE_CONFIG) {
             let sampleRate = args["sampleRate"] as? Float
             let traceType = args["traceType"] as? Int
-            let enableLinkRUMData = args["enableLinkRUMData"] as? Bool?
+            let enableLinkRUMData = args["enableLinkRUMData"] as? Bool
 
             let traceConfig = FTTraceConfig()
             traceConfig.samplerate = Int32(Int(sampleRate! * 100))
-            traceConfig.enableLinkRumData = enableLinkRUMData!
+            if (enableLinkRUMData != nil) {
+                traceConfig.enableLinkRumData = enableLinkRUMData!
+            }
             traceConfig.networkTraceType = FTNetworkTraceType.init(rawValue: traceType!)!
             FTMobileAgent.sharedInstance().startTrace(withConfigOptions: traceConfig)
             result(nil)
         } else if (call.method == SwiftAgentPlugin.METHOD_TRACE) {
-
-//            var data = FTRecordModel()
-//            let traceType = args["traceType"] as? Int
-//
-//
-//            FTTrackDataManger.sharedInstance().addTrackData(data, type: FTAddDataType.init(rawValue: <#T##Int##Swift.Int#>)!)
             result(nil)
         } else if (call.method == SwiftAgentPlugin.METHOD_GET_TRACE_HEADER) {
 
             result(nil)
         } else if (call.method == SwiftAgentPlugin.METHOD_BIND_USER) {
+            let userId = args["userId"] as? String
+            FTMobileAgent.sharedInstance().bindUser(withUserID: userId!)
 
         } else if (call.method == SwiftAgentPlugin.METHOD_UNBIND_USER) {
-
+            FTMobileAgent.sharedInstance().logout()
         } else {
             result(FlutterMethodNotImplemented)
         }
