@@ -11,13 +11,13 @@ Future<Null> main() async {
   var onError = FlutterError.onError; //先将 onError 保存起来
   FlutterError.onError = (FlutterErrorDetails details) async {
     onError?.call(details); //调用默认的onError
-
+    // sdk 采集
   };
 
   runZonedGuarded((){
     runApp(MyApp());
   }, (Object error, StackTrace stack){
-
+    // sdk 采集
   });
 }
 

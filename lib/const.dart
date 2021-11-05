@@ -16,6 +16,7 @@ const methodRumStartView = "ftRumStartView";
 const methodRumStopView = "ftRumStopView";
 const methodRumAddError = "ftRumAddError";
 const methodRumStartResource = "ftRumStartResource";
+const methodRumUploadResource = "ftRumUploadResource";
 const methodRumStopResource = "ftRumStopResource";
 
 const methodTraceConfig = "ftTraceConfig";

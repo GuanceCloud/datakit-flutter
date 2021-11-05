@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart';
 
 import 'const.dart';
 
@@ -15,12 +16,14 @@ class FTRUMManager {
       {required String rumAppId,
       double? sampleRate,
       bool? enableUserAction,
-      MonitorType? monitorType}) async {
+      MonitorType? monitorType,
+      Map? globalContext}) async {
     Map<String, dynamic> map = {};
     map["rumAppId"] = rumAppId;
     map["sampleRate"] = sampleRate;
     map["enableUserAction"] = enableUserAction;
     map["monitorType"] = monitorType?.value;
+    map["globalContext"] = globalContext?.entries;
     await channel.invokeMethod(methodRumConfig, map);
   }
 
@@ -63,11 +66,18 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumAddError, map);
   }
 
-  Future<void> startResource() async {
-    await channel.invokeMethod(methodRumStartResource);
+  Future<void> startResource(String key,String url) async {
+    Map<String, dynamic> map = {};
+    map["key"] = key;
+    map["url"] = url;
+    await channel.invokeMethod(methodRumStartResource,map);
   }
-
-  Future<void> stopResource() async {
+  Future<void> uploadResource(String key,Response response) async {
+    Map<String, dynamic> map = {};
+    map["requestHeader"] = response.request!.headers;
+    await channel.invokeMethod(methodRumUploadResource);
+  }
+  Future<void> stopResource(String key) async {
     await channel.invokeMethod(methodRumStopView);
   }
 }

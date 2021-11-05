@@ -38,8 +38,8 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         if (call.arguments is Dictionary<String, Any>) {
             args = call.arguments as! Dictionary<String, Any>
         }
-
-        if (call.method == SwiftAgentPlugin.METHOD_CONFIG) {
+        switch call.method {
+        case SwiftAgentPlugin.METHOD_CONFIG:
             let metricsUrl = args["metricsUrl"] as! String
             let debug = args["debug"] as? Bool
             let datakitUUID = args["datakitUUID"] as? String
@@ -60,51 +60,12 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
 
             FTMobileAgent.start(withConfigOptions: config)
             result(nil)
-        } else if (call.method == SwiftAgentPlugin.METHOD_LOGGING) {
-            let content = args["content"] as! String
-            let status = args["status"] as! Int
-            FTMobileAgent.sharedInstance().logging(content, status: FTStatus.init(rawValue: status)!)
-            result(nil)
-        } else if (call.method == SwiftAgentPlugin.METHOD_RUM_CONFIG) {
-            let rumAppId = args["rumAppId"] as! String
-            let sampleRate = args["sampleRate"] as? Float
-            let enableUserAction = args["enableUserAction"] as? Bool
-            let monitorType = args["monitorType"] as? Int
-
-            let rumConfig = FTRumConfig(appid: rumAppId)
-            if (sampleRate != nil) {
-                rumConfig.samplerate = Int32(Int(sampleRate! * 100))
-            }
-            if (enableUserAction != nil) {
-                rumConfig.enableTraceUserAction = enableUserAction!
-            }
-            if (monitorType != nil) {
-                rumConfig.monitorInfoType = FTMonitorInfoType.init(rawValue: UInt(monitorType!))
-            }
-            FTMobileAgent.sharedInstance().startRum(withConfigOptions: rumConfig)
-            result(nil)
-
-        } else if (call.method == SwiftAgentPlugin.METHOD_RUM_ADD_ACTION) {
-            let actionName = args["actionName"] as! String
-            FTMonitorManager.sharedInstance().rumManger.addClickAction(withName: actionName)
-        } else if (call.method == SwiftAgentPlugin.METHOD_RUM_START_VIEW) {
-            let viewName = args["viewName"] as! String
-            let viewReferrer = args["viewReferrer"] as! String
-            let loadDuration = args["loadDuration"] as! Int
-            FTMonitorManager.sharedInstance().rumManger.startView(withName: viewName, viewReferrer: viewReferrer, loadDuration: NSNumber.init(value: loadDuration))
-
-        } else if (call.method == SwiftAgentPlugin.METHOD_RUM_STOP_VIEW) {
-            FTMonitorManager.sharedInstance().rumManger.stopView()
-        } else if (call.method == SwiftAgentPlugin.METHOD_RUM_ADD_ERROR) {
-            let stack = args["stack"] as! String
-            let message = args["message"] as! String
-            let appState = args["appState"] as! Int
-            FTMonitorManager.sharedInstance().rumManger.addError(withType: "flutter", situation: "", message: message, stack: stack)
-        } else if (call.method == SwiftAgentPlugin.METHOD_RUM_START_RESOURCE) {
-
-        } else if (call.method == SwiftAgentPlugin.METHOD_RUM_STOP_RESOURCE) {
-
-        } else if (call.method == SwiftAgentPlugin.METHOD_LOG_CONFIG) {
+        case SwiftAgentPlugin.METHOD_BIND_USER:
+            let userId = args["userId"] as? String
+            FTMobileAgent.sharedInstance().bindUser(withUserID: userId!)
+        case SwiftAgentPlugin.METHOD_UNBIND_USER:
+            FTMobileAgent.sharedInstance().logout()
+        case SwiftAgentPlugin.METHOD_LOG_CONFIG:
             let sampleRate = args["sampleRate"] as? Float
             let serviceName = args["serviceName"] as? String
             let logTypeArr = args["logType"] as? [Int]
@@ -140,8 +101,12 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             FTMobileAgent.sharedInstance().startLogger(withConfigOptions: logConfig)
 
             result(nil)
-
-        } else if (call.method == SwiftAgentPlugin.METHOD_TRACE_CONFIG) {
+        case SwiftAgentPlugin.METHOD_LOGGING:
+            let content = args["content"] as! String
+            let status = args["status"] as! Int
+            FTMobileAgent.sharedInstance().logging(content, status: FTStatus.init(rawValue: status)!)
+            result(nil)
+        case SwiftAgentPlugin.METHOD_TRACE_CONFIG:
             let sampleRate = args["sampleRate"] as? Float
             let traceType = args["traceType"] as? Int
             let enableLinkRUMData = args["enableLinkRUMData"] as? Bool
@@ -154,19 +119,52 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             traceConfig.networkTraceType = FTNetworkTraceType.init(rawValue: traceType!)!
             FTMobileAgent.sharedInstance().startTrace(withConfigOptions: traceConfig)
             result(nil)
-        } else if (call.method == SwiftAgentPlugin.METHOD_TRACE) {
+        case SwiftAgentPlugin.METHOD_GET_TRACE_HEADER:
+            let handler = FTTraceHandler.init(url: <#T##URL#>)
             result(nil)
-        } else if (call.method == SwiftAgentPlugin.METHOD_GET_TRACE_HEADER) {
-
+        case SwiftAgentPlugin.METHOD_TRACE:
             result(nil)
-        } else if (call.method == SwiftAgentPlugin.METHOD_BIND_USER) {
-            let userId = args["userId"] as? String
-            FTMobileAgent.sharedInstance().bindUser(withUserID: userId!)
-
-        } else if (call.method == SwiftAgentPlugin.METHOD_UNBIND_USER) {
-            FTMobileAgent.sharedInstance().logout()
-        } else {
-            result(FlutterMethodNotImplemented)
+        case SwiftAgentPlugin.METHOD_RUM_CONFIG:
+            let rumAppId = args["rumAppId"] as! String
+            let sampleRate = args["sampleRate"] as? Float
+            let enableUserAction = args["enableUserAction"] as? Bool
+            let monitorType = args["monitorType"] as? Int
+            let globalContext = args["globalContext"] as? Dictionary<String, String>
+            let rumConfig = FTRumConfig(appid: rumAppId)
+            if (sampleRate != nil) {
+                rumConfig.samplerate = Int32(Int(sampleRate! * 100))
+            }
+            if (enableUserAction != nil) {
+                rumConfig.enableTraceUserAction = enableUserAction!
+            }
+            if (monitorType != nil) {
+                rumConfig.monitorInfoType = FTMonitorInfoType.init(rawValue: UInt(monitorType!))
+            }
+            if (globalContext != nil){
+                rumConfig.globalContext = globalContext!
+            }
+            FTMobileAgent.sharedInstance().startRum(withConfigOptions: rumConfig)
+            result(nil)
+        case SwiftAgentPlugin.METHOD_RUM_ADD_ACTION:
+            let actionName = args["actionName"] as! String
+            FTMonitorManager.sharedInstance().rumManger.addClickAction(withName: actionName)
+        case  SwiftAgentPlugin.METHOD_RUM_START_VIEW:
+            let viewName = args["viewName"] as! String
+            let viewReferrer = args["viewReferrer"] as! String
+            let loadDuration = args["loadDuration"] as! Int
+            FTMonitorManager.sharedInstance().rumManger.startView(withName: viewName, viewReferrer: viewReferrer, loadDuration: NSNumber.init(value: loadDuration))
+        case SwiftAgentPlugin.METHOD_RUM_STOP_VIEW:
+            FTMonitorManager.sharedInstance().rumManger.stopView()
+        case SwiftAgentPlugin.METHOD_RUM_ADD_ERROR:
+            let stack = args["stack"] as! String
+            let message = args["message"] as! String
+            let appState = args["appState"] as! Int
+            // TODO: IOS SDK situation 改为枚举
+            FTMonitorManager.sharedInstance().rumManger.addError(withType: "flutter", situation: appState.description, message: message, stack: stack)
+        case SwiftAgentPlugin.METHOD_RUM_START_RESOURCE: break
+        case SwiftAgentPlugin.METHOD_RUM_STOP_RESOURCE: break
+        default:
+            result(FlutterMethodNotImplemented);
         }
     }
 
