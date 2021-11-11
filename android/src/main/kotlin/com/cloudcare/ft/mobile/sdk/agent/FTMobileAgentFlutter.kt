@@ -130,7 +130,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 val sampleRate: Float? = call.argument<Float>("sampleRate")
                 val enableUserAction: Boolean? = call.argument<Boolean>("enableUserAction")
                 val monitorType: Int? = call.argument<Int>("monitorType")
-
+                val globalContext : Map<String,String>? =  call.argument<Map>("globalContext")
                 val rumConfig = FTRUMConfig().setRumAppId(rumAppId)
                 if (sampleRate != null) {
                     rumConfig.samplingRate = sampleRate
@@ -141,6 +141,9 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 }
                 if (monitorType != null) {
                     rumConfig.extraMonitorTypeWithError = monitorType
+                }
+                if (globalContext != null){
+
                 }
 
                 FTSdk.initRUMWithConfig(rumConfig)
@@ -259,6 +262,9 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 result.success(null)
             }
             METHOD_TRACE -> {
+
+            }
+            METHOD_GET_TRACE_HEADER -> {
 
             }
             METHOD_BIND_USER -> {

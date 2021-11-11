@@ -26,6 +26,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     static let METHOD_TRACE = "ftTrace"
     static let METHOD_GET_TRACE_HEADER = "ftTraceGetHeader"
 
+    private var traceHandlers: [String: FTTraceHandler] = [:]
+    private var rumHandlers: [String: FTTraceHandler] = [:]
+
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "ft_mobile_agent_flutter", binaryMessenger: registrar.messenger())
         let instance = SwiftAgentPlugin()
@@ -120,9 +123,24 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             FTMobileAgent.sharedInstance().startTrace(withConfigOptions: traceConfig)
             result(nil)
         case SwiftAgentPlugin.METHOD_GET_TRACE_HEADER:
-            let handler = FTTraceHandler.init(url: <#T##URL#>)
+            let urlStr = args["url"] as! String
+            if let url = URL.init(string: urlStr) {
+                let key = args["key"] as! String
+                let handler = FTTraceHandler.init(url: url, identifier: key)
+                traceHandlers[key] = handler
+            }
+           
             result(nil)
         case SwiftAgentPlugin.METHOD_TRACE:
+            let key = args["key"] as! String
+            let content = args["content"] as! String
+            let operationName = args["operationName"] as! String
+            let isError = args["isError"] as! Bool
+            if let handler = traceHandlers[key] {
+                handler.tracingContent(content, operationName: operationName, isError: isError)
+                traceHandlers.removeValue(forKey: key)
+            }
+            
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_CONFIG:
             let rumAppId = args["rumAppId"] as! String
@@ -159,10 +177,40 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             let stack = args["stack"] as! String
             let message = args["message"] as! String
             let appState = args["appState"] as! Int
-            // TODO: IOS SDK situation 改为枚举
-            FTMonitorManager.sharedInstance().rumManger.addError(withType: "flutter", situation: appState.description, message: message, stack: stack)
-        case SwiftAgentPlugin.METHOD_RUM_START_RESOURCE: break
-        case SwiftAgentPlugin.METHOD_RUM_STOP_RESOURCE: break
+            FTMonitorManager.sharedInstance().rumManger.addError(withType: "flutter", situation: AppState(rawValue: UInt(appState)) ?? .UNKNOWN, message: message, stack: stack)
+        case SwiftAgentPlugin.METHOD_RUM_START_RESOURCE:
+            let key = args["key"] as! String
+            if let handler = traceHandlers[key]{
+                rumHandlers[key] = handler
+            }
+            FTMonitorManager.sharedInstance().rumManger.startResource(key)
+        case SwiftAgentPlugin.METHOD_RUM_STOP_RESOURCE:
+            let key = args["key"] as! String
+            let urlStr = args["url"] as! String
+            let resourceMethod = args["resourceMethod"] as! String
+            let requestHeader = args["requestHeader"] as! Dictionary<String, Any>
+            let responseHeader = args["responseHeader"] as! Dictionary<String, Any>
+            let responseBody = args["responseBody"] as! String
+            let resourceStatus = args["resourceStatus"] as! Int
+            var spanID = "";
+            var traceID = "";
+            if let handler = rumHandlers[key] {
+                spanID = handler.getSpanID()
+                traceID = handler.getTraceID()
+                rumHandlers.removeValue(forKey: key)
+            }
+            if let url = URL.init(string: urlStr) {
+                let content = FTResourceContentModel.init()
+                content.url = url
+                content.resourceMethod = resourceMethod
+                content.requestHeader = requestHeader
+                content.responseHeader = responseHeader
+                content.httpStatusCode = resourceStatus
+                content.responseBody = responseBody
+                FTMonitorManager.sharedInstance().rumManger.addResourceContent(key, content: content, spanID: spanID, traceID: traceID)
+                FTMonitorManager.sharedInstance().rumManger.stopResource(key)
+            }
+           
         default:
             result(FlutterMethodNotImplemented);
         }

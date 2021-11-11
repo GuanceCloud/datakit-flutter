@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart';
 
 import 'const.dart';
 
 class FTRUMManager {
   static final FTRUMManager _singleton = FTRUMManager._internal();
-
+  AppState appState = AppState.unknown;
   factory FTRUMManager() {
     return _singleton;
   }
@@ -47,38 +46,48 @@ class FTRUMManager {
   }
 
   ///其它异常捕获与日志收集
-  Future<void> addError(Object obj, StackTrace stack, AppState state) async {
+  Future<void> addError(Object obj, StackTrace stack,) async {
     if(obj is FlutterErrorDetails) {
-      return await addFlutterError(obj, state);
+      return await addFlutterError(obj);
     }
     Map<String, dynamic> map = {};
     map["crash"] = stack.toString();
     map["message"] = obj.toString();
-    map["appState"] = state.index;
+    map["appState"] = appState.index;
     await channel.invokeMethod(methodRumAddError, map);
   }
   ///Flutter框架异常捕获
-  Future<void> addFlutterError(FlutterErrorDetails error, AppState state) async {
+  Future<void> addFlutterError(FlutterErrorDetails error) async {
     Map<String, dynamic> map = {};
     map["stack"] = error.stack.toString();
     map["message"] = error.exceptionAsString();
-    map["appState"] = state.index;
+    map["appState"] = appState.index;
     await channel.invokeMethod(methodRumAddError, map);
   }
 
-  Future<void> startResource(String key,String url) async {
+  Future<void> startResource(String key) async {
+    Map<String, dynamic> map = {};
+    map["key"] = key;
+    await channel.invokeMethod(methodRumStartResource,map);
+  }
+
+  Future<void> stopResource(
+      {required String key,
+      required String url,
+      required String httpMethod,
+      required Map requestHeader,
+      Map? responseHeader,
+      String responseBody = "",
+      int resourceStatus = -1}) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
     map["url"] = url;
-    await channel.invokeMethod(methodRumStartResource,map);
-  }
-  Future<void> uploadResource(String key,Response response) async {
-    Map<String, dynamic> map = {};
-    map["requestHeader"] = response.request!.headers;
-    await channel.invokeMethod(methodRumUploadResource);
-  }
-  Future<void> stopResource(String key) async {
-    await channel.invokeMethod(methodRumStopView);
+    map["resourceMethod"] = httpMethod;
+    map["requestHeader"] = requestHeader;
+    map["responseHeader"] = responseHeader;
+    map["responseBody"] = responseBody;
+    map["resourceStatus"] = resourceStatus;
+    await channel.invokeMethod(methodRumStopView, map);
   }
 }
 
