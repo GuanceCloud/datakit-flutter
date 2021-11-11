@@ -1,28 +1,35 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
+
 const serverUrl = String.fromEnvironment("SERVER_URL");
 const appId = String.fromEnvironment("APP_ID");
-
 Future<Null> main() async {
-  var onError = FlutterError.onError; //先将 onError 保存起来
+  //初始化 SDK
+  FTMobileFlutter.sdkConfig(serverUrl: serverUrl, debug: true);
+  FTLogger()
+      .logConfig(serviceName: "flutter_agent", enableCustomLog: true);
+  FTTracer().setConfig(enableLinkRUMData: true);
+  FTRUMManager().setConfig(rumAppId: appId);
+  FTRUMManager().appState = AppState.startup;
+  //先将 onError 保存起来
+  var onError = FlutterError.onError;
   FlutterError.onError = (FlutterErrorDetails details) async {
-    onError?.call(details); //调用默认的onError
-    // sdk 采集
+    //调用默认的onError
+    onError?.call(details);
+    //RUM 记录 error 数据
+    FTRUMManager().addFlutterError(details);
   };
 
   runZonedGuarded((){
     runApp(MyApp());
   }, (Object error, StackTrace stack){
-    // sdk 采集
+    //RUM 记录 error 数据
+    FTRUMManager().addError(error, stack);
   });
 }
-
-
-
 
 class MyApp extends StatelessWidget {
   @override
@@ -32,9 +39,13 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: HomeRoute(),
+      navigatorObservers: [
+        FTRouteObserver(),
+      ],
     );
   }
 }
+
 
 class HomeRoute extends StatefulWidget {
   @override
@@ -49,6 +60,8 @@ class _HomeState extends State<HomeRoute> {
   @override
   void initState() {
     super.initState();
+    //第一个页面加载完成
+    FTRUMManager().appState = AppState.run;
     if (Platform.isAndroid) {
       requestPermission(permissions);
     } else if (Platform.isIOS) {
@@ -68,27 +81,12 @@ class _HomeState extends State<HomeRoute> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              _buildConfigWidget(),
               _buildLoggingWidget(),
+              _buildTracerWidget(),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildConfigWidget() {
-    return ElevatedButton(
-      child: Text("设置配置"),
-      onPressed: () async {
-        ///配置
-        FTMobileFlutter.sdkConfig(serverUrl: serverUrl, debug: true);
-
-        FTLogger()
-            .logConfig(serviceName: "flutter_agent", enableCustomLog: true);
-
-        FTRUMManager().setConfig(rumAppId: appId);
-      },
     );
   }
 
@@ -100,7 +98,21 @@ class _HomeState extends State<HomeRoute> {
       },
     );
   }
+  Widget _buildTracerWidget() {
+    return ElevatedButton(
+      child: Text("网络链路追踪"),
+      onPressed: () {
+      },
+    );
+  }
+  Widget _buildRUMWidget() {
+    return ElevatedButton(
+      child: Text("RUM数据采集"),
+      onPressed: () {
 
+      },
+    );
+  }
   void _showPermissionTip(String tip) {
     showDialog<Null>(
         context: context,
