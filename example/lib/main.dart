@@ -1,18 +1,24 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:agent_example/rum.dart';
+import 'package:agent_example/tracing.dart';
 import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'ft_route_observer.dart';
+import 'logging.dart';
 const serverUrl = String.fromEnvironment("SERVER_URL");
-const appId = String.fromEnvironment("APP_ID");
-Future<Null> main() async {
+const appId =  String.fromEnvironment("APP_ID");
+void main() async  {
+  WidgetsFlutterBinding.ensureInitialized();
+
   //初始化 SDK
-  FTMobileFlutter.sdkConfig(serverUrl: serverUrl, debug: true);
-  FTLogger()
+  await FTMobileFlutter.sdkConfig(serverUrl: serverUrl, debug: true,);
+  await FTLogger()
       .logConfig(serviceName: "flutter_agent", enableCustomLog: true);
-  FTTracer().setConfig(enableLinkRUMData: true);
-  FTRUMManager().setConfig(rumAppId: appId);
+  await FTTracer().setConfig(enableLinkRUMData: true);
+  await FTRUMManager().setConfig(rumAppId: appId,enableUserAction: true);
   FTRUMManager().appState = AppState.startup;
   //先将 onError 保存起来
   var onError = FlutterError.onError;
@@ -40,8 +46,14 @@ class MyApp extends StatelessWidget {
       ),
       home: HomeRoute(),
       navigatorObservers: [
+        // 使用路由跳转时，监控页面生命周期
         FTRouteObserver(),
       ],
+      routes:<String, WidgetBuilder>{//路由跳转
+        'logging': (BuildContext context) => Logging(),
+        'rum': (BuildContext context) => RUM(),
+        'tracing': (BuildContext context) => Tracing(),
+      } ,
     );
   }
 }
@@ -59,6 +71,7 @@ class _HomeState extends State<HomeRoute> {
 
   @override
   void initState() {
+
     super.initState();
     //第一个页面加载完成
     FTRUMManager().appState = AppState.run;
@@ -83,10 +96,11 @@ class _HomeState extends State<HomeRoute> {
             children: <Widget>[
               _buildLoggingWidget(),
               _buildTracerWidget(),
+              _buildRUMWidget(),
             ],
           ),
         ),
-      ),
+    )
     );
   }
 
@@ -94,7 +108,7 @@ class _HomeState extends State<HomeRoute> {
     return ElevatedButton(
       child: Text("日志输出"),
       onPressed: () {
-        FTLogger().logging("log content", FTLogStatus.info);
+        Navigator.pushNamed(context, "logging");
       },
     );
   }
@@ -102,6 +116,7 @@ class _HomeState extends State<HomeRoute> {
     return ElevatedButton(
       child: Text("网络链路追踪"),
       onPressed: () {
+        Navigator.pushNamed(context, "tracing");
       },
     );
   }
@@ -109,6 +124,7 @@ class _HomeState extends State<HomeRoute> {
     return ElevatedButton(
       child: Text("RUM数据采集"),
       onPressed: () {
+        Navigator.pushNamed(context, "rum");
 
       },
     );

@@ -43,83 +43,74 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         }
         switch call.method {
         case SwiftAgentPlugin.METHOD_CONFIG:
-            let metricsUrl = args["metricsUrl"] as! String
-            let debug = args["debug"] as? Bool
-            let datakitUUID = args["datakitUUID"] as? String
-            let env = args["env"] as? Int
-
-            let config: FTMobileConfig = FTMobileConfig(metricsUrl: metricsUrl)
-            if (debug ?? false) {
-                config.enableSDKDebugLog = debug!
+            if let metricsUrl = args["metricsUrl"]{
+                let config: FTMobileConfig = FTMobileConfig(metricsUrl: metricsUrl as! String)
+                if let debug = args["debug"] as? Bool  {
+                    config.enableSDKDebugLog = debug
+                }
+                if let datakitUUID = args["datakitUUID"] as? String {
+                    config.xDataKitUUID = datakitUUID
+                }
+                if let env = args["env"] as? Int {
+                    let entType: FTEnv? = FTEnv.init(rawValue: env)
+                    config.env = entType ?? .common
+                }
+                FTMobileAgent.start(withConfigOptions: config)
             }
-            if (datakitUUID != nil) {
-                config.xDataKitUUID = datakitUUID!
-            }
-
-            if (env != nil) {
-                let entType: FTEnv? = FTEnv.init(rawValue: env!)
-                config.env = entType!
-            }
-
-            FTMobileAgent.start(withConfigOptions: config)
+            
             result(nil)
         case SwiftAgentPlugin.METHOD_BIND_USER:
-            let userId = args["userId"] as? String
-            FTMobileAgent.sharedInstance().bindUser(withUserID: userId!)
+            if let userId = args["userId"] as? String {
+                FTMobileAgent.sharedInstance().bindUser(withUserID: userId)
+            }
         case SwiftAgentPlugin.METHOD_UNBIND_USER:
             FTMobileAgent.sharedInstance().logout()
         case SwiftAgentPlugin.METHOD_LOG_CONFIG:
-            let sampleRate = args["sampleRate"] as? Float
-            let serviceName = args["serviceName"] as? String
-            let logTypeArr = args["logType"] as? [Int]
-            let enableLinkRumData = args["enableLinkRumData"] as? Bool
-            let enableCustomLog = args["enableCustomLog"] as? Bool
-            let logCacheDiscardType = args["logCacheDiscard"] as? Int
 
             let logConfig = FTLoggerConfig()
-
-            if (logCacheDiscardType != nil) {
-                let logCacheDiscard = FTLogCacheDiscard.init(rawValue: logCacheDiscardType!)
-                logConfig.discardType = logCacheDiscard!
+            if let logCacheDiscardType = args["logCacheDiscard"] as? Int {
+                let logCacheDiscard = FTLogCacheDiscard.init(rawValue: logCacheDiscardType)
+                logConfig.discardType = logCacheDiscard ?? FTLogCacheDiscard.discard
             }
 
-            if (sampleRate != nil) {
-                logConfig.samplerate = Int32(Int(sampleRate! * 100))
+            if let sampleRate = args["sampleRate"] as? Float {
+                logConfig.samplerate = Int32(Int(sampleRate * 100))
             }
-            if (serviceName != nil) {
-                logConfig.service = serviceName!
+            if let serviceName = args["serviceName"] as? String {
+                logConfig.service = serviceName
             }
-            if (logTypeArr != nil) {
-                logConfig.logLevelFilter = logTypeArr!.map { number in
+            if let logTypeArr = args["logType"] as? [Int]{
+                logConfig.logLevelFilter = logTypeArr.map { number in
                     NSNumber.init(integerLiteral: number)
                 }
             }
-            if (enableLinkRumData != nil) {
-                logConfig.enableLinkRumData = enableLinkRumData!
+            if let enableLinkRumData = args["enableLinkRumData"] as? Bool {
+                logConfig.enableLinkRumData = enableLinkRumData
             }
-            if (enableCustomLog != nil) {
-                logConfig.enableCustomLog = enableCustomLog!;
+            if let enableCustomLog = args["enableCustomLog"] as? Bool{
+                logConfig.enableCustomLog = enableCustomLog
             }
 
             FTMobileAgent.sharedInstance().startLogger(withConfigOptions: logConfig)
 
             result(nil)
         case SwiftAgentPlugin.METHOD_LOGGING:
-            let content = args["content"] as! String
-            let status = args["status"] as! Int
-            FTMobileAgent.sharedInstance().logging(content, status: FTStatus.init(rawValue: status)!)
+            if let content = args["content"] as? String{
+                let status = args["status"] as? Int ?? 0
+                FTMobileAgent.sharedInstance().logging(content, status: FTStatus.init(rawValue: status)!)
+            }
             result(nil)
         case SwiftAgentPlugin.METHOD_TRACE_CONFIG:
-            let sampleRate = args["sampleRate"] as? Float
-            let traceType = args["traceType"] as? Int
-            let enableLinkRUMData = args["enableLinkRUMData"] as? Bool
-
             let traceConfig = FTTraceConfig()
-            traceConfig.samplerate = Int32(Int(sampleRate! * 100))
-            if (enableLinkRUMData != nil) {
-                traceConfig.enableLinkRumData = enableLinkRUMData!
+            if let sampleRate = args["sampleRate"] as? Float{
+                traceConfig.samplerate = Int32(Int(sampleRate * 100))
             }
-            traceConfig.networkTraceType = FTNetworkTraceType.init(rawValue: traceType!)!
+            if let enableLinkRUMData = args["enableLinkRUMData"] as? Bool{
+                traceConfig.enableLinkRumData = enableLinkRUMData
+            }
+            if let traceType = args["traceType"] as? Int {
+                traceConfig.networkTraceType = FTNetworkTraceType.init(rawValue: traceType)!
+            }
             FTMobileAgent.sharedInstance().startTrace(withConfigOptions: traceConfig)
             result(nil)
         case SwiftAgentPlugin.METHOD_GET_TRACE_HEADER:
@@ -128,55 +119,57 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 let key = args["key"] as! String
                 let handler = FTTraceHandler.init(url: url, identifier: key)
                 traceHandlers[key] = handler
+                let header = handler.getTraceHeader()
+                result(header)
+            }else{
+                result(nil)
             }
-           
-            result(nil)
         case SwiftAgentPlugin.METHOD_TRACE:
             let key = args["key"] as! String
-            let content = args["content"] as! String
-            let operationName = args["operationName"] as! String
-            let isError = args["isError"] as! Bool
             if let handler = traceHandlers[key] {
+                let content = args["content"] as! String
+                let operationName = args["operationName"] as! String
+                let isError = args["isError"] as! Bool
                 handler.tracingContent(content, operationName: operationName, isError: isError)
                 traceHandlers.removeValue(forKey: key)
             }
             
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_CONFIG:
-            let rumAppId = args["rumAppId"] as! String
-            let sampleRate = args["sampleRate"] as? Float
-            let enableUserAction = args["enableUserAction"] as? Bool
-            let monitorType = args["monitorType"] as? Int
-            let globalContext = args["globalContext"] as? Dictionary<String, String>
-            let rumConfig = FTRumConfig(appid: rumAppId)
-            if (sampleRate != nil) {
-                rumConfig.samplerate = Int32(Int(sampleRate! * 100))
+            if let rumAppId = args["rumAppId"] as? String{
+                let rumConfig = FTRumConfig(appid: rumAppId)
+                if let sampleRate = args["sampleRate"] as? Float {
+                    rumConfig.samplerate = Int32(Int(sampleRate * 100))
+                }
+                if let enableUserAction = args["enableUserAction"] as? Bool {
+                    rumConfig.enableTraceUserAction = enableUserAction
+                }
+                if let monitorType = args["monitorType"] as? Int {
+                    rumConfig.monitorInfoType = FTMonitorInfoType.init(rawValue: UInt(monitorType))
+                }
+                if let globalContext = args["globalContext"] as? Dictionary<String, String>{
+                    rumConfig.globalContext = globalContext
+                }
+                FTMobileAgent.sharedInstance().startRum(withConfigOptions: rumConfig)
             }
-            if (enableUserAction != nil) {
-                rumConfig.enableTraceUserAction = enableUserAction!
-            }
-            if (monitorType != nil) {
-                rumConfig.monitorInfoType = FTMonitorInfoType.init(rawValue: UInt(monitorType!))
-            }
-            if (globalContext != nil){
-                rumConfig.globalContext = globalContext!
-            }
-            FTMobileAgent.sharedInstance().startRum(withConfigOptions: rumConfig)
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_ADD_ACTION:
-            let actionName = args["actionName"] as! String
-            FTMonitorManager.sharedInstance().rumManger.addClickAction(withName: actionName)
+            if let actionName = args["actionName"] as? String{
+                FTMonitorManager.sharedInstance().rumManger.addClickAction(withName: actionName)
+            }
         case  SwiftAgentPlugin.METHOD_RUM_START_VIEW:
-            let viewName = args["viewName"] as! String
-            let viewReferrer = args["viewReferrer"] as! String
-            let loadDuration = args["loadDuration"] as! Int
-            FTMonitorManager.sharedInstance().rumManger.startView(withName: viewName, viewReferrer: viewReferrer, loadDuration: NSNumber.init(value: loadDuration))
+            if let viewName = args["viewName"] as? String {
+                let viewReferrer = args["viewReferrer"] as? String ?? ""
+                let loadDuration = args["loadDuration"] as? Int ?? -1
+                FTMonitorManager.sharedInstance().rumManger.startView(withName: viewName, viewReferrer: viewReferrer, loadDuration: NSNumber.init(value: loadDuration))
+
+            }
         case SwiftAgentPlugin.METHOD_RUM_STOP_VIEW:
             FTMonitorManager.sharedInstance().rumManger.stopView()
         case SwiftAgentPlugin.METHOD_RUM_ADD_ERROR:
-            let stack = args["stack"] as! String
-            let message = args["message"] as! String
-            let appState = args["appState"] as! Int
+            let stack = args["stack"] as? String ?? ""
+            let message = args["message"] as? String ?? ""
+            let appState = args["appState"] as? Int ?? 0
             FTMonitorManager.sharedInstance().rumManger.addError(withType: "flutter", situation: AppState(rawValue: UInt(appState)) ?? .UNKNOWN, message: message, stack: stack)
         case SwiftAgentPlugin.METHOD_RUM_START_RESOURCE:
             let key = args["key"] as! String
@@ -189,24 +182,27 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             let urlStr = args["url"] as! String
             let resourceMethod = args["resourceMethod"] as! String
             let requestHeader = args["requestHeader"] as! Dictionary<String, Any>
-            let responseHeader = args["responseHeader"] as! Dictionary<String, Any>
-            let responseBody = args["responseBody"] as! String
-            let resourceStatus = args["resourceStatus"] as! Int
-            var spanID = "";
-            var traceID = "";
-            if let handler = rumHandlers[key] {
-                spanID = handler.getSpanID()
-                traceID = handler.getTraceID()
-                rumHandlers.removeValue(forKey: key)
-            }
             if let url = URL.init(string: urlStr) {
                 let content = FTResourceContentModel.init()
                 content.url = url
                 content.resourceMethod = resourceMethod
                 content.requestHeader = requestHeader
-                content.responseHeader = responseHeader
-                content.httpStatusCode = resourceStatus
-                content.responseBody = responseBody
+                if let responseHeader = args["responseHeader"] as? Dictionary<String, Any> {
+                    content.responseHeader = responseHeader
+                }
+                if  let responseBody = args["responseBody"] as? String{
+                    content.responseBody = responseBody
+                }
+                if  let resourceStatus = args["resourceStatus"] as? Int {
+                    content.httpStatusCode = resourceStatus
+                }
+                var spanID = "";
+                var traceID = "";
+                if let handler = rumHandlers[key] {
+                    spanID = handler.getSpanID()
+                    traceID = handler.getTraceID()
+                    rumHandlers.removeValue(forKey: key)
+                }
                 FTMonitorManager.sharedInstance().rumManger.addResourceContent(key, content: content, spanID: spanID, traceID: traceID)
                 FTMonitorManager.sharedInstance().rumManger.stopResource(key)
             }

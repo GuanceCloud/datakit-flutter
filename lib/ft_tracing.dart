@@ -75,7 +75,13 @@ class FTTracer {
   Future<Map<String, String>> getTraceHeader(String key, String url) async {
     var map = Map<String, dynamic>();
     map["key"] = key;
-    return await channel.invokeMethod(methodGetTraceGetHeader, key);
+    map["url"] = url;
+    Map? header = await channel.invokeMethod(methodGetTraceGetHeader, map);
+    if (header != null){
+      return new Map<String, String>.from(header);
+    }else{
+      return {};
+    }
   }
 }
 

@@ -77,8 +77,8 @@ class FTRUMManager {
       required String httpMethod,
       required Map requestHeader,
       Map? responseHeader,
-      String responseBody = "",
-      int resourceStatus = -1}) async {
+      String? responseBody = "",
+      int? resourceStatus}) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
     map["url"] = url;
@@ -87,7 +87,7 @@ class FTRUMManager {
     map["responseHeader"] = responseHeader;
     map["responseBody"] = responseBody;
     map["resourceStatus"] = resourceStatus;
-    await channel.invokeMethod(methodRumStopView, map);
+    await channel.invokeMethod(methodRumStopResource, map);
   }
 }
 
