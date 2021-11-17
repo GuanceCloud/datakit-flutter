@@ -1,91 +1,40 @@
 DataFlux Flutter SDK 接口规范
 # 接口目录
 
-[1、绑定用户](#1绑定用户)
+[1、SDK 初始化配置](#1SDK-初始化配置)
 
-[2、解绑用户](#2解绑用户)
+[2、绑定用户](#2绑定用户)
 
-[3、上报流程图数据](#3上报流程图数据)
+[3、解绑用户](#3解绑用户)
 
-[4、主动埋点后台上传](#4主动埋点后台上传)
+[4、Logging 初始化配置](#4Logging-初始化配置)
 
-[5、停止SDK后台正在执行的操作](#5停止sdk后台正在执行的操作)
+[5、日志写入](#5日志写入)
 
-[6、SDK 初始化配置](#6sdk-初始化配置)
+[6、Tracing 初始化配置](#6Tracing-初始化配置)
 
-[7、主动埋点一条数据（异步回调结果）](#7主动埋点一条数据异步回调结果)
+[7、获取 Tracing 请求头](#7获取-Tracing-请求头)
 
-[8、主动埋点上传一组数据（异步回调结果）](#8主动埋点上传一组数据异步回调结果)
+[8、Tracing 数据写入](#8Tracing-数据写入)
 
-[9、定位回调方法](#9定位回调方法)
+[9、RUM 初始化配置](#9RUM-初始化配置)
 
-[10、开启监控周期上报](#10开启监控周期上报)
+[10、RUM: Action](#10RUM:-Action)
 
-[11、关闭监控周期上报](#11关闭监控周期上报)
+[11、RUM: View Start](#11RUM:-View-Start)
+
+[12、RUM: View Stop](#12RUM:-View-Stop)
+
+[13、RUM: Error](#13RUM:-Error)
+
+[14、RUM: Resource Start](#14RUM:-Resource-Start)
+
+[15、RUM: Resource Stop](#15RUM:-Resource-Stop)
+
 
 # 接口详情
-
-## 1、绑定用户
-方法名：ftBindUser
-
-返回值：无
-
-参数表
-
-| 参数名  |        类型         | 是否必须 |
-|:------:|:------------------:|:------:|
-|  name  |       String       |   是    |
-|   id   |       String       |   是    |
-| extras | Map<String,Object> |   否    |
-
-## 2、解绑用户
-方法名：ftUnBindUser
-
-返回值：无
-
-参数：无
-
-## 3、上报流程图数据
-方法名：ftTrackFlowChart
-
-返回值：无
-
-参数表
-
-|   参数名    |        类型         | 是否必须 |
-|:----------:|:------------------:|:------:|
-| production |       String       |   是    |
-|  traceId   |       String       |   是    |
-|    name    |       String       |   是    |
-|  duration  |        long        |   是    |
-|   parent   |       String       |   否    |
-|    tags    | Map<String,Object> |   否    |
-|   fields   | Map<String,Object> |   否    |
-
-
-## 4、主动埋点后台上传
-方法名：ftTrackBackground
-
-返回值：无
-
-参数表
-
-|    参数名    |        类型         | 是否必须 |
-|:-----------:|:------------------:|:------:|
-| measurement |       String       |   是    |
-|   fields    | Map<String,Object> |   是    |
-|    tags     | Map<String,Object> |   否    |
-
-
-## 5、停止SDK后台正在执行的操作
-方法名：ftStopSdk
-
-返回值：无
-
-参数：无
-
-## 6、SDK 初始化配置
-方法名：ftConfig
+## 1、SDK 初始化配置
+方法名：ftLogConfig
 
 返回值：无
 
@@ -94,36 +43,87 @@ DataFlux Flutter SDK 接口规范
 |    参数名     |  类型   | 是否必须 |
 |:------------:|:------:|:------:|
 |  serverUrl   | String |   是    |
-|     akId     | String |   否    |
-|   akSecret   | String |   否    |
+|     debug    | bool   |   否    |
 | datakitUUID  | String |   否    |
-|  enableLog   |  bool  |   否    |
-| needBindUser |  bool  |   否    |
-| monitorType  |  int   |   否    |
-|  useGeoKey   |  bool  |   否    |
-|    geoKey    | String |   否    |
-|   product    | String |   否    |
+|  env         |  Int   |   否    |
+| useOAID      |  bool  |   否    |
+
+## 2、绑定用户
+方法名：ftBindUser
+
+返回值：无
+
+参数表
+
+| 参数名  |        类型         | 是否必须 |
+|:------:|:------------------:|:------:|
+|  userId|       String       |   是    |
+
+## 3、解绑用户
+方法名：ftUnBindUser
+
+返回值：无
+
+参数：无
 
 
 
+## 4、Logging 初始化配置
+方法名：ftLogConfig
 
-## 7、主动埋点一条数据（异步回调结果）
-方法名：ftTrack
-
-返回值：Map<String, Object>
+返回值：无
 
 参数表
 
 |    参数名    |         类型         | 是否必须 |
 |:-----------:|:-------------------:|:------:|
-| measurement |       String        |   是    |
-|   fields    | Map<String, Object> |   是    |
-|    tags     | Map<String, Object> |   否    |
+| serviceName |       String        |   否    |
+|   logType   | [Int] |   否    |
+|  logCacheDiscard | bool           |   否   |
+|sampleRate   |      double            | 否        |
+|enableCustomLog|   bool            | 否       |
+|enableLinkRumData|   bool          | 否       |
+
+## 5、日志写入
+方法名：ftLogging
+返回值：无
+参数表
+
+|    参数名    |         类型         | 是否必须 |
+|:-----------:|:-------------------:|:------:|
+| content |       String        |  是    |
+|   status   | Int |   是    |
+
+## 6、Tracing 初始化配置
+
+方法名：ftTraceConfig
+
+返回值：无
+
+参数表
+
+| 参数名 |            类型            | 是否必须 |
+|:-----:|:-------------------------:|:------:|
+| sampleRate  | double |   否    |
+| serviceName  | String |   否    |
+| traceType  | enum |   否    |
+| enableLinkRUMData  | bool |   否    |
 
 
-## 8、主动埋点上传一组数据（异步回调结果）
+## 7、获取 Tracing 请求头
+方法名：ftTraceGetHeader
 
-方法名：ftTrackList
+返回值：Map<String,String>
+
+参数表
+
+| 参数名 |            类型            | 是否必须 |
+|:-----:|:-------------------------:|:------:|
+| key  | String |  是    |
+| url  | String |   是    |
+
+## 8、Tracing 数据写入
+方法名：ftTrace
 
 返回值：Map<String, Object>
 
@@ -131,11 +131,17 @@ DataFlux Flutter SDK 接口规范
 
 | 参数名 |            类型            | 是否必须 |
 |:-----:|:-------------------------:|:------:|
-| list  | List<Map<String, Object>> |   是    |
+| key  | String |  是    |
+| url  | Uri |   是    |
+| httpMethod  | String |   是    |
+| requestHeader  | Map<String, dynamic> |   是    |
+| statusCode  | int  |   否    |
+| responseHeader  | Map<String, dynamic> |   否    |
+| errorMessage  | String |   否    |
 
-## 9、定位回调方法
+## 9、RUM 初始化配置
 
-方法名：ftStartLocation
+方法名：ftRumConfig
 
 返回值：Map<String,Object>
 
@@ -143,27 +149,89 @@ DataFlux Flutter SDK 接口规范
 
 | 参数名 | 类型  | 是否必须 |
 |:---:|:---:|:----:|
-|   geoKey  |  String   |    否  |
+|   rumAppId  |  String   |    是  |
+|   sampleRate  |  double   |    否  |
+|   enableUserAction  |  bool   |    否  |
+|   monitorType  |  enum   |    否  |
+|   globalContext  |  Map   |    否  |
 
-## 10、开启监控周期上报
-
-方法名：ftStartMonitor
+## 10、RUM: Action
+方法名：ftRumAddAction
 
 返回值：无
 
 参数表
 
-|     参数名     |   类型   | 是否必须 |      说明      |
-|:-----------:|:------:|:----:|:------------:|
-|   geoKey    | String |  否   | Android 端特有  |
-|  useGeoKey  |  bool  |  否   | Android 端特有  |
-|   period    |  int   |  否   | 周期，单位秒，默认10秒 |
-| monitorType |  int   |  是   |     监控类型     |
+|     参数名     |   类型   | 是否必须 |     
+|:-----------:|:------:|:----:|
+|   actionName    | String |  是   |
+|  actionType  |  String  |  是   | 
 
-## 11、关闭监控周期上报
+## 11、RUM: View Start
 
-方法名：ftStopMonitor
+方法名：ftRumStartView
 
 返回值：无
 
+参数表
 
+|     参数名     |   类型   | 是否必须 |     
+|:-----------:|:------:|:----:|
+|   viewName    | String |  是   |
+|  viewReferer  |  String  |  是   | 
+
+## 12、RUM: View Stop
+
+方法名：ftRumStopView
+
+返回值：无
+
+参数表
+
+
+## 13、RUM: Error
+
+方法名：ftRumAddError
+
+返回值：无
+
+参数表
+
+|     参数名     |   类型   | 是否必须 |     
+|:-----------:|:------:|:----:|
+|   stack    | String |  是   |
+|  message  |  String  |  是   | 
+|  appState  |  Int  |  是   | 
+
+
+## 14、RUM: Resource Start
+
+方法名：ftRumStartResource
+
+返回值：无
+
+参数表
+
+|     参数名     |   类型   | 是否必须 |     
+|:-----------:|:------:|:----:|
+|   key    | String |  是   |
+
+## 15、RUM: Resource Stop
+
+方法名：ftRumStopResource
+
+返回值：无
+
+参数表
+
+|     参数名     |   类型   | 是否必须 |     
+|:-----------:|:------:|:----:|
+|   key    | String |  是   |
+|  url  |  String  |  是   | 
+|  resourceMethod  |  String  |  是   | 
+|  requestHeader  |  Map<String, dynamic>   |  是   | 
+|  responseHeader  |  Map<String, dynamic>  |  否   | 
+|  resourceStatus  |  Int  |  否   | 
+|  responseBody  |  String  |  否   |
+|  spanID  |  String  |  否   |
+|  traceID  |  String  |  否   |
