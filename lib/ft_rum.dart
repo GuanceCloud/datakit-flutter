@@ -26,8 +26,7 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumConfig, map);
   }
 
-  Future<void> startAction(String actionName, String actionType,
-      {bool needWait = false}) async {
+  Future<void> startAction(String actionName, String actionType) async {
     Map<String, dynamic> map = {};
     map["actionName"] = actionName;
     map["actionType"] = actionType;
@@ -46,12 +45,12 @@ class FTRUMManager {
   }
 
   ///其它异常捕获与日志收集
-  Future<void> addError(Object obj, StackTrace stack,) async {
+  Future<void> addError(Object obj, StackTrace stack) async {
     if(obj is FlutterErrorDetails) {
       return await addFlutterError(obj);
     }
     Map<String, dynamic> map = {};
-    map["crash"] = stack.toString();
+    map["stack"] = stack.toString();
     map["message"] = obj.toString();
     map["appState"] = appState.index;
     await channel.invokeMethod(methodRumAddError, map);
@@ -65,6 +64,13 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumAddError, map);
   }
 
+  Future<void> addCustomError(String stack, String message) async {
+    Map<String, dynamic> map = {};
+    map["stack"] = stack;
+    map["message"] = message;
+    map["appState"] = appState.index;
+    await channel.invokeMethod(methodRumAddError, map);
+  }
   Future<void> startResource(String key) async {
     Map<String, dynamic> map = {};
     map["key"] = key;

@@ -94,6 +94,8 @@ class _HomeState extends State<HomeRoute> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              _buildBindUserWidget(),
+              _buildUnBindUserWidget(),
               _buildLoggingWidget(),
               _buildTracerWidget(),
               _buildRUMWidget(),
@@ -103,7 +105,22 @@ class _HomeState extends State<HomeRoute> {
     )
     );
   }
-
+  Widget _buildBindUserWidget() {
+    return ElevatedButton(
+      child: Text("绑定用户"),
+      onPressed: () {
+        FTMobileFlutter.bindUser("flutterUser");
+      },
+    );
+  }
+  Widget _buildUnBindUserWidget() {
+    return ElevatedButton(
+      child: Text("解绑用户"),
+      onPressed: () {
+        FTMobileFlutter.unbindUser();
+      },
+    );
+  }
   Widget _buildLoggingWidget() {
     return ElevatedButton(
       child: Text("日志输出"),

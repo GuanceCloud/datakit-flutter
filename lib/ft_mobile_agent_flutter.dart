@@ -19,6 +19,18 @@ class FTMobileFlutter {
     map["env"] = envType?.index;
     await channel.invokeMethod(methodConfig, map);
   }
+
+  ///绑定用户
+  static Future<void> bindUser(String userId) async {
+    Map<String, dynamic> map = {};
+    map["userId"] = userId;
+    return await channel.invokeMethod(methodBindUser, map);
+  }
+
+  ///解绑用户
+  static Future<void> unbindUser() async {
+    return await channel.invokeMethod(methodUnbindUser);
+  }
 }
 
 enum EnvType { prod, gray, pre, common, local }
