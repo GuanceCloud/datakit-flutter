@@ -79,7 +79,7 @@ class FTRUMManager {
 
   Future<void> stopResource(
       {required String key,
-      required String url,
+      required Uri url,
       required String httpMethod,
       required Map requestHeader,
       Map? responseHeader,
@@ -87,7 +87,7 @@ class FTRUMManager {
       int? resourceStatus}) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
-    map["url"] = url;
+    map["url"] = url.toString();
     map["resourceMethod"] = httpMethod;
     map["requestHeader"] = requestHeader;
     map["responseHeader"] = responseHeader;

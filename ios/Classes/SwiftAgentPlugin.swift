@@ -20,7 +20,6 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     static let METHOD_RUM_ADD_ERROR = "ftRumAddError"
     static let METHOD_RUM_START_RESOURCE = "ftRumStartResource"
     static let METHOD_RUM_STOP_RESOURCE = "ftRumStopResource"
-    static let METHOD_RUM_RESOURCE_CONTENT = "ftRumResourceContent"
 
     static let METHOD_TRACE_CONFIG = "ftTraceConfig"
     static let METHOD_TRACE = "ftTrace"

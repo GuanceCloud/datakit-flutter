@@ -71,7 +71,7 @@ class _TracingState extends State<Tracing> {
     HttpClientResponse? response;
     try {
       final traceHeaders =
-          await FTTracer().getTraceHeader(key, request.uri.toString());
+          await FTTracer().getTraceHeader(key, request.uri);
       traceHeaders.forEach((key, value) {
         request.headers.add(key, value);
       });

@@ -59,23 +59,18 @@ class FTTracer {
       "requestContent": requestContent,
       "responseContent": responseContent
     };
-    _addTrace(key, content, operationName, isError);
-  }
-
-  Future<void> _addTrace(String key,
-      Map<String, dynamic> json, String operationName, bool isError) async {
     var map = Map<String, dynamic>();
     map["key"] = key;
-    map["content"] = jsonEncode(json);
+    map["content"] = jsonEncode(content);
     map["operationName"] = operationName;
     map["isError"] = isError;
     await channel.invokeMethod(methodTrace, map);
   }
 
-  Future<Map<String, String>> getTraceHeader(String key, String url) async {
+  Future<Map<String, String>> getTraceHeader(String key, Uri url) async {
     var map = Map<String, dynamic>();
     map["key"] = key;
-    map["url"] = url;
+    map["url"] = url.toString();
     Map? header = await channel.invokeMethod(methodGetTraceGetHeader, map);
     if (header != null){
       return new Map<String, String>.from(header);

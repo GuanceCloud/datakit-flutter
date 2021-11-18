@@ -10,7 +10,7 @@ class FTInterceptor extends Interceptor {
       RequestOptions options, RequestInterceptorHandler handler) async {
     String key = DateTime.now().millisecondsSinceEpoch.toString()+options.uri.toString();
     final traceHeaders =
-    await FTTracer().getTraceHeader(key, options.uri.toString());
+    await FTTracer().getTraceHeader(key, options.uri);
     options.headers.addAll(traceHeaders);
     traceMap[options] = key;
     FTRUMManager().startResource(key);
@@ -32,7 +32,7 @@ class FTInterceptor extends Interceptor {
           errorMessage: "");
       FTRUMManager().stopResource(
         key: key,
-        url:options.uri.toString(),
+        url:options.uri,
         requestHeader: options.headers,
         httpMethod: options.method,
         responseHeader:response.headers.map,
@@ -61,7 +61,7 @@ class FTInterceptor extends Interceptor {
           errorMessage: err.message);
       FTRUMManager().stopResource(
         key: key,
-        url:options.uri.toString(),
+        url:options.uri,
         requestHeader: options.headers,
         httpMethod: options.method,
         responseHeader:err.response?.headers.map,
