@@ -65,7 +65,7 @@ class _TracingState extends State<Tracing> {
   void httpClientGetHttp() async {
     var url = 'http://www.google.cn';
     var httpClient = new HttpClient();
-    String key = "aaa";
+    String key = DateTime.now().millisecondsSinceEpoch.toString()+url;
     String errorMessage = "";
     HttpClientRequest request = await httpClient.getUrl(Uri.parse(url));
     HttpClientResponse? response;

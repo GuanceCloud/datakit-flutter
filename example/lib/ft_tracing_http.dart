@@ -13,7 +13,7 @@ class FTTracingHttpClient extends http.BaseClient {
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     if (request is! http.Request) return _innerClient.send(request);
-    String key = "";
+    String key = DateTime.now().millisecondsSinceEpoch.toString()+request.url.toString();
     final traceHeaders =
         await FTTracer().getTraceHeader(key, request.url.toString());
     request.headers.addAll(traceHeaders);

@@ -8,7 +8,7 @@ class FTInterceptor extends Interceptor {
   @override
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    String key = "aaa";
+    String key = DateTime.now().millisecondsSinceEpoch.toString()+options.uri.toString();
     final traceHeaders =
     await FTTracer().getTraceHeader(key, options.uri.toString());
     options.headers.addAll(traceHeaders);
@@ -68,7 +68,7 @@ class FTInterceptor extends Interceptor {
         resourceStatus: err.response?.statusCode,
         responseBody: err.response?.data?.toString(),
       );
-      traceMap.remove(key);
+      traceMap.remove(options);
     }
     handler.next(err);
   }
