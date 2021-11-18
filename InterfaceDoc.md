@@ -132,12 +132,9 @@ DataFlux Flutter SDK 接口规范
 | 参数名 |            类型            | 是否必须 |
 |:-----:|:-------------------------:|:------:|
 | key  | String |  是    |
-| url  | Uri |   是    |
-| httpMethod  | String |   是    |
-| requestHeader  | Map<String, dynamic> |   是    |
-| statusCode  | int  |   否    |
-| responseHeader  | Map<String, dynamic> |   否    |
-| errorMessage  | String |   否    |
+| content | String |   是    |
+| operationName | String |   是    |
+| isError | bool |   是    |
 
 ## 9、RUM 初始化配置
 
@@ -162,10 +159,10 @@ DataFlux Flutter SDK 接口规范
 
 参数表
 
-|     参数名     |   类型   | 是否必须 |     
+|     参数名     |   类型   | 是否必须 |
 |:-----------:|:------:|:----:|
 |   actionName    | String |  是   |
-|  actionType  |  String  |  是   | 
+|  actionType  |  String  |  是   |
 
 ## 11、RUM: View Start
 
@@ -175,10 +172,10 @@ DataFlux Flutter SDK 接口规范
 
 参数表
 
-|     参数名     |   类型   | 是否必须 |     
+|     参数名     |   类型   | 是否必须 |
 |:-----------:|:------:|:----:|
 |   viewName    | String |  是   |
-|  viewReferer  |  String  |  是   | 
+|  viewReferer  |  String  |  是   |
 
 ## 12、RUM: View Stop
 
@@ -197,11 +194,11 @@ DataFlux Flutter SDK 接口规范
 
 参数表
 
-|     参数名     |   类型   | 是否必须 |     
+|     参数名     |   类型   | 是否必须 |
 |:-----------:|:------:|:----:|
 |   stack    | String |  是   |
-|  message  |  String  |  是   | 
-|  appState  |  Int  |  是   | 
+|  message  |  String  |  是   |
+|  appState  |  Int  |  是   |
 
 
 ## 14、RUM: Resource Start
@@ -212,7 +209,7 @@ DataFlux Flutter SDK 接口规范
 
 参数表
 
-|     参数名     |   类型   | 是否必须 |     
+|     参数名     |   类型   | 是否必须 |
 |:-----------:|:------:|:----:|
 |   key    | String |  是   |
 
@@ -224,14 +221,14 @@ DataFlux Flutter SDK 接口规范
 
 参数表
 
-|     参数名     |   类型   | 是否必须 |     
+|     参数名     |   类型   | 是否必须 |
 |:-----------:|:------:|:----:|
 |   key    | String |  是   |
-|  url  |  String  |  是   | 
-|  resourceMethod  |  String  |  是   | 
-|  requestHeader  |  Map<String, dynamic>   |  是   | 
-|  responseHeader  |  Map<String, dynamic>  |  否   | 
-|  resourceStatus  |  Int  |  否   | 
+|  url  |  String  |  是   |
+|  resourceMethod  |  String  |  是   |
+|  requestHeader  |  Map<String, dynamic>   |  是   |
+|  responseHeader  |  Map<String, dynamic>  |  否   |
+|  resourceStatus  |  Int  |  否   |
 |  responseBody  |  String  |  否   |
 |  spanID  |  String  |  否   |
 |  traceID  |  String  |  否   |
