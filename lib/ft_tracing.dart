@@ -75,7 +75,7 @@ class FTTracer {
     if (header != null){
       return new Map<String, String>.from(header);
     }else{
-      return {};
+      return <String,String>{};
     }
   }
 }

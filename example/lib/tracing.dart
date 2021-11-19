@@ -4,6 +4,7 @@ import 'package:agent_example/ft_tracing_http.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 import 'ft_tracing_dio.dart';
 
@@ -39,7 +40,7 @@ class _TracingState extends State<Tracing> {
           ListTile(
             title: Text("http"),
             onTap: () {
-              client.get(Uri.parse("http://www.google.cn"));
+             client.get(Uri.parse("http://www.google.cn"));
             },
           ),
           ListTile(
@@ -65,7 +66,7 @@ class _TracingState extends State<Tracing> {
   void httpClientGetHttp() async {
     var url = 'http://www.google.cn';
     var httpClient = new HttpClient();
-    String key = DateTime.now().millisecondsSinceEpoch.toString()+url;
+    String key = Uuid().v4();
     String errorMessage = "";
     HttpClientRequest request = await httpClient.getUrl(Uri.parse(url));
     HttpClientResponse? response;

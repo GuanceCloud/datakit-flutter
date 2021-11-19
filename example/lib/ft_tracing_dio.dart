@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
+import 'package:uuid/uuid.dart';
 ///使用 dio 库来进行网络请求
 
 class FTInterceptor extends Interceptor {
@@ -8,7 +9,7 @@ class FTInterceptor extends Interceptor {
   @override
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    String key = DateTime.now().millisecondsSinceEpoch.toString()+options.uri.toString();
+    String key = Uuid().v4();
     final traceHeaders =
     await FTTracer().getTraceHeader(key, options.uri);
     options.headers.addAll(traceHeaders);
