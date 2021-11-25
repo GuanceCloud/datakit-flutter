@@ -1,6 +1,7 @@
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:uuid/uuid.dart';
 
 ///使用 http 库来进行网络请求
 class FTTracingHttpClient extends http.BaseClient {
@@ -13,8 +14,7 @@ class FTTracingHttpClient extends http.BaseClient {
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     if (request is! http.Request) return _innerClient.send(request);
-    String key = DateTime.now().millisecondsSinceEpoch.toString() +
-        request.url.toString();
+    String key = Uuid().v4();
     final traceHeaders =
         await FTTracer().getTraceHeader(key, request.url.toString());
     request.headers.addAll(traceHeaders);
