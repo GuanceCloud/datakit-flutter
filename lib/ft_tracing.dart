@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'const.dart';
 
@@ -12,10 +11,11 @@ class FTTracer {
 
   FTTracer._internal();
 
-  Future<void> setConfig({double? sampleRate,
-    String? serviceName,
-    TraceType? traceType,
-    bool? enableLinkRUMData}) async {
+  Future<void> setConfig(
+      {double? sampleRate,
+      String? serviceName,
+      TraceType? traceType,
+      bool? enableLinkRUMData}) async {
     var map = Map<String, dynamic>();
     map["sampleRate"] = sampleRate;
     map["serviceName"] = serviceName;
@@ -26,49 +26,19 @@ class FTTracer {
 
   Future<void> addTrace({
     required String key,
-    required Uri url,
     required String httpMethod,
-    required Map<String, dynamic>requestHeader,
+    required Map<String, dynamic> requestHeader,
     int? statusCode,
     Map<String, dynamic>? responseHeader,
     String? errorMessage,
   }) async {
-    String operationName = httpMethod.toUpperCase() + ' ' + url.path;
-    Map requestContent = {
-      "method": httpMethod,
-      "headers": requestHeader,
-      "url": url.toString(),
-    };
-    Map responseContent = {};
-    Map headers = responseHeader != null ? responseHeader : {};
-    int code = statusCode != null ? statusCode : 0;
-    bool isError = responseHeader == null || code >= 400;
-    if (isError) {
-      String error = errorMessage != null ? errorMessage : "";
-      responseContent = {
-        "error": error,
-        "headers": headers
-      };
-    } else {
-      responseContent = {
-        "code": code.toString(),
-        "headers": headers
-      };
-    }
-    Map<String, dynamic> content = {
-      "requestContent": requestContent,
-      "responseContent": responseContent
-    };
-    _addTrace(key, content, operationName, isError);
-  }
-
-  Future<void> _addTrace(String key,
-      Map<String, dynamic> json, String operationName, bool isError) async {
     var map = Map<String, dynamic>();
     map["key"] = key;
-    map["content"] = jsonEncode(json);
-    map["operationName"] = operationName;
-    map["isError"] = isError;
+    map["httpMethod"] = httpMethod;
+    map["requestHeader"] = requestHeader;
+    map["responseHeader"] = responseHeader;
+    map["statusCode"] = statusCode;
+    map["errorMessage"] = errorMessage;
     await channel.invokeMethod(methodTrace, map);
   }
 
@@ -77,9 +47,9 @@ class FTTracer {
     map["key"] = key;
     map["url"] = url;
     Map? header = await channel.invokeMethod(methodGetTraceGetHeader, map);
-    if (header != null){
+    if (header != null) {
       return new Map<String, String>.from(header);
-    }else{
+    } else {
       return {};
     }
   }

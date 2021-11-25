@@ -65,7 +65,7 @@ class _TracingState extends State<Tracing> {
   void httpClientGetHttp() async {
     var url = 'http://www.google.cn';
     var httpClient = new HttpClient();
-    String key = DateTime.now().millisecondsSinceEpoch.toString()+url;
+    String key = DateTime.now().millisecondsSinceEpoch.toString() + url;
     String errorMessage = "";
     HttpClientRequest request = await httpClient.getUrl(Uri.parse(url));
     HttpClientResponse? response;
@@ -78,21 +78,20 @@ class _TracingState extends State<Tracing> {
       response = await request.close();
     } catch (exception) {
       errorMessage = exception.toString();
-    } finally{
-      Map<String,dynamic> requestHeader = {};
-      Map<String,dynamic> responseHeader = {};
+    } finally {
+      Map<String, dynamic> requestHeader = {};
+      Map<String, dynamic> responseHeader = {};
 
       request.headers.forEach((name, values) {
         requestHeader[name] = values;
       });
-      if (response != null){
+      if (response != null) {
         response.headers.forEach((name, values) {
           responseHeader[name] = values;
         });
       }
       FTTracer().addTrace(
           key: key,
-          url: request.uri,
           httpMethod: request.method,
           responseHeader: responseHeader,
           requestHeader: requestHeader,
