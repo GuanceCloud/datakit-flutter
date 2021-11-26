@@ -72,7 +72,7 @@ class _TracingState extends State<Tracing> {
     HttpClientResponse? response;
     try {
       final traceHeaders =
-          await FTTracer().getTraceHeader(key, request.uri);
+          await FTTracer().getTraceHeader(key, request.uri.toString());
       traceHeaders.forEach((key, value) {
         request.headers.add(key, value);
       });
@@ -93,12 +93,10 @@ class _TracingState extends State<Tracing> {
       }
       FTTracer().addTrace(
           key: key,
-          url: request.uri,
           httpMethod: request.method,
           responseHeader: responseHeader,
           requestHeader: requestHeader,
-          statusCode: response?.statusCode,
-          errorMessage: errorMessage);
+          statusCode: response?.statusCode);
     }
   }
 }

@@ -1,10 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 
 import 'const.dart';
 
 class FTRUMManager {
   static final FTRUMManager _singleton = FTRUMManager._internal();
-  AppState appState = AppState.unknown;
+  AppState appState = AppState.run;
+
   factory FTRUMManager() {
     return _singleton;
   }
@@ -12,13 +15,18 @@ class FTRUMManager {
   FTRUMManager._internal();
 
   Future<void> setConfig(
-      {required String rumAppId,
-      double? sampleRate,
-      bool? enableUserAction,
-      MonitorType? monitorType,
-      Map? globalContext}) async {
+      {String? androidAppId,
+        String? iOSAppId,
+        double? sampleRate,
+        bool? enableUserAction,
+        MonitorType? monitorType,
+        Map? globalContext}) async {
     Map<String, dynamic> map = {};
-    map["rumAppId"] = rumAppId;
+    if (Platform.isAndroid) {
+      map["rumAppId"] = androidAppId;
+    } else if (Platform.isIOS) {
+      map["rumAppId"] = iOSAppId;
+    }
     map["sampleRate"] = sampleRate;
     map["enableUserAction"] = enableUserAction;
     map["monitorType"] = monitorType?.value;
@@ -46,22 +54,15 @@ class FTRUMManager {
 
   ///其它异常捕获与日志收集
   Future<void> addError(Object obj, StackTrace stack) async {
-    if(obj is FlutterErrorDetails) {
+    if (obj is FlutterErrorDetails) {
       return await addFlutterError(obj);
     }
-    Map<String, dynamic> map = {};
-    map["stack"] = stack.toString();
-    map["message"] = obj.toString();
-    map["appState"] = appState.index;
-    await channel.invokeMethod(methodRumAddError, map);
+    addCustomError(stack.toString(), obj.toString());
   }
+
   ///Flutter框架异常捕获
   Future<void> addFlutterError(FlutterErrorDetails error) async {
-    Map<String, dynamic> map = {};
-    map["stack"] = error.stack.toString();
-    map["message"] = error.exceptionAsString();
-    map["appState"] = appState.index;
-    await channel.invokeMethod(methodRumAddError, map);
+    addCustomError(error.stack.toString(), error.exceptionAsString());
   }
 
   Future<void> addCustomError(String stack, String message) async {
@@ -71,37 +72,37 @@ class FTRUMManager {
     map["appState"] = appState.index;
     await channel.invokeMethod(methodRumAddError, map);
   }
+
   Future<void> startResource(String key) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
-    await channel.invokeMethod(methodRumStartResource,map);
+    await channel.invokeMethod(methodRumStartResource, map);
   }
 
-  Future<void> addResource(
-      {required String key,
-      required Uri url,
-      required String httpMethod,
-      required Map requestHeader,
-      Map? responseHeader,
-      String? responseBody = "",
-      int? resourceStatus}) async {
-    Map<String, dynamic> map = {};
-    map["key"] = key;
-    map["url"] = url.toString();
-    map["httpMethod"] = httpMethod;
-    map["requestHeader"] = requestHeader;
-    map["responseHeader"] = responseHeader;
-    map["responseBody"] = responseBody;
-    map["resourceStatus"] = resourceStatus;
-    await channel.invokeMethod(methodRumUploadResource, map);
-  }
-
-  Future<void> stopResource(String key) async{
+  Future<void> stopResource(String key) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
     await channel.invokeMethod(methodRumStopResource, map);
   }
 
+  Future<void> addResource(
+      {required String key,
+        required String url,
+        required String httpMethod,
+        required Map requestHeader,
+        Map? responseHeader,
+        String? responseBody = "",
+        int? resourceStatus}) async {
+    Map<String, dynamic> map = {};
+    map["key"] = key;
+    map["url"] = url;
+    map["resourceMethod"] = httpMethod;
+    map["requestHeader"] = requestHeader;
+    map["responseHeader"] = responseHeader;
+    map["responseBody"] = responseBody;
+    map["resourceStatus"] = resourceStatus;
+    await channel.invokeMethod(methodRumAddResource, map);
+  }
 }
 
 enum MonitorType { all, battery, memory, cpu }

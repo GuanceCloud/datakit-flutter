@@ -11,7 +11,7 @@ class FTInterceptor extends Interceptor {
       RequestOptions options, RequestInterceptorHandler handler) async {
     String key = Uuid().v4();
     final traceHeaders =
-    await FTTracer().getTraceHeader(key, options.uri);
+    await FTTracer().getTraceHeader(key, options.uri.toString());
     options.headers.addAll(traceHeaders);
     traceMap[options] = key;
     FTRUMManager().startResource(key);
@@ -26,14 +26,12 @@ class FTInterceptor extends Interceptor {
       FTTracer().addTrace(
           key: key,
           httpMethod: options.method,
-          url: options.uri,
           requestHeader: options.headers,
           responseHeader: response.headers.map,
-          statusCode: response.statusCode,
-          errorMessage: "");
-      FTRUMManager().stopResource(
+          statusCode: response.statusCode);
+      FTRUMManager().addResource(
         key: key,
-        url:options.uri,
+        url:options.uri.toString(),
         requestHeader: options.headers,
         httpMethod: options.method,
         responseHeader:response.headers.map,
@@ -55,20 +53,19 @@ class FTInterceptor extends Interceptor {
       FTTracer().addTrace(
           key: key,
           httpMethod: options.method,
-          url: options.uri,
           requestHeader: options.headers,
           responseHeader: err.response?.headers.map,
-          statusCode: err.response?.statusCode,
-          errorMessage: err.message);
-      FTRUMManager().stopResource(
+          statusCode: err.response?.statusCode);
+      FTRUMManager().addResource(
         key: key,
-        url:options.uri,
+        url:options.uri.toString(),
         requestHeader: options.headers,
         httpMethod: options.method,
         responseHeader:err.response?.headers.map,
         resourceStatus: err.response?.statusCode,
         responseBody: err.response?.data?.toString(),
       );
+      FTRUMManager().stopResource(key);
       traceMap.remove(options);
     }
     handler.next(err);

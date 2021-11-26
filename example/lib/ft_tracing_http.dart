@@ -20,15 +20,16 @@ class FTTracingHttpClient extends http.BaseClient {
     BaseRequest req = response.request!;
     String? key = rumMap[req];
     if (key != null) {
-      FTRUMManager().stopResource(
+      FTRUMManager().addResource(
         key: key,
-        url: req.url,
+        url: req.url.toString(),
         requestHeader: req.headers,
         httpMethod: req.method,
         responseHeader: response.headers,
         resourceStatus: response.statusCode,
         responseBody: response.body,
       );
+      FTRUMManager().stopResource(key);
       rumMap.remove(req);
     }
     return response;
@@ -37,7 +38,7 @@ class FTTracingHttpClient extends http.BaseClient {
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     String key = Uuid().v4();
-    final traceHeaders = await FTTracer().getTraceHeader(key, request.url);
+    final traceHeaders = await FTTracer().getTraceHeader(key, request.url.toString());
     request.headers.addAll(traceHeaders);
     FTRUMManager().startResource(key);
     http.StreamedResponse? response;
@@ -47,9 +48,9 @@ class FTTracingHttpClient extends http.BaseClient {
       return response = await _innerClient.send(request);
     } catch (e) {
       errorMessage = e.toString();
-      FTRUMManager().stopResource(
+      FTRUMManager().addResource(
         key: key,
-        url: request.url,
+        url: request.url.toString(),
         requestHeader: request.headers,
         httpMethod: request.method,
       );
@@ -57,12 +58,10 @@ class FTTracingHttpClient extends http.BaseClient {
     } finally {
       FTTracer().addTrace(
           key: key,
-          url: request.url,
           httpMethod: request.method,
           requestHeader: request.headers,
           responseHeader: response?.headers,
-          statusCode: response?.statusCode,
-          errorMessage: errorMessage);
+          statusCode: response?.statusCode);
     }
   }
 }

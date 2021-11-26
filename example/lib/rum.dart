@@ -70,15 +70,16 @@ class _RUMState extends State<RUM> {
         });
         responseBody = await response.transform(Utf8Decoder()).join();
       }
-      FTRUMManager().stopResource(
+      FTRUMManager().addResource(
         key: key,
-        url:request.uri,
+        url:request.uri.toString(),
         requestHeader: requestHeader,
         httpMethod: request.method,
         responseHeader:responseHeader,
         resourceStatus: response?.statusCode,
         responseBody: responseBody,
       );
+      FTRUMManager().stopResource(key);
     }
 
   }

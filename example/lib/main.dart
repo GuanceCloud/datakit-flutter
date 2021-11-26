@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:agent_example/rum.dart';
 import 'package:agent_example/tracing.dart';
 import 'package:flutter/material.dart';
@@ -8,30 +9,30 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'ft_route_observer.dart';
 import 'logging.dart';
+
 const serverUrl = String.fromEnvironment("SERVER_URL");
-const appId =  String.fromEnvironment("APP_ID");
-void main() async  {
+const appAndroidId = String.fromEnvironment("ANDROID_APP_ID");
+const appIOSId = String.fromEnvironment("IOS_APP_ID");
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   //初始化 SDK
-  await FTMobileFlutter.sdkConfig(serverUrl: serverUrl, debug: true,);
+  await FTMobileFlutter.sdkConfig(
+    serverUrl: serverUrl,
+    debug: true,
+  );
   await FTLogger()
       .logConfig(serviceName: "flutter_agent", enableCustomLog: true);
   await FTTracer().setConfig(enableLinkRUMData: true);
-  await FTRUMManager().setConfig(rumAppId: appId,enableUserAction: true);
-  FTRUMManager().appState = AppState.startup;
-  //先将 onError 保存起来
-  var onError = FlutterError.onError;
-  FlutterError.onError = (FlutterErrorDetails details) async {
-    //调用默认的onError
-    onError?.call(details);
-    //RUM 记录 error 数据
-    FTRUMManager().addFlutterError(details);
-  };
+  await FTRUMManager().setConfig(
+      androidAppId: appAndroidId, iOSAppId: appIOSId, enableUserAction: true);
 
-  runZonedGuarded((){
+  FlutterError.onError = FTRUMManager().addFlutterError;
+
+  runZonedGuarded(() {
     runApp(MyApp());
-  }, (Object error, StackTrace stack){
+  }, (Object error, StackTrace stack) {
     //RUM 记录 error 数据
     FTRUMManager().addError(error, stack);
   });
@@ -49,15 +50,15 @@ class MyApp extends StatelessWidget {
         // 使用路由跳转时，监控页面生命周期
         FTRouteObserver(),
       ],
-      routes:<String, WidgetBuilder>{//路由跳转
+      routes: <String, WidgetBuilder>{
+        //路由跳转
         'logging': (BuildContext context) => Logging(),
         'rum': (BuildContext context) => RUM(),
         'tracing': (BuildContext context) => Tracing(),
-      } ,
+      },
     );
   }
 }
-
 
 class HomeRoute extends StatefulWidget {
   @override
@@ -71,7 +72,6 @@ class _HomeState extends State<HomeRoute> {
 
   @override
   void initState() {
-
     super.initState();
     //第一个页面加载完成
     FTRUMManager().appState = AppState.run;
@@ -85,26 +85,26 @@ class _HomeState extends State<HomeRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Plugin example app'),
-      ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              _buildBindUserWidget(),
-              _buildUnBindUserWidget(),
-              _buildLoggingWidget(),
-              _buildTracerWidget(),
-              _buildRUMWidget(),
-            ],
-          ),
+        appBar: AppBar(
+          title: const Text('Plugin example app'),
         ),
-    )
-    );
+        body: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                _buildBindUserWidget(),
+                _buildUnBindUserWidget(),
+                _buildLoggingWidget(),
+                _buildTracerWidget(),
+                _buildRUMWidget(),
+              ],
+            ),
+          ),
+        ));
   }
+
   Widget _buildBindUserWidget() {
     return ElevatedButton(
       child: Text("绑定用户"),
@@ -113,6 +113,7 @@ class _HomeState extends State<HomeRoute> {
       },
     );
   }
+
   Widget _buildUnBindUserWidget() {
     return ElevatedButton(
       child: Text("解绑用户"),
@@ -121,6 +122,7 @@ class _HomeState extends State<HomeRoute> {
       },
     );
   }
+
   Widget _buildLoggingWidget() {
     return ElevatedButton(
       child: Text("日志输出"),
@@ -129,6 +131,7 @@ class _HomeState extends State<HomeRoute> {
       },
     );
   }
+
   Widget _buildTracerWidget() {
     return ElevatedButton(
       child: Text("网络链路追踪"),
@@ -137,15 +140,16 @@ class _HomeState extends State<HomeRoute> {
       },
     );
   }
+
   Widget _buildRUMWidget() {
     return ElevatedButton(
       child: Text("RUM数据采集"),
       onPressed: () {
         Navigator.pushNamed(context, "rum");
-
       },
     );
   }
+
   void _showPermissionTip(String tip) {
     showDialog<Null>(
         context: context,
