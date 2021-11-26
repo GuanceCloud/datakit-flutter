@@ -77,7 +77,7 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumStartResource,map);
   }
 
-  Future<void> stopResource(
+  Future<void> addResource(
       {required String key,
       required Uri url,
       required String httpMethod,
@@ -88,13 +88,20 @@ class FTRUMManager {
     Map<String, dynamic> map = {};
     map["key"] = key;
     map["url"] = url.toString();
-    map["resourceMethod"] = httpMethod;
+    map["httpMethod"] = httpMethod;
     map["requestHeader"] = requestHeader;
     map["responseHeader"] = responseHeader;
     map["responseBody"] = responseBody;
     map["resourceStatus"] = resourceStatus;
+    await channel.invokeMethod(methodRumUploadResource, map);
+  }
+
+  Future<void> stopResource(String key) async{
+    Map<String, dynamic> map = {};
+    map["key"] = key;
     await channel.invokeMethod(methodRumStopResource, map);
   }
+
 }
 
 enum MonitorType { all, battery, memory, cpu }
