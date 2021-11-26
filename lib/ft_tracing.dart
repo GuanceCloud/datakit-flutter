@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'const.dart';
 
@@ -29,41 +28,16 @@ class FTTracer {
     required Uri url,
     required String httpMethod,
     required Map<String, dynamic>requestHeader,
-    int? statusCode,
     Map<String, dynamic>? responseHeader,
-    String? errorMessage,
+    int? statusCode,
   }) async {
-    String operationName = httpMethod.toUpperCase() + ' ' + url.path;
-    Map requestContent = {
-      "method": httpMethod,
-      "headers": requestHeader,
-      "url": url.toString(),
-    };
-    Map responseContent = {};
-    Map headers = responseHeader != null ? responseHeader : {};
-    int code = statusCode != null ? statusCode : 0;
-    bool isError = responseHeader == null || code >= 400;
-    if (isError) {
-      String error = errorMessage != null ? errorMessage : "";
-      responseContent = {
-        "error": error,
-        "headers": headers
-      };
-    } else {
-      responseContent = {
-        "code": code.toString(),
-        "headers": headers
-      };
-    }
-    Map<String, dynamic> content = {
-      "requestContent": requestContent,
-      "responseContent": responseContent
-    };
     var map = Map<String, dynamic>();
     map["key"] = key;
-    map["content"] = jsonEncode(content);
-    map["operationName"] = operationName;
-    map["isError"] = isError;
+    map["url"] = url.toString();
+    map["httpMethod"] = httpMethod;
+    map["requestHeader"] = requestHeader;
+    map["responseHeader"] = responseHeader;
+    map["statusCode"] = statusCode;
     await channel.invokeMethod(methodTrace, map);
   }
 
