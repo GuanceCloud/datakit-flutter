@@ -65,6 +65,7 @@ class FTRUMManager {
     addCustomError(error.stack.toString(), error.exceptionAsString());
   }
 
+  ///添加自定义错误
   Future<void> addCustomError(String stack, String message) async {
     Map<String, dynamic> map = {};
     map["stack"] = stack;
@@ -73,18 +74,21 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumAddError, map);
   }
 
+  ///开始资源请求
   Future<void> startResource(String key) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
     await channel.invokeMethod(methodRumStartResource, map);
   }
 
+  ///结束资源请求
   Future<void> stopResource(String key) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
     await channel.invokeMethod(methodRumStopResource, map);
   }
 
+  /// 发送资源数据指标
   Future<void> addResource(
       {required String key,
       required String url,
@@ -105,9 +109,13 @@ class FTRUMManager {
   }
 }
 
-enum MonitorType { all, battery, memory, cpu }
 
+/// app 运行状态
 enum AppState { unknown, startup, run }
+
+
+/// 监控类型
+enum MonitorType { all, battery, memory, cpu }
 
 extension MonitorTypeExt on MonitorType {
   int get value {
