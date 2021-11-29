@@ -38,8 +38,9 @@ class _TracingState extends State<Tracing> {
           ),
           ListTile(
             title: Text("http"),
-            onTap: () {
-              client.get(Uri.parse("http://www.google.cn"));
+            onTap: () async{
+           var response = await  client.get(Uri.parse("http://www.google.cn"));
+           FTLogger().logging(response.body, FTLogStatus.info);
             },
           ),
           ListTile(
@@ -66,7 +67,7 @@ class _TracingState extends State<Tracing> {
     var url = 'http://www.google.cn';
     var httpClient = new HttpClient();
     String key = DateTime.now().millisecondsSinceEpoch.toString() + url;
-    String errorMessage = "";
+    var errorMessage = "";
     HttpClientRequest request = await httpClient.getUrl(Uri.parse(url));
     HttpClientResponse? response;
     try {
@@ -96,7 +97,8 @@ class _TracingState extends State<Tracing> {
           responseHeader: responseHeader,
           requestHeader: requestHeader,
           statusCode: response?.statusCode,
-          errorMessage: errorMessage);
+          errorMessage: errorMessage
+      );
     }
   }
 }

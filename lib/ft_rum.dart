@@ -16,11 +16,11 @@ class FTRUMManager {
 
   Future<void> setConfig(
       {String? androidAppId,
-      String? iOSAppId,
-      double? sampleRate,
-      bool? enableUserAction,
-      MonitorType? monitorType,
-      Map? globalContext}) async {
+        String? iOSAppId,
+        double? sampleRate,
+        bool? enableUserAction,
+        MonitorType? monitorType,
+        Map? globalContext}) async {
     Map<String, dynamic> map = {};
     if (Platform.isAndroid) {
       map["rumAppId"] = androidAppId;
@@ -87,15 +87,15 @@ class FTRUMManager {
 
   Future<void> addResource(
       {required String key,
-      required Uri url,
-      required String httpMethod,
-      required Map requestHeader,
-      Map? responseHeader,
-      String? responseBody = "",
-      int? resourceStatus}) async {
+        required String url,
+        required String httpMethod,
+        required Map requestHeader,
+        Map? responseHeader,
+        String? responseBody = "",
+        int? resourceStatus}) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
-    map["url"] = url.toString();
+    map["url"] = url;
     map["resourceMethod"] = httpMethod;
     map["requestHeader"] = requestHeader;
     map["responseHeader"] = responseHeader;

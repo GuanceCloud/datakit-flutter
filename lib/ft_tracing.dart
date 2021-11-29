@@ -13,9 +13,9 @@ class FTTracer {
 
   Future<void> setConfig(
       {double? sampleRate,
-      String? serviceName,
-      TraceType? traceType,
-      bool? enableLinkRUMData}) async {
+        String? serviceName,
+        TraceType? traceType,
+        bool? enableLinkRUMData}) async {
     var map = Map<String, dynamic>();
     map["sampleRate"] = sampleRate;
     map["serviceName"] = serviceName;
@@ -49,8 +49,8 @@ class FTTracer {
     Map? header = await channel.invokeMethod(methodGetTraceGetHeader, map);
     if (header != null) {
       return new Map<String, String>.from(header);
-    } else {
-      return {};
+    }else{
+      return <String,String>{};
     }
   }
 }
