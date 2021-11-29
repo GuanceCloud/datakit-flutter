@@ -21,19 +21,19 @@ class _RUMState extends State<RUM> {
         children: <Widget>[
           ListTile(
             title: Text("Action 点击"),
-            onTap: (){
+            onTap: () {
               FTRUMManager().startAction("[ListTile][Action 点击]", "click");
             },
           ),
           ListTile(
             title: Text("View Start"),
-            onTap: (){
+            onTap: () {
               FTRUMManager().starView("RUM", "");
             },
           ),
           ListTile(
             title: Text("View Stop"),
-            onTap: (){
+            onTap: () {
               FTRUMManager().stopView();
             },
           ),

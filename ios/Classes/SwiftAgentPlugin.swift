@@ -51,7 +51,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 }
                 if let env = args["env"] as? Int {
                     let entType: FTEnv? = FTEnv.init(rawValue: env)
-                    config.env = entType ?? .common
+                    config.env = entType ?? .prod
                 }
                 FTMobileAgent.start(withConfigOptions: config)
             }

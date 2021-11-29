@@ -4,7 +4,8 @@ import android.app.Application
 import android.view.ViewGroup
 import androidx.annotation.NonNull
 import com.ft.sdk.*
-import com.ft.sdk.garble.bean.Status
+import com.ft.sdk.garble.bean.*
+import com.ft.sdk.garble.utils.Utils
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -76,6 +77,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
         const val METHOD_RUM_ADD_ERROR = "ftRumAddError"
         const val METHOD_RUM_START_RESOURCE = "ftRumStartResource"
         const val METHOD_RUM_STOP_RESOURCE = "ftRumStopResource"
+        const val METHOD_RUM_ADD_RESOURCE = "ftRumAddResource"
 
         const val METHOD_TRACE_CONFIG = "ftTraceConfig"
         const val METHOD_TRACE = "ftTrace"
@@ -130,7 +132,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 val sampleRate: Float? = call.argument<Float>("sampleRate")
                 val enableUserAction: Boolean? = call.argument<Boolean>("enableUserAction")
                 val monitorType: Int? = call.argument<Int>("monitorType")
-                val globalContext : Map<String,String>? =  call.argument<Map>("globalContext")
+                val globalContext: Map<String, String>? = call.argument("globalContext")
                 val rumConfig = FTRUMConfig().setRumAppId(rumAppId)
                 if (sampleRate != null) {
                     rumConfig.samplingRate = sampleRate
@@ -142,39 +144,92 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 if (monitorType != null) {
                     rumConfig.extraMonitorTypeWithError = monitorType
                 }
-                if (globalContext != null){
-
+                globalContext?.forEach {
+                    rumConfig.addGlobalContext(it.key, it.value)
                 }
 
                 FTSdk.initRUMWithConfig(rumConfig)
+                result.success(null)
             }
             METHOD_RUM_ADD_ACTION -> {
                 val actionName: String? = call.argument<String>("actionName")
                 val actionType: String? = call.argument<String>("actionType")
                 FTRUMGlobalManager.get().startAction(actionName, actionType)
-
+                result.success(null)
             }
             METHOD_RUM_START_VIEW -> {
                 val viewName: String? = call.argument<String>("viewName")
                 val viewReferrer: String? = call.argument<String>("viewReferrer")
 
                 FTRUMGlobalManager.get().startView(viewName, viewReferrer)
+                result.success(null)
             }
             METHOD_RUM_STOP_VIEW -> {
                 FTRUMGlobalManager.get().stopView()
-
+                result.success(null)
             }
             METHOD_RUM_ADD_ERROR -> {
+                val stack: String? = call.argument<String>("stack")
+                val message: String? = call.argument<String>("message")
+                FTRUMGlobalManager.get().addError(stack, message, Utils.getCurrentNanoTime(),
+                        ErrorType.FLUTTER, AppState.RUN)
+                result.success(null)
 
             }
 
             METHOD_RUM_START_RESOURCE -> {
-
-
+                val key: String? = call.argument<String>("key")
+                FTRUMGlobalManager.get().startResource(key)
+                result.success(null)
             }
 
             METHOD_RUM_STOP_RESOURCE -> {
+                val key: String? = call.argument<String>("key")
+                FTRUMGlobalManager.get().stopResource(key)
+                result.success(null)
 
+            }
+
+            METHOD_RUM_ADD_RESOURCE -> {
+                val key: String? = call.argument<String>("key")
+                val method: String? = call.argument<String>("resourceMethod")
+                val requestHeader: Map<String, String>? = call.argument<Map<String, String>>("requestHeader")
+                val responseHeader: Map<String, String>? = call.argument<Map<String, String>>("resourceMethod")
+                val responseBody: String? = call.argument<String>("responseBody")
+                val responseConnection: String? = call.argument<String>("responseConnection")
+                val responseContentType: String? = call.argument<String>("responseContentType")
+                val responseContentEncoding: String? = call.argument<String>("responseContentEncoding")
+                val resourceStatus: Int? = call.argument<Int>("resourceStatus")
+//                val fetchStartTime: Long? = call.argument<Long>("fetchStartTime")
+//                val tcpStartTime: Long? = call.argument<Long>("tcpStartTime")
+//                val tcpEndTime: Long? = call.argument<Long>("tcpEndTime")
+//                val dnsStartTime: Long? = call.argument<Long>("dnsStartTime")
+//                val dnsEndTime: Long? = call.argument<Long>("dnsEndTime")
+//                val responseStartTime: Long? = call.argument<Long>("responseStartTime")
+//                val responseEndTime: Long? = call.argument<Long>("responseEndTime")
+//                val sslStartTime: Long? = call.argument<Long>("sslStartTime")
+//                val sslEndTime: Long? = call.argument<Long>("sslEndTime")
+                val params = ResourceParams()
+                val netStatusBean = NetStatusBean()
+                params.responseHeader = responseHeader.toString()
+                params.resourceMethod = method
+                params.requestHeader = requestHeader.toString()
+                params.resourceStatus = resourceStatus!!
+                params.responseBody = responseBody!!
+                params.responseConnection = responseConnection!!
+                params.responseContentType = responseContentType!!
+                params.responseContentEncoding = responseContentEncoding!!
+//                netStatusBean.fetchStartTime = fetchStartTime!!
+//                netStatusBean.tcpStartTime = tcpStartTime!!
+//                netStatusBean.tcpEndTime = tcpEndTime!!
+//                netStatusBean.dnsStartTime = dnsStartTime!!
+//                netStatusBean.dnsEndTime = dnsEndTime!!
+//                netStatusBean.responseStartTime = responseStartTime!!
+//                netStatusBean.responseEndTime = responseEndTime!!
+//                netStatusBean.sslStartTime = sslStartTime!!
+//                netStatusBean.sslEndTime = sslEndTime!!
+                FTRUMGlobalManager.get().addResource(key, params, netStatusBean)
+                result.success(null)
             }
 
             METHOD_LOG_CONFIG -> {
@@ -183,7 +238,6 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 val logTypeArr: List<Int>? = call.argument<List<Int>>("logType")
                 val enableLinkRumData: Boolean? = call.argument<Boolean>("enableLinkRumData")
                 val enableCustomLog: Boolean? = call.argument<Boolean>("enableCustomLog")
-//                val enableConsoleLog: Boolean? = call.argument<Boolean>("enableLinkRumData")
 
                 val logCacheDiscard: LogCacheDiscard =
                         when (call.argument<Int>("logCacheDiscard")) {
@@ -220,6 +274,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 }
 
                 FTSdk.initLogWithConfig(logConfig)
+                result.success(null)
             }
 
 
@@ -235,6 +290,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 }
 
                 FTLogger.getInstance().logBackground(content, status)
+                result.success(null)
             }
             METHOD_TRACE_CONFIG -> {
                 val sampleRate: Float? = call.argument<Float>("sampleRate")
@@ -262,17 +318,31 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 result.success(null)
             }
             METHOD_TRACE -> {
+                val key: String? = call.argument<String>("key")
+                val httpMethod: String? = call.argument("httpMethod")
+                val requestHeader: HashMap<String, String>? = call.argument("requestHeader")
+                val responseHeader: HashMap<String, String>? = call.argument("responseHeader")
+                val statusCode: Int? = call.argument("statusCode")
+                val errorMsg: String? = call.argument("errorMsg")
+
+                FTTraceManager.get().addTrace(key, httpMethod, requestHeader,
+                        responseHeader, statusCode ?: 0, errorMsg ?: "")
+                result.success(null)
 
             }
             METHOD_GET_TRACE_HEADER -> {
-
+                val url: String? = call.argument<String>("url")
+                val key: String? = call.argument<String>("key")
+                result.success(FTTraceManager.get().getTraceHeader(key, url))
             }
             METHOD_BIND_USER -> {
                 val userId: String? = call.argument<String>("userId")
                 FTSdk.bindRumUserData(userId!!)
+                result.success(null)
             }
             METHOD_UNBIND_USER -> {
                 FTSdk.unbindRumUserData()
+                result.success(null)
             }
             else -> {
                 result.notImplemented()

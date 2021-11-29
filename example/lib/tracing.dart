@@ -4,7 +4,6 @@ import 'package:agent_example/ft_tracing_http.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
-import 'package:uuid/uuid.dart';
 
 import 'ft_tracing_dio.dart';
 
@@ -39,8 +38,9 @@ class _TracingState extends State<Tracing> {
           ),
           ListTile(
             title: Text("http"),
-            onTap: () {
-             client.get(Uri.parse("http://www.google.cn"));
+            onTap: () async{
+           var response = await  client.get(Uri.parse("http://www.google.cn"));
+           FTLogger().logging(response.body, FTLogStatus.info);
             },
           ),
           ListTile(
@@ -66,8 +66,8 @@ class _TracingState extends State<Tracing> {
   void httpClientGetHttp() async {
     var url = 'http://www.google.cn';
     var httpClient = new HttpClient();
-    String key = Uuid().v4();
-    String errorMessage = "";
+    String key = DateTime.now().millisecondsSinceEpoch.toString() + url;
+    var errorMessage = "";
     HttpClientRequest request = await httpClient.getUrl(Uri.parse(url));
     HttpClientResponse? response;
     try {
@@ -79,14 +79,14 @@ class _TracingState extends State<Tracing> {
       response = await request.close();
     } catch (exception) {
       errorMessage = exception.toString();
-    } finally{
-      Map<String,dynamic> requestHeader = {};
-      Map<String,dynamic> responseHeader = {};
+    } finally {
+      Map<String, dynamic> requestHeader = {};
+      Map<String, dynamic> responseHeader = {};
 
       request.headers.forEach((name, values) {
         requestHeader[name] = values;
       });
-      if (response != null){
+      if (response != null) {
         response.headers.forEach((name, values) {
           responseHeader[name] = values;
         });
@@ -96,7 +96,9 @@ class _TracingState extends State<Tracing> {
           httpMethod: request.method,
           responseHeader: responseHeader,
           requestHeader: requestHeader,
-          statusCode: response?.statusCode);
+          statusCode: response?.statusCode,
+          errorMessage: errorMessage
+      );
     }
   }
 }
