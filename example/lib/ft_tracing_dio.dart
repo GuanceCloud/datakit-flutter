@@ -30,7 +30,7 @@ class FTInterceptor extends Interceptor {
         responseHeader: response.headers.map,
         statusCode: response.statusCode,
         errorMessage: "");
-
+    FTRUMManager().stopResource(key);
     FTRUMManager().addResource(
       key: key,
       url: options.uri.toString(),
@@ -40,8 +40,6 @@ class FTInterceptor extends Interceptor {
       resourceStatus: response.statusCode,
       responseBody: response.data.toString(),
     );
-
-    FTRUMManager().stopResource(key);
 
     handler.next(response);
   }
@@ -57,7 +55,7 @@ class FTInterceptor extends Interceptor {
         responseHeader: err.response?.headers.map,
         statusCode: err.response?.statusCode,
         errorMessage: err.message);
-
+    FTRUMManager().stopResource(key);
     FTRUMManager().addResource(
       key: key,
       url: options.uri.toString(),
@@ -68,7 +66,7 @@ class FTInterceptor extends Interceptor {
       responseBody: err.response?.data?.toString(),
     );
 
-    FTRUMManager().stopResource(key);
+
     handler.next(err);
   }
 }

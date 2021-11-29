@@ -29,6 +29,7 @@ class FTTracingHttpClient extends http.BaseClient {
         Uint8List body = await ByteStream.fromBytes(event).toBytes();
         Response res =  Response.bytes(body, response!.statusCode);
         String bodyStr = res.body;
+        FTRUMManager().stopResource(key);
         FTRUMManager().addResource(
           key: key,
           url: request.url.toString(),
@@ -38,7 +39,6 @@ class FTTracingHttpClient extends http.BaseClient {
           resourceStatus: response.statusCode,
           responseBody: bodyStr,
         );
-        FTRUMManager().stopResource(key);
       });
       return StreamedResponse(stream, response.statusCode,
           contentLength: response.contentLength,
@@ -48,13 +48,13 @@ class FTTracingHttpClient extends http.BaseClient {
           reasonPhrase: response.reasonPhrase);
     } catch (e) {
       errorMessage = e.toString();
+      FTRUMManager().stopResource(key);
       FTRUMManager().addResource(
         key: key,
         url: request.url.toString(),
         requestHeader: request.headers,
         httpMethod: request.method,
       );
-      FTRUMManager().stopResource(key);
       throw e;
     } finally {
       FTTracer().addTrace(

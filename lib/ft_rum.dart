@@ -16,11 +16,11 @@ class FTRUMManager {
 
   Future<void> setConfig(
       {String? androidAppId,
-        String? iOSAppId,
-        double? sampleRate,
-        bool? enableUserAction,
-        MonitorType? monitorType,
-        Map? globalContext}) async {
+      String? iOSAppId,
+      double? sampleRate,
+      bool? enableUserAction,
+      MonitorType? monitorType,
+      Map? globalContext}) async {
     Map<String, dynamic> map = {};
     if (Platform.isAndroid) {
       map["rumAppId"] = androidAppId;
@@ -53,15 +53,15 @@ class FTRUMManager {
   }
 
   ///其它异常捕获与日志收集
-  Future<void> addError(Object obj, StackTrace stack) async {
+  void addError(Object obj, StackTrace stack) {
     if (obj is FlutterErrorDetails) {
-      return await addFlutterError(obj);
+      return addFlutterError(obj);
     }
     addCustomError(stack.toString(), obj.toString());
   }
 
   ///Flutter框架异常捕获
-  Future<void> addFlutterError(FlutterErrorDetails error) async {
+  void addFlutterError(FlutterErrorDetails error) {
     addCustomError(error.stack.toString(), error.exceptionAsString());
   }
 
@@ -87,12 +87,12 @@ class FTRUMManager {
 
   Future<void> addResource(
       {required String key,
-        required String url,
-        required String httpMethod,
-        required Map requestHeader,
-        Map? responseHeader,
-        String? responseBody = "",
-        int? resourceStatus}) async {
+      required String url,
+      required String httpMethod,
+      required Map requestHeader,
+      Map? responseHeader,
+      String? responseBody = "",
+      int? resourceStatus}) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
     map["url"] = url;
