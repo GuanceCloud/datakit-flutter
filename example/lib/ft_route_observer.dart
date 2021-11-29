@@ -1,26 +1,25 @@
-import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 
 ///使用路由跳转时，监控页面生命周期
 class FTRouteObserver extends RouteObserver<PageRoute<dynamic>> {
-
   FTRouteObserver();
 
   Future<void> _sendScreenView(Route? route, Route? previousRoute) async {
     String previousRouteName = '';
     String name = "";
-    if (previousRoute != null && previousRoute is MaterialPageRoute) {
-        previousRouteName = previousRoute.builder.toString();
+    if (previousRoute != null && previousRoute is PageRoute) {
+      previousRouteName = previousRoute.settings.name ?? "";
     }
 
     if (previousRoute != null) {
-         FTRUMManager().stopView();
+      await FTRUMManager().stopView();
     }
-    if (route is MaterialPageRoute) {
-        name = route.settings.name != null?route.settings.name!: route.builder.toString();
+    if (route is PageRoute) {
+      name = route.settings.name ?? "";
       if (name.length > 0) {
-         FTRUMManager().starView(name,previousRouteName);
+        await FTRUMManager().starView(name, previousRouteName);
       }
     }
   }
@@ -39,7 +38,7 @@ class FTRouteObserver extends RouteObserver<PageRoute<dynamic>> {
 
   @override
   void didPop(Route route, Route? previousRoute) {
-    _sendScreenView(route, previousRoute);
+    _sendScreenView(previousRoute, route);
     super.didPop(route, previousRoute);
   }
 }

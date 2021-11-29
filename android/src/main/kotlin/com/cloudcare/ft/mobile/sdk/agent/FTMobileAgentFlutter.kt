@@ -1,6 +1,7 @@
 package com.cloudcare.ft.mobile.sdk.agent
 
 import android.app.Application
+import android.util.Log
 import android.view.ViewGroup
 import androidx.annotation.NonNull
 import com.ft.sdk.*
@@ -62,6 +63,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
     // depending on the user's project. onAttachedToEngine or registerWith must both be defined
     // in the same class.
     companion object {
+        const val LOG_TAG = "FTMobileAgentFlutter"
         const val METHOD_CONFIG = "ftConfig"
 
         const val METHOD_BIND_USER = "ftBindUser"
@@ -87,6 +89,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+        Log.d(LOG_TAG, "${call.method} onMethodCall")
         when (call.method) {
             METHOD_CONFIG -> {
                 val metricsUrl: String = call.argument<String>("metricsUrl")!!
@@ -121,7 +124,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                     sdkConfig.setXDataKitUUID(datakitUUID)
                 }
                 if (useOAID != null) {
-                    sdkConfig.isUseOAID = useOAID;
+                    sdkConfig.isUseOAID = useOAID
                 }
 
                 FTSdk.install(sdkConfig)
@@ -194,12 +197,13 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 val key: String? = call.argument<String>("key")
                 val method: String? = call.argument<String>("resourceMethod")
                 val requestHeader: Map<String, String>? = call.argument<Map<String, String>>("requestHeader")
-                val responseHeader: Map<String, String>? = call.argument<Map<String, String>>("resourceMethod")
+                val responseHeader: Map<String, String>? = call.argument<Map<String, String>>("responseHeader")
                 val responseBody: String? = call.argument<String>("responseBody")
                 val responseConnection: String? = call.argument<String>("responseConnection")
                 val responseContentType: String? = call.argument<String>("responseContentType")
                 val responseContentEncoding: String? = call.argument<String>("responseContentEncoding")
                 val resourceStatus: Int? = call.argument<Int>("resourceStatus")
+                val url: String? = call.argument<String>("url")
 //                val fetchStartTime: Long? = call.argument<Long>("fetchStartTime")
 //                val tcpStartTime: Long? = call.argument<Long>("tcpStartTime")
 //                val tcpEndTime: Long? = call.argument<Long>("tcpEndTime")
@@ -214,11 +218,12 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 params.responseHeader = responseHeader.toString()
                 params.resourceMethod = method
                 params.requestHeader = requestHeader.toString()
-                params.resourceStatus = resourceStatus!!
-                params.responseBody = responseBody!!
-                params.responseConnection = responseConnection!!
-                params.responseContentType = responseContentType!!
-                params.responseContentEncoding = responseContentEncoding!!
+                params.resourceStatus = resourceStatus ?: 0
+                params.responseBody = responseBody ?: ""
+                params.responseConnection = responseConnection ?: ""
+                params.responseContentType = responseContentType ?: ""
+                params.responseContentEncoding = responseContentEncoding ?: ""
+                params.url = url ?: ""
 //                netStatusBean.fetchStartTime = fetchStartTime!!
 //                netStatusBean.tcpStartTime = tcpStartTime!!
 //                netStatusBean.tcpEndTime = tcpEndTime!!
@@ -279,7 +284,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
 
 
             METHOD_LOGGING -> {
-                val content: String = call.argument<String>("content")!!
+                val content: String = call.argument<String>("content") ?: ""
                 val status: Status = when (call.argument<Int>("status")) {
                     0 -> Status.INFO
                     1 -> Status.WARNING
