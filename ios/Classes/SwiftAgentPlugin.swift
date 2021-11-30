@@ -61,8 +61,10 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             if let userId = args["userId"] as? String {
                 FTMobileAgent.sharedInstance().bindUser(withUserID: userId)
             }
+            result(nil)
         case SwiftAgentPlugin.METHOD_UNBIND_USER:
             FTMobileAgent.sharedInstance().logout()
+            result(nil)
         case SwiftAgentPlugin.METHOD_LOG_CONFIG:
             
             let logConfig = FTLoggerConfig()
@@ -161,7 +163,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             let actionName = args["actionName"] as! String
             let actionType = args["actionType"] as! String
             FTExternalDataManager.shared().addAction(withName: actionName, actionType: actionType)
-            
+            result(nil)
         case  SwiftAgentPlugin.METHOD_RUM_START_VIEW:
             if let viewName = args["viewName"] as? String {
                 let viewReferrer = args["viewReferrer"] as? String ?? ""
@@ -169,16 +171,20 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 FTExternalDataManager.shared().startView(withName: viewName, viewReferrer: viewReferrer, loadDuration: NSNumber.init(value: loadDuration))
                 
             }
+            result(nil)
         case SwiftAgentPlugin.METHOD_RUM_STOP_VIEW:
             FTExternalDataManager.shared().stopView()
+            result(nil)
         case SwiftAgentPlugin.METHOD_RUM_ADD_ERROR:
             let stack = args["stack"] as? String ?? ""
             let message = args["message"] as? String ?? ""
             let appState = args["appState"] as? Int ?? 0
             FTExternalDataManager.shared().addError(withType: "flutter", situation: AppState(rawValue: UInt(appState)) ?? .UNKNOWN, message: message, stack: stack)
+            result(nil)
         case SwiftAgentPlugin.METHOD_RUM_START_RESOURCE:
             let key = args["key"] as! String
             FTExternalDataManager.shared().startResource(withKey: key)
+            result(nil)
         case SwiftAgentPlugin.METHOD_RUM_ADD_RESOURCE:
             let key = args["key"] as! String
             let urlStr = args["url"] as! String
@@ -201,12 +207,14 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 
                 FTExternalDataManager.shared().addResource(withKey: key, metrics: nil, content: content)
             }
+            result(nil)
         case SwiftAgentPlugin.METHOD_RUM_STOP_RESOURCE:
             let key = args["key"] as! String
             FTExternalDataManager.shared().stopResource(withKey: key)
+            result(nil)
         default:
-        result(FlutterMethodNotImplemented);
+            result(FlutterMethodNotImplemented);
+        }
     }
-}
-
+    
 }
