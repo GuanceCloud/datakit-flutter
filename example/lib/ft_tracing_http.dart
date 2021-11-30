@@ -27,7 +27,7 @@ class FTTracingHttpClient extends http.BaseClient {
       Stream<List<int>>  stream = response.stream.asBroadcastStream();
       stream.listen((List<int> event) async{
         Uint8List body = await ByteStream.fromBytes(event).toBytes();
-        Response res =  Response.bytes(body, response!.statusCode);
+        Response res =  Response.bytes(body, response!.statusCode,headers: response.headers);
         String bodyStr = res.body;
         FTRUMManager().addResource(
           key: key,
