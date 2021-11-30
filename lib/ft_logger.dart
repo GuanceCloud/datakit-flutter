@@ -18,6 +18,7 @@ class FTLogger {
     await channel.invokeMethod(methodLog, map);
   }
 
+  /// 配置日志输出配置
   Future<void> logConfig(
       {double? sampleRate,
       String? serviceName,
@@ -35,6 +36,7 @@ class FTLogger {
   }
 }
 
+/// 设置日志等级
 enum FTLogStatus {
   info,
   warning,
@@ -43,4 +45,5 @@ enum FTLogStatus {
   ok,
 }
 
+/// 日志丢弃方式
 enum FTLogCacheDiscard { discard, discardOldest }

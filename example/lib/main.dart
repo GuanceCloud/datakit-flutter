@@ -15,22 +15,21 @@ const appAndroidId = String.fromEnvironment("ANDROID_APP_ID");
 const appIOSId = String.fromEnvironment("IOS_APP_ID");
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  //初始化 SDK
-  await FTMobileFlutter.sdkConfig(
-    serverUrl: serverUrl,
-    debug: true,
-  );
-  await FTLogger()
-      .logConfig(serviceName: "flutter_agent", enableCustomLog: true);
-  await FTTracer().setConfig(enableLinkRUMData: true);
-  await FTRUMManager().setConfig(
-      androidAppId: appAndroidId, iOSAppId: appIOSId, enableUserAction: true);
+    //初始化 SDK
+    await FTMobileFlutter.sdkConfig(
+      serverUrl: serverUrl,
+      debug: true,
+    );
+    await FTLogger()
+        .logConfig(serviceName: "flutter_agent", enableCustomLog: true);
+    await FTTracer().setConfig(enableLinkRUMData: true);
+    await FTRUMManager().setConfig(
+        androidAppId: appAndroidId, iOSAppId: appIOSId, enableUserAction: true);
+    FlutterError.onError = FTRUMManager().addFlutterError;
 
-  FlutterError.onError = FTRUMManager().addFlutterError;
-
-  runZonedGuarded(() {
     runApp(MyApp());
   }, (Object error, StackTrace stack) {
     //RUM 记录 error 数据

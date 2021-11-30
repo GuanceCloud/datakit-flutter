@@ -11,6 +11,7 @@ class FTTracer {
 
   FTTracer._internal();
 
+  ///配置 trace
   Future<void> setConfig(
       {double? sampleRate,
         String? serviceName,
@@ -24,6 +25,7 @@ class FTTracer {
     await channel.invokeMethod(methodTraceConfig, map);
   }
 
+  /// 上传 Trace 数据
   Future<void> addTrace({
     required String key,
     required String httpMethod,
@@ -42,6 +44,7 @@ class FTTracer {
     await channel.invokeMethod(methodTrace, map);
   }
 
+  /// 获取 trace http 请求头数据
   Future<Map<String, String>> getTraceHeader(String key, String url) async {
     var map = Map<String, dynamic>();
     map["key"] = key;
@@ -55,4 +58,5 @@ class FTTracer {
   }
 }
 
+/// 使用 trace trace 类型
 enum TraceType { ddTrace, zipkin, jaeger }
