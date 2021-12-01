@@ -1,7 +1,7 @@
 name: ft_mobile_agent_flutter
-description: 基于 ft ios android 调用的 plugin
+description: 基于观测云 ios android 调用的 plugin
 version: 0.1.0-dev.1
-homepage: https://www.dataflux.cn/
+homepage: https://www.guance.com/
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -27,7 +27,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.cloudcare.ft.mobile.sdk.agent
+        package: com.cloudcare.ft.mobile.sdk.tracker.flutter
         pluginClass: FTMobileAgentFlutter
       ios:
         pluginClass: FTMobileAgentFlutter

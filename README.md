@@ -4,7 +4,7 @@
 
 # agent
 
-基于 **ft ios android** 调用的 **plugin**
+基于 **观测云 ios android** 调用的 **plugin**
 
   * [使用](#使用)
   * [常见问题](#常见问题)

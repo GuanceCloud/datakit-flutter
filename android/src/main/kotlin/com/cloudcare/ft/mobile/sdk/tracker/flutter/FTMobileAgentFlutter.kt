@@ -1,4 +1,4 @@
-package com.cloudcare.ft.mobile.sdk.agent
+package com.cloudcare.ft.mobile.sdk.tracker.flutter
 
 import android.app.Application
 import android.util.Log
