@@ -108,6 +108,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             if let enableLinkRUMData = args["enableLinkRUMData"] as? Bool{
                 traceConfig.enableLinkRumData = enableLinkRUMData
             }
+            if let enableAutoTrace = args["enableAutoTrace"] as? Bool {
+                traceConfig.enableAutoTrace = enableAutoTrace
+            }
             if let traceType = args["traceType"] as? Int {
                 traceConfig.networkTraceType = FTNetworkTraceType.init(rawValue: traceType)!
             }
@@ -149,6 +152,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 }
                 if let enableUserAction = args["enableUserAction"] as? Bool {
                     rumConfig.enableTraceUserAction = enableUserAction
+                }
+                if let enableUserView = args["enableUserView"] as? Bool {
+                    rumConfig.enableTraceUserView = enableUserView
                 }
                 if let monitorType = args["monitorType"] as? Int {
                     rumConfig.monitorInfoType = FTMonitorInfoType.init(rawValue: UInt(monitorType))
