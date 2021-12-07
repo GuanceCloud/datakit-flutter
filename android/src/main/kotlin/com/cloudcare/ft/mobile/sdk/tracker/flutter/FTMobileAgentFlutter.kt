@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.annotation.NonNull
 import com.ft.sdk.*
 import com.ft.sdk.garble.bean.*
-import com.ft.sdk.garble.utils.Utils
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -134,6 +133,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 val rumAppId: String = call.argument<String>("rumAppId")!!
                 val sampleRate: Float? = call.argument<Float>("sampleRate")
                 val enableUserAction: Boolean? = call.argument<Boolean>("enableUserAction")
+                val enableUserView: Boolean? = call.argument<Boolean>("enableUserView")
                 val monitorType: Int? = call.argument<Int>("monitorType")
                 val globalContext: Map<String, String>? = call.argument("globalContext")
                 val rumConfig = FTRUMConfig().setRumAppId(rumAppId)
@@ -144,6 +144,11 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 if (enableUserAction != null) {
                     rumConfig.isEnableTraceUserAction = enableUserAction
                 }
+
+                if (enableUserView != null) {
+                    rumConfig.isEnableTraceUserAction = enableUserView
+                }
+
                 if (monitorType != null) {
                     rumConfig.extraMonitorTypeWithError = monitorType
                 }
@@ -174,8 +179,10 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
             METHOD_RUM_ADD_ERROR -> {
                 val stack: String? = call.argument<String>("stack")
                 val message: String? = call.argument<String>("message")
-                FTRUMGlobalManager.get().addError(stack, message, Utils.getCurrentNanoTime(),
-                        ErrorType.FLUTTER, AppState.RUN)
+                FTRUMGlobalManager.get().addError(
+                    stack, message,
+                    ErrorType.FLUTTER, AppState.RUN
+                )
                 result.success(null)
 
             }
@@ -196,12 +203,15 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
             METHOD_RUM_ADD_RESOURCE -> {
                 val key: String? = call.argument<String>("key")
                 val method: String? = call.argument<String>("resourceMethod")
-                val requestHeader: Map<String, String>? = call.argument<Map<String, String>>("requestHeader")
-                val responseHeader: Map<String, String>? = call.argument<Map<String, String>>("responseHeader")
+                val requestHeader: Map<String, String>? =
+                    call.argument<Map<String, String>>("requestHeader")
+                val responseHeader: Map<String, String>? =
+                    call.argument<Map<String, String>>("responseHeader")
                 val responseBody: String? = call.argument<String>("responseBody")
                 val responseConnection: String? = call.argument<String>("responseConnection")
                 val responseContentType: String? = call.argument<String>("responseContentType")
-                val responseContentEncoding: String? = call.argument<String>("responseContentEncoding")
+                val responseContentEncoding: String? =
+                    call.argument<String>("responseContentEncoding")
                 val resourceStatus: Int? = call.argument<Int>("resourceStatus")
                 val url: String? = call.argument<String>("url")
 //                val fetchStartTime: Long? = call.argument<Long>("fetchStartTime")
@@ -245,15 +255,15 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 val enableCustomLog: Boolean? = call.argument<Boolean>("enableCustomLog")
 
                 val logCacheDiscard: LogCacheDiscard =
-                        when (call.argument<Int>("logCacheDiscard")) {
-                            0 -> LogCacheDiscard.DISCARD
-                            1 -> LogCacheDiscard.DISCARD_OLDEST
-                            else -> LogCacheDiscard.DISCARD
-                        }
+                    when (call.argument<Int>("logCacheDiscard")) {
+                        0 -> LogCacheDiscard.DISCARD
+                        1 -> LogCacheDiscard.DISCARD_OLDEST
+                        else -> LogCacheDiscard.DISCARD
+                    }
 
                 val logConfig = FTLoggerConfig()
-                        .setEnableCustomLog(true)
-                        .setLogCacheDiscardStrategy(logCacheDiscard)
+                    .setEnableCustomLog(true)
+                    .setLogCacheDiscardStrategy(logCacheDiscard)
 
                 if (sampleRate != null) {
                     logConfig.samplingRate = sampleRate
@@ -301,6 +311,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 val sampleRate: Float? = call.argument<Float>("sampleRate")
                 val traceType = call.argument<Int>("traceType")
                 val enableLinkRUMData = call.argument<Boolean>("enableLinkRUMData")
+                val enableAutoTrace = call.argument<Boolean>("enableNativeAutoTrace")
 
                 val traceConfig = FTTraceConfig()
                 if (sampleRate != null) {
@@ -319,6 +330,10 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                     traceConfig.isEnableLinkRUMData = enableLinkRUMData
                 }
 
+                if (enableAutoTrace != null) {
+                    traceConfig.isEnableAutoTrace = enableAutoTrace
+                }
+
                 FTSdk.initTraceWithConfig(traceConfig)
                 result.success(null)
             }
@@ -330,8 +345,10 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 val statusCode: Int? = call.argument("statusCode")
                 val errorMsg: String? = call.argument("errorMsg")
 
-                FTTraceManager.get().addTrace(key, httpMethod, requestHeader,
-                        responseHeader, statusCode ?: 0, errorMsg ?: "")
+                FTTraceManager.get().addTrace(
+                    key, httpMethod, requestHeader,
+                    responseHeader, statusCode ?: 0, errorMsg ?: ""
+                )
                 result.success(null)
 
             }

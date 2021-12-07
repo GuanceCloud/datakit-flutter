@@ -26,8 +26,8 @@ void main() async {
     await FTLogger()
         .logConfig(serviceName: "flutter_agent", enableCustomLog: true);
     await FTTracer().setConfig(enableLinkRUMData: true);
-    await FTRUMManager().setConfig(
-        androidAppId: appAndroidId, iOSAppId: appIOSId, enableUserAction: true);
+    await FTRUMManager().setConfig(androidAppId: appAndroidId, iOSAppId: appIOSId);
+
     FlutterError.onError = FTRUMManager().addFlutterError;
 
     runApp(MyApp());
@@ -65,9 +65,6 @@ class HomeRoute extends StatefulWidget {
 }
 
 class _HomeState extends State<HomeRoute> {
-  var permissions = [Permission.storage, Permission.phone];
-  var locationState = "";
-  var locationStateGeo = "";
 
   @override
   void initState() {
@@ -75,9 +72,7 @@ class _HomeState extends State<HomeRoute> {
     //第一个页面加载完成
     FTRUMManager().appState = AppState.run;
     if (Platform.isAndroid) {
-      requestPermission(permissions);
-    } else if (Platform.isIOS) {
-      requestPermission([Permission.location]);
+      requestPermission([Permission.phone]);
     }
   }
 
@@ -85,7 +80,7 @@ class _HomeState extends State<HomeRoute> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text('Plugin Example App'),
         ),
         body: SingleChildScrollView(
           child: Center(
@@ -149,7 +144,7 @@ class _HomeState extends State<HomeRoute> {
     );
   }
 
-  void _showPermissionTip(String tip) {
+  void _showPermissionTip(String tip, List<Permission> permissions) {
     showDialog<Null>(
         context: context,
         barrierDismissible: false,
@@ -185,7 +180,7 @@ class _HomeState extends State<HomeRoute> {
         state.isGranted;
         tip += permission.toString() + "\n";
       });
-      _showPermissionTip(tip);
+      _showPermissionTip(tip, permission);
     }
   }
 }

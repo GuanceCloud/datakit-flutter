@@ -12,20 +12,34 @@ class FTTracer {
   FTTracer._internal();
 
   ///配置 trace
+  ///[sampleRate]采样率
+  ///[serviceName]服务名
+  ///[traceType] 链路类型
+  ///[enableLinkRUMData] 是否与 RUM 数据关联
+  ///[enableNativeAutoTrace] 是否开启原生网络网络自动追踪 iOS NSURLSession ,Android OKhttp
   Future<void> setConfig(
       {double? sampleRate,
         String? serviceName,
         TraceType? traceType,
-        bool? enableLinkRUMData}) async {
+        bool? enableLinkRUMData,
+        bool? enableNativeAutoTrace,
+      }) async {
     var map = Map<String, dynamic>();
     map["sampleRate"] = sampleRate;
     map["serviceName"] = serviceName;
     map["traceType"] = traceType?.index;
     map["enableLinkRUMData"] = enableLinkRUMData;
+    map["enableNativeAutoTrace"] = enableNativeAutoTrace;
     await channel.invokeMethod(methodTraceConfig, map);
   }
 
   /// 上传 Trace 数据
+  /// [key] 唯一 id
+  /// [httpMethod] 请求方法
+  /// [requestHeader] 请求头参数
+  /// [statusCode] 返回状态码
+  /// [responseHeader] 返回头参数
+  /// [errorMessage] 错误消息
   Future<void> addTrace({
     required String key,
     required String httpMethod,
@@ -45,6 +59,9 @@ class FTTracer {
   }
 
   /// 获取 trace http 请求头数据
+  /// [key] 唯一 id
+  /// [url] 请求地址
+  ///
   Future<Map<String, String>> getTraceHeader(String key, String url) async {
     var map = Map<String, dynamic>();
     map["key"] = key;
@@ -59,4 +76,8 @@ class FTTracer {
 }
 
 /// 使用 trace trace 类型
-enum TraceType { ddTrace, zipkin, jaeger }
+enum TraceType {
+  ddTrace,
+  zipkin,
+  jaeger
+}
