@@ -108,7 +108,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             if let enableLinkRUMData = args["enableLinkRUMData"] as? Bool{
                 traceConfig.enableLinkRumData = enableLinkRUMData
             }
-            if let enableAutoTrace = args["enableAutoTrace"] as? Bool {
+            if let enableAutoTrace = args["enableNativeAutoTrace"] as? Bool {
                 traceConfig.enableAutoTrace = enableAutoTrace
             }
             if let traceType = args["traceType"] as? Int {
@@ -150,10 +150,10 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 if let sampleRate = args["sampleRate"] as? Float {
                     rumConfig.samplerate = Int32(Int(sampleRate * 100))
                 }
-                if let enableUserAction = args["enableUserAction"] as? Bool {
+                if let enableUserAction = args["enableNativeUserAction"] as? Bool {
                     rumConfig.enableTraceUserAction = enableUserAction
                 }
-                if let enableUserView = args["enableUserView"] as? Bool {
+                if let enableUserView = args["enableNativeUserView"] as? Bool {
                     rumConfig.enableTraceUserView = enableUserView
                 }
                 if let monitorType = args["monitorType"] as? Int {

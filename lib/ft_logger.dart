@@ -11,6 +11,8 @@ class FTLogger {
   FTLogger._internal();
 
   ///输出日志
+  ///[content] 日志内容
+  ///[status] 日志状态
   Future<void> logging(String content, FTLogStatus status) async {
     Map<String, dynamic> map = {};
     map["content"] = content;
@@ -19,6 +21,12 @@ class FTLogger {
   }
 
   /// 配置日志输出配置
+  /// [sampleRate] 采样率
+  /// [serviceName] 服务名
+  /// [enableLinkRumData] 是否与 RUM 关联
+  /// [enableCustomLog] 是否开启自定义日志
+  /// [discardStrategy] 日志丢弃策略
+  /// [logLevelFilters] 日志等级过滤
   Future<void> logConfig(
       {double? sampleRate,
       String? serviceName,
