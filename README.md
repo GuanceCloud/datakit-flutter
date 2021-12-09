@@ -6,10 +6,19 @@
 
 基于 **观测云 ios android** 调用的 **plugin**
 
-# 示例
+# 安装
+`pubspec.yaml` 中添加 ·ft_mobile_agent_flutter·
 
-[Example](https://github.com/DataFlux-cn/datakit-flutter/tree/dev/example/lib)
+```yaml
+dependencies:
+ft_mobile_agent_flutter: ^2.0.1
+```
+项目目录下，终端输入
+
+```
+flutter pub get
+```
 
 # 使用文档
 
-[点击这里](https://www.yuque.com/dataflux/doc/nst0ca)
+请参考官方文档 [点击这里](https://www.yuque.com/dataflux/doc/nst0ca)
