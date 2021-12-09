@@ -1,6 +1,5 @@
-## 0.1.0-dev.2
-* 适配新 rum SDK
-* null safety
+## 0.2.0-dev.2
+* 添加 Trace RUM Log 调用接口
 
 ---
 ## 0.1.0-dev.1
