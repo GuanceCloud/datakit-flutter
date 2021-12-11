@@ -1,3 +1,7 @@
+## 0.2.0-dev.2
+* 修改 README LICENSE
+
+---
 ## 0.2.0-dev.1
 * 添加 Trace RUM Log 调用接口
 
