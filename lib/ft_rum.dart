@@ -20,6 +20,7 @@ class FTRUMManager {
   /// [sampleRate] 采样率
   /// [enableNativeUserAction] 是否开始 Native Action 追踪，Button 点击事件，纯 flutter 应用建议关闭
   /// [enableNativeUserView] 是否开始 Native View 自动追踪，纯 Flutter 应用建议关闭
+  /// [enableNativeUserResource] 是否开始 Native Resource 自动追踪，纯 Flutter 应用建议关闭
   /// [monitorType] 监控补充类型
   /// [globalContext] 自定义全局参数
   Future<void> setConfig(
@@ -28,6 +29,7 @@ class FTRUMManager {
       double? sampleRate,
       bool? enableNativeUserAction,
       bool? enableNativeUserView,
+      bool? enableNativeUserResource,
       MonitorType? monitorType,
       Map? globalContext}) async {
     Map<String, dynamic> map = {};
@@ -37,8 +39,9 @@ class FTRUMManager {
       map["rumAppId"] = iOSAppId;
     }
     map["sampleRate"] = sampleRate;
-    map["enableNativeUserAction"] = enableNativeUserAction;
-    map["enableNativeUserView"] = enableNativeUserView;
+    map["enableUserAction"] = enableNativeUserAction;
+    map["enableUserView"] = enableNativeUserView;
+    map["enableUserResource"] = enableNativeUserResource;
     map["monitorType"] = monitorType?.value;
     map["globalContext"] = globalContext?.entries;
     await channel.invokeMethod(methodRumConfig, map);

@@ -88,7 +88,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-        Log.d(LOG_TAG, "${call.method} onMethodCall")
+        Log.d(LOG_TAG, "${call.method} onMethodCall:${call.arguments}")
         when (call.method) {
             METHOD_CONFIG -> {
                 val metricsUrl: String = call.argument<String>("metricsUrl")!!
@@ -134,6 +134,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 val sampleRate: Float? = call.argument<Float>("sampleRate")
                 val enableUserAction: Boolean? = call.argument<Boolean>("enableUserAction")
                 val enableUserView: Boolean? = call.argument<Boolean>("enableUserView")
+                val enableUserResource: Boolean? = call.argument<Boolean>("enableUserResource")
                 val monitorType: Int? = call.argument<Int>("monitorType")
                 val globalContext: Map<String, String>? = call.argument("globalContext")
                 val rumConfig = FTRUMConfig().setRumAppId(rumAppId)
@@ -146,12 +147,17 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 }
 
                 if (enableUserView != null) {
-                    rumConfig.isEnableTraceUserAction = enableUserView
+                    rumConfig.isEnableTraceUserView = enableUserView
+                }
+
+                if (enableUserResource != null) {
+                    rumConfig.isEnableTraceUserResource = enableUserResource
                 }
 
                 if (monitorType != null) {
                     rumConfig.extraMonitorTypeWithError = monitorType
                 }
+
                 globalContext?.forEach {
                     rumConfig.addGlobalContext(it.key, it.value)
                 }
