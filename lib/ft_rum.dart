@@ -18,9 +18,9 @@ class FTRUMManager {
   /// [androidAppId] appId，监测中申请
   /// [iOSAppId] appId，监测中申请
   /// [sampleRate] 采样率
-  /// [enableNativeUserAction] 是否开始 Native Action 追踪，Button 点击事件，纯 flutter 应用建议关闭
-  /// [enableNativeUserView] 是否开始 Native View 自动追踪，纯 Flutter 应用建议关闭
-  /// [enableNativeUserResource] 是否开始 Native Resource 自动追踪，纯 Flutter 应用建议关闭
+  /// [enableNativeUserAction] 是否进行 Native Action 追踪，Button 点击事件，纯 flutter 应用建议关闭
+  /// [enableNativeUserView] 是否进行 Native View 自动追踪，纯 Flutter 应用建议关闭
+  /// [enableNativeUserResource] 是否进行 Native Resource 自动追踪，纯 Flutter 应用建议关闭
   /// [monitorType] 监控补充类型
   /// [globalContext] 自定义全局参数
   Future<void> setConfig(
@@ -31,7 +31,7 @@ class FTRUMManager {
       bool? enableNativeUserView,
       bool? enableNativeUserResource,
       MonitorType? monitorType,
-      Map? globalContext}) async {
+      Map<String, String>? globalContext}) async {
     Map<String, dynamic> map = {};
     if (Platform.isAndroid) {
       map["rumAppId"] = androidAppId;
@@ -43,7 +43,7 @@ class FTRUMManager {
     map["enableUserView"] = enableNativeUserView;
     map["enableUserResource"] = enableNativeUserResource;
     map["monitorType"] = monitorType?.value;
-    map["globalContext"] = globalContext?.entries;
+    map["globalContext"] = globalContext;
     await channel.invokeMethod(methodRumConfig, map);
   }
 
@@ -128,8 +128,8 @@ class FTRUMManager {
       {required String key,
       required String url,
       required String httpMethod,
-      required Map requestHeader,
-      Map? responseHeader,
+      required Map<String, dynamic> requestHeader,
+      Map<String, dynamic>? responseHeader,
       String? responseBody = "",
       int? resourceStatus}) async {
     Map<String, dynamic> map = {};
@@ -144,22 +144,15 @@ class FTRUMManager {
   }
 }
 
-
 /// app 运行状态
 enum AppState {
-  unknown,//未知
-  startup,//启动
+  unknown, //未知
+  startup, //启动
   run //运行
 }
 
-
 /// 监控类型
-enum MonitorType {
-  all,
-  battery,
-  memory,
-  cpu
-}
+enum MonitorType { all, battery, memory, cpu }
 
 extension MonitorTypeExt on MonitorType {
   int get value {

@@ -185,9 +185,21 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
             METHOD_RUM_ADD_ERROR -> {
                 val stack: String? = call.argument<String>("stack")
                 val message: String? = call.argument<String>("message")
+                val state: Int? = call.argument<Int>("appState")
+
+                val appState: AppState = when (state) {
+                    AppState.RUN.ordinal -> {
+                        AppState.RUN
+                    }
+                    AppState.STARTUP.ordinal -> {
+                        AppState.STARTUP
+                    }
+
+                    else -> AppState.UNKNOWN
+                }
                 FTRUMGlobalManager.get().addError(
-                    stack, message,
-                    ErrorType.FLUTTER, AppState.RUN
+                        stack, message,
+                        ErrorType.FLUTTER, appState
                 )
                 result.success(null)
 
@@ -210,14 +222,14 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 val key: String? = call.argument<String>("key")
                 val method: String? = call.argument<String>("resourceMethod")
                 val requestHeader: Map<String, String>? =
-                    call.argument<Map<String, String>>("requestHeader")
+                        call.argument<Map<String, String>>("requestHeader")
                 val responseHeader: Map<String, String>? =
-                    call.argument<Map<String, String>>("responseHeader")
+                        call.argument<Map<String, String>>("responseHeader")
                 val responseBody: String? = call.argument<String>("responseBody")
                 val responseConnection: String? = call.argument<String>("responseConnection")
                 val responseContentType: String? = call.argument<String>("responseContentType")
                 val responseContentEncoding: String? =
-                    call.argument<String>("responseContentEncoding")
+                        call.argument<String>("responseContentEncoding")
                 val resourceStatus: Int? = call.argument<Int>("resourceStatus")
                 val url: String? = call.argument<String>("url")
 //                val fetchStartTime: Long? = call.argument<Long>("fetchStartTime")
@@ -261,15 +273,15 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 val enableCustomLog: Boolean? = call.argument<Boolean>("enableCustomLog")
 
                 val logCacheDiscard: LogCacheDiscard =
-                    when (call.argument<Int>("logCacheDiscard")) {
-                        0 -> LogCacheDiscard.DISCARD
-                        1 -> LogCacheDiscard.DISCARD_OLDEST
-                        else -> LogCacheDiscard.DISCARD
-                    }
+                        when (call.argument<Int>("logCacheDiscard")) {
+                            0 -> LogCacheDiscard.DISCARD
+                            1 -> LogCacheDiscard.DISCARD_OLDEST
+                            else -> LogCacheDiscard.DISCARD
+                        }
 
                 val logConfig = FTLoggerConfig()
-                    .setEnableCustomLog(true)
-                    .setLogCacheDiscardStrategy(logCacheDiscard)
+                        .setEnableCustomLog(true)
+                        .setLogCacheDiscardStrategy(logCacheDiscard)
 
                 if (sampleRate != null) {
                     logConfig.samplingRate = sampleRate
@@ -316,6 +328,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
             METHOD_TRACE_CONFIG -> {
                 val sampleRate: Float? = call.argument<Float>("sampleRate")
                 val traceType = call.argument<Int>("traceType")
+                val serviceName = call.argument<String>("serviceName")
                 val enableLinkRUMData = call.argument<Boolean>("enableLinkRUMData")
                 val enableAutoTrace = call.argument<Boolean>("enableNativeAutoTrace")
 
@@ -339,6 +352,12 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 if (enableAutoTrace != null) {
                     traceConfig.isEnableAutoTrace = enableAutoTrace
                 }
+                if (serviceName != null) {
+                    traceConfig.serviceName = serviceName
+                }
+                if (enableAutoTrace != null) {
+                    traceConfig.isEnableAutoTrace = enableAutoTrace
+                }
 
                 FTSdk.initTraceWithConfig(traceConfig)
                 result.success(null)
@@ -349,11 +368,11 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 val requestHeader: HashMap<String, String>? = call.argument("requestHeader")
                 val responseHeader: HashMap<String, String>? = call.argument("responseHeader")
                 val statusCode: Int? = call.argument("statusCode")
-                val errorMsg: String? = call.argument("errorMsg")
+                val errorMsg: String? = call.argument("errorMessage")
 
                 FTTraceManager.get().addTrace(
-                    key, httpMethod, requestHeader,
-                    responseHeader, statusCode ?: 0, errorMsg ?: ""
+                        key, httpMethod, requestHeader,
+                        responseHeader, statusCode ?: 0, errorMsg ?: ""
                 )
                 result.success(null)
 

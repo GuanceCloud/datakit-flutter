@@ -21,14 +21,14 @@ class FTMobileFlutter {
   }
 
   ///绑定用户
-  static Future<void> bindUser(String userId) async {
+  static Future<void> bindRUMUserData(String userId) async {
     Map<String, dynamic> map = {};
     map["userId"] = userId;
     return await channel.invokeMethod(methodBindUser, map);
   }
 
   ///解绑用户
-  static Future<void> unbindUser() async {
+  static Future<void> unbindRUMUserData() async {
     return await channel.invokeMethod(methodUnbindUser);
   }
 }

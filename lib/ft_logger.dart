@@ -40,6 +40,7 @@ class FTLogger {
     map["logType"] = logLevelFilters?.map((e) => e.index).toList();
     map["enableLinkRumData"] = enableLinkRumData;
     map["enableCustomLog"] = enableCustomLog;
+    map["logCacheDiscard"] = discardStrategy;
     await channel.invokeMethod(methodLogConfig, map);
   }
 }

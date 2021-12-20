@@ -4,7 +4,7 @@
 
 # 简介
 
-基于 **观测云 ios android** 调用的 **plugin**
+基于 **观测云 ios android** SDK 的 **plugin**
 
 
 # 使用文档

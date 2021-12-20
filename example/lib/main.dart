@@ -35,6 +35,7 @@ void main() async {
     //RUM 记录 error 数据
     FTRUMManager().addError(error, stack);
   });
+  print("object");
 }
 
 class MyApp extends StatelessWidget {
@@ -103,7 +104,7 @@ class _HomeState extends State<HomeRoute> {
     return ElevatedButton(
       child: Text("绑定用户"),
       onPressed: () {
-        FTMobileFlutter.bindUser("flutterUser");
+        FTMobileFlutter.bindRUMUserData("flutterUser");
       },
     );
   }
@@ -112,7 +113,7 @@ class _HomeState extends State<HomeRoute> {
     return ElevatedButton(
       child: Text("解绑用户"),
       onPressed: () {
-        FTMobileFlutter.unbindUser();
+        FTMobileFlutter.unbindRUMUserData();
       },
     );
   }
