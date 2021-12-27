@@ -4,10 +4,15 @@ buildscript {
         google()
         mavenCentral()
 //        jcenter()
+
+        maven {
+            url 'https://mvnrepo.jiagouyun.com/repository/maven-releases'
+        }
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath 'com.cloudcare.ft.mobile.sdk.tracker.plugin:ft-plugin:1.0.2-alpha02'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
