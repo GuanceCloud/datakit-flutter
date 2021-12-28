@@ -1,3 +1,7 @@
+## 0.2.0-dev.4
+* 升级 iOS Android Native 支持库
+
+---
 ## 0.2.0-dev.3
 * 用户绑定方法方法名修改
 * resource  遗漏参数添加
