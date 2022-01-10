@@ -1,3 +1,7 @@
+## 0.2.0-dev.5
+* 修复 Android 单 trace 数据不触发同步数据的问题
+
+---
 ## 0.2.0-dev.4
 * 升级 iOS Android Native 支持库
 
