@@ -23,13 +23,13 @@ class FTInterceptor extends Interceptor {
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     RequestOptions options = response.requestOptions;
     var key = options.headers[_dioKey];
-    FTTracer().addTrace(
-        key: key,
-        httpMethod: options.method,
-        requestHeader: options.headers,
-        responseHeader: response.headers.map,
-        statusCode: response.statusCode,
-        errorMessage: "");
+    // FTTracer().addTrace(
+    //     key: key,
+    //     httpMethod: options.method,
+    //     requestHeader: options.headers,
+    //     responseHeader: response.headers.map,
+    //     statusCode: response.statusCode,
+    //     errorMessage: "");
     FTRUMManager().stopResource(key);
     FTRUMManager().addResource(
       key: key,
@@ -48,13 +48,13 @@ class FTInterceptor extends Interceptor {
   void onError(DioError err, ErrorInterceptorHandler handler) {
     RequestOptions options = err.requestOptions;
     var key = options.headers[_dioKey];
-    FTTracer().addTrace(
-        key: key,
-        httpMethod: options.method,
-        requestHeader: options.headers,
-        responseHeader: err.response?.headers.map,
-        statusCode: err.response?.statusCode,
-        errorMessage: err.message);
+    // FTTracer().addTrace(
+    //     key: key,
+    //     httpMethod: options.method,
+    //     requestHeader: options.headers,
+    //     responseHeader: err.response?.headers.map,
+    //     statusCode: err.response?.statusCode,
+    //     errorMessage: err.message);
     FTRUMManager().stopResource(key);
     FTRUMManager().addResource(
       key: key,

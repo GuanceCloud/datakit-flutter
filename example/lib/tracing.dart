@@ -91,14 +91,14 @@ class _TracingState extends State<Tracing> {
           responseHeader[name] = values;
         });
       }
-      FTTracer().addTrace(
-          key: key,
-          httpMethod: request.method,
-          responseHeader: responseHeader,
-          requestHeader: requestHeader,
-          statusCode: response?.statusCode,
-          errorMessage: errorMessage
-      );
+      // FTTracer().addTrace(
+      //     key: key,
+      //     httpMethod: request.method,
+      //     responseHeader: responseHeader,
+      //     requestHeader: requestHeader,
+      //     statusCode: response?.statusCode,
+      //     errorMessage: errorMessage
+      // );
     }
   }
 }

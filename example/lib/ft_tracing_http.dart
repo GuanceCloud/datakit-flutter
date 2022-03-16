@@ -57,13 +57,13 @@ class FTTracingHttpClient extends http.BaseClient {
       );
       throw e;
     } finally {
-      FTTracer().addTrace(
-          key: key,
-          httpMethod: request.method,
-          requestHeader: request.headers,
-          responseHeader: response?.headers,
-          statusCode: response?.statusCode,
-          errorMessage: errorMessage);
+      // FTTracer().addTrace(
+      //     key: key,
+      //     httpMethod: request.method,
+      //     requestHeader: request.headers,
+      //     responseHeader: response?.headers,
+      //     statusCode: response?.statusCode,
+      //     errorMessage: errorMessage);
     }
   }
 
