@@ -1,3 +1,7 @@
+## 0.2.1-dev.1
+* 适配新版本 Native SDK
+
+---
 ## 0.2.0-dev.5
 * 修复 Android 单 trace 数据不触发同步数据的问题
 
