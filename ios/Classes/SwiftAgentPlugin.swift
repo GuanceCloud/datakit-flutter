@@ -23,7 +23,6 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     static let METHOD_RUM_STOP_RESOURCE = "ftRumStopResource"
     
     static let METHOD_TRACE_CONFIG = "ftTraceConfig"
-    static let METHOD_TRACE = "ftTrace"
     static let METHOD_GET_TRACE_HEADER = "ftTraceGetHeader"
     
     
@@ -52,6 +51,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 if let env = args["env"] as? Int {
                     let entType: FTEnv? = FTEnv.init(rawValue: env)
                     config.env = entType ?? .prod
+                }
+                if let globalContext = args["globalContext"] as? Dictionary<String,String>{
+                    config.globalContext = globalContext
                 }
                 FTMobileAgent.start(withConfigOptions: config)
             }
@@ -90,14 +92,16 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             if let enableCustomLog = args["enableCustomLog"] as? Bool{
                 logConfig.enableCustomLog = enableCustomLog
             }
-            
+            if let globalContext = args["globalContext"] as? Dictionary<String,String>{
+                logConfig.globalContext = globalContext
+            }
             FTMobileAgent.sharedInstance().startLogger(withConfigOptions: logConfig)
             
             result(nil)
         case SwiftAgentPlugin.METHOD_LOGGING:
             if let content = args["content"] as? String{
                 let status = args["status"] as? Int ?? 0
-                FTMobileAgent.sharedInstance().logging(content, status: FTStatus.init(rawValue: status)!)
+                FTMobileAgent.sharedInstance().logging(content, status: FTLogStatus.init(rawValue: status)!)
             }
             result(nil)
         case SwiftAgentPlugin.METHOD_TRACE_CONFIG:
@@ -119,31 +123,11 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         case SwiftAgentPlugin.METHOD_GET_TRACE_HEADER:
             let urlStr = args["url"] as! String
             if let url = URL.init(string: urlStr) {
-                let key = args["key"] as! String
-                let header = FTExternalDataManager.shared().getTraceHeader(withKey: key, url: url)
+                let header = FTExternalDataManager.shared().getTraceHeaderUrl(url)
                 result(header)
             }else{
                 result(nil)
             }
-        case SwiftAgentPlugin.METHOD_TRACE:
-            let key = args["key"] as! String
-            let httpMethod = args["httpMethod"] as! String
-            let requestHeader = args["requestHeader"] as! Dictionary<String, Any>
-            let content = FTResourceContentModel.init()
-            content.httpMethod = httpMethod
-            content.requestHeader = requestHeader
-            if let responseHeader = args["responseHeader"] as? Dictionary<String, Any> {
-                content.responseHeader = responseHeader
-            }
-            if  let resourceStatus = args["resourceStatus"] as? Int {
-                content.httpStatusCode = resourceStatus
-            }
-            if  let errorMessage = args["errorMessage"] as? String {
-                content.errorMessage = errorMessage
-            }
-            FTExternalDataManager.shared().trace(withKey: key, content: content)
-            
-            result(nil)
         case SwiftAgentPlugin.METHOD_RUM_CONFIG:
             if let rumAppId = args["rumAppId"] as? String{
                 let rumConfig = FTRumConfig(appid: rumAppId)
@@ -155,6 +139,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 }
                 if let enableUserView = args["enableUserView"] as? Bool {
                     rumConfig.enableTraceUserView = enableUserView
+                }
+                if let enableUserResource = args["enableUserResource"] as? Bool{
+                    rumConfig.enableTraceUserResource = enableUserResource
                 }
                 if let monitorType = args["monitorType"] as? Int {
                     rumConfig.monitorInfoType = FTMonitorInfoType.init(rawValue: UInt(monitorType))
@@ -185,7 +172,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             let stack = args["stack"] as? String ?? ""
             let message = args["message"] as? String ?? ""
             let appState = args["appState"] as? Int ?? 0
-            FTExternalDataManager.shared().addError(withType: "flutter", situation: AppState(rawValue: UInt(appState)) ?? .UNKNOWN, message: message, stack: stack)
+            FTExternalDataManager.shared().addError(withType: "flutter", situation: AppState(rawValue: UInt(appState)) ?? .unknown, message: message, stack: stack)
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_START_RESOURCE:
             let key = args["key"] as! String
