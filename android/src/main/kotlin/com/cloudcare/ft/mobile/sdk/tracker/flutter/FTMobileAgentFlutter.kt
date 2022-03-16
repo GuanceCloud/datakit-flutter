@@ -340,7 +340,11 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 if (traceType != null) {
                     traceConfig.traceType = when (traceType) {
                         0 -> TraceType.DDTRACE
-                        1 -> TraceType.ZIPKIN
+                        1 -> TraceType.ZIPKIN_MULTI_HEADER
+                        2 -> TraceType.ZIPKIN_SINGLE_HEADER
+                        3 -> TraceType.TRACEPARENT
+                        4 -> TraceType.SKYWALKING
+                        5 -> TraceType.JAEGER
                         else -> TraceType.JAEGER
                     }
                 }
@@ -352,9 +356,9 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 if (enableAutoTrace != null) {
                     traceConfig.isEnableAutoTrace = enableAutoTrace
                 }
-                if (serviceName != null) {
-                    traceConfig.serviceName = serviceName
-                }
+//                if (serviceName != null) {
+//                    traceConfig.serviceName = serviceName
+//                }
                 if (enableAutoTrace != null) {
                     traceConfig.isEnableAutoTrace = enableAutoTrace
                 }
@@ -362,21 +366,21 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 FTSdk.initTraceWithConfig(traceConfig)
                 result.success(null)
             }
-            METHOD_TRACE -> {
-                val key: String? = call.argument<String>("key")
-                val httpMethod: String? = call.argument("httpMethod")
-                val requestHeader: HashMap<String, String>? = call.argument("requestHeader")
-                val responseHeader: HashMap<String, String>? = call.argument("responseHeader")
-                val statusCode: Int? = call.argument("statusCode")
-                val errorMsg: String? = call.argument("errorMessage")
-
-                FTTraceManager.get().addTrace(
-                        key, httpMethod, requestHeader,
-                        responseHeader, statusCode ?: 0, errorMsg ?: ""
-                )
-                result.success(null)
-
-            }
+//            METHOD_TRACE -> {
+//                val key: String? = call.argument<String>("key")
+//                val httpMethod: String? = call.argument("httpMethod")
+//                val requestHeader: HashMap<String, String>? = call.argument("requestHeader")
+//                val responseHeader: HashMap<String, String>? = call.argument("responseHeader")
+//                val statusCode: Int? = call.argument("statusCode")
+//                val errorMsg: String? = call.argument("errorMessage")
+//
+//                FTTraceManager.get().addTrace(
+//                        key, httpMethod, requestHeader,
+//                        responseHeader, statusCode ?: 0, errorMsg ?: ""
+//                )
+//                result.success(null)
+//
+//            }
             METHOD_GET_TRACE_HEADER -> {
                 val url: String? = call.argument<String>("url")
                 val key: String? = call.argument<String>("key")
