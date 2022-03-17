@@ -81,7 +81,6 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
         const val METHOD_RUM_ADD_RESOURCE = "ftRumAddResource"
 
         const val METHOD_TRACE_CONFIG = "ftTraceConfig"
-        const val METHOD_TRACE = "ftTrace"
         const val METHOD_GET_TRACE_HEADER = "ftTraceGetHeader"
 
 
@@ -114,6 +113,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                     }
                     else -> EnvType.PROD
                 }
+                val globalContext: Map<String, String>? = call.argument("globalContext")
                 val sdkConfig = FTSDKConfig.builder(metricsUrl).setEnv(envType)
 
                 if (debug != null) {
@@ -125,7 +125,9 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 if (useOAID != null) {
                     sdkConfig.isUseOAID = useOAID
                 }
-
+                globalContext?.forEach {
+                    sdkConfig.addGlobalContext(it.key, it.value)
+                }
                 FTSdk.install(sdkConfig)
                 result.success(null)
             }
@@ -271,6 +273,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val logTypeArr: List<Int>? = call.argument<List<Int>>("logType")
                 val enableLinkRumData: Boolean? = call.argument<Boolean>("enableLinkRumData")
                 val enableCustomLog: Boolean? = call.argument<Boolean>("enableCustomLog")
+                val globalContext: Map<String, String>? = call.argument("globalContext")
 
                 val logCacheDiscard: LogCacheDiscard =
                         when (call.argument<Int>("logCacheDiscard")) {
@@ -304,6 +307,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
                 if (enableCustomLog != null) {
                     logConfig.isEnableCustomLog = enableCustomLog
+                }
+
+                globalContext?.forEach {
+                    logConfig.addGlobalContext(it.key, it.value)
                 }
 
                 FTSdk.initLogWithConfig(logConfig)
