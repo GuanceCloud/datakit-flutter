@@ -39,7 +39,7 @@ class _TracingState extends State<Tracing> {
           ListTile(
             title: Text("http"),
             onTap: () async{
-           var response = await  client.get(Uri.parse("http://www.google.cn"));
+           var response = await  client.get(Uri.parse("http://testing-ft2x-api.cloudcare.cn/api/v1/account/permissions"));
            FTLogger().logging(response.body, FTLogStatus.info);
             },
           ),
@@ -56,7 +56,7 @@ class _TracingState extends State<Tracing> {
 
   void dioGetHttp() async {
     try {
-      var response = await dio.get('http://www.google.cn');
+      var response = await dio.get('http://testing-ft2x-api.cloudcare.cn/api/v1/account/permissions');
       print(response);
     } catch (e) {
       print(e);
@@ -64,7 +64,7 @@ class _TracingState extends State<Tracing> {
   }
 
   void httpClientGetHttp() async {
-    var url = 'http://www.google.cn';
+    var url = 'http://testing-ft2x-api.cloudcare.cn/api/v1/account/permissions';
     var httpClient = new HttpClient();
     String key = DateTime.now().millisecondsSinceEpoch.toString() + url;
     var errorMessage = "";

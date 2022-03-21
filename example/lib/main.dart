@@ -25,7 +25,7 @@ void main() async {
     );
     await FTLogger()
         .logConfig(serviceName: "flutter_agent", enableCustomLog: true);
-    await FTTracer().setConfig(enableLinkRUMData: true);
+    await FTTracer().setConfig(enableLinkRUMData: true,traceType:TraceType.ddTrace);
     await FTRUMManager().setConfig(androidAppId: appAndroidId, iOSAppId: appIOSId);
 
     FlutterError.onError = FTRUMManager().addFlutterError;
@@ -35,7 +35,6 @@ void main() async {
     //RUM 记录 error 数据
     FTRUMManager().addError(error, stack);
   });
-  print("object");
 }
 
 class MyApp extends StatelessWidget {
