@@ -122,8 +122,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             result(nil)
         case SwiftAgentPlugin.METHOD_GET_TRACE_HEADER:
             let urlStr = args["url"] as! String
+            let key = args["key"] as! String
             if let url = URL.init(string: urlStr) {
-                let header = FTExternalDataManager.shared().getTraceHeaderUrl(url)
+                let header = FTTraceManager.sharedInstance().getTraceHeader(withKey: key, url: url)
                 result(header)
             }else{
                 result(nil)
