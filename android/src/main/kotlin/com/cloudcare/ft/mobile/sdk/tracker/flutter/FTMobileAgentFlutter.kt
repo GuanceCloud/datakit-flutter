@@ -177,7 +177,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val viewName: String? = call.argument<String>("viewName")
                 val viewReferrer: String? = call.argument<String>("viewReferrer")
 
-                FTRUMGlobalManager.get().startView(viewName, viewReferrer)
+                FTRUMGlobalManager.get().startView(viewName)
                 result.success(null)
             }
             METHOD_RUM_STOP_VIEW -> {
@@ -335,7 +335,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
             METHOD_TRACE_CONFIG -> {
                 val sampleRate: Float? = call.argument<Float>("sampleRate")
                 val traceType = call.argument<Int>("traceType")
-                val serviceName = call.argument<String>("serviceName")
+//                val serviceName = call.argument<String>("serviceName")
                 val enableLinkRUMData = call.argument<Boolean>("enableLinkRUMData")
                 val enableAutoTrace = call.argument<Boolean>("enableNativeAutoTrace")
 
