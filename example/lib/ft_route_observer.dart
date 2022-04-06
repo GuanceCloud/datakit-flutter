@@ -19,7 +19,7 @@ class FTRouteObserver extends RouteObserver<PageRoute<dynamic>> {
     if (route is PageRoute) {
       name = route.settings.name ?? "";
       if (name.length > 0) {
-        await FTRUMManager().starView(name, previousRouteName);
+        await FTRUMManager().starView(name);
       }
     }
   }

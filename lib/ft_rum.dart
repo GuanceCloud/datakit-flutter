@@ -60,10 +60,9 @@ class FTRUMManager {
   /// view 开始
   /// [viewName] 界面名称
   /// [viewReferer] 前一个界面名称
-  Future<void> starView(String viewName, String viewReferer) async {
+  Future<void> starView(String viewName) async {
     Map<String, dynamic> map = {};
     map["viewName"] = viewName;
-    map["viewReferer"] = viewReferer;
     await channel.invokeMethod(methodRumStartView, map);
   }
 
