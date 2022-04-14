@@ -15,6 +15,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     
     static let METHOD_RUM_CONFIG = "ftRumConfig"
     static let METHOD_RUM_ADD_ACTION = "ftRumAddAction"
+    static let METHOD_RUM_CREATE_VIEW = "ftRumCreateView"
     static let METHOD_RUM_START_VIEW = "ftRumStartView"
     static let METHOD_RUM_STOP_VIEW = "ftRumStopView"
     static let METHOD_RUM_ADD_ERROR = "ftRumAddError"
@@ -155,15 +156,17 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_ADD_ACTION:
             let actionName = args["actionName"] as! String
-            let actionType = args["actionType"] as! String
-            FTExternalDataManager.shared().addAction(withName: actionName, actionType: actionType)
+            FTExternalDataManager.shared().addClickAction(withName: actionName)
+            result(nil)
+        case SwiftAgentPlugin.METHOD_RUM_CREATE_VIEW:
+            if let viewName = args["viewName"] as? String {
+                let loadDuration = args["duration"] as? Int ?? -1
+                FTExternalDataManager.shared().onCreateView(viewName, loadTime: NSNumber.init(value: loadDuration))
+            }
             result(nil)
         case  SwiftAgentPlugin.METHOD_RUM_START_VIEW:
             if let viewName = args["viewName"] as? String {
-                let viewReferrer = args["viewReferrer"] as? String ?? ""
-                let loadDuration = args["loadDuration"] as? Int ?? -1
-                FTExternalDataManager.shared().startView(withName: viewName, viewReferrer: viewReferrer, loadDuration: NSNumber.init(value: loadDuration))
-                
+                FTExternalDataManager.shared().startView(withName: viewName)
             }
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_STOP_VIEW:
@@ -172,8 +175,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         case SwiftAgentPlugin.METHOD_RUM_ADD_ERROR:
             let stack = args["stack"] as? String ?? ""
             let message = args["message"] as? String ?? ""
-            let appState = args["appState"] as? Int ?? 0
-            FTExternalDataManager.shared().addError(withType: "flutter", situation: AppState(rawValue: UInt(appState)) ?? .unknown, message: message, stack: stack)
+            FTExternalDataManager.shared().addError(withType: "flutter", message: message, stack: stack)
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_START_RESOURCE:
             let key = args["key"] as! String
