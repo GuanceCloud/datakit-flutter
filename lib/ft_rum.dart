@@ -60,11 +60,20 @@ class FTRUMManager {
   /// view 开始
   /// [viewName] 界面名称
   /// [viewReferer] 前一个界面名称
-  Future<void> starView(String viewName, String viewReferer) async {
+  Future<void> starView(String viewName) async {
     Map<String, dynamic> map = {};
     map["viewName"] = viewName;
-    map["viewReferer"] = viewReferer;
     await channel.invokeMethod(methodRumStartView, map);
+  }
+
+  /// view 创建,这个方法需要在 [starView] 之前被调用，目前 flutter route 中未有
+  /// [viewName]界面名称
+  /// [duration]
+  Future<void> createView(String viewName,int duration) async{
+    Map<String, dynamic> map = {};
+    map["viewName"] = viewName;
+    map["duration"] = duration;
+    await channel.invokeMethod(methodRumCreateView, map);
   }
 
   /// view 结束

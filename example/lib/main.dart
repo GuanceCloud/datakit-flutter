@@ -25,8 +25,12 @@ void main() async {
     );
     await FTLogger()
         .logConfig(serviceName: "flutter_agent", enableCustomLog: true);
-    await FTTracer().setConfig(enableLinkRUMData: true,traceType:TraceType.ddTrace);
-    await FTRUMManager().setConfig(androidAppId: appAndroidId, iOSAppId: appIOSId);
+    await FTTracer()
+        .setConfig(enableLinkRUMData: true, traceType: TraceType.ddTrace);
+    await FTRUMManager().setConfig(
+        androidAppId: appAndroidId,
+        iOSAppId: appIOSId,
+        enableNativeUserAction: true);
 
     FlutterError.onError = FTRUMManager().addFlutterError;
 
@@ -35,6 +39,7 @@ void main() async {
     //RUM 记录 error 数据
     FTRUMManager().addError(error, stack);
   });
+  print("=======config here");
 }
 
 class MyApp extends StatelessWidget {
@@ -65,7 +70,6 @@ class HomeRoute extends StatefulWidget {
 }
 
 class _HomeState extends State<HomeRoute> {
-
   @override
   void initState() {
     super.initState();

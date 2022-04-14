@@ -28,7 +28,7 @@ class _RUMState extends State<RUM> {
           ListTile(
             title: Text("View Start"),
             onTap: () {
-              FTRUMManager().starView("RUM", "");
+              FTRUMManager().starView("RUM");
             },
           ),
           ListTile(
