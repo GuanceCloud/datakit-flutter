@@ -1,3 +1,7 @@
+## 0.2.2-dev.2
+* 调整 Android SDK
+
+---
 ## 0.2.2-dev.1
 * Android Native Bug 修复升级
 
