@@ -7,11 +7,7 @@ class FTRouteObserver extends RouteObserver<PageRoute<dynamic>> {
   FTRouteObserver();
 
   Future<void> _sendScreenView(Route? route, Route? previousRoute) async {
-    String previousRouteName = '';
     String name = "";
-    if (previousRoute != null && previousRoute is PageRoute) {
-      previousRouteName = previousRoute.settings.name ?? "";
-    }
 
     if (previousRoute != null) {
       await FTRUMManager().stopView();
