@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'FTMobileSDK/FTMobileAgent', "1.3.4-alpha.3"
+  s.dependency 'FTMobileSDK/FTMobileAgent', "1.3.5-beta.1"
   s.ios.deployment_target = '8.0'
 
   # Flutter.framework does not contain a i386 slice. Only x86_64 simulators are supported.

@@ -55,5 +55,7 @@
 	<string>用于采集码上报地理位置信息</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>用于采集码上报地理位置信息</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 </dict>
 </plist>
