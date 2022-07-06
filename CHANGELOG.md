@@ -1,10 +1,15 @@
+## 0.2.3-dev.3
+* 调整  Android Native lib 版本 ft-native:1.0.0-alpha05
+* 设置 iOS Native SDK 1.3.5-beta.3
+---
 ## 0.2.3-dev.2
 * 调整  Android miniSDK 为 21
-* 升级 iOS Native SDK 
+* 升级 iOS Native SDK 1.3.5-beta.2
 
 ---
 ## 0.2.3-dev.1
-* Native SDK 版本升级
+* iOS SDK 版本升级 1.3.5-beta.1
+* Android SDK 版本升级 1.3.6-beta01
 
 ---
 ## 0.2.2-dev.2
