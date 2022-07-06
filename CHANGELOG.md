@@ -1,3 +1,8 @@
+## 0.2.3-dev.2
+* 调整  Android miniSDK 为 21
+* 升级 iOS Native SDK 
+
+---
 ## 0.2.3-dev.1
 * Native SDK 版本升级
 
