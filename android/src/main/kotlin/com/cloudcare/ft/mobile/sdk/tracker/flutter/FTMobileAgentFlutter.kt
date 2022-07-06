@@ -92,7 +92,6 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
         when (call.method) {
             METHOD_CONFIG -> {
                 val metricsUrl: String = call.argument<String>("metricsUrl")!!
-                val useOAID: Boolean? = call.argument<Boolean>("useOAID")
                 val debug: Boolean? = call.argument<Boolean>("debug")
                 val datakitUUID: String? = call.argument<String>("datakitUUID")
                 val env: Int? = call.argument<Int>("env")
@@ -122,9 +121,6 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
                 if (datakitUUID != null) {
                     sdkConfig.setXDataKitUUID(datakitUUID)
-                }
-                if (useOAID != null) {
-                    sdkConfig.isUseOAID = useOAID
                 }
                 globalContext?.forEach {
                     sdkConfig.addGlobalContext(it.key, it.value)
