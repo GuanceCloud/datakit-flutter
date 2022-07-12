@@ -1,3 +1,7 @@
+## 0.2.3-dev.5
+* 调整  Android Native lib 版本 ft-sdk:1.3.6-beta02
+
+---
 ## 0.2.3-dev.4
 * 调整  Android Native lib 版本 ft-sdk:1.3.6-beta02 
 
