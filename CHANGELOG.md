@@ -1,3 +1,7 @@
+## 0.2.3-dev.4
+* 调整  Android Native lib 版本 ft-sdk:1.3.6-beta02 
+
+---
 ## 0.2.3-dev.3
 * 调整  Android Native lib 版本 ft-native:1.0.0-alpha05
 * 设置 iOS Native SDK 1.3.5-beta.3
