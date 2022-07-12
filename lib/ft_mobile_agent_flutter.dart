@@ -1,8 +1,11 @@
+import 'package:ft_mobile_agent_flutter/version.dart';
+
 import 'const.dart';
 
 export 'ft_logger.dart';
 export 'ft_rum.dart';
 export 'ft_tracing.dart';
+
 class FTMobileFlutter {
   /// 配置
   static Future<void> sdkConfig(
@@ -10,13 +13,19 @@ class FTMobileFlutter {
       bool? useOAID,
       bool? debug,
       String? datakitUUID,
-      EnvType? envType}) async {
+      EnvType? envType,
+      Map<String, String>? globalContext}) async {
     Map<String, dynamic> map = {};
     map["metricsUrl"] = serverUrl;
     map["useOAID"] = useOAID;
     map["debug"] = debug;
     map["datakitUUID"] = datakitUUID;
     map["env"] = envType?.index;
+    if (globalContext == null) {
+      globalContext = {};
+    }
+    globalContext["sdk_package_flutter"] = packageVersion;
+    map["globalContext"] = globalContext;
     await channel.invokeMethod(methodConfig, map);
   }
 
