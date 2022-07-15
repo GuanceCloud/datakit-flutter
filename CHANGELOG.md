@@ -1,3 +1,8 @@
+## 0.2.3-dev.6
+* 升级 Android ft-sdk:1.3.6-beta03
+* 升级 iOS 1.3.5-beta.4
+
+---
 ## 0.2.3-dev.5
 * 调整  Android Native lib 版本 ft-sdk:1.3.6-beta02
 
