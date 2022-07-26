@@ -1,3 +1,7 @@
+## 0.2.3-dev.8
+* 升级 Android ft-sdk:1.3.6-beta05
+
+---
 ## 0.2.3-dev.7
 * 升级 Android ft-sdk:1.3.6-beta04
 
