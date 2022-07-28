@@ -134,6 +134,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val enableUserAction: Boolean? = call.argument<Boolean>("enableUserAction")
                 val enableUserView: Boolean? = call.argument<Boolean>("enableUserView")
                 val enableUserResource: Boolean? = call.argument<Boolean>("enableUserResource")
+                val enableAppUIBlock: Boolean? = call.argument<Boolean>("enableAppUIBlock")
                 val monitorType: Int? = call.argument<Int>("monitorType")
                 val globalContext: Map<String, String>? = call.argument("globalContext")
                 val rumConfig = FTRUMConfig().setRumAppId(rumAppId)
@@ -151,6 +152,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 if (enableUserResource != null) {
                     rumConfig.isEnableTraceUserResource = enableUserResource
+                }
+
+                if (enableAppUIBlock != null) {
+                    rumConfig.isEnableTrackAppUIBlock = enableAppUIBlock;
                 }
 
                 if (monitorType != null) {
@@ -202,8 +207,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                     else -> AppState.UNKNOWN
                 }
                 FTRUMGlobalManager.get().addError(
-                        stack, message,
-                        ErrorType.FLUTTER, appState
+                    stack, message,
+                    ErrorType.FLUTTER, appState
                 )
                 result.success(null)
 
@@ -226,14 +231,14 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val key: String? = call.argument<String>("key")
                 val method: String? = call.argument<String>("resourceMethod")
                 val requestHeader: Map<String, String>? =
-                        call.argument<Map<String, String>>("requestHeader")
+                    call.argument<Map<String, String>>("requestHeader")
                 val responseHeader: Map<String, String>? =
-                        call.argument<Map<String, String>>("responseHeader")
+                    call.argument<Map<String, String>>("responseHeader")
                 val responseBody: String? = call.argument<String>("responseBody")
                 val responseConnection: String? = call.argument<String>("responseConnection")
                 val responseContentType: String? = call.argument<String>("responseContentType")
                 val responseContentEncoding: String? =
-                        call.argument<String>("responseContentEncoding")
+                    call.argument<String>("responseContentEncoding")
                 val resourceStatus: Int? = call.argument<Int>("resourceStatus")
                 val url: String? = call.argument<String>("url")
 //                val fetchStartTime: Long? = call.argument<Long>("fetchStartTime")
@@ -278,15 +283,15 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val globalContext: Map<String, String>? = call.argument("globalContext")
 
                 val logCacheDiscard: LogCacheDiscard =
-                        when (call.argument<Int>("logCacheDiscard")) {
-                            0 -> LogCacheDiscard.DISCARD
-                            1 -> LogCacheDiscard.DISCARD_OLDEST
-                            else -> LogCacheDiscard.DISCARD
-                        }
+                    when (call.argument<Int>("logCacheDiscard")) {
+                        0 -> LogCacheDiscard.DISCARD
+                        1 -> LogCacheDiscard.DISCARD_OLDEST
+                        else -> LogCacheDiscard.DISCARD
+                    }
 
                 val logConfig = FTLoggerConfig()
-                        .setEnableCustomLog(true)
-                        .setLogCacheDiscardStrategy(logCacheDiscard)
+                    .setEnableCustomLog(true)
+                    .setLogCacheDiscardStrategy(logCacheDiscard)
 
                 if (sampleRate != null) {
                     logConfig.samplingRate = sampleRate

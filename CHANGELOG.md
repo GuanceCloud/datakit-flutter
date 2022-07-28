@@ -1,3 +1,7 @@
+## 0.2.4-dev.1
+* 添加 longtask 支持
+
+---
 ## 0.2.3-dev.10
 * 升级 Android ft-sdk:1.3.6-beta06
 

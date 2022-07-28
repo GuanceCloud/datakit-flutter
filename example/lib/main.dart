@@ -30,6 +30,7 @@ void main() async {
     await FTRUMManager().setConfig(
         androidAppId: appAndroidId,
         iOSAppId: appIOSId,
+        enableNativeAppUIBlock: true,
         enableNativeUserAction: true);
 
     FlutterError.onError = FTRUMManager().addFlutterError;

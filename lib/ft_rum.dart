@@ -30,6 +30,7 @@ class FTRUMManager {
       bool? enableNativeUserAction,
       bool? enableNativeUserView,
       bool? enableNativeUserResource,
+      bool? enableNativeAppUIBlock,
       MonitorType? monitorType,
       Map<String, String>? globalContext}) async {
     Map<String, dynamic> map = {};
@@ -42,6 +43,7 @@ class FTRUMManager {
     map["enableUserAction"] = enableNativeUserAction;
     map["enableUserView"] = enableNativeUserView;
     map["enableUserResource"] = enableNativeUserResource;
+    map["enableAppUIBlock"] = enableNativeAppUIBlock;
     map["monitorType"] = monitorType?.value;
     map["globalContext"] = globalContext;
     await channel.invokeMethod(methodRumConfig, map);
@@ -69,7 +71,7 @@ class FTRUMManager {
   /// view 创建,这个方法需要在 [starView] 之前被调用，目前 flutter route 中未有
   /// [viewName]界面名称
   /// [duration]
-  Future<void> createView(String viewName,int duration) async{
+  Future<void> createView(String viewName, int duration) async {
     Map<String, dynamic> map = {};
     map["viewName"] = viewName;
     map["duration"] = duration;

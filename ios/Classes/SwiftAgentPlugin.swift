@@ -145,6 +145,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 if let enableUserResource = args["enableUserResource"] as? Bool{
                     rumConfig.enableTraceUserResource = enableUserResource
                 }
+                if let enableAppUIBlock = args["enableAppUIBlock"] as? Bool{
+                    rumConfig.enableTrackAppFreeze = enableAppUIBlock
+                }
                 if let monitorType = args["monitorType"] as? Int {
                     rumConfig.monitorInfoType = FTMonitorInfoType.init(rawValue: UInt(monitorType))
                 }
