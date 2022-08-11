@@ -125,9 +125,9 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val enableUserView: Boolean? = call.argument<Boolean>("enableUserView")
                 val enableUserResource: Boolean? = call.argument<Boolean>("enableUserResource")
                 val enableAppUIBlock: Boolean? = call.argument<Boolean>("enableAppUIBlock")
-                val errorMonitorType: Long? = call.argument<Long>("errorMonitorType")
-                val deviceMetricsMonitorType: Long? =
-                    call.argument<Long>("deviceMetricsMonitorType")
+                val errorMonitorType: Int? = call.argument<Int>("errorMonitorType")
+                val deviceMetricsMonitorType: Int? =
+                    call.argument<Int>("deviceMetricsMonitorType")
                 val detectFrequency: Int? = call.argument<Int>("detectFrequency")
                 val globalContext: Map<String, String>? = call.argument("globalContext")
                 val rumConfig = FTRUMConfig().setRumAppId(rumAppId)
@@ -152,7 +152,14 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
 
                 if (errorMonitorType != null) {
-                    rumConfig.extraMonitorTypeWithError = errorMonitorType.toInt()
+                    rumConfig.extraMonitorTypeWithError = when (errorMonitorType) {
+                        ErrorMonitorType.ALL.ordinal -> ErrorMonitorType.ALL
+                        ErrorMonitorType.CPU.ordinal -> ErrorMonitorType.CPU
+                        ErrorMonitorType.MEMORY.ordinal -> ErrorMonitorType.MEMORY
+                        ErrorMonitorType.BATTERY.ordinal -> ErrorMonitorType.BATTERY
+                        else -> ErrorMonitorType.ALL
+
+                    }
                 }
 
                 if (deviceMetricsMonitorType != null) {
@@ -162,13 +169,22 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                         else -> DetectFrequency.DEFAULT
                     }
 
+                    val deviceMetricsMonitorTypeEnum = when (deviceMetricsMonitorType) {
+                        DeviceMetricsMonitorType.ALL.ordinal -> DeviceMetricsMonitorType.ALL
+                        DeviceMetricsMonitorType.CPU.ordinal -> DeviceMetricsMonitorType.CPU
+                        DeviceMetricsMonitorType.MEMORY.ordinal -> DeviceMetricsMonitorType.MEMORY
+                        DeviceMetricsMonitorType.BATTERY.ordinal -> DeviceMetricsMonitorType.BATTERY
+                        DeviceMetricsMonitorType.FPS.ordinal -> DeviceMetricsMonitorType.FPS
+                        else -> DeviceMetricsMonitorType.ALL
+                    }
+
                     if (detectFrequency != null) {
                         rumConfig.setDeviceMetricsMonitorType(
-                            deviceMetricsMonitorType.toInt(),
+                            deviceMetricsMonitorTypeEnum,
                             detectFrequencyEnum
                         )
                     } else {
-                        rumConfig.deviceMetricsMonitorType = deviceMetricsMonitorType.toInt()
+                        rumConfig.deviceMetricsMonitorType = deviceMetricsMonitorTypeEnum
                     }
                 }
 
