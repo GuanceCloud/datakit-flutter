@@ -158,36 +158,10 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                     rumConfig.globalContext = globalContext
                 }
                 if let deviceMetricsMonitorType = args["deviceMetricsMonitorType"] as? Int {
-                    let deviceMonitotType:FTDeviceMetricsMonitorType?
-                    switch (deviceMetricsMonitorType){
-                    case 1 << 2:
-                        deviceMonitotType = .memory
-                    case 1 << 3:
-                        deviceMonitotType = .cpu
-                    case 1 << 4:
-                        deviceMonitotType = .fps
-                    case 0xFFFFFFFF:
-                        deviceMonitotType = .all
-                    default:
-                        deviceMonitotType = nil
-                    }
-                    if let deviceMonitotType = deviceMonitotType {
-                        rumConfig.deviceMetricsMonitorType = deviceMonitotType
-                    }
+                    rumConfig.deviceMetricsMonitorType = FTDeviceMetricsMonitorType.init(rawValue: UInt(deviceMetricsMonitorType))
                 }
                 if let detectFrequency = args["detectFrequency"] as? Int {
-                    let frequency:FTMonitorFrequency
-                    switch (detectFrequency){
-                    case 500:
-                        frequency = FTMonitorFrequency.init(rawValue: 0)
-                    case 100:
-                        frequency = .frequent
-                    case 1000:
-                        frequency = .rare
-                    default:
-                        frequency = FTMonitorFrequency.init(rawValue: 0)
-                    }
-                    rumConfig.monitorFrequency = frequency
+                    rumConfig.monitorFrequency = FTMonitorFrequency.init(rawValue: UInt(detectFrequency))
                 }
                 FTMobileAgent.sharedInstance().startRum(withConfigOptions: rumConfig)
             }
