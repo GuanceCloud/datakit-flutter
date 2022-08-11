@@ -62,7 +62,10 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             result(nil)
         case SwiftAgentPlugin.METHOD_BIND_USER:
             if let userId = args["userId"] as? String {
-                FTMobileAgent.sharedInstance().bindUser(withUserID: userId)
+                let userName = args["userName"] as? String 
+                let userEmail = args["userEmail"] as? String
+                let userExt = args["userExt"] as? [AnyHashable : Any]
+                FTMobileAgent.sharedInstance().bindUser(withUserID:userId, userName: userName, userEmail: userEmail, extra: userExt)
             }
             result(nil)
         case SwiftAgentPlugin.METHOD_UNBIND_USER:
@@ -149,10 +152,42 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                     rumConfig.enableTrackAppFreeze = enableAppUIBlock
                 }
                 if let monitorType = args["monitorType"] as? Int {
-                    rumConfig.monitorInfoType = FTMonitorInfoType.init(rawValue: UInt(monitorType))
+                    rumConfig.errorMonitorType = FTErrorMonitorType.init(rawValue: UInt(monitorType))
                 }
                 if let globalContext = args["globalContext"] as? Dictionary<String, String>{
                     rumConfig.globalContext = globalContext
+                }
+                if let deviceMetricsMonitorType = args["deviceMetricsMonitorType"] as? Int {
+                    let deviceMonitotType:FTDeviceMetricsMonitorType?
+                    switch (deviceMetricsMonitorType){
+                    case 1 << 2:
+                        deviceMonitotType = .memory
+                    case 1 << 3:
+                        deviceMonitotType = .cpu
+                    case 1 << 4:
+                        deviceMonitotType = .fps
+                    case 0xFFFFFFFF:
+                        deviceMonitotType = .all
+                    default:
+                        deviceMonitotType = nil
+                    }
+                    if let deviceMonitotType = deviceMonitotType {
+                        rumConfig.deviceMetricsMonitorType = deviceMonitotType
+                    }
+                }
+                if let detectFrequency = args["detectFrequency"] as? Int {
+                    let frequency:FTMonitorFrequency
+                    switch (detectFrequency){
+                    case 500:
+                        frequency = FTMonitorFrequency.init(rawValue: 0)
+                    case 100:
+                        frequency = .frequent
+                    case 1000:
+                        frequency = .rare
+                    default:
+                        frequency = FTMonitorFrequency.init(rawValue: 0)
+                    }
+                    rumConfig.monitorFrequency = frequency
                 }
                 FTMobileAgent.sharedInstance().startRum(withConfigOptions: rumConfig)
             }
