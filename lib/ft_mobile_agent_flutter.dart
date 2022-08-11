@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:ft_mobile_agent_flutter/version.dart';
 
 import 'const.dart';
@@ -30,9 +32,15 @@ class FTMobileFlutter {
   }
 
   ///绑定用户
-  static Future<void> bindRUMUserData(String userId) async {
+  static Future<void> bindRUMUserData(String userId,
+      {String? userName,
+      String? userEmail,
+      Map<String, String>? ext}) async {
     Map<String, dynamic> map = {};
     map["userId"] = userId;
+    map["userName"] = userName;
+    map["userEmail"] = userEmail;
+    map["userExt"] = ext;
     return await channel.invokeMethod(methodBindUser, map);
   }
 

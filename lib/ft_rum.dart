@@ -21,7 +21,8 @@ class FTRUMManager {
   /// [enableNativeUserAction] 是否进行 Native Action 追踪，Button 点击事件，纯 flutter 应用建议关闭
   /// [enableNativeUserView] 是否进行 Native View 自动追踪，纯 Flutter 应用建议关闭
   /// [enableNativeUserResource] 是否进行 Native Resource 自动追踪，纯 Flutter 应用建议关闭
-  /// [monitorType] 监控补充类型
+  /// [errorMonitorType] 监控补充类型
+  /// [deviceMonitorType] 监控补充类型
   /// [globalContext] 自定义全局参数
   Future<void> setConfig(
       {String? androidAppId,
@@ -31,7 +32,9 @@ class FTRUMManager {
       bool? enableNativeUserView,
       bool? enableNativeUserResource,
       bool? enableNativeAppUIBlock,
-      MonitorType? monitorType,
+      ErrorMonitorType? errorMonitorType,
+      DeviceMetricsMonitorType? deviceMetricsMonitorType,
+      DetectFrequency? detectFrequency,
       Map<String, String>? globalContext}) async {
     Map<String, dynamic> map = {};
     if (Platform.isAndroid) {
@@ -44,7 +47,9 @@ class FTRUMManager {
     map["enableUserView"] = enableNativeUserView;
     map["enableUserResource"] = enableNativeUserResource;
     map["enableAppUIBlock"] = enableNativeAppUIBlock;
-    map["monitorType"] = monitorType?.value;
+    map["errorMonitorType"] = errorMonitorType?.value;
+    map["deviceMetricsMonitorType"] = deviceMetricsMonitorType?.value;
+    map["detectFrequency"] = detectFrequency?.index;
     map["globalContext"] = globalContext;
     await channel.invokeMethod(methodRumConfig, map);
   }
@@ -163,19 +168,53 @@ enum AppState {
 }
 
 /// 监控类型
-enum MonitorType { all, battery, memory, cpu }
+enum ErrorMonitorType { all, battery, memory, cpu }
 
-extension MonitorTypeExt on MonitorType {
+extension ErrorMonitorTypeExt on ErrorMonitorType {
   int get value {
     switch (this) {
-      case MonitorType.all:
+      case ErrorMonitorType.all:
         return 0xFFFFFFFF;
-      case MonitorType.battery:
+      case ErrorMonitorType.battery:
         return 1 << 1;
-      case MonitorType.memory:
+      case ErrorMonitorType.memory:
         return 1 << 2;
-      case MonitorType.cpu:
+      case ErrorMonitorType.cpu:
         return 1 << 3;
+    }
+  }
+}
+
+enum DeviceMetricsMonitorType { all, battery, memory, cpu, fps }
+
+extension DeviceMetricsMonitorTypeExt on DeviceMetricsMonitorType {
+  int get value {
+    switch (this) {
+      case DeviceMetricsMonitorType.all:
+        return 0xFFFFFFFF;
+      case DeviceMetricsMonitorType.battery:
+        return 1 << 1;
+      case DeviceMetricsMonitorType.memory:
+        return 1 << 2;
+      case DeviceMetricsMonitorType.cpu:
+        return 1 << 3;
+      case DeviceMetricsMonitorType.fps:
+        return 1 << 4;
+    }
+  }
+}
+
+enum DetectFrequency { normal, frequent, rare }
+
+extension DetectFrequencyTypeExt on DetectFrequency {
+  int get value {
+    switch (this) {
+      case DetectFrequency.normal:
+        return 500;
+      case DetectFrequency.frequent:
+        return 100;
+      case DetectFrequency.rare:
+        return 1000;
     }
   }
 }

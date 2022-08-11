@@ -96,21 +96,11 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val datakitUUID: String? = call.argument<String>("datakitUUID")
                 val env: Int? = call.argument<Int>("env")
                 val envType: EnvType = when (env) {
-                    EnvType.PROD.ordinal -> {
-                        EnvType.PROD
-                    }
-                    EnvType.GRAY.ordinal -> {
-                        EnvType.GRAY
-                    }
-                    EnvType.PRE.ordinal -> {
-                        EnvType.PRE
-                    }
-                    EnvType.COMMON.ordinal -> {
-                        EnvType.COMMON
-                    }
-                    EnvType.LOCAL.ordinal -> {
-                        EnvType.LOCAL
-                    }
+                    EnvType.PROD.ordinal -> EnvType.PROD
+                    EnvType.GRAY.ordinal -> EnvType.GRAY
+                    EnvType.PRE.ordinal -> EnvType.PRE
+                    EnvType.COMMON.ordinal -> EnvType.COMMON
+                    EnvType.LOCAL.ordinal -> EnvType.LOCAL
                     else -> EnvType.PROD
                 }
                 val globalContext: Map<String, String>? = call.argument("globalContext")
@@ -135,7 +125,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val enableUserView: Boolean? = call.argument<Boolean>("enableUserView")
                 val enableUserResource: Boolean? = call.argument<Boolean>("enableUserResource")
                 val enableAppUIBlock: Boolean? = call.argument<Boolean>("enableAppUIBlock")
-                val monitorType: Int? = call.argument<Int>("monitorType")
+                val errorMonitorType: Long? = call.argument<Long>("errorMonitorType")
+                val deviceMetricsMonitorType: Long? =
+                    call.argument<Long>("deviceMetricsMonitorType")
+                val detectFrequency: Int? = call.argument<Int>("detectFrequency")
                 val globalContext: Map<String, String>? = call.argument("globalContext")
                 val rumConfig = FTRUMConfig().setRumAppId(rumAppId)
                 if (sampleRate != null) {
@@ -158,8 +151,25 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                     rumConfig.isEnableTrackAppUIBlock = enableAppUIBlock;
                 }
 
-                if (monitorType != null) {
-                    rumConfig.extraMonitorTypeWithError = monitorType
+                if (errorMonitorType != null) {
+                    rumConfig.extraMonitorTypeWithError = errorMonitorType.toInt()
+                }
+
+                if (deviceMetricsMonitorType != null) {
+                    val detectFrequencyEnum: DetectFrequency = when (detectFrequency) {
+                        DetectFrequency.FREQUENT.ordinal -> DetectFrequency.FREQUENT
+                        DetectFrequency.RARE.ordinal -> DetectFrequency.RARE
+                        else -> DetectFrequency.DEFAULT
+                    }
+
+                    if (detectFrequency != null) {
+                        rumConfig.setDeviceMetricsMonitorType(
+                            deviceMetricsMonitorType.toInt(),
+                            detectFrequencyEnum
+                        )
+                    } else {
+                        rumConfig.deviceMetricsMonitorType = deviceMetricsMonitorType.toInt()
+                    }
                 }
 
                 globalContext?.forEach {
@@ -197,13 +207,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val state: Int? = call.argument<Int>("appState")
 
                 val appState: AppState = when (state) {
-                    AppState.RUN.ordinal -> {
-                        AppState.RUN
-                    }
-                    AppState.STARTUP.ordinal -> {
-                        AppState.STARTUP
-                    }
-
+                    AppState.RUN.ordinal -> AppState.RUN
+                    AppState.STARTUP.ordinal -> AppState.STARTUP
                     else -> AppState.UNKNOWN
                 }
                 FTRUMGlobalManager.get().addError(
@@ -284,8 +289,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 val logCacheDiscard: LogCacheDiscard =
                     when (call.argument<Int>("logCacheDiscard")) {
-                        0 -> LogCacheDiscard.DISCARD
-                        1 -> LogCacheDiscard.DISCARD_OLDEST
+                        LogCacheDiscard.DISCARD.ordinal -> LogCacheDiscard.DISCARD
+                        LogCacheDiscard.DISCARD_OLDEST.ordinal -> LogCacheDiscard.DISCARD_OLDEST
                         else -> LogCacheDiscard.DISCARD
                     }
 
@@ -328,11 +333,11 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
             METHOD_LOGGING -> {
                 val content: String = call.argument<String>("content") ?: ""
                 val status: Status = when (call.argument<Int>("status")) {
-                    0 -> Status.INFO
-                    1 -> Status.WARNING
-                    2 -> Status.ERROR
-                    3 -> Status.CRITICAL
-                    4 -> Status.OK
+                    Status.INFO.ordinal -> Status.INFO
+                    Status.WARNING.ordinal -> Status.WARNING
+                    Status.ERROR.ordinal -> Status.ERROR
+                    Status.CRITICAL.ordinal -> Status.CRITICAL
+                    Status.OK.ordinal -> Status.OK
                     else -> Status.INFO
                 }
 
@@ -353,13 +358,13 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 if (traceType != null) {
                     traceConfig.traceType = when (traceType) {
-                        0 -> TraceType.DDTRACE
-                        1 -> TraceType.ZIPKIN_MULTI_HEADER
-                        2 -> TraceType.ZIPKIN_SINGLE_HEADER
-                        3 -> TraceType.TRACEPARENT
-                        4 -> TraceType.SKYWALKING
-                        5 -> TraceType.JAEGER
-                        else -> TraceType.JAEGER
+                        TraceType.DDTRACE.ordinal -> TraceType.DDTRACE
+                        TraceType.ZIPKIN_MULTI_HEADER.ordinal -> TraceType.ZIPKIN_MULTI_HEADER
+                        TraceType.ZIPKIN_SINGLE_HEADER.ordinal -> TraceType.ZIPKIN_SINGLE_HEADER
+                        TraceType.TRACEPARENT.ordinal -> TraceType.TRACEPARENT
+                        TraceType.SKYWALKING.ordinal -> TraceType.SKYWALKING
+                        TraceType.JAEGER.ordinal -> TraceType.JAEGER
+                        else -> TraceType.DDTRACE
                     }
                 }
 
@@ -402,7 +407,29 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
             }
             METHOD_BIND_USER -> {
                 val userId: String? = call.argument<String>("userId")
-                FTSdk.bindRumUserData(userId!!)
+                val userName: String? = call.argument<String>("userName")
+                val userEmail: String? = call.argument<String>("userEmail")
+                val userExt: Map<String, String>? = call.argument("userExt")
+
+                val userData = UserData()
+                if (userId != null) {
+                    userData.id = userId
+                }
+                if (userId != null) {
+                    userData.name = userName
+                }
+                if (userId != null) {
+                    userData.email = userEmail
+                }
+                if (userExt != null) {
+                    val map = hashMapOf<String, String>()
+                    userExt.forEach {
+                        map[it.key] = it.value
+                    }
+                    userData.exts = map
+                }
+
+                FTSdk.bindRumUserData(userData)
                 result.success(null)
             }
             METHOD_UNBIND_USER -> {

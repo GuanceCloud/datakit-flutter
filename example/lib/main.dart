@@ -31,7 +31,9 @@ void main() async {
         androidAppId: appAndroidId,
         iOSAppId: appIOSId,
         enableNativeAppUIBlock: true,
-        enableNativeUserAction: true);
+        enableNativeUserAction: true,
+        errorMonitorType: ErrorMonitorType.all,
+        deviceMetricsMonitorType: DeviceMetricsMonitorType.all);
 
     FlutterError.onError = FTRUMManager().addFlutterError;
 
@@ -108,7 +110,10 @@ class _HomeState extends State<HomeRoute> {
     return ElevatedButton(
       child: Text("绑定用户"),
       onPressed: () {
-        FTMobileFlutter.bindRUMUserData("flutterUser");
+        FTMobileFlutter.bindRUMUserData("flutterUserId",
+            userEmail: "flutter@email.com",
+            userName: "flutterUser",
+            ext: {"ft_key": "ft_value"});
       },
     );
   }
