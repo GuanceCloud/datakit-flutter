@@ -95,14 +95,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val debug: Boolean? = call.argument<Boolean>("debug")
                 val datakitUUID: String? = call.argument<String>("datakitUUID")
                 val env: Int? = call.argument<Int>("env")
-                val envType: EnvType = when (env) {
-                    EnvType.PROD.ordinal -> EnvType.PROD
-                    EnvType.GRAY.ordinal -> EnvType.GRAY
-                    EnvType.PRE.ordinal -> EnvType.PRE
-                    EnvType.COMMON.ordinal -> EnvType.COMMON
-                    EnvType.LOCAL.ordinal -> EnvType.LOCAL
-                    else -> EnvType.PROD
-                }
+                val envType: EnvType = EnvType.values()[env ?: EnvType.PROD.ordinal]
                 val globalContext: Map<String, String>? = call.argument("globalContext")
                 val sdkConfig = FTSDKConfig.builder(metricsUrl).setEnv(envType)
 
@@ -152,33 +145,18 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
 
                 if (errorMonitorType != null) {
-                    rumConfig.extraMonitorTypeWithError = when (errorMonitorType) {
-                        ErrorMonitorType.ALL.ordinal -> ErrorMonitorType.ALL
-                        ErrorMonitorType.CPU.ordinal -> ErrorMonitorType.CPU
-                        ErrorMonitorType.MEMORY.ordinal -> ErrorMonitorType.MEMORY
-                        ErrorMonitorType.BATTERY.ordinal -> ErrorMonitorType.BATTERY
-                        else -> ErrorMonitorType.ALL
-
-                    }
+                    rumConfig.extraMonitorTypeWithError =
+                        ErrorMonitorType.values()[errorMonitorType]
                 }
 
                 if (deviceMetricsMonitorType != null) {
-                    val detectFrequencyEnum: DetectFrequency = when (detectFrequency) {
-                        DetectFrequency.FREQUENT.ordinal -> DetectFrequency.FREQUENT
-                        DetectFrequency.RARE.ordinal -> DetectFrequency.RARE
-                        else -> DetectFrequency.DEFAULT
-                    }
 
-                    val deviceMetricsMonitorTypeEnum = when (deviceMetricsMonitorType) {
-                        DeviceMetricsMonitorType.ALL.ordinal -> DeviceMetricsMonitorType.ALL
-                        DeviceMetricsMonitorType.CPU.ordinal -> DeviceMetricsMonitorType.CPU
-                        DeviceMetricsMonitorType.MEMORY.ordinal -> DeviceMetricsMonitorType.MEMORY
-                        DeviceMetricsMonitorType.BATTERY.ordinal -> DeviceMetricsMonitorType.BATTERY
-                        DeviceMetricsMonitorType.FPS.ordinal -> DeviceMetricsMonitorType.FPS
-                        else -> DeviceMetricsMonitorType.ALL
-                    }
+                    val deviceMetricsMonitorTypeEnum =
+                        DeviceMetricsMonitorType.values()[deviceMetricsMonitorType]
 
                     if (detectFrequency != null) {
+                        val detectFrequencyEnum: DetectFrequency =
+                            DetectFrequency.values()[detectFrequency]
                         rumConfig.setDeviceMetricsMonitorType(
                             deviceMetricsMonitorTypeEnum,
                             detectFrequencyEnum
@@ -222,11 +200,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val message: String? = call.argument<String>("message")
                 val state: Int? = call.argument<Int>("appState")
 
-                val appState: AppState = when (state) {
-                    AppState.RUN.ordinal -> AppState.RUN
-                    AppState.STARTUP.ordinal -> AppState.STARTUP
-                    else -> AppState.UNKNOWN
-                }
+                val appState: AppState = AppState.values()[state ?: AppState.UNKNOWN.ordinal]
                 FTRUMGlobalManager.get().addError(
                     stack, message,
                     ErrorType.FLUTTER, appState
@@ -304,11 +278,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val globalContext: Map<String, String>? = call.argument("globalContext")
 
                 val logCacheDiscard: LogCacheDiscard =
-                    when (call.argument<Int>("logCacheDiscard")) {
-                        LogCacheDiscard.DISCARD.ordinal -> LogCacheDiscard.DISCARD
-                        LogCacheDiscard.DISCARD_OLDEST.ordinal -> LogCacheDiscard.DISCARD_OLDEST
-                        else -> LogCacheDiscard.DISCARD
-                    }
+                    LogCacheDiscard.values()[call.argument<Int>("logCacheDiscard")
+                        ?: LogCacheDiscard.DISCARD.ordinal]
 
                 val logConfig = FTLoggerConfig()
                     .setEnableCustomLog(true)
@@ -348,14 +319,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
             METHOD_LOGGING -> {
                 val content: String = call.argument<String>("content") ?: ""
-                val status: Status = when (call.argument<Int>("status")) {
-                    Status.INFO.ordinal -> Status.INFO
-                    Status.WARNING.ordinal -> Status.WARNING
-                    Status.ERROR.ordinal -> Status.ERROR
-                    Status.CRITICAL.ordinal -> Status.CRITICAL
-                    Status.OK.ordinal -> Status.OK
-                    else -> Status.INFO
-                }
+                val status: Status =
+                    Status.values()[call.argument<Int>("status") ?: Status.INFO.ordinal]
 
                 FTLogger.getInstance().logBackground(content, status)
                 result.success(null)
@@ -373,15 +338,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
 
                 if (traceType != null) {
-                    traceConfig.traceType = when (traceType) {
-                        TraceType.DDTRACE.ordinal -> TraceType.DDTRACE
-                        TraceType.ZIPKIN_MULTI_HEADER.ordinal -> TraceType.ZIPKIN_MULTI_HEADER
-                        TraceType.ZIPKIN_SINGLE_HEADER.ordinal -> TraceType.ZIPKIN_SINGLE_HEADER
-                        TraceType.TRACEPARENT.ordinal -> TraceType.TRACEPARENT
-                        TraceType.SKYWALKING.ordinal -> TraceType.SKYWALKING
-                        TraceType.JAEGER.ordinal -> TraceType.JAEGER
-                        else -> TraceType.DDTRACE
-                    }
+                    traceConfig.traceType = TraceType.values()[traceType]
                 }
 
                 if (enableLinkRUMData != null) {
