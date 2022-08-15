@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:ft_mobile_agent_flutter/version.dart';
 
@@ -16,6 +17,7 @@ class FTMobileFlutter {
       bool? debug,
       String? datakitUUID,
       EnvType? envType,
+      bool? enableAccessAndroidID,
       Map<String, String>? globalContext}) async {
     Map<String, dynamic> map = {};
     map["metricsUrl"] = serverUrl;
@@ -28,14 +30,15 @@ class FTMobileFlutter {
     }
     globalContext["sdk_package_flutter"] = packageVersion;
     map["globalContext"] = globalContext;
+    if (Platform.isAndroid) {
+      map["enableAccessAndroidID"] = enableAccessAndroidID;
+    }
     await channel.invokeMethod(methodConfig, map);
   }
 
   ///绑定用户
   static Future<void> bindRUMUserData(String userId,
-      {String? userName,
-      String? userEmail,
-      Map<String, String>? ext}) async {
+      {String? userName, String? userEmail, Map<String, String>? ext}) async {
     Map<String, dynamic> map = {};
     map["userId"] = userId;
     map["userName"] = userName;
@@ -47,6 +50,15 @@ class FTMobileFlutter {
   ///解绑用户
   static Future<void> unbindRUMUserData() async {
     return await channel.invokeMethod(methodUnbindUser);
+  }
+
+  static Future<void> setEnableAccessAndroidID(
+      bool enableAccessAndroidID) async {
+    if (!Platform.isAndroid) return;
+
+    Map<String, dynamic> map = {};
+    map["enableAccessAndroidID"] = enableAccessAndroidID;
+    return await channel.invokeMethod(methodEnableAccessAndroidID, map);
   }
 }
 

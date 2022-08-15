@@ -83,6 +83,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         const val METHOD_TRACE_CONFIG = "ftTraceConfig"
         const val METHOD_GET_TRACE_HEADER = "ftTraceGetHeader"
+        const val METHOD_ENABLE_ACCESS_ANDROID_ID = "ftEnableAccessAndroidID"
 
 
     }
@@ -97,6 +98,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val env: Int? = call.argument<Int>("env")
                 val envType: EnvType = EnvType.values()[env ?: EnvType.PROD.ordinal]
                 val globalContext: Map<String, String>? = call.argument("globalContext")
+                val enableAccessAndroidID: Boolean? =
+                    call.argument<Boolean>("enableAccessAndroidID")
                 val sdkConfig = FTSDKConfig.builder(metricsUrl).setEnv(envType)
 
                 if (debug != null) {
@@ -108,6 +111,11 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 globalContext?.forEach {
                     sdkConfig.addGlobalContext(it.key, it.value)
                 }
+
+                if (enableAccessAndroidID != null) {
+                    sdkConfig.isEnableAccessAndroidID = enableAccessAndroidID
+                }
+
                 FTSdk.install(sdkConfig)
                 result.success(null)
             }
@@ -409,6 +417,13 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 FTSdk.unbindRumUserData()
                 result.success(null)
             }
+            METHOD_ENABLE_ACCESS_ANDROID_ID -> {
+                val enableAccessAndroidID: Boolean? =
+                    call.argument<Boolean>("enableAccessAndroidID")
+                FTSdk.setEnableAccessAndroidID(enableAccessAndroidID!!)
+                result.success(null)
+            }
+
             else -> {
                 result.notImplemented()
             }
