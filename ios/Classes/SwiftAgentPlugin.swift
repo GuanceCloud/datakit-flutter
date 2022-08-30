@@ -200,7 +200,8 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_ADD_ACTION:
             let actionName = args["actionName"] as! String
-            FTExternalDataManager.shared().addClickAction(withName: actionName)
+            let actionType = args["actionType"] as! String
+            FTExternalDataManager.shared().addActionName(actionName, actionType: actionType)
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_CREATE_VIEW:
             if let viewName = args["viewName"] as? String {
