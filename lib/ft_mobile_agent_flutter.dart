@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:io';
 
 import 'package:ft_mobile_agent_flutter/version.dart';
@@ -8,6 +7,7 @@ import 'const.dart';
 export 'ft_logger.dart';
 export 'ft_rum.dart';
 export 'ft_tracing.dart';
+export 'ft_http_client.dart';
 
 class FTMobileFlutter {
   /// 配置

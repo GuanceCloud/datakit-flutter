@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:agent_example/rum.dart';
 import 'package:agent_example/tracing.dart';
+import 'package:agent_example/view_without_route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -25,8 +26,10 @@ void main() async {
     );
     await FTLogger()
         .logConfig(serviceName: "flutter_agent", enableCustomLog: true);
-    await FTTracer()
-        .setConfig(enableLinkRUMData: true, traceType: TraceType.ddTrace);
+    await FTTracer().setConfig(
+        enableLinkRUMData: true,
+        traceType: TraceType.ddTrace,
+        enableAutoTrace: false);
     await FTRUMManager().setConfig(
         androidAppId: appAndroidId,
         iOSAppId: appIOSId,
@@ -61,7 +64,8 @@ class MyApp extends StatelessWidget {
         //路由跳转
         'logging': (BuildContext context) => Logging(),
         'rum': (BuildContext context) => RUM(),
-        'tracing': (BuildContext context) => Tracing(),
+        'tracing_custom': (BuildContext context) => CustomTracing(),
+        'tracing_auto': (BuildContext context) => AutoTracing(),
       },
     );
   }
@@ -98,8 +102,10 @@ class _HomeState extends State<HomeRoute> {
                 _buildBindUserWidget(),
                 _buildUnBindUserWidget(),
                 _buildLoggingWidget(),
-                _buildTracerWidget(),
+                _buildTracerCustomWidget(),
+                _buildTracerAutoWidget(),
                 _buildRUMWidget(),
+                _buildNoNavigatorObserversWidget(),
               ],
             ),
           ),
@@ -136,11 +142,28 @@ class _HomeState extends State<HomeRoute> {
     );
   }
 
-  Widget _buildTracerWidget() {
+  Widget _buildTracerCustomWidget() {
     return ElevatedButton(
-      child: Text("网络链路追踪"),
+      child: Text("网络链路追踪(自定义)"),
+      onPressed: () async {
+        bool hasSet = HttpOverrides.current != null;
+        if (hasSet) {
+          HttpOverrides.global = null;
+        }
+        await Navigator.pushNamed(context, "tracing_custom");
+
+        if (hasSet) {
+          HttpOverrides.global = FTHttpOverrides();
+        }
+      },
+    );
+  }
+
+  Widget _buildTracerAutoWidget() {
+    return ElevatedButton(
+      child: Text("网络链路追踪(自动)"),
       onPressed: () {
-        Navigator.pushNamed(context, "tracing");
+        Navigator.pushNamed(context, "tracing_auto");
       },
     );
   }
@@ -150,6 +173,17 @@ class _HomeState extends State<HomeRoute> {
       child: Text("RUM数据采集"),
       onPressed: () {
         Navigator.pushNamed(context, "rum");
+      },
+    );
+  }
+
+  Widget _buildNoNavigatorObserversWidget() {
+    return ElevatedButton(
+      child: Text("不设置 Route Name"),
+      onPressed: () {
+        Navigator.of(context).push(
+          FTMaterialPageRoute(builder: (context) => new NoRouteNamePage()),
+        );
       },
     );
   }

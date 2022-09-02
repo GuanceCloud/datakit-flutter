@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'dart:io';
+
+import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 
 import 'const.dart';
 
@@ -18,15 +21,18 @@ class FTTracer {
   ///[enableNativeAutoTrace] 是否开启原生网络网络自动追踪 iOS NSURLSession ,Android OKhttp
   Future<void> setConfig(
       {double? sampleRate,
-        TraceType? traceType,
-        bool? enableLinkRUMData,
-        bool? enableNativeAutoTrace,
-      }) async {
+      TraceType? traceType,
+      bool? enableLinkRUMData,
+      bool? enableNativeAutoTrace,
+      bool enableAutoTrace = false}) async {
     var map = Map<String, dynamic>();
     map["sampleRate"] = sampleRate;
     map["traceType"] = traceType?.index;
     map["enableLinkRUMData"] = enableLinkRUMData;
     map["enableNativeAutoTrace"] = enableNativeAutoTrace;
+    if (enableAutoTrace) {
+      HttpOverrides.global = FTHttpOverrides();
+    }
     await channel.invokeMethod(methodTraceConfig, map);
   }
 
@@ -66,8 +72,8 @@ class FTTracer {
     Map? header = await channel.invokeMethod(methodGetTraceGetHeader, map);
     if (header != null) {
       return new Map<String, String>.from(header);
-    }else{
-      return <String,String>{};
+    } else {
+      return <String, String>{};
     }
   }
 }
