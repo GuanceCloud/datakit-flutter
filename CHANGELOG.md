@@ -1,3 +1,8 @@
+## 0.2.6-dev.1
+* 添加 http autoTrack
+* RUM view 补充不设置 route name，获取到 view_name 的方式
+
+---
 ## 0.2.5-dev.4
 * iOS action 传参调整
 
