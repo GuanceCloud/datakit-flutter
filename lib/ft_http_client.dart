@@ -381,7 +381,7 @@ class _FTHttpResponse extends Stream<List<int>> implements HttpClientResponse {
           String body = utf8.decode(bodyBytes, allowMalformed: true);
           _onFinish(body, null, null);
           bodyBytes.clear();
-        } on FormatException catch (e) {
+        } on FormatException catch (_) {
           // baseLog.LogUtils().e(e.message);
           _onFinish("", null, null);
         }

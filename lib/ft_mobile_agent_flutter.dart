@@ -8,6 +8,7 @@ export 'ft_logger.dart';
 export 'ft_rum.dart';
 export 'ft_tracing.dart';
 export 'ft_http_client.dart';
+export 'ft_route_observer.dart';
 
 class FTMobileFlutter {
   /// 配置

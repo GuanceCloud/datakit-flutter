@@ -100,7 +100,7 @@
 * resource  遗漏参数添加
 
 ---
-# 0.2.0-dev.2
+## 0.2.0-dev.2
 * 修改 README LICENSE
 
 ---
