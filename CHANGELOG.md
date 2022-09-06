@@ -1,3 +1,7 @@
+## 0.2.7-dev.1
+* FTRouteObserver 从示例添加至 SDK
+
+---
 ## 0.2.6-dev.1
 * 添加 http autoTrack
 * RUM view 补充不设置 route name，获取到 view_name 的方式
