@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:agent_example/ft_tracing_custom_dio.dart';
 import 'package:agent_example/ft_tracing_custom_http.dart';
 import 'package:dio/dio.dart';

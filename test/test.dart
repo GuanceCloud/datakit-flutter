@@ -8,14 +8,12 @@ import 'package:http/io_client.dart';
 const initRouteName = "/";
 const nextRouteName = "next_route";
 
-const requestUrl = "https://jsonplaceholder.typicode.com/albums/1";
+const requestUrl = "https://docs.guance.com/";
 
 void main() {
   const MethodChannel channel = MethodChannel('ft_mobile_agent_flutter');
 
   TestWidgetsFlutterBinding.ensureInitialized();
-
-  FlutterError.onError = FTRUMManager().addFlutterError;
 
   const List<String> list = [
     methodConfig,
@@ -152,4 +150,3 @@ class MainPage extends StatelessWidget {
     );
   }
 }
-

@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'ft_route_observer.dart';
+import 'ft_get_view_name.dart';
 import 'logging.dart';
 
 const serverUrl = String.fromEnvironment("SERVER_URL");
@@ -80,11 +80,18 @@ class _HomeState extends State<HomeRoute> {
   @override
   void initState() {
     super.initState();
-    //第一个页面加载完成
-    FTRUMManager().appState = AppState.run;
     if (Platform.isAndroid) {
       requestPermission([Permission.phone]);
     }
+
+    FTLifeRecycleHandler().initObserver();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    FTLifeRecycleHandler().removeObserver();
   }
 
   @override
