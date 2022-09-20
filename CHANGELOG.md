@@ -1,3 +1,7 @@
+## 0.2.7-dev.3
+* 修改 FTLifeRecycleHandler removeObserver 错误
+
+---
 ## 0.2.7-dev.2
 * 添加 RUM 页面自动监测唤醒和休眠的方式
 
