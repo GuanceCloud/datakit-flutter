@@ -19,7 +19,7 @@ class FTLifeRecycleHandler with WidgetsBindingObserver {
   }
 
   void removeObserver() {
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
   }
 
   @override

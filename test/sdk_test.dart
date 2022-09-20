@@ -5,6 +5,10 @@ import 'package:ft_mobile_agent_flutter/const.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 import 'package:http/io_client.dart';
 
+/// flutter test --coverage
+/// genhtml coverage/lcov.info -o coverage/html
+///
+/// report: coverage/html/lib/index.html
 const initRouteName = "/";
 const nextRouteName = "next_route";
 
@@ -103,10 +107,39 @@ void main() {
     expect(callResult[methodRumAddResource], true);
   });
 
+  test("LifeCycle Test", () {
+    FTLifeRecycleHandler().initObserver();
+    WidgetsBinding.instance
+        .handleAppLifecycleStateChanged(AppLifecycleState.paused);
+
+    expect(callResult[methodRumStopView], true);
+
+    WidgetsBinding.instance
+        .handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+
+    expect(callResult[methodRumStartView], true);
+
+    FTLifeRecycleHandler().removeObserver();
+    callResult.clear();
+
+    WidgetsBinding.instance
+        .handleAppLifecycleStateChanged(AppLifecycleState.paused);
+
+    WidgetsBinding.instance
+        .handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+
+    expect(callResult.isEmpty, true);
+  });
+
   testWidgets("Route Test", (widgetTester) async {
-    await _buildWidget(widgetTester);
+    await _buildRouteTestWidget(widgetTester);
     expect(callResult[methodRumStartView], true);
     expect(callResult[methodRumStopView], true);
+  });
+
+  testWidgets("Action Test", (widgetTester) async {
+    await _buildActionTestWidget(widgetTester);
+    expect(callResult[methodRumAddAction], true);
   });
 
   tearDown(() {
@@ -114,7 +147,7 @@ void main() {
   });
 }
 
-Future<void> _buildWidget(
+Future<void> _buildRouteTestWidget(
   WidgetTester tester,
 ) async {
   await tester.pumpWidget(MaterialApp(
@@ -133,6 +166,19 @@ Future<void> _buildWidget(
   await tester.pumpAndSettle();
 }
 
+Future<void> _buildActionTestWidget(WidgetTester tester) async {
+  await tester.pumpWidget(MaterialApp(
+    initialRoute: initRouteName,
+    routes: {
+      initRouteName: (context) => const MainPage(),
+    },
+  ));
+  var button = find.text('Click');
+
+  await tester.tap(button);
+  await tester.pumpAndSettle();
+}
+
 class MainPage extends StatelessWidget {
   const MainPage({
     Key? key,
@@ -141,11 +187,18 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: Center(
-        child: TextButton(
-          onPressed: () => Navigator.of(context).pushNamed(nextRouteName),
-          child: const Text('Navigate'),
-        ),
+      child: Column(
+        children: [
+          TextButton(
+              onPressed: () {
+                FTRUMManager().startAction("Action Name", "action_type");
+              },
+              child: const Text("Click")),
+          TextButton(
+            onPressed: () => Navigator.of(context).pushNamed(nextRouteName),
+            child: const Text('Navigate'),
+          )
+        ],
       ),
     );
   }

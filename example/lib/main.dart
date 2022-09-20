@@ -84,6 +84,7 @@ class _HomeState extends State<HomeRoute> {
       requestPermission([Permission.phone]);
     }
 
+    //添加应用休眠和唤醒监听
     FTLifeRecycleHandler().initObserver();
   }
 
