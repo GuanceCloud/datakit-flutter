@@ -11,7 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  uuid: any
+  uuid: ^3.0.6
 #  http: ^0.13.5
 
 dev_dependencies:
