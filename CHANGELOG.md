@@ -1,6 +1,5 @@
 ## 0.2.7-dev.4
 * 适配 Android ft-sdk:1.3.8-beta02
-* 适配 iOS 1.3.8-beta.2
 
 ---
 ## 0.2.7-dev.3
