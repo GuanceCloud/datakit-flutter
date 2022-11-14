@@ -19,13 +19,15 @@ class FTMobileFlutter {
       String? datakitUUID,
       EnvType? envType,
       bool? enableAccessAndroidID,
-      Map<String, String>? globalContext}) async {
+      Map<String, String>? globalContext,
+      List<String>? iOSGroupIdentifiers}) async {
     Map<String, dynamic> map = {};
     map["metricsUrl"] = serverUrl;
     map["useOAID"] = useOAID;
     map["debug"] = debug;
     map["datakitUUID"] = datakitUUID;
     map["env"] = envType?.index;
+    map["groupIdentifiers"] = iOSGroupIdentifiers;
     if (globalContext == null) {
       globalContext = {};
     }

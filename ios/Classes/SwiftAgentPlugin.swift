@@ -56,6 +56,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 if let globalContext = args["globalContext"] as? Dictionary<String, String> {
                     config.globalContext = globalContext
                 }
+                if let groupIdentifiers = args["groupIdentifiers"] as? Array<String>{
+                    config.groupIdentifiers = groupIdentifiers
+                }
                 FTMobileAgent.start(withConfigOptions: config)
             }
 
@@ -128,7 +131,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             let urlStr = args["url"] as! String
             let key = args["key"] as! String
             if let url = URL.init(string: urlStr) {
-                let header = FTTraceManager.sharedInstance().getTraceHeader(withKey: key, url: url)
+                let header = FTExternalDataManager.shared().getTraceHeader(withKey: key, url: url)
                 result(header)
             } else {
                 result(nil)
