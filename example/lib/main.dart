@@ -23,6 +23,7 @@ void main() async {
     await FTMobileFlutter.sdkConfig(
       serverUrl: serverUrl,
       debug: true,
+      iOSGroupIdentifiers: ["group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo"],
     );
     await FTLogger()
         .logConfig(serviceName: "flutter_agent", enableCustomLog: true);
