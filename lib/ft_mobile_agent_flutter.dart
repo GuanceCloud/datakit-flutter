@@ -64,11 +64,16 @@ class FTMobileFlutter {
     return await channel.invokeMethod(methodEnableAccessAndroidID, map);
   }
 
-  static Future<Map<String,dynamic>> trackEventFromExtension(String groupIdentifier) async {
+  static Future<Map<String, dynamic>> trackEventFromExtension(
+      String groupIdentifier) async {
     Map<String, dynamic> map = {};
     map["groupIdentifier"] = groupIdentifier;
-    return await channel.invokeMethod(methodTrackEventFromExetension, map);
+    Map? data = await channel.invokeMethod(methodTrackEventFromExetension, map);
+    if (data != null) {
+      return new Map<String, dynamic>.from(data);
+    } else {
+      return <String, dynamic>{};
+    }
   }
 }
-
 enum EnvType { prod, gray, pre, common, local }
