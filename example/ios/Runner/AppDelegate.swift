@@ -11,7 +11,5 @@ import FTMobileSDK
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
-    override func applicationWillResignActive(_ application: UIApplication) {
-        FTMobileAgent.sharedInstance().trackEventFromExtension(withGroupIdentifier: "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo")
-    }
+
 }

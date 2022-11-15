@@ -7,7 +7,7 @@ const methodConfig = "ftConfig";
 const methodBindUser = "ftBindUser";
 const methodUnbindUser = "ftUnBindUser";
 const methodEnableAccessAndroidID = "ftEnableAccessAndroidID";
-
+const methodTrackEventFromExetension = "ftTrackEventFromExtension";
 const methodLogConfig = "ftLogConfig";
 const methodLog = "ftLogging";
 

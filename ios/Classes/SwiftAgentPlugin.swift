@@ -9,6 +9,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
 
     static let METHOD_BIND_USER = "ftBindUser"
     static let METHOD_UNBIND_USER = "ftUnBindUser"
+    static let METHOD_TRACK_EVENT_FROM_EXTENSION = "ftTrackEventFromExtension"
 
     static let METHOD_LOG_CONFIG = "ftLogConfig"
     static let METHOD_LOGGING = "ftLogging"
@@ -74,6 +75,12 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         case SwiftAgentPlugin.METHOD_UNBIND_USER:
             FTMobileAgent.sharedInstance().logout()
             result(nil)
+        case SwiftAgentPlugin.METHOD_TRACK_EVENT_FROM_EXTENSION:
+            if let groupIdentifier = args["groupIdentifier"] as? String{
+                FTMobileAgent.sharedInstance().trackEventFromExtension(withGroupIdentifier: groupIdentifier) { groupId, datas in
+                    result(["groupIdentifier":groupId,"datas":datas])
+                }
+            }
         case SwiftAgentPlugin.METHOD_LOG_CONFIG:
 
             let logConfig = FTLoggerConfig()

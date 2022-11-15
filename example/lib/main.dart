@@ -11,9 +11,11 @@ import 'package:permission_handler/permission_handler.dart';
 import 'ft_get_view_name.dart';
 import 'logging.dart';
 
-const serverUrl = String.fromEnvironment("SERVER_URL");
+const serverUrl = "aaa";
+//String.fromEnvironment("SERVER_URL");
 const appAndroidId = String.fromEnvironment("ANDROID_APP_ID");
-const appIOSId = String.fromEnvironment("IOS_APP_ID");
+const appIOSId = "bbb";
+//String.fromEnvironment("IOS_APP_ID");
 
 void main() async {
   runZonedGuarded(() async {
@@ -38,6 +40,7 @@ void main() async {
         enableNativeUserAction: true,
         errorMonitorType: ErrorMonitorType.all,
         deviceMetricsMonitorType: DeviceMetricsMonitorType.all);
+    FTMobileFlutter.trackEventFromExtension("group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo");
 
     FlutterError.onError = FTRUMManager().addFlutterError;
 
@@ -77,23 +80,29 @@ class HomeRoute extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<HomeRoute> {
+class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
     if (Platform.isAndroid) {
       requestPermission([Permission.phone]);
     }
-
+    WidgetsBinding.instance.addObserver(this); //添加观察者
     //添加应用休眠和唤醒监听
     FTLifeRecycleHandler().initObserver();
   }
-
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      FTMobileFlutter.trackEventFromExtension("group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo");
+    }
+  }
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
     FTLifeRecycleHandler().removeObserver();
+    WidgetsBinding.instance.removeObserver(this); //添加观察者
   }
 
   @override
