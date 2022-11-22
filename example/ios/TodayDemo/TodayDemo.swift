@@ -59,6 +59,8 @@ struct TodayDemo: Widget {
         let extensionConfig = FTExtensionConfig.init(groupIdentifier: "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo")
         extensionConfig.enableTrackAppCrash = true
         extensionConfig.enableSDKDebugLog = true
+        extensionConfig.enableTracerAutoTrace = true
+        extensionConfig.enableRUMAutoTraceResource = true
         FTExtensionManager.start(with: extensionConfig)
         FTExternalDataManager.shared().startView(withName: "TodayDemoEntryView")
     }

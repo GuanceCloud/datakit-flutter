@@ -11,11 +11,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'ft_get_view_name.dart';
 import 'logging.dart';
 
-const serverUrl = "aaa";
-//String.fromEnvironment("SERVER_URL");
+const serverUrl = String.fromEnvironment("SERVER_URL");
 const appAndroidId = String.fromEnvironment("ANDROID_APP_ID");
-const appIOSId = "bbb";
-//String.fromEnvironment("IOS_APP_ID");
+const appIOSId = String.fromEnvironment("IOS_APP_ID");
 
 void main() async {
   runZonedGuarded(() async {
