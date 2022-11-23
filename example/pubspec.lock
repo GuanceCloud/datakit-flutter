@@ -87,7 +87,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.2.7-dev.4"
+    version: "0.2.8-dev.1"
   http:
     dependency: "direct main"
     description:
