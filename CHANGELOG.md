@@ -1,3 +1,7 @@
+## 0.2.8-dev.2
+* 适配 iOS 1.3.9-alpha.11
+
+---
 ## 0.2.8-dev.1
 * 适配 iOS 1.3.9-alpha.10
 * 适配 Android ft-sdk:1.3.8-beta03

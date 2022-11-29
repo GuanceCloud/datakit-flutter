@@ -1,6 +1,6 @@
 name: ft_mobile_agent_flutter
 description: 基于观测云 ios android 调用的 plugin
-version: 0.2.8-dev.1
+version: 0.2.8-dev.2
 homepage: https://www.guance.com/
 repository: https://github.com/DataFlux-cn/datakit-flutter
 
