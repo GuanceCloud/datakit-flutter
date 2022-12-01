@@ -4,11 +4,11 @@ import 'package:ft_mobile_agent_flutter/version.dart';
 
 import 'const.dart';
 
+export 'ft_http_client.dart';
 export 'ft_logger.dart';
+export 'ft_route_observer.dart';
 export 'ft_rum.dart';
 export 'ft_tracing.dart';
-export 'ft_http_client.dart';
-export 'ft_route_observer.dart';
 
 class FTMobileFlutter {
   /// 配置
@@ -55,6 +55,11 @@ class FTMobileFlutter {
     return await channel.invokeMethod(methodUnbindUser);
   }
 
+  ///
+  /// 是否开启使用 accessAndroidID，仅支持 Android
+  /// [enableAccessAndroidID] true 开启，false 不开启
+  ///
+  ///
   static Future<void> setEnableAccessAndroidID(
       bool enableAccessAndroidID) async {
     if (!Platform.isAndroid) return;
@@ -64,8 +69,13 @@ class FTMobileFlutter {
     return await channel.invokeMethod(methodEnableAccessAndroidID, map);
   }
 
+  ///
+  /// 同步 ios extension 中的事件，仅支持 iOS
+  /// [groupIdentifier] app groupId
+  ///
   static Future<Map<String, dynamic>> trackEventFromExtension(
       String groupIdentifier) async {
+    if (!Platform.isIOS) return {};
     Map<String, dynamic> map = {};
     map["groupIdentifier"] = groupIdentifier;
     Map? data = await channel.invokeMethod(methodTrackEventFromExetension, map);
@@ -76,4 +86,5 @@ class FTMobileFlutter {
     }
   }
 }
+
 enum EnvType { prod, gray, pre, common, local }

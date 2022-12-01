@@ -1,3 +1,7 @@
+## 0.2.8-dev.3
+* trackEventFromExtension 方法调整
+
+---
 ## 0.2.8-dev.2
 * 适配 iOS 1.3.9-alpha.11
 
