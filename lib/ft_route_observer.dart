@@ -4,7 +4,7 @@ import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 ///监控页面休眠和唤醒
 class FTLifeRecycleHandler with WidgetsBindingObserver {
   static final FTLifeRecycleHandler _singleton =
-      FTLifeRecycleHandler._internal();
+  FTLifeRecycleHandler._internal();
 
   factory FTLifeRecycleHandler() {
     return _singleton;
@@ -44,10 +44,11 @@ class FTRouteObserver extends RouteObserver<PageRoute<dynamic>> {
     }
     if (route is PageRoute) {
       name = route.settings.name ?? "";
-      if (name.length > 0) {
-        await FTRUMManager().starView(name);
-        FTLifeRecycleHandler()._currentPageName = name;
+      if (name.length == 0) {
+        name = route.runtimeType.toString();
       }
+      await FTRUMManager().starView(name);
+      FTLifeRecycleHandler()._currentPageName = name;
     }
   }
 

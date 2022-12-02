@@ -1,3 +1,8 @@
+## 0.2.8-dev.4
+* iOS 适配 1.3.9-alpha.12
+* 优化 route name 显示
+
+---
 ## 0.2.8-dev.3
 * trackEventFromExtension 方法调整
 
