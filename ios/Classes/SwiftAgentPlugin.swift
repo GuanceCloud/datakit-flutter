@@ -203,7 +203,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
 
                 }
                 if let detectFrequency = args["detectFrequency"] as? Int {
-                    rumConfig.monitorFrequency = FTMonitorFrequency.init(rawValue: UInt(detectFrequency))
+                    rumConfig.monitorFrequency = FTMonitorFrequency.init(rawValue: UInt(detectFrequency))!
                 }
                 FTMobileAgent.sharedInstance().startRum(withConfigOptions: rumConfig)
             }
