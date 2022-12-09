@@ -1,3 +1,7 @@
+## 0.2.8-dev.6
+* iOS 适配 1.3.9-alpha.14
+
+---
 ## 0.2.8-dev.5
 * iOS 适配 1.3.9-alpha.13
 * 优化 route name 显示
