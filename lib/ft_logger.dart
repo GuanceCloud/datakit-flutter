@@ -1,7 +1,6 @@
 import 'const.dart';
 
 class FTLogger {
-
   static final FTLogger _singleton = FTLogger._internal();
 
   factory FTLogger() {
@@ -27,13 +26,15 @@ class FTLogger {
   /// [enableCustomLog] 是否开启自定义日志
   /// [discardStrategy] 日志丢弃策略
   /// [logLevelFilters] 日志等级过滤
+  /// [globalContext] 自定义全局参数
   Future<void> logConfig(
       {double? sampleRate,
       String? serviceName,
       bool? enableLinkRumData,
       bool? enableCustomLog,
       FTLogCacheDiscard? discardStrategy,
-      List<FTLogStatus>? logLevelFilters}) async {
+      List<FTLogStatus>? logLevelFilters,
+      Map<String, String>? globalContext}) async {
     Map<String, dynamic> map = {};
     map["sampleRate"] = sampleRate;
     map["serviceName"] = serviceName;
@@ -41,6 +42,7 @@ class FTLogger {
     map["enableLinkRumData"] = enableLinkRumData;
     map["enableCustomLog"] = enableCustomLog;
     map["logCacheDiscard"] = discardStrategy;
+    map["globalContext"] = globalContext;
     await channel.invokeMethod(methodLogConfig, map);
   }
 }
