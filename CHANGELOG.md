@@ -1,3 +1,7 @@
+## 0.2.8-dev.7
+* 优化 ErrorMonitorType DeviceMetricsMonitorType 配置方式
+
+---
 ## 0.2.8-dev.6
 * iOS 适配 1.3.9-alpha.14
 
