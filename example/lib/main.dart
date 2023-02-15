@@ -23,7 +23,9 @@ void main() async {
     await FTMobileFlutter.sdkConfig(
       serverUrl: serverUrl,
       debug: true,
-      iOSGroupIdentifiers: ["group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo"],
+      iOSGroupIdentifiers: [
+        "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo"
+      ],
     );
     await FTLogger()
         .logConfig(serviceName: "flutter_agent", enableCustomLog: true);
@@ -36,9 +38,10 @@ void main() async {
         iOSAppId: appIOSId,
         enableNativeAppUIBlock: true,
         enableNativeUserAction: true,
-        errorMonitorType: ErrorMonitorType.all,
-        deviceMetricsMonitorType: DeviceMetricsMonitorType.all);
-    FTMobileFlutter.trackEventFromExtension("group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo");
+        errorMonitorType: ErrorMonitorType.all.value,
+        deviceMetricsMonitorType: DeviceMetricsMonitorType.all.value);
+    FTMobileFlutter.trackEventFromExtension(
+        "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo");
 
     FlutterError.onError = FTRUMManager().addFlutterError;
 
@@ -89,12 +92,15 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
     //添加应用休眠和唤醒监听
     FTLifeRecycleHandler().initObserver();
   }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      FTMobileFlutter.trackEventFromExtension("group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo");
+      FTMobileFlutter.trackEventFromExtension(
+          "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo");
     }
   }
+
   @override
   void dispose() {
     // TODO: implement dispose

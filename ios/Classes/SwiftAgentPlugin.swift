@@ -162,45 +162,13 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                     rumConfig.enableTrackAppFreeze = enableAppUIBlock
                 }
                 if let monitorType = args["errorMonitorType"] as? Int {
-                    let errorMonitorType: FTErrorMonitorType?
-                    switch (monitorType) {
-                    case 0:
-                        errorMonitorType = .all
-                    case 1:
-                        errorMonitorType = .battery
-                    case 2:
-                        errorMonitorType = .memory
-                    case 3:
-                        errorMonitorType = .cpu
-                    default:
-                        errorMonitorType = nil
-                    }
-                    if let errorMonitorType = errorMonitorType {
-                        rumConfig.errorMonitorType = errorMonitorType
-                    }
-
+                    rumConfig.errorMonitorType =  FTErrorMonitorType.init(rawValue: UInt(monitorType))
                 }
                 if let globalContext = args["globalContext"] as? Dictionary<String, String> {
                     rumConfig.globalContext = globalContext
                 }
                 if let deviceMetricsMonitorType = args["deviceMetricsMonitorType"] as? Int {
-                    let deviceMonitorType: FTDeviceMetricsMonitorType?
-                    switch (deviceMetricsMonitorType) {
-                    case 0:
-                        deviceMonitorType = .all
-                    case 2:
-                        deviceMonitorType = .memory
-                    case 3:
-                        deviceMonitorType = .cpu
-                    case 4:
-                        deviceMonitorType = .fps
-                    default:
-                        deviceMonitorType = nil
-                    }
-                    if let deviceMonitorType = deviceMonitorType {
-                        rumConfig.deviceMetricsMonitorType = deviceMonitorType
-                    }
-
+                     rumConfig.deviceMetricsMonitorType = FTDeviceMetricsMonitorType(rawValue:UInt(deviceMetricsMonitorType))
                 }
                 if let detectFrequency = args["detectFrequency"] as? Int {
                     rumConfig.monitorFrequency = FTMonitorFrequency.init(rawValue: UInt(detectFrequency))!

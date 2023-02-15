@@ -32,8 +32,8 @@ class FTRUMManager {
       bool? enableNativeUserView,
       bool? enableNativeUserResource,
       bool? enableNativeAppUIBlock,
-      ErrorMonitorType? errorMonitorType,
-      DeviceMetricsMonitorType? deviceMetricsMonitorType,
+      int? errorMonitorType,
+      int? deviceMetricsMonitorType,
       DetectFrequency? detectFrequency,
       Map<String, String>? globalContext}) async {
     Map<String, dynamic> map = {};
@@ -47,8 +47,8 @@ class FTRUMManager {
     map["enableUserView"] = enableNativeUserView;
     map["enableUserResource"] = enableNativeUserResource;
     map["enableAppUIBlock"] = enableNativeAppUIBlock;
-    map["errorMonitorType"] = errorMonitorType?.index;
-    map["deviceMetricsMonitorType"] = deviceMetricsMonitorType?.index;
+    map["errorMonitorType"] = errorMonitorType;
+    map["deviceMetricsMonitorType"] = deviceMetricsMonitorType;
     map["detectFrequency"] = detectFrequency?.index;
     map["globalContext"] = globalContext;
     await channel.invokeMethod(methodRumConfig, map);
@@ -170,9 +170,38 @@ enum AppState {
 /// 监控类型
 enum ErrorMonitorType { all, battery, memory, cpu }
 
+extension ErrorMonitorTypeExt on ErrorMonitorType {
+  int get value {
+    switch (this) {
+      case ErrorMonitorType.all:
+        return 0xffffffff;
+      case ErrorMonitorType.battery:
+        return 1 << 1;
+      case ErrorMonitorType.memory:
+        return 1 << 2;
+      case ErrorMonitorType.cpu:
+        return 1 << 3;
+    }
+  }
+}
 
 enum DeviceMetricsMonitorType { all, battery, memory, cpu, fps }
 
+extension DeviceMetricsMonitorTypeExt on DeviceMetricsMonitorType {
+  int get value {
+    switch (this) {
+      case DeviceMetricsMonitorType.all:
+        return 0xffffffff;
+      case DeviceMetricsMonitorType.battery:
+        return 1 << 1;
+      case DeviceMetricsMonitorType.memory:
+        return 1 << 2;
+      case DeviceMetricsMonitorType.cpu:
+        return 1 << 3;
+      case DeviceMetricsMonitorType.fps:
+        return 1 << 4;
+    }
+  }
+}
 
 enum DetectFrequency { normal, frequent, rare }
-

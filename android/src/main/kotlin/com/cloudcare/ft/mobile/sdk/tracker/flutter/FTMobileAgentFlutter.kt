@@ -153,24 +153,22 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
 
                 if (errorMonitorType != null) {
-                    rumConfig.extraMonitorTypeWithError =
-                        ErrorMonitorType.values()[errorMonitorType]
+                    rumConfig.extraMonitorTypeWithError = errorMonitorType
+
                 }
 
                 if (deviceMetricsMonitorType != null) {
 
-                    val deviceMetricsMonitorTypeEnum =
-                        DeviceMetricsMonitorType.values()[deviceMetricsMonitorType]
 
                     if (detectFrequency != null) {
                         val detectFrequencyEnum: DetectFrequency =
                             DetectFrequency.values()[detectFrequency]
                         rumConfig.setDeviceMetricsMonitorType(
-                            deviceMetricsMonitorTypeEnum,
+                            deviceMetricsMonitorType,
                             detectFrequencyEnum
                         )
                     } else {
-                        rumConfig.deviceMetricsMonitorType = deviceMetricsMonitorTypeEnum
+                        rumConfig.deviceMetricsMonitorType = deviceMetricsMonitorType
                     }
                 }
 
