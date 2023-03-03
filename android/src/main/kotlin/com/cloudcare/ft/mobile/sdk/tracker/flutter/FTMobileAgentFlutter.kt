@@ -89,7 +89,9 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-        Log.d(LOG_TAG, "${call.method} onMethodCall:${call.arguments}")
+        if(BuildConfig.DEBUG){
+            Log.d(LOG_TAG, "${call.method} onMethodCall:${call.arguments}")
+        }
         when (call.method) {
             METHOD_CONFIG -> {
                 val metricsUrl: String = call.argument<String>("metricsUrl")!!
@@ -126,9 +128,9 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val enableUserView: Boolean? = call.argument<Boolean>("enableUserView")
                 val enableUserResource: Boolean? = call.argument<Boolean>("enableUserResource")
                 val enableAppUIBlock: Boolean? = call.argument<Boolean>("enableAppUIBlock")
-                val errorMonitorType: Int? = call.argument<Int>("errorMonitorType")
-                val deviceMetricsMonitorType: Int? =
-                    call.argument<Int>("deviceMetricsMonitorType")
+                val errorMonitorType: Long? = call.argument<Long>("errorMonitorType")
+                val deviceMetricsMonitorType: Long? =
+                    call.argument<Long>("deviceMetricsMonitorType")
                 val detectFrequency: Int? = call.argument<Int>("detectFrequency")
                 val globalContext: Map<String, String>? = call.argument("globalContext")
                 val rumConfig = FTRUMConfig().setRumAppId(rumAppId)
@@ -153,7 +155,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
 
                 if (errorMonitorType != null) {
-                    rumConfig.extraMonitorTypeWithError = errorMonitorType
+                    rumConfig.extraMonitorTypeWithError = errorMonitorType.toInt()
 
                 }
 
@@ -164,11 +166,11 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                         val detectFrequencyEnum: DetectFrequency =
                             DetectFrequency.values()[detectFrequency]
                         rumConfig.setDeviceMetricsMonitorType(
-                            deviceMetricsMonitorType,
+                            deviceMetricsMonitorType.toInt(),
                             detectFrequencyEnum
                         )
                     } else {
-                        rumConfig.deviceMetricsMonitorType = deviceMetricsMonitorType
+                        rumConfig.deviceMetricsMonitorType = deviceMetricsMonitorType.toInt()
                     }
                 }
 

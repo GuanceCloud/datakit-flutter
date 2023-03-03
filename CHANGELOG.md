@@ -1,3 +1,7 @@
+## 0.2.8-dev.8
+* 适配 Android 1.3.10-alpha01
+
+---
 ## 0.2.8-dev.7
 * 优化 ErrorMonitorType DeviceMetricsMonitorType 配置方式
 
