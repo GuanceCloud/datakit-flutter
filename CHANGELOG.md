@@ -1,3 +1,7 @@
+## 0.2.8-dev.9
+* 适配 Android 1.3.10-beta01
+
+---
 ## 0.2.8-dev.8
 * 适配 Android 1.3.10-alpha01
 
