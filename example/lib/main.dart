@@ -32,7 +32,7 @@ void main() async {
     await FTTracer().setConfig(
         enableLinkRUMData: true,
         traceType: TraceType.ddTrace,
-        enableAutoTrace: false);
+        enableAutoTrace: true);
     await FTRUMManager().setConfig(
         androidAppId: appAndroidId,
         iOSAppId: appIOSId,

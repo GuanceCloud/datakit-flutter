@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.annotation.NonNull
 import com.ft.sdk.*
 import com.ft.sdk.garble.bean.*
+import com.ft.sdk.garble.utils.LogUtils
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -90,7 +91,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         if(BuildConfig.DEBUG){
-            Log.d(LOG_TAG, "${call.method} onMethodCall:${call.arguments}")
+            LogUtils.d(LOG_TAG, "${call.method} onMethodCall:${call.arguments}")
         }
         when (call.method) {
             METHOD_CONFIG -> {
@@ -239,7 +240,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                     call.argument<Map<String, String>>("responseHeader")
                 val responseBody: String? = call.argument<String>("responseBody")
                 val responseConnection: String? = call.argument<String>("responseConnection")
-                val responseContentType: String? = call.argument<String>("responseContentType")
+//                val responseContentType: String? = call.argument<String>("responseContentType")
                 val responseContentEncoding: String? =
                     call.argument<String>("responseContentEncoding")
                 val resourceStatus: Int? = call.argument<Int>("resourceStatus")
@@ -253,6 +254,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 //                val responseEndTime: Long? = call.argument<Long>("responseEndTime")
 //                val sslStartTime: Long? = call.argument<Long>("sslStartTime")
 //                val sslEndTime: Long? = call.argument<Long>("sslEndTime")
+                val responseContentType= responseHeader?.get("content-type")?.replace(Regex("[\\[\\]]"), "")
                 val params = ResourceParams()
                 val netStatusBean = NetStatusBean()
                 params.responseHeader = responseHeader.toString()
