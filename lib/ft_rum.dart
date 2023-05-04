@@ -57,19 +57,23 @@ class FTRUMManager {
   /// 执行 action
   /// [actionName] action 名称
   /// [actionType] action 类型
-  Future<void> startAction(String actionName, String actionType) async {
+  /// [property] 附加属性参数(可选)
+  Future<void> startAction(String actionName, String actionType,{Map<String,String>? property}) async {
     Map<String, dynamic> map = {};
     map["actionName"] = actionName;
     map["actionType"] = actionType;
+    map["property"] = property;
     await channel.invokeMethod(methodRumAddAction, map);
   }
 
   /// view 开始
   /// [viewName] 界面名称
   /// [viewReferer] 前一个界面名称
-  Future<void> starView(String viewName) async {
+  /// [property] 附加属性参数(可选)
+  Future<void> starView(String viewName,{Map<String,String>? property}) async {
     Map<String, dynamic> map = {};
     map["viewName"] = viewName;
+    map["property"] = property;
     await channel.invokeMethod(methodRumStartView, map);
   }
 
@@ -84,8 +88,11 @@ class FTRUMManager {
   }
 
   /// view 结束
-  Future<void> stopView() async {
-    await channel.invokeMethod(methodRumStopView);
+  /// [property] 附加属性参数(可选)
+  Future<void> stopView({Map<String,String>? property}) async {
+    Map<String, dynamic> map = {};
+    map["property"] = property;
+    await channel.invokeMethod(methodRumStopView,map);
   }
 
   ///其它异常捕获与日志收集
@@ -108,27 +115,33 @@ class FTRUMManager {
   ///[stack] 堆栈日志
   /// [message]错误信息
   ///[appState] 应用状态
-  Future<void> addCustomError(String stack, String message) async {
+  /// [property] 附加属性参数(可选)
+  Future<void> addCustomError(String stack, String message,{Map<String,String>? property}) async {
     Map<String, dynamic> map = {};
     map["stack"] = stack;
     map["message"] = message;
     map["appState"] = appState.index;
+    map["property"] = property;
     await channel.invokeMethod(methodRumAddError, map);
   }
 
   ///开始资源请求
   ///[key] 唯一 id
-  Future<void> startResource(String key) async {
+  /// [property] 附加属性参数(可选)
+  Future<void> startResource(String key,{Map<String,String>? property}) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
+    map["property"] = property;
     await channel.invokeMethod(methodRumStartResource, map);
   }
 
   ///结束资源请求
   ///[key] 唯一 id
-  Future<void> stopResource(String key) async {
+  /// [property] 附加属性参数(可选)
+  Future<void> stopResource(String key,{Map<String,String>? property}) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
+    map["property"] = property;
     await channel.invokeMethod(methodRumStopResource, map);
   }
 

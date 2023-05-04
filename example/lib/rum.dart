@@ -22,19 +22,19 @@ class _RUMState extends State<RUM> {
           ListTile(
             title: Text("Action 点击"),
             onTap: () {
-              FTRUMManager().startAction("[ListTile][Action 点击]", "click");
+              FTRUMManager().startAction("[ListTile][Action 点击]", "click",property: {"action_property": "ft_value"});
             },
           ),
           ListTile(
             title: Text("View Start"),
             onTap: () {
-              FTRUMManager().starView("RUM");
+              FTRUMManager().starView("RUM",property: {"starView_property": "ft_value"});
             },
           ),
           ListTile(
             title: Text("View Stop"),
             onTap: () {
-              FTRUMManager().stopView();
+              FTRUMManager().stopView(property: {"stopView_property": "ft_value"});
             },
           ),
           ListTile(
@@ -53,7 +53,7 @@ class _RUMState extends State<RUM> {
           ListTile(
             title: Text("Add Error"),
             onTap: () async {
-              FTRUMManager().addCustomError("error stack", "error message");
+              FTRUMManager().addCustomError("error stack", "error message",property: {"error_property": "ft_value"});
             },
           ),
           ListTile(
@@ -76,7 +76,7 @@ class _RUMState extends State<RUM> {
       request = await httpClient
           .getUrl(Uri.parse(url))
           .timeout(Duration(seconds: 10));
-      FTRUMManager().startResource(key);
+      FTRUMManager().startResource(key,property: {"startResource_property": "ft_value"});
       response = await request.close();
     } finally {
       Map<String, dynamic> requestHeader = {};
@@ -92,7 +92,7 @@ class _RUMState extends State<RUM> {
         });
         responseBody = await response.transform(Utf8Decoder()).join();
       }
-      FTRUMManager().stopResource(key);
+      FTRUMManager().stopResource(key,property: {"stopResource_property": "ft_value"});
       FTRUMManager().addResource(
         key: key,
         url: request.uri.toString(),
