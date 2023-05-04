@@ -54,6 +54,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                     let entType: FTEnv? = FTEnv.init(rawValue: env)
                     config.env = entType ?? .prod
                 }
+                if let serviceName = args["serviceName"] as? String {
+                    config.service = serviceName
+                }
                 if let globalContext = args["globalContext"] as? Dictionary<String, String> {
                     config.globalContext = globalContext
                 }
@@ -78,7 +81,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         case SwiftAgentPlugin.METHOD_TRACK_EVENT_FROM_EXTENSION:
             if let groupIdentifier = args["groupIdentifier"] as? String{
                 FTMobileAgent.sharedInstance().trackEventFromExtension(withGroupIdentifier: groupIdentifier) { groupId, datas in
-                    result(["groupIdentifier":groupId,"datas":datas])
+                    result(["groupIdentifier":groupId,"datas":datas] as [String : Any])
                 }
             }
         case SwiftAgentPlugin.METHOD_LOG_CONFIG:
@@ -91,9 +94,6 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
 
             if let sampleRate = args["sampleRate"] as? Float {
                 logConfig.samplerate = Int32(Int(sampleRate * 100))
-            }
-            if let serviceName = args["serviceName"] as? String {
-                logConfig.service = serviceName
             }
             if let logTypeArr = args["logType"] as? [Int] {
                 logConfig.logLevelFilter = logTypeArr.map { number in
@@ -115,7 +115,8 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         case SwiftAgentPlugin.METHOD_LOGGING:
             if let content = args["content"] as? String {
                 let status = args["status"] as? Int ?? 0
-                FTMobileAgent.sharedInstance().logging(content, status: FTLogStatus.init(rawValue: status)!)
+                let property = args["property"] as? Dictionary<String, Any> ?? nil
+                FTMobileAgent.sharedInstance().logging(content, status: FTLogStatus.init(rawValue: status)!,property: property)
             }
             result(nil)
         case SwiftAgentPlugin.METHOD_TRACE_CONFIG:
@@ -179,7 +180,8 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         case SwiftAgentPlugin.METHOD_RUM_ADD_ACTION:
             let actionName = args["actionName"] as! String
             let actionType = args["actionType"] as! String
-            FTExternalDataManager.shared().addActionName(actionName, actionType: actionType)
+            let property = args["property"] as? Dictionary<String, Any> ?? nil
+            FTExternalDataManager.shared().addActionName(actionName, actionType: actionType,property: property)
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_CREATE_VIEW:
             if let viewName = args["viewName"] as? String {
@@ -189,20 +191,24 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_START_VIEW:
             if let viewName = args["viewName"] as? String {
-                FTExternalDataManager.shared().startView(withName: viewName)
+                let property = args["property"] as? Dictionary<String, Any> ?? nil
+                FTExternalDataManager.shared().startView(withName: viewName,property: property)
             }
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_STOP_VIEW:
-            FTExternalDataManager.shared().stopView()
+            let property = args["property"] as? Dictionary<String, Any> ?? nil
+            FTExternalDataManager.shared().stopView(withProperty: property)
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_ADD_ERROR:
             let stack = args["stack"] as? String ?? ""
             let message = args["message"] as? String ?? ""
-            FTExternalDataManager.shared().addError(withType: "flutter", message: message, stack: stack)
+            let property = args["property"] as? Dictionary<String, Any> ?? nil
+            FTExternalDataManager.shared().addError(withType: "flutter", message: message, stack: stack,property: property)
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_START_RESOURCE:
             let key = args["key"] as! String
-            FTExternalDataManager.shared().startResource(withKey: key)
+            let property = args["property"] as? Dictionary<String, Any> ?? nil
+            FTExternalDataManager.shared().startResource(withKey: key,property: property)
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_ADD_RESOURCE:
             let key = args["key"] as! String
@@ -229,7 +235,8 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_STOP_RESOURCE:
             let key = args["key"] as! String
-            FTExternalDataManager.shared().stopResource(withKey: key)
+            let property = args["property"] as? Dictionary<String, Any> ?? nil
+            FTExternalDataManager.shared().stopResource(withKey: key,property: property)
             result(nil)
         default:
             result(FlutterMethodNotImplemented);
