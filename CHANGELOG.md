@@ -1,3 +1,9 @@
+## 0.3.0-dev.1
+* 新增 View Action Resource Log 添加扩展 property
+* 适配 Android agent_1.3.10-beta02 
+* 适配 iOS 1.4.1-alpha.2
+
+---
 ## 0.2.8-dev.9
 * 适配 Android 1.3.10-beta01
 
