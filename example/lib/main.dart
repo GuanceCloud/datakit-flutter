@@ -33,12 +33,13 @@ void main() async {
     await FTTracer().setConfig(
         enableLinkRUMData: true,
         traceType: TraceType.ddTrace,
-        enableAutoTrace: true);
+        enableAutoTrace: true);//  Trace 在 Http 请求 Trace Header
     await FTRUMManager().setConfig(
         androidAppId: appAndroidId,
         iOSAppId: appIOSId,
         enableNativeAppUIBlock: true,
         enableNativeUserAction: true,
+        enableUserResource: true,// RUM Resource Http 数据抓取
         errorMonitorType: ErrorMonitorType.all.value,
         deviceMetricsMonitorType: DeviceMetricsMonitorType.all.value);
     FTMobileFlutter.trackEventFromExtension(
@@ -48,7 +49,7 @@ void main() async {
 
     runApp(MyApp());
   }, (Object error, StackTrace stack) {
-    //RUM 记录 error 数据
+    //RUM Error： 记录 自动抓取 error 数据
     FTRUMManager().addError(error, stack);
   });
   print("=======config here");
@@ -63,7 +64,7 @@ class MyApp extends StatelessWidget {
       ),
       home: HomeRoute(),
       navigatorObservers: [
-        // 使用路由跳转时，监控页面生命周期
+        //RUM View： 使用路由跳转时，监控页面生命周期
         FTRouteObserver(),
       ],
       routes: <String, WidgetBuilder>{
@@ -89,7 +90,11 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
     if (Platform.isAndroid) {
       requestPermission([Permission.phone]);
     }
+
+
     WidgetsBinding.instance.addObserver(this); //添加观察者
+
+    //RUM View：休眠与唤醒事件
     //添加应用休眠和唤醒监听
     FTLifeRecycleHandler().initObserver();
   }
@@ -97,6 +102,7 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
+      // Extension 同步至缓存
       FTMobileFlutter.trackEventFromExtension(
           "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo");
     }
@@ -106,6 +112,8 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+
+    //RUM View：休眠与唤醒事件
     FTLifeRecycleHandler().removeObserver();
     WidgetsBinding.instance.removeObserver(this); //添加观察者
   }
@@ -139,6 +147,7 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
     return ElevatedButton(
       child: Text("绑定用户"),
       onPressed: () {
+        //RUM 用户数据绑定
         FTMobileFlutter.bindRUMUserData("flutterUserId",
             userEmail: "flutter@email.com",
             userName: "flutterUser",
@@ -151,6 +160,7 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
     return ElevatedButton(
       child: Text("解绑用户"),
       onPressed: () {
+        //RUM 用户数据解绑
         FTMobileFlutter.unbindRUMUserData();
       },
     );
@@ -169,13 +179,17 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
     return ElevatedButton(
       child: Text("网络链路追踪(自定义)"),
       onPressed: () async {
+
+        //判断是否全局设置
         bool hasSet = HttpOverrides.current != null;
         if (hasSet) {
+          //移除网络数据抓取
           HttpOverrides.global = null;
         }
         await Navigator.pushNamed(context, "tracing_custom");
 
         if (hasSet) {
+          //恢复网络抓取
           HttpOverrides.global = FTHttpOverrides();
         }
       },

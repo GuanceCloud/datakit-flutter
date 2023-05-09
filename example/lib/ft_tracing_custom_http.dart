@@ -17,7 +17,7 @@ class FTTracingHttpClient extends http.BaseClient {
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     if (request is! http.Request) return _innerClient.send(request);
     String key = Uuid().v4();
-    final traceHeaders = await FTTracer().getTraceHeader(key, request.url.toString());
+    final traceHeaders = await FTTracer().getTraceHeader(request.url.toString(),key: key );
     request.headers.addAll(traceHeaders);
     FTRUMManager().startResource(key);
     http.StreamedResponse? response;

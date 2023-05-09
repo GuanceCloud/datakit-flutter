@@ -86,7 +86,7 @@ void main() {
         key: "key", url: requestUrl, httpMethod: "post", requestHeader: {});
 
     await FTTracer().setConfig();
-    await FTTracer().getTraceHeader("key", requestUrl);
+    await FTTracer().getTraceHeader(requestUrl, key: "key");
 
     list.forEach((element) async {
       expect(callResult[element], true);

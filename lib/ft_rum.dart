@@ -1,6 +1,10 @@
+library ft_mobile_agent_flutter;
+
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:ft_mobile_agent_flutter/internal/ft_sdk_config.dart'
+    as internalConfig;
 
 import 'const.dart';
 
@@ -28,6 +32,7 @@ class FTRUMManager {
       {String? androidAppId,
       String? iOSAppId,
       double? sampleRate,
+      bool enableUserResource = false,
       bool? enableNativeUserAction,
       bool? enableNativeUserView,
       bool? enableNativeUserResource,
@@ -51,6 +56,7 @@ class FTRUMManager {
     map["deviceMetricsMonitorType"] = deviceMetricsMonitorType;
     map["detectFrequency"] = detectFrequency?.index;
     map["globalContext"] = globalContext;
+    internalConfig.traceResource = enableUserResource;
     await channel.invokeMethod(methodRumConfig, map);
   }
 
@@ -58,7 +64,8 @@ class FTRUMManager {
   /// [actionName] action 名称
   /// [actionType] action 类型
   /// [property] 附加属性参数(可选)
-  Future<void> startAction(String actionName, String actionType,{Map<String,String>? property}) async {
+  Future<void> startAction(String actionName, String actionType,
+      {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
     map["actionName"] = actionName;
     map["actionType"] = actionType;
@@ -70,7 +77,8 @@ class FTRUMManager {
   /// [viewName] 界面名称
   /// [viewReferer] 前一个界面名称
   /// [property] 附加属性参数(可选)
-  Future<void> starView(String viewName,{Map<String,String>? property}) async {
+  Future<void> starView(String viewName,
+      {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
     map["viewName"] = viewName;
     map["property"] = property;
@@ -89,10 +97,10 @@ class FTRUMManager {
 
   /// view 结束
   /// [property] 附加属性参数(可选)
-  Future<void> stopView({Map<String,String>? property}) async {
+  Future<void> stopView({Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
     map["property"] = property;
-    await channel.invokeMethod(methodRumStopView,map);
+    await channel.invokeMethod(methodRumStopView, map);
   }
 
   ///其它异常捕获与日志收集
@@ -116,7 +124,8 @@ class FTRUMManager {
   /// [message]错误信息
   ///[appState] 应用状态
   /// [property] 附加属性参数(可选)
-  Future<void> addCustomError(String stack, String message,{Map<String,String>? property}) async {
+  Future<void> addCustomError(String stack, String message,
+      {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
     map["stack"] = stack;
     map["message"] = message;
@@ -128,7 +137,8 @@ class FTRUMManager {
   ///开始资源请求
   ///[key] 唯一 id
   /// [property] 附加属性参数(可选)
-  Future<void> startResource(String key,{Map<String,String>? property}) async {
+  Future<void> startResource(String key,
+      {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
     map["property"] = property;
@@ -138,7 +148,7 @@ class FTRUMManager {
   ///结束资源请求
   ///[key] 唯一 id
   /// [property] 附加属性参数(可选)
-  Future<void> stopResource(String key,{Map<String,String>? property}) async {
+  Future<void> stopResource(String key, {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
     map["property"] = property;

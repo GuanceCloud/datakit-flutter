@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
+import 'package:ft_mobile_agent_flutter/internal/ft_sdk_config.dart'
+    as internalConfig;
 
 import 'const.dart';
 
@@ -30,9 +30,7 @@ class FTTracer {
     map["traceType"] = traceType?.index;
     map["enableLinkRUMData"] = enableLinkRUMData;
     map["enableNativeAutoTrace"] = enableNativeAutoTrace;
-    if (enableAutoTrace) {
-      HttpOverrides.global = FTHttpOverrides();
-    }
+    internalConfig.traceHeader = enableAutoTrace;
     await channel.invokeMethod(methodTraceConfig, map);
   }
 
@@ -65,7 +63,7 @@ class FTTracer {
   /// [key] 唯一 id
   /// [url] 请求地址
   ///
-  Future<Map<String, String>> getTraceHeader(String key, String url) async {
+  Future<Map<String, String>> getTraceHeader(String url, {String? key}) async {
     var map = Map<String, dynamic>();
     map["key"] = key;
     map["url"] = url;

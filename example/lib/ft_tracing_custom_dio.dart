@@ -12,7 +12,7 @@ class FTInterceptor extends Interceptor {
       RequestOptions options, RequestInterceptorHandler handler) async {
     String key = Uuid().v4();
     final traceHeaders =
-    await FTTracer().getTraceHeader(key, options.uri.toString());
+    await FTTracer().getTraceHeader(options.uri.toString(),key: key);
     traceHeaders[_dioKey] = key;
     options.headers.addAll(traceHeaders);
     FTRUMManager().startResource(key);

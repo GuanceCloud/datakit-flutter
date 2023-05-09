@@ -10,6 +10,8 @@ export 'ft_route_observer.dart';
 export 'ft_rum.dart';
 export 'ft_tracing.dart';
 
+String _myInternalVariable = 'Internal Data';
+
 class FTMobileFlutter {
   /// 配置
   static Future<void> sdkConfig(
@@ -80,7 +82,7 @@ class FTMobileFlutter {
     if (!Platform.isIOS) return {};
     Map<String, dynamic> map = {};
     map["groupIdentifier"] = groupIdentifier;
-    Map? data = await channel.invokeMethod(methodTrackEventFromExetension, map);
+    Map? data = await channel.invokeMethod(methodTrackEventFromExtension, map);
     if (data != null) {
       return new Map<String, dynamic>.from(data);
     } else {

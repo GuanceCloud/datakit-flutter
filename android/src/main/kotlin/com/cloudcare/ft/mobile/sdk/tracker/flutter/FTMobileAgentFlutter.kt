@@ -273,10 +273,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val responseHeader: Map<String, String>? =
                     call.argument<Map<String, String>>("responseHeader")
                 val responseBody: String? = call.argument<String>("responseBody")
-                val responseConnection: String? = call.argument<String>("responseConnection")
+//                val responseConnection: String? = call.argument<String>("responseConnection")
 //                val responseContentType: String? = call.argument<String>("responseContentType")
-                val responseContentEncoding: String? =
-                    call.argument<String>("responseContentEncoding")
+//                val responseContentEncoding: String? =
+//                    call.argument<String>("responseContentEncoding")
                 val resourceStatus: Int? = call.argument<Int>("resourceStatus")
                 val url: String? = call.argument<String>("url")
 //                val fetchStartTime: Long? = call.argument<Long>("fetchStartTime")
@@ -289,8 +289,9 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 //                val sslStartTime: Long? = call.argument<Long>("sslStartTime")
 //                val sslEndTime: Long? = call.argument<Long>("sslEndTime")
                 val responseContentType =
-                    responseHeader?.get("content-type")?.replace(Regex("[\\[\\]]"), "")
-
+                    responseHeader?.get("content-type")
+                val responseConnection: String? = responseHeader?.get("connection")
+                val responseContentEncoding: String? = responseContentType?.split(";")?.last()
                 val params = ResourceParams()
                 val netStatusBean = NetStatusBean()
                 params.responseHeader = responseHeader.toString()
@@ -369,6 +370,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 FTLogger.getInstance().logBackground(content, status, property)
                 result.success(null)
             }
+
             METHOD_TRACE_CONFIG -> {
                 val sampleRate: Float? = call.argument<Float>("sampleRate")
                 val traceType = call.argument<Int>("traceType")
@@ -416,7 +418,12 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
             METHOD_GET_TRACE_HEADER -> {
                 val url: String? = call.argument<String>("url")
                 val key: String? = call.argument<String>("key")
-                result.success(FTTraceManager.get().getTraceHeader(key, url))
+
+                if (key != null) {
+                    result.success(FTTraceManager.get().getTraceHeader(key, url))
+                } else {
+                    result.success(FTTraceManager.get().getTraceHeader(url))
+                }
             }
 
             METHOD_BIND_USER -> {

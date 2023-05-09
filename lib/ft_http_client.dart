@@ -7,6 +7,8 @@ import 'package:ft_mobile_agent_flutter/ft_rum.dart';
 import 'package:ft_mobile_agent_flutter/ft_tracing.dart';
 import 'package:uuid/uuid.dart';
 
+import 'internal/ft_sdk_config.dart' as internalConfig;
+
 enum _RequestMethod { get, post, delete, head, patch, put }
 
 extension _RequestMethodExt on _RequestMethod {
@@ -18,7 +20,10 @@ extension _RequestMethodExt on _RequestMethod {
 class FTHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
-    return FTHttpClient(super.createHttpClient(context));
+    if (internalConfig.traceHeader || internalConfig.traceResource) {
+      return FTHttpClient(super.createHttpClient(context));
+    }
+    return super.createHttpClient(context);
   }
 }
 
@@ -42,23 +47,29 @@ class FTHttpClient implements HttpClient {
 
     try {
       uniqueKey = _uuid.v4();
-      final traceHeaders =
-          await FTTracer().getTraceHeader(uniqueKey, urlString);
+      final traceHeaders = internalConfig.traceHeader
+          ? await FTTracer().getTraceHeader(urlString,
+              key: internalConfig.traceResource ? uniqueKey : null)
+          : {};
       request = await _httpClient.openUrl(method, url);
       traceHeaders.forEach((key, value) {
         request.headers.add(key, value);
       });
-      FTRUMManager().startResource(uniqueKey);
+      if (internalConfig.traceResource) {
+        FTRUMManager().startResource(uniqueKey);
+      }
     } catch (e) {
       if (uniqueKey != null) {
         try {
-          FTRUMManager().stopResource(uniqueKey);
-          FTRUMManager().addResource(
-              key: uniqueKey,
-              url: urlString,
-              httpMethod: "",
-              requestHeader: {},
-              responseBody: e.toString());
+          if (internalConfig.traceResource) {
+            FTRUMManager().stopResource(uniqueKey);
+            FTRUMManager().addResource(
+                key: uniqueKey,
+                url: urlString,
+                httpMethod: "",
+                requestHeader: {},
+                responseBody: e.toString());
+          }
         } catch (innerE) {}
       }
       rethrow;
@@ -221,7 +232,7 @@ class _GCHttpRequest implements HttpClientRequest {
     return innerFuture.then((value) {
       var requestHeaders = Map<String, String>();
       _request.headers.forEach((name, values) {
-        requestHeaders[name] = values.toString();
+        requestHeaders[name] = values.toString().replaceAll(RegExp(r"[\[\]]"), "");
       });
       return _FTHttpResponse(value, _uniqueKey, _url, method, requestHeaders);
     }, onError: (e, st) {
@@ -235,7 +246,7 @@ class _GCHttpRequest implements HttpClientRequest {
     return _request.close().then((value) {
       var requestHeaders = Map<String, String>();
       _request.headers.forEach((name, values) {
-        requestHeaders[name] = values.toString();
+        requestHeaders[name] = values.toString().replaceAll(RegExp(r"[\[\]]"), "");
       });
       return _FTHttpResponse(value, _uniqueKey, _url, method, requestHeaders);
     }, onError: (e, st) async {
@@ -245,6 +256,7 @@ class _GCHttpRequest implements HttpClientRequest {
   }
 
   void _onStreamError(Object e, StackTrace? st) {
+    if (!internalConfig.traceResource) return;
     try {
       if (_uniqueKey != null) {
         FTRUMManager().stopResource(_uniqueKey!);
@@ -397,6 +409,7 @@ class _FTHttpResponse extends Stream<List<int>> implements HttpClientResponse {
   }
 
   void _onFinish(String? body, Object? error, StackTrace? stackTrace) {
+    if (!internalConfig.traceResource) return;
     try {
       final statusCode = response.statusCode;
 
@@ -412,7 +425,7 @@ class _FTHttpResponse extends Stream<List<int>> implements HttpClientResponse {
         } else {
           var map = Map<String, String>();
           response.headers.forEach((name, values) {
-            map[name] = values.toString();
+            map[name] = values.toString().replaceAll(RegExp(r"[\[\]]"), "");
           });
 
           FTRUMManager().addResource(
