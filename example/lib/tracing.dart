@@ -62,14 +62,14 @@ class AutoTracing extends StatelessWidget {
             title: Text("http"),
             onTap: () async {
               var response = await client.get(Uri.parse(requestUrl));
-              print(response);
+              print(response.body);
             },
           ),
           ListTile(
             title: Text("dio"),
             onTap: () async {
               var response = await dio.get(requestUrl);
-              print(response);
+              print(response.data);
             },
           ),
         ],

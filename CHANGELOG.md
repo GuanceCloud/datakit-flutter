@@ -1,3 +1,9 @@
+## 0.4.0-dev.1
+* 修正 ios
+* android ft-sdk:1.3.12-alpha01
+* ios sdk 1.4.1-alpha.3
+
+---
 ## 0.3.0-dev.1
 * 新增 View Action Resource Log 添加扩展 property
 * 适配 Android agent_1.3.10-beta02 
