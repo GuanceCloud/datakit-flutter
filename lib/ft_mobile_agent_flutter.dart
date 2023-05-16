@@ -18,7 +18,6 @@ class FTMobileFlutter {
       {required String serverUrl,
       bool? useOAID,
       bool? debug,
-      String? datakitUUID,
       String? serviceName,
       EnvType? envType,
       bool? enableAccessAndroidID,
@@ -28,7 +27,6 @@ class FTMobileFlutter {
     map["metricsUrl"] = serverUrl;
     map["useOAID"] = useOAID;
     map["debug"] = debug;
-    map["datakitUUID"] = datakitUUID;
     map["serviceName"] = serviceName;
     map["env"] = envType?.index;
     map["groupIdentifiers"] = iOSGroupIdentifiers;

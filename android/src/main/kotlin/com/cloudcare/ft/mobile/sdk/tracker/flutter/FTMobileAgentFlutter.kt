@@ -111,7 +111,6 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
             METHOD_CONFIG -> {
                 val metricsUrl: String = call.argument<String>("metricsUrl")!!
                 val debug: Boolean? = call.argument<Boolean>("debug")
-                val datakitUUID: String? = call.argument<String>("datakitUUID")
                 val env: Int? = call.argument<Int>("env")
                 val serviceName: String? = call.argument<String?>("serviceName")
                 val envType: EnvType = EnvType.values()[env ?: EnvType.PROD.ordinal]
@@ -122,9 +121,6 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 if (debug != null) {
                     sdkConfig.isDebug = debug
-                }
-                if (datakitUUID != null) {
-                    sdkConfig.setXDataKitUUID(datakitUUID)
                 }
                 globalContext?.forEach {
                     sdkConfig.addGlobalContext(it.key, it.value)
