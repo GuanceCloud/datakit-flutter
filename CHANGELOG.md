@@ -1,3 +1,7 @@
+## 0.4.0-dev.2
+* SDK version 显示问题修复 
+
+---
 ## 0.4.0-dev.1
 * 修正 ios
 * android ft-sdk:1.3.12-alpha01
