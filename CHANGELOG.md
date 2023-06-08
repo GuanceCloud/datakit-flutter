@@ -1,5 +1,10 @@
+## 0.4.1-dev.1
+* iOS 适配 1.4.3-alpha.1
+* Android 适配 ft-sdk:1.3.12-beta01，ft-native:1.0.0-beta01
+
+
 ## 0.4.0-dev.2
-* SDK version 显示问题修复 
+* SDK version 显示问题修复
 
 ---
 ## 0.4.0-dev.1
