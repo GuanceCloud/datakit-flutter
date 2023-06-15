@@ -1,6 +1,10 @@
+library ft_mobile_agent_flutter;
+
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:ft_mobile_agent_flutter/internal/ft_sdk_config.dart'
+    as internalConfig;
 
 import 'const.dart';
 
@@ -18,18 +22,25 @@ class FTRUMManager {
   /// [androidAppId] appId，监测中申请
   /// [iOSAppId] appId，监测中申请
   /// [sampleRate] 采样率
-  /// [enableNativeUserAction] 是否开始 Native Action 追踪，Button 点击事件，纯 flutter 应用建议关闭
-  /// [enableNativeUserView] 是否开始 Native View 自动追踪，纯 Flutter 应用建议关闭
-  /// [monitorType] 监控补充类型
+  /// [enableNativeUserAction] 是否进行 Native Action 追踪，Button 点击事件，纯 flutter 应用建议关闭
+  /// [enableNativeUserView] 是否进行 Native View 自动追踪，纯 Flutter 应用建议关闭
+  /// [enableNativeUserResource] 是否进行 Native Resource 自动追踪，纯 Flutter 应用建议关闭
+  /// [errorMonitorType] 监控补充类型
+  /// [deviceMonitorType] 监控补充类型
   /// [globalContext] 自定义全局参数
   Future<void> setConfig(
       {String? androidAppId,
       String? iOSAppId,
       double? sampleRate,
+      bool enableUserResource = false,
       bool? enableNativeUserAction,
       bool? enableNativeUserView,
-      MonitorType? monitorType,
-      Map? globalContext}) async {
+      bool? enableNativeUserResource,
+      bool? enableNativeAppUIBlock,
+      int? errorMonitorType,
+      int? deviceMetricsMonitorType,
+      DetectFrequency? detectFrequency,
+      Map<String, String>? globalContext}) async {
     Map<String, dynamic> map = {};
     if (Platform.isAndroid) {
       map["rumAppId"] = androidAppId;
@@ -37,36 +48,59 @@ class FTRUMManager {
       map["rumAppId"] = iOSAppId;
     }
     map["sampleRate"] = sampleRate;
-    map["enableNativeUserAction"] = enableNativeUserAction;
-    map["enableNativeUserView"] = enableNativeUserView;
-    map["monitorType"] = monitorType?.value;
-    map["globalContext"] = globalContext?.entries;
+    map["enableUserAction"] = enableNativeUserAction;
+    map["enableUserView"] = enableNativeUserView;
+    map["enableUserResource"] = enableNativeUserResource;
+    map["enableAppUIBlock"] = enableNativeAppUIBlock;
+    map["errorMonitorType"] = errorMonitorType;
+    map["deviceMetricsMonitorType"] = deviceMetricsMonitorType;
+    map["detectFrequency"] = detectFrequency?.index;
+    map["globalContext"] = globalContext;
+    internalConfig.traceResource = enableUserResource;
     await channel.invokeMethod(methodRumConfig, map);
   }
 
   /// 执行 action
   /// [actionName] action 名称
   /// [actionType] action 类型
-  Future<void> startAction(String actionName, String actionType) async {
+  /// [property] 附加属性参数(可选)
+  Future<void> startAction(String actionName, String actionType,
+      {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
     map["actionName"] = actionName;
     map["actionType"] = actionType;
+    map["property"] = property;
     await channel.invokeMethod(methodRumAddAction, map);
   }
 
   /// view 开始
   /// [viewName] 界面名称
   /// [viewReferer] 前一个界面名称
-  Future<void> starView(String viewName, String viewReferer) async {
+  /// [property] 附加属性参数(可选)
+  Future<void> starView(String viewName,
+      {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
     map["viewName"] = viewName;
-    map["viewReferer"] = viewReferer;
+    map["property"] = property;
     await channel.invokeMethod(methodRumStartView, map);
   }
 
+  /// view 创建,这个方法需要在 [starView] 之前被调用，目前 flutter route 中未有
+  /// [viewName]界面名称
+  /// [duration]
+  Future<void> createView(String viewName, int duration) async {
+    Map<String, dynamic> map = {};
+    map["viewName"] = viewName;
+    map["duration"] = duration;
+    await channel.invokeMethod(methodRumCreateView, map);
+  }
+
   /// view 结束
-  Future<void> stopView() async {
-    await channel.invokeMethod(methodRumStopView);
+  /// [property] 附加属性参数(可选)
+  Future<void> stopView({Map<String, String>? property}) async {
+    Map<String, dynamic> map = {};
+    map["property"] = property;
+    await channel.invokeMethod(methodRumStopView, map);
   }
 
   ///其它异常捕获与日志收集
@@ -89,27 +123,35 @@ class FTRUMManager {
   ///[stack] 堆栈日志
   /// [message]错误信息
   ///[appState] 应用状态
-  Future<void> addCustomError(String stack, String message) async {
+  /// [property] 附加属性参数(可选)
+  Future<void> addCustomError(String stack, String message,
+      {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
     map["stack"] = stack;
     map["message"] = message;
     map["appState"] = appState.index;
+    map["property"] = property;
     await channel.invokeMethod(methodRumAddError, map);
   }
 
   ///开始资源请求
   ///[key] 唯一 id
-  Future<void> startResource(String key) async {
+  /// [property] 附加属性参数(可选)
+  Future<void> startResource(String key,
+      {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
+    map["property"] = property;
     await channel.invokeMethod(methodRumStartResource, map);
   }
 
   ///结束资源请求
   ///[key] 唯一 id
-  Future<void> stopResource(String key) async {
+  /// [property] 附加属性参数(可选)
+  Future<void> stopResource(String key, {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
+    map["property"] = property;
     await channel.invokeMethod(methodRumStopResource, map);
   }
 
@@ -125,8 +167,8 @@ class FTRUMManager {
       {required String key,
       required String url,
       required String httpMethod,
-      required Map requestHeader,
-      Map? responseHeader,
+      required Map<String, dynamic> requestHeader,
+      Map<String, dynamic>? responseHeader,
       String? responseBody = "",
       int? resourceStatus}) async {
     Map<String, dynamic> map = {};
@@ -141,34 +183,48 @@ class FTRUMManager {
   }
 }
 
-
 /// app 运行状态
 enum AppState {
-  unknown,//未知
-  startup,//启动
+  unknown, //未知
+  startup, //启动
   run //运行
 }
 
-
 /// 监控类型
-enum MonitorType {
-  all,
-  battery,
-  memory,
-  cpu
-}
+enum ErrorMonitorType { all, battery, memory, cpu }
 
-extension MonitorTypeExt on MonitorType {
+extension ErrorMonitorTypeExt on ErrorMonitorType {
   int get value {
     switch (this) {
-      case MonitorType.all:
-        return 0xFFFFFFFF;
-      case MonitorType.battery:
+      case ErrorMonitorType.all:
+        return 0xffffffff;
+      case ErrorMonitorType.battery:
         return 1 << 1;
-      case MonitorType.memory:
+      case ErrorMonitorType.memory:
         return 1 << 2;
-      case MonitorType.cpu:
+      case ErrorMonitorType.cpu:
         return 1 << 3;
     }
   }
 }
+
+enum DeviceMetricsMonitorType { all, battery, memory, cpu, fps }
+
+extension DeviceMetricsMonitorTypeExt on DeviceMetricsMonitorType {
+  int get value {
+    switch (this) {
+      case DeviceMetricsMonitorType.all:
+        return 0xffffffff;
+      case DeviceMetricsMonitorType.battery:
+        return 1 << 1;
+      case DeviceMetricsMonitorType.memory:
+        return 1 << 2;
+      case DeviceMetricsMonitorType.cpu:
+        return 1 << 3;
+      case DeviceMetricsMonitorType.fps:
+        return 1 << 4;
+    }
+  }
+}
+
+enum DetectFrequency { normal, frequent, rare }

@@ -1,11 +1,26 @@
 package com.cloudcare.ft.mobile.sdk.tracker.flutter
 
 import android.app.Application
-import android.util.Log
 import android.view.ViewGroup
-import androidx.annotation.NonNull
-import com.ft.sdk.*
-import com.ft.sdk.garble.bean.*
+import com.ft.sdk.DetectFrequency
+import com.ft.sdk.EnvType
+import com.ft.sdk.FTLogger
+import com.ft.sdk.FTLoggerConfig
+import com.ft.sdk.FTRUMConfig
+import com.ft.sdk.FTRUMGlobalManager
+import com.ft.sdk.FTSDKConfig
+import com.ft.sdk.FTSdk
+import com.ft.sdk.FTTraceConfig
+import com.ft.sdk.FTTraceManager
+import com.ft.sdk.LogCacheDiscard
+import com.ft.sdk.TraceType
+import com.ft.sdk.garble.bean.AppState
+import com.ft.sdk.garble.bean.ErrorType
+import com.ft.sdk.garble.bean.NetStatusBean
+import com.ft.sdk.garble.bean.ResourceParams
+import com.ft.sdk.garble.bean.Status
+import com.ft.sdk.garble.bean.UserData
+import com.ft.sdk.garble.utils.LogUtils
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -15,7 +30,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
 /** AgentPlugin */
-public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
+class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
     /// The MethodChannel that will the communication between Flutter and native Android
     ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -25,7 +40,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
     private lateinit var application: Application
     private var viewGroup: ViewGroup? = null
 
-    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+    override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "ft_mobile_agent_flutter")
         channel.setMethodCallHandler(this)
         application = flutterPluginBinding.applicationContext as Application
@@ -73,6 +88,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
 
         const val METHOD_RUM_CONFIG = "ftRumConfig"
         const val METHOD_RUM_ADD_ACTION = "ftRumAddAction"
+        const val METHOD_RUM_CREATE_VIEW = "ftRumCreateView"
         const val METHOD_RUM_START_VIEW = "ftRumStartView"
         const val METHOD_RUM_STOP_VIEW = "ftRumStopView"
         const val METHOD_RUM_ADD_ERROR = "ftRumAddError"
@@ -81,60 +97,58 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
         const val METHOD_RUM_ADD_RESOURCE = "ftRumAddResource"
 
         const val METHOD_TRACE_CONFIG = "ftTraceConfig"
-        const val METHOD_TRACE = "ftTrace"
         const val METHOD_GET_TRACE_HEADER = "ftTraceGetHeader"
+        const val METHOD_ENABLE_ACCESS_ANDROID_ID = "ftEnableAccessAndroidID"
 
 
     }
 
-    override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-        Log.d(LOG_TAG, "${call.method} onMethodCall")
+    override fun onMethodCall(call: MethodCall, result: Result) {
+        if (BuildConfig.DEBUG) {
+            LogUtils.d(LOG_TAG, "${call.method} onMethodCall:${call.arguments}")
+        }
         when (call.method) {
             METHOD_CONFIG -> {
                 val metricsUrl: String = call.argument<String>("metricsUrl")!!
-                val useOAID: Boolean? = call.argument<Boolean>("useOAID")
                 val debug: Boolean? = call.argument<Boolean>("debug")
-                val datakitUUID: String? = call.argument<String>("datakitUUID")
                 val env: Int? = call.argument<Int>("env")
-                val envType: EnvType = when (env) {
-                    EnvType.PROD.ordinal -> {
-                        EnvType.PROD
-                    }
-                    EnvType.GRAY.ordinal -> {
-                        EnvType.GRAY
-                    }
-                    EnvType.PRE.ordinal -> {
-                        EnvType.PRE
-                    }
-                    EnvType.COMMON.ordinal -> {
-                        EnvType.COMMON
-                    }
-                    EnvType.LOCAL.ordinal -> {
-                        EnvType.LOCAL
-                    }
-                    else -> EnvType.PROD
-                }
+                val serviceName: String? = call.argument<String?>("serviceName")
+                val envType: EnvType = EnvType.values()[env ?: EnvType.PROD.ordinal]
+                val globalContext: Map<String, String>? = call.argument("globalContext")
+                val enableAccessAndroidID: Boolean? =
+                    call.argument<Boolean>("enableAccessAndroidID")
                 val sdkConfig = FTSDKConfig.builder(metricsUrl).setEnv(envType)
 
                 if (debug != null) {
                     sdkConfig.isDebug = debug
                 }
-                if (datakitUUID != null) {
-                    sdkConfig.setXDataKitUUID(datakitUUID)
+                globalContext?.forEach {
+                    sdkConfig.addGlobalContext(it.key, it.value)
                 }
-                if (useOAID != null) {
-                    sdkConfig.isUseOAID = useOAID
+
+                if (enableAccessAndroidID != null) {
+                    sdkConfig.isEnableAccessAndroidID = enableAccessAndroidID
+                }
+
+                if (!serviceName.isNullOrEmpty()) {
+                    sdkConfig.serviceName = serviceName
                 }
 
                 FTSdk.install(sdkConfig)
                 result.success(null)
             }
+
             METHOD_RUM_CONFIG -> {
                 val rumAppId: String = call.argument<String>("rumAppId")!!
                 val sampleRate: Float? = call.argument<Float>("sampleRate")
                 val enableUserAction: Boolean? = call.argument<Boolean>("enableUserAction")
                 val enableUserView: Boolean? = call.argument<Boolean>("enableUserView")
-                val monitorType: Int? = call.argument<Int>("monitorType")
+                val enableUserResource: Boolean? = call.argument<Boolean>("enableUserResource")
+                val enableAppUIBlock: Boolean? = call.argument<Boolean>("enableAppUIBlock")
+                val errorMonitorType: Long? = call.argument<Long>("errorMonitorType")
+                val deviceMetricsMonitorType: Long? =
+                    call.argument<Long>("deviceMetricsMonitorType")
+                val detectFrequency: Int? = call.argument<Int>("detectFrequency")
                 val globalContext: Map<String, String>? = call.argument("globalContext")
                 val rumConfig = FTRUMConfig().setRumAppId(rumAppId)
                 if (sampleRate != null) {
@@ -146,12 +160,37 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 }
 
                 if (enableUserView != null) {
-                    rumConfig.isEnableTraceUserAction = enableUserView
+                    rumConfig.isEnableTraceUserView = enableUserView
                 }
 
-                if (monitorType != null) {
-                    rumConfig.extraMonitorTypeWithError = monitorType
+                if (enableUserResource != null) {
+                    rumConfig.isEnableTraceUserResource = enableUserResource
                 }
+
+                if (enableAppUIBlock != null) {
+                    rumConfig.isEnableTrackAppUIBlock = enableAppUIBlock
+                }
+
+                if (errorMonitorType != null) {
+                    rumConfig.extraMonitorTypeWithError = errorMonitorType.toInt()
+
+                }
+
+                if (deviceMetricsMonitorType != null) {
+
+
+                    if (detectFrequency != null) {
+                        val detectFrequencyEnum: DetectFrequency =
+                            DetectFrequency.values()[detectFrequency]
+                        rumConfig.setDeviceMetricsMonitorType(
+                            deviceMetricsMonitorType.toInt(),
+                            detectFrequencyEnum
+                        )
+                    } else {
+                        rumConfig.deviceMetricsMonitorType = deviceMetricsMonitorType.toInt()
+                    }
+                }
+
                 globalContext?.forEach {
                     rumConfig.addGlobalContext(it.key, it.value)
                 }
@@ -159,29 +198,47 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 FTSdk.initRUMWithConfig(rumConfig)
                 result.success(null)
             }
+
             METHOD_RUM_ADD_ACTION -> {
                 val actionName: String? = call.argument<String>("actionName")
                 val actionType: String? = call.argument<String>("actionType")
                 FTRUMGlobalManager.get().startAction(actionName, actionType)
                 result.success(null)
             }
+
+            METHOD_RUM_CREATE_VIEW -> {
+                val viewName: String? = call.argument<String>("viewName")
+                val duration: Long? = call.argument<Long>("duration")
+                FTRUMGlobalManager.get().onCreateView(viewName, duration ?: -1L)
+                result.success(null)
+            }
+
             METHOD_RUM_START_VIEW -> {
                 val viewName: String? = call.argument<String>("viewName")
-                val viewReferrer: String? = call.argument<String>("viewReferrer")
+                val mapProperty: Map<String, Any>? = call.argument("property")
+                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                FTRUMGlobalManager.get().startView(viewName, property)
+                result.success(null)
+            }
 
-                FTRUMGlobalManager.get().startView(viewName, viewReferrer)
-                result.success(null)
-            }
             METHOD_RUM_STOP_VIEW -> {
-                FTRUMGlobalManager.get().stopView()
+                val mapProperty: Map<String, Any>? = call.argument("property")
+                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                FTRUMGlobalManager.get().stopView(property)
                 result.success(null)
             }
+
             METHOD_RUM_ADD_ERROR -> {
                 val stack: String? = call.argument<String>("stack")
                 val message: String? = call.argument<String>("message")
+                val state: Int? = call.argument<Int>("appState")
+                val mapProperty: Map<String, Any>? = call.argument("property")
+                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+
+                val appState: AppState = AppState.values()[state ?: AppState.UNKNOWN.ordinal]
                 FTRUMGlobalManager.get().addError(
                     stack, message,
-                    ErrorType.FLUTTER, AppState.RUN
+                    ErrorType.FLUTTER, appState, property
                 )
                 result.success(null)
 
@@ -189,13 +246,17 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
 
             METHOD_RUM_START_RESOURCE -> {
                 val key: String? = call.argument<String>("key")
-                FTRUMGlobalManager.get().startResource(key)
+                val mapProperty: Map<String, Any>? = call.argument("property")
+                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                FTRUMGlobalManager.get().startResource(key, property)
                 result.success(null)
             }
 
             METHOD_RUM_STOP_RESOURCE -> {
                 val key: String? = call.argument<String>("key")
-                FTRUMGlobalManager.get().stopResource(key)
+                val mapProperty: Map<String, Any>? = call.argument("property")
+                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                FTRUMGlobalManager.get().stopResource(key, property)
                 result.success(null)
 
             }
@@ -208,10 +269,10 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 val responseHeader: Map<String, String>? =
                     call.argument<Map<String, String>>("responseHeader")
                 val responseBody: String? = call.argument<String>("responseBody")
-                val responseConnection: String? = call.argument<String>("responseConnection")
-                val responseContentType: String? = call.argument<String>("responseContentType")
-                val responseContentEncoding: String? =
-                    call.argument<String>("responseContentEncoding")
+//                val responseConnection: String? = call.argument<String>("responseConnection")
+//                val responseContentType: String? = call.argument<String>("responseContentType")
+//                val responseContentEncoding: String? =
+//                    call.argument<String>("responseContentEncoding")
                 val resourceStatus: Int? = call.argument<Int>("resourceStatus")
                 val url: String? = call.argument<String>("url")
 //                val fetchStartTime: Long? = call.argument<Long>("fetchStartTime")
@@ -223,6 +284,10 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
 //                val responseEndTime: Long? = call.argument<Long>("responseEndTime")
 //                val sslStartTime: Long? = call.argument<Long>("sslStartTime")
 //                val sslEndTime: Long? = call.argument<Long>("sslEndTime")
+                val responseContentType =
+                    responseHeader?.get("content-type")
+                val responseConnection: String? = responseHeader?.get("connection")
+                val responseContentEncoding: String? = responseContentType?.split(";")?.last()
                 val params = ResourceParams()
                 val netStatusBean = NetStatusBean()
                 params.responseHeader = responseHeader.toString()
@@ -249,17 +314,14 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
 
             METHOD_LOG_CONFIG -> {
                 val sampleRate: Float? = call.argument<Float>("sampleRate")
-                val serviceName: String? = call.argument<String>("serviceName")
                 val logTypeArr: List<Int>? = call.argument<List<Int>>("logType")
                 val enableLinkRumData: Boolean? = call.argument<Boolean>("enableLinkRumData")
                 val enableCustomLog: Boolean? = call.argument<Boolean>("enableCustomLog")
+                val globalContext: Map<String, String>? = call.argument("globalContext")
 
                 val logCacheDiscard: LogCacheDiscard =
-                    when (call.argument<Int>("logCacheDiscard")) {
-                        0 -> LogCacheDiscard.DISCARD
-                        1 -> LogCacheDiscard.DISCARD_OLDEST
-                        else -> LogCacheDiscard.DISCARD
-                    }
+                    LogCacheDiscard.values()[call.argument<Int>("logCacheDiscard")
+                        ?: LogCacheDiscard.DISCARD.ordinal]
 
                 val logConfig = FTLoggerConfig()
                     .setEnableCustomLog(true)
@@ -267,9 +329,6 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
 
                 if (sampleRate != null) {
                     logConfig.samplingRate = sampleRate
-                }
-                if (serviceName != null) {
-                    logConfig.serviceName = serviceName
                 }
 
                 if (logTypeArr != null) {
@@ -288,6 +347,10 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                     logConfig.isEnableCustomLog = enableCustomLog
                 }
 
+                globalContext?.forEach {
+                    logConfig.addGlobalContext(it.key, it.value)
+                }
+
                 FTSdk.initLogWithConfig(logConfig)
                 result.success(null)
             }
@@ -295,18 +358,15 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
 
             METHOD_LOGGING -> {
                 val content: String = call.argument<String>("content") ?: ""
-                val status: Status = when (call.argument<Int>("status")) {
-                    0 -> Status.INFO
-                    1 -> Status.WARNING
-                    2 -> Status.ERROR
-                    3 -> Status.CRITICAL
-                    4 -> Status.OK
-                    else -> Status.INFO
-                }
+                val status: Status =
+                    Status.values()[call.argument<Int>("status") ?: Status.INFO.ordinal]
+                val mapProperty: Map<String, Any>? = call.argument("property")
+                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
 
-                FTLogger.getInstance().logBackground(content, status)
+                FTLogger.getInstance().logBackground(content, status, property)
                 result.success(null)
             }
+
             METHOD_TRACE_CONFIG -> {
                 val sampleRate: Float? = call.argument<Float>("sampleRate")
                 val traceType = call.argument<Int>("traceType")
@@ -319,11 +379,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 }
 
                 if (traceType != null) {
-                    traceConfig.traceType = when (traceType) {
-                        0 -> TraceType.DDTRACE
-                        1 -> TraceType.ZIPKIN
-                        else -> TraceType.JAEGER
-                    }
+                    traceConfig.traceType = TraceType.values()[traceType]
                 }
 
                 if (enableLinkRUMData != null) {
@@ -333,39 +389,79 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
                 if (enableAutoTrace != null) {
                     traceConfig.isEnableAutoTrace = enableAutoTrace
                 }
+                if (enableAutoTrace != null) {
+                    traceConfig.isEnableAutoTrace = enableAutoTrace
+                }
 
                 FTSdk.initTraceWithConfig(traceConfig)
                 result.success(null)
             }
-            METHOD_TRACE -> {
-                val key: String? = call.argument<String>("key")
-                val httpMethod: String? = call.argument("httpMethod")
-                val requestHeader: HashMap<String, String>? = call.argument("requestHeader")
-                val responseHeader: HashMap<String, String>? = call.argument("responseHeader")
-                val statusCode: Int? = call.argument("statusCode")
-                val errorMsg: String? = call.argument("errorMsg")
-
-                FTTraceManager.get().addTrace(
-                    key, httpMethod, requestHeader,
-                    responseHeader, statusCode ?: 0, errorMsg ?: ""
-                )
-                result.success(null)
-
-            }
+//            METHOD_TRACE -> {
+//                val key: String? = call.argument<String>("key")
+//                val httpMethod: String? = call.argument("httpMethod")
+//                val requestHeader: HashMap<String, String>? = call.argument("requestHeader")
+//                val responseHeader: HashMap<String, String>? = call.argument("responseHeader")
+//                val statusCode: Int? = call.argument("statusCode")
+//                val errorMsg: String? = call.argument("errorMessage")
+//
+//                FTTraceManager.get().addTrace(
+//                        key, httpMethod, requestHeader,
+//                        responseHeader, statusCode ?: 0, errorMsg ?: ""
+//                )
+//                result.success(null)
+//
+//            }
             METHOD_GET_TRACE_HEADER -> {
                 val url: String? = call.argument<String>("url")
                 val key: String? = call.argument<String>("key")
-                result.success(FTTraceManager.get().getTraceHeader(key, url))
+
+                if (key != null) {
+                    result.success(FTTraceManager.get().getTraceHeader(key, url))
+                } else {
+                    result.success(FTTraceManager.get().getTraceHeader(url))
+                }
             }
+
             METHOD_BIND_USER -> {
                 val userId: String? = call.argument<String>("userId")
-                FTSdk.bindRumUserData(userId!!)
+                val userName: String? = call.argument<String>("userName")
+                val userEmail: String? = call.argument<String>("userEmail")
+                val userExt: Map<String, String>? = call.argument("userExt")
+
+                val userData = UserData()
+                if (userId != null) {
+                    userData.id = userId
+                }
+                if (userId != null) {
+                    userData.name = userName
+                }
+                if (userId != null) {
+                    userData.email = userEmail
+                }
+                if (userExt != null) {
+                    val map = hashMapOf<String, String>()
+                    userExt.forEach {
+                        map[it.key] = it.value
+                    }
+                    userData.exts = map
+                }
+
+                FTSdk.bindRumUserData(userData)
                 result.success(null)
             }
+
             METHOD_UNBIND_USER -> {
                 FTSdk.unbindRumUserData()
                 result.success(null)
             }
+
+            METHOD_ENABLE_ACCESS_ANDROID_ID -> {
+                val enableAccessAndroidID: Boolean? =
+                    call.argument<Boolean>("enableAccessAndroidID")
+                FTSdk.setEnableAccessAndroidID(enableAccessAndroidID!!)
+                result.success(null)
+            }
+
             else -> {
                 result.notImplemented()
             }
@@ -373,7 +469,7 @@ public class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAw
     }
 
 
-    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
     }
 }

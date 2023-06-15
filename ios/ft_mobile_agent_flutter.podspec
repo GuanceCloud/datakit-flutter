@@ -5,9 +5,9 @@
 Pod::Spec.new do |s|
   s.name             = 'ft_mobile_agent_flutter'
   s.version          = '0.0.2'
-  s.summary          = '基于 ft ios android 调用的 plugin'
+  s.summary          = '基于观测云 ios android 调用的 plugin'
   s.description      = <<-DESC
-基于 ft ios android 调用的 plugin
+基于观测云 ios android 调用的 plugin
                        DESC
   s.homepage         = 'http://example.com'
   s.license          = { :file => '../LICENSE' }
@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'FTMobileSDK/FTMobileAgent', "1.3.1-alpha.6"
+  s.dependency 'FTMobileSDK/FTMobileAgent', "1.4.3-alpha.1"
   s.ios.deployment_target = '8.0'
 
   # Flutter.framework does not contain a i386 slice. Only x86_64 simulators are supported.

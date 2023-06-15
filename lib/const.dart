@@ -6,13 +6,15 @@ const methodConfig = "ftConfig";
 
 const methodBindUser = "ftBindUser";
 const methodUnbindUser = "ftUnBindUser";
-
+const methodEnableAccessAndroidID = "ftEnableAccessAndroidID";
+const methodTrackEventFromExtension = "ftTrackEventFromExtension";
 const methodLogConfig = "ftLogConfig";
 const methodLog = "ftLogging";
 
 const methodRumConfig = "ftRumConfig";
 const methodRumAddAction = "ftRumAddAction";
 const methodRumStartView = "ftRumStartView";
+const methodRumCreateView = "ftRumCreateView";
 const methodRumStopView = "ftRumStopView";
 const methodRumAddError = "ftRumAddError";
 const methodRumStartResource = "ftRumStartResource";

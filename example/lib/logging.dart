@@ -19,7 +19,7 @@ class _LoggingState extends State<Logging> {
           ListTile(
             title: Text("Log Status: info"),
             onTap: (){
-              FTLogger().logging("info log content", FTLogStatus.info);
+              FTLogger().logging("info log content", FTLogStatus.info,property: {"logger_property": "ft_value"});
             },
           ),
           ListTile(
