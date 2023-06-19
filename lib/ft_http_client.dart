@@ -80,15 +80,15 @@ class FTHttpClient implements HttpClient {
     return request;
   }
 
-  @override
-  set connectionFactory(
-          Future<ConnectionTask<Socket>> Function(
-                  Uri url, String? proxyHost, int? proxyPort)?
-              f) =>
-      _httpClient.connectionFactory = f;
-
-  @override
-  set keyLog(Function(String line)? callback) => _httpClient.keyLog = callback;
+  // @override
+  // set connectionFactory(
+  //         Future<ConnectionTask<Socket>> Function(
+  //                 Uri url, String? proxyHost, int? proxyPort)?
+  //             f) =>
+  //     _httpClient.connectionFactory = f;
+  //
+  // @override
+  // set keyLog(Function(String line)? callback) => _httpClient.keyLog = callback;
 
   @override
   bool get autoUncompress => _httpClient.autoUncompress;
