@@ -33,7 +33,7 @@ class FTMobileFlutter {
     if (globalContext == null) {
       globalContext = {};
     }
-    globalContext["sdk_package_flutter"] = packageVersion;
+    globalContext["sdk_package_flutter"] = "legacy_"+packageVersion;
     map["globalContext"] = globalContext;
     if (Platform.isAndroid) {
       map["enableAccessAndroidID"] = enableAccessAndroidID;
