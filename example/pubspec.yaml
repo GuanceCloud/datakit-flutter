@@ -22,6 +22,9 @@ dev_dependencies:
     sdk: flutter
 
   ft_mobile_agent_flutter:
+#    git:
+#      url: https://github.com/GuanceCloud/datakit-flutter.git
+#      ref: agent_legacy_0.4.1.dev.1
     path: ../
 
 # For information on the generic Dart part of this file, see the
