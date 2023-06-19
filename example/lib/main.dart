@@ -92,7 +92,7 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
     }
 
 
-    WidgetsBinding.instance.addObserver(this); //添加观察者
+    WidgetsBinding.instance?.addObserver(this); //添加观察者
 
     //RUM View：休眠与唤醒事件
     //添加应用休眠和唤醒监听
@@ -115,7 +115,7 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
 
     //RUM View：休眠与唤醒事件
     FTLifeRecycleHandler().removeObserver();
-    WidgetsBinding.instance.removeObserver(this); //添加观察者
+    WidgetsBinding.instance?.removeObserver(this); //添加观察者
   }
 
   @override

@@ -110,12 +110,12 @@ void main() {
   test("LifeCycle Test", () {
     FTLifeRecycleHandler().initObserver();
     WidgetsBinding.instance
-        .handleAppLifecycleStateChanged(AppLifecycleState.paused);
+        ?.handleAppLifecycleStateChanged(AppLifecycleState.paused);
 
     expect(callResult[methodRumStopView], true);
 
     WidgetsBinding.instance
-        .handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+        ?.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
 
     expect(callResult[methodRumStartView], true);
 
@@ -123,10 +123,10 @@ void main() {
     callResult.clear();
 
     WidgetsBinding.instance
-        .handleAppLifecycleStateChanged(AppLifecycleState.paused);
+        ?.handleAppLifecycleStateChanged(AppLifecycleState.paused);
 
     WidgetsBinding.instance
-        .handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+        ?.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
 
     expect(callResult.isEmpty, true);
   });
