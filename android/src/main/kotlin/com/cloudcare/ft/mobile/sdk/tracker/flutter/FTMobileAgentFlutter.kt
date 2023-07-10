@@ -3,7 +3,6 @@ package com.cloudcare.ft.mobile.sdk.tracker.flutter
 import android.app.Application
 import android.view.ViewGroup
 import com.ft.sdk.DetectFrequency
-import com.ft.sdk.EnvType
 import com.ft.sdk.FTLogger
 import com.ft.sdk.FTLoggerConfig
 import com.ft.sdk.FTRUMConfig
@@ -111,9 +110,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
             METHOD_CONFIG -> {
                 val metricsUrl: String = call.argument<String>("metricsUrl")!!
                 val debug: Boolean? = call.argument<Boolean>("debug")
-                val env: Int? = call.argument<Int>("env")
                 val serviceName: String? = call.argument<String?>("serviceName")
-                val envType: EnvType = EnvType.values()[env ?: EnvType.PROD.ordinal]
+                val envType: String? = call.argument<String?>("env");
                 val globalContext: Map<String, String>? = call.argument("globalContext")
                 val enableAccessAndroidID: Boolean? =
                     call.argument<Boolean>("enableAccessAndroidID")
@@ -132,6 +130,9 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 if (!serviceName.isNullOrEmpty()) {
                     sdkConfig.serviceName = serviceName
+                }
+                if (envType != null) {
+                    sdkConfig.env = envType;
                 }
 
                 FTSdk.install(sdkConfig)

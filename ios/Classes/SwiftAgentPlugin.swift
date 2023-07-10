@@ -47,9 +47,8 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 if let debug = args["debug"] as? Bool {
                     config.enableSDKDebugLog = debug
                 }
-                if let env = args["env"] as? Int {
-                    let entType: FTEnv? = FTEnv.init(rawValue: env)
-                    config.env = entType ?? .prod
+                if let env = args["env"] as? String {
+                    config.env = env
                 }
                 if let serviceName = args["serviceName"] as? String {
                     config.service = serviceName
