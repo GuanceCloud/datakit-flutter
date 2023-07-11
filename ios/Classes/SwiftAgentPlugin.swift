@@ -102,6 +102,10 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             if let enableCustomLog = args["enableCustomLog"] as? Bool {
                 logConfig.enableCustomLog = enableCustomLog
             }
+            if let printCustomLogToConsole = args["printCustomLogToConsole"] as? Bool {
+                logConfig.printCustomLogToConsole = printCustomLogToConsole
+            }
+            
             if let globalContext = args["globalContext"] as? Dictionary<String, String> {
                 logConfig.globalContext = globalContext
             }

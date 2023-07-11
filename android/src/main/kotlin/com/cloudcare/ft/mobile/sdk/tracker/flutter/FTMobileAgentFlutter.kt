@@ -103,9 +103,9 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
-        if (BuildConfig.DEBUG) {
-            LogUtils.d(LOG_TAG, "${call.method} onMethodCall:${call.arguments}")
-        }
+//        if (BuildConfig.DEBUG) {
+//            LogUtils.d(LOG_TAG, "${call.method} onMethodCall:${call.arguments}")
+//        }
         when (call.method) {
             METHOD_CONFIG -> {
                 val metricsUrl: String = call.argument<String>("metricsUrl")!!
@@ -318,6 +318,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val logTypeArr: List<Int>? = call.argument<List<Int>>("logType")
                 val enableLinkRumData: Boolean? = call.argument<Boolean>("enableLinkRumData")
                 val enableCustomLog: Boolean? = call.argument<Boolean>("enableCustomLog")
+                val printCustomLogToConsole: Boolean? = call.argument<Boolean>("printCustomLogToConsole")
                 val globalContext: Map<String, String>? = call.argument("globalContext")
 
                 val logCacheDiscard: LogCacheDiscard =
@@ -346,6 +347,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
                 if (enableCustomLog != null) {
                     logConfig.isEnableCustomLog = enableCustomLog
+                }
+
+                if(printCustomLogToConsole!=null){
+                    logConfig.isPrintCustomLogToConsole = printCustomLogToConsole;
                 }
 
                 globalContext?.forEach {
