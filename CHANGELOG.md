@@ -1,8 +1,18 @@
+## 0.4.2-pre.1
+* 新增将自定义日志打印至控制台的功能
+* 同 0.4.2-dev.1
+
+---
+## 0.4.2-dev.1
+* iOS 适配 1.4.4-beta.1
+* Android 适配 ft-sdk:1.3.13-beta01
+
+---
 ## 0.4.1-dev.1
 * iOS 适配 1.4.3-alpha.1
 * Android 适配 ft-sdk:1.3.12-beta01，ft-native:1.0.0-beta01
 
-
+---
 ## 0.4.0-dev.2
 * SDK version 显示问题修复
 

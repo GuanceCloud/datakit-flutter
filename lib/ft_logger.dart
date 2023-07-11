@@ -13,7 +13,8 @@ class FTLogger {
   ///[content] 日志内容
   ///[status] 日志状态
   ///[property] 附加属性参数(可选)
-  Future<void> logging(String content, FTLogStatus status, {Map<String, String>? property}) async {
+  Future<void> logging(String content, FTLogStatus status,
+      {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
     map["content"] = content;
     map["status"] = status.index;
@@ -25,6 +26,7 @@ class FTLogger {
   /// [sampleRate] 采样率
   /// [enableLinkRumData] 是否与 RUM 关联
   /// [enableCustomLog] 是否开启自定义日志
+  /// [printCustomLogToConsole] 是否打印自定义到控制台
   /// [discardStrategy] 日志丢弃策略
   /// [logLevelFilters] 日志等级过滤
   /// [globalContext] 自定义全局参数
@@ -32,6 +34,7 @@ class FTLogger {
       {double? sampleRate,
       bool? enableLinkRumData,
       bool? enableCustomLog,
+      bool? printCustomLogToConsole,
       FTLogCacheDiscard? discardStrategy,
       List<FTLogStatus>? logLevelFilters,
       Map<String, String>? globalContext}) async {
@@ -41,6 +44,7 @@ class FTLogger {
     map["enableLinkRumData"] = enableLinkRumData;
     map["enableCustomLog"] = enableCustomLog;
     map["logCacheDiscard"] = discardStrategy;
+    map["printCustomLogToConsole"] = printCustomLogToConsole;
     map["globalContext"] = globalContext;
     await channel.invokeMethod(methodLogConfig, map);
   }

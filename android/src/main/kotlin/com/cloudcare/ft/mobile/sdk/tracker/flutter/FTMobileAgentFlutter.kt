@@ -3,7 +3,6 @@ package com.cloudcare.ft.mobile.sdk.tracker.flutter
 import android.app.Application
 import android.view.ViewGroup
 import com.ft.sdk.DetectFrequency
-import com.ft.sdk.EnvType
 import com.ft.sdk.FTLogger
 import com.ft.sdk.FTLoggerConfig
 import com.ft.sdk.FTRUMConfig
@@ -104,16 +103,15 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
-        if (BuildConfig.DEBUG) {
-            LogUtils.d(LOG_TAG, "${call.method} onMethodCall:${call.arguments}")
-        }
+//        if (BuildConfig.DEBUG) {
+//            LogUtils.d(LOG_TAG, "${call.method} onMethodCall:${call.arguments}")
+//        }
         when (call.method) {
             METHOD_CONFIG -> {
                 val metricsUrl: String = call.argument<String>("metricsUrl")!!
                 val debug: Boolean? = call.argument<Boolean>("debug")
-                val env: Int? = call.argument<Int>("env")
                 val serviceName: String? = call.argument<String?>("serviceName")
-                val envType: EnvType = EnvType.values()[env ?: EnvType.PROD.ordinal]
+                val envType: String? = call.argument<String?>("env");
                 val globalContext: Map<String, String>? = call.argument("globalContext")
                 val enableAccessAndroidID: Boolean? =
                     call.argument<Boolean>("enableAccessAndroidID")
@@ -132,6 +130,9 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 if (!serviceName.isNullOrEmpty()) {
                     sdkConfig.serviceName = serviceName
+                }
+                if (envType != null) {
+                    sdkConfig.env = envType;
                 }
 
                 FTSdk.install(sdkConfig)
@@ -317,6 +318,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val logTypeArr: List<Int>? = call.argument<List<Int>>("logType")
                 val enableLinkRumData: Boolean? = call.argument<Boolean>("enableLinkRumData")
                 val enableCustomLog: Boolean? = call.argument<Boolean>("enableCustomLog")
+                val printCustomLogToConsole: Boolean? = call.argument<Boolean>("printCustomLogToConsole")
                 val globalContext: Map<String, String>? = call.argument("globalContext")
 
                 val logCacheDiscard: LogCacheDiscard =
@@ -345,6 +347,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
                 if (enableCustomLog != null) {
                     logConfig.isEnableCustomLog = enableCustomLog
+                }
+
+                if(printCustomLogToConsole!=null){
+                    logConfig.isPrintCustomLogToConsole = printCustomLogToConsole;
                 }
 
                 globalContext?.forEach {
