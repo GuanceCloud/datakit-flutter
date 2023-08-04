@@ -19,7 +19,6 @@ import com.ft.sdk.garble.bean.NetStatusBean
 import com.ft.sdk.garble.bean.ResourceParams
 import com.ft.sdk.garble.bean.Status
 import com.ft.sdk.garble.bean.UserData
-import com.ft.sdk.garble.utils.LogUtils
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -27,6 +26,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import io.flutter.plugins.webviewflutter.WebViewFlutterAndroidExternalApi
 
 /** AgentPlugin */
 class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
@@ -318,7 +318,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val logTypeArr: List<Int>? = call.argument<List<Int>>("logType")
                 val enableLinkRumData: Boolean? = call.argument<Boolean>("enableLinkRumData")
                 val enableCustomLog: Boolean? = call.argument<Boolean>("enableCustomLog")
-                val printCustomLogToConsole: Boolean? = call.argument<Boolean>("printCustomLogToConsole")
+                val printCustomLogToConsole: Boolean? =
+                    call.argument<Boolean>("printCustomLogToConsole")
                 val globalContext: Map<String, String>? = call.argument("globalContext")
 
                 val logCacheDiscard: LogCacheDiscard =
@@ -349,7 +350,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                     logConfig.isEnableCustomLog = enableCustomLog
                 }
 
-                if(printCustomLogToConsole!=null){
+                if (printCustomLogToConsole != null) {
                     logConfig.isPrintCustomLogToConsole = printCustomLogToConsole;
                 }
 

@@ -1,19 +1,21 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:agent_example/rum.dart';
-import 'package:agent_example/tracing.dart';
+import 'package:agent_example/rum_screen.dart';
+import 'package:agent_example/tracing_screen.dart';
 import 'package:agent_example/view_without_route_name.dart';
+import 'package:agent_example/webview_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'ft_get_view_name.dart';
-import 'logging.dart';
+import 'logging_screen.dart';
 
 const serverUrl = String.fromEnvironment("SERVER_URL");
 const appAndroidId = String.fromEnvironment("ANDROID_APP_ID");
 const appIOSId = String.fromEnvironment("IOS_APP_ID");
+const webViewViewUrl = String.fromEnvironment("WEB_VIEW_URL");
 
 void main() async {
   runZonedGuarded(() async {
@@ -28,18 +30,18 @@ void main() async {
         "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo"
       ],
     );
-    await FTLogger()
-        .logConfig( enableCustomLog: true);
+    await FTLogger().logConfig(enableCustomLog: true);
     await FTTracer().setConfig(
         enableLinkRUMData: true,
         traceType: TraceType.ddTrace,
-        enableAutoTrace: true);//  Trace 在 Http 请求 Trace Header
+        enableAutoTrace: true); //  Trace 在 Http 请求 Trace Header
     await FTRUMManager().setConfig(
         androidAppId: appAndroidId,
         iOSAppId: appIOSId,
         enableNativeAppUIBlock: true,
         enableNativeUserAction: true,
-        enableUserResource: true,// RUM Resource Http 数据抓取
+        enableUserResource: true,
+        // RUM Resource Http 数据抓取
         errorMonitorType: ErrorMonitorType.all.value,
         deviceMetricsMonitorType: DeviceMetricsMonitorType.all.value);
     FTMobileFlutter.trackEventFromExtension(
@@ -69,10 +71,12 @@ class MyApp extends StatelessWidget {
       ],
       routes: <String, WidgetBuilder>{
         //路由跳转
-        'logging': (BuildContext context) => Logging(),
-        'rum': (BuildContext context) => RUM(),
-        'tracing_custom': (BuildContext context) => CustomTracing(),
+        'logging': (BuildContext context) => LoggingScreen(),
+        'rum': (BuildContext context) => RUMScreen(),
+        'tracing_custom': (BuildContext context) => CustomTracingScreen(),
         'tracing_auto': (BuildContext context) => AutoTracing(),
+        'webview': (BuildContext context) =>
+            WebViewScreen(url: webViewViewUrl),
       },
     );
   }
@@ -90,7 +94,6 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
     if (Platform.isAndroid) {
       requestPermission([Permission.phone]);
     }
-
 
     WidgetsBinding.instance.addObserver(this); //添加观察者
 
@@ -179,7 +182,6 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
     return ElevatedButton(
       child: Text("网络链路追踪(自定义)"),
       onPressed: () async {
-
         //判断是否全局设置
         bool hasSet = HttpOverrides.current != null;
         if (hasSet) {

@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 import 'package:uuid/uuid.dart';
 
-class RUM extends StatefulWidget {
+class RUMScreen extends StatefulWidget {
   @override
-  _RUMState createState() => _RUMState();
+  _RUMScreenState createState() => _RUMScreenState();
 }
 
-class _RUMState extends State<RUM> {
+class _RUMScreenState extends State<RUMScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,19 +22,22 @@ class _RUMState extends State<RUM> {
           ListTile(
             title: Text("Action 点击"),
             onTap: () {
-              FTRUMManager().startAction("[ListTile][Action 点击]", "click",property: {"action_property": "ft_value"});
+              FTRUMManager().startAction("[ListTile][Action 点击]", "click",
+                  property: {"action_property": "ft_value"});
             },
           ),
           ListTile(
             title: Text("View Start"),
             onTap: () {
-              FTRUMManager().starView("RUM",property: {"starView_property": "ft_value"});
+              FTRUMManager()
+                  .starView("RUM", property: {"starView_property": "ft_value"});
             },
           ),
           ListTile(
             title: Text("View Stop"),
             onTap: () {
-              FTRUMManager().stopView(property: {"stopView_property": "ft_value"});
+              FTRUMManager()
+                  .stopView(property: {"stopView_property": "ft_value"});
             },
           ),
           ListTile(
@@ -53,7 +56,8 @@ class _RUMState extends State<RUM> {
           ListTile(
             title: Text("Add Error"),
             onTap: () async {
-              FTRUMManager().addCustomError("error stack", "error message",property: {"error_property": "ft_value"});
+              FTRUMManager().addCustomError("error stack", "error message",
+                  property: {"error_property": "ft_value"});
             },
           ),
           ListTile(
@@ -62,6 +66,13 @@ class _RUMState extends State<RUM> {
               throw new Exception("Flutter error");
             },
           ),
+          ListTile(
+            title: Text("WebView"),
+            onTap: () async {
+              Navigator.pushNamed(context, "webview");
+
+            },
+          )
         ],
       ),
     );
@@ -76,7 +87,8 @@ class _RUMState extends State<RUM> {
       request = await httpClient
           .getUrl(Uri.parse(url))
           .timeout(Duration(seconds: 10));
-      FTRUMManager().startResource(key,property: {"startResource_property": "ft_value"});
+      FTRUMManager()
+          .startResource(key, property: {"startResource_property": "ft_value"});
       response = await request.close();
     } finally {
       Map<String, dynamic> requestHeader = {};
@@ -92,7 +104,8 @@ class _RUMState extends State<RUM> {
         });
         responseBody = await response.transform(Utf8Decoder()).join();
       }
-      FTRUMManager().stopResource(key,property: {"stopResource_property": "ft_value"});
+      FTRUMManager()
+          .stopResource(key, property: {"stopResource_property": "ft_value"});
       FTRUMManager().addResource(
         key: key,
         url: request.uri.toString(),

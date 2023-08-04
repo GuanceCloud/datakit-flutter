@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   uuid: ^3.0.6
+  webview_flutter: ^4.0.4
 #  http: ^0.13.5
 
 dev_dependencies:
