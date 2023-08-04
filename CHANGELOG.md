@@ -1,3 +1,9 @@
+## 0.4.3-dev.1
+* webview 功能更新适配
+* Android ft-sdk:1.3.16-alpha01,ft-plugin:1.2.2-alpha01
+* iOS 适配 1.4.5-alpha.1
+
+---
 ## 0.4.2-pre.3
 * 调整对 Java 版本的兼容性
 
