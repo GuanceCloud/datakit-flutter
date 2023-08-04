@@ -36,7 +36,7 @@ end
 target 'TodayDemoExtension' do
   use_modular_headers!
 
-  pod 'FTMobileSDK/Extension','1.4.4-beta.1'
+  pod 'FTMobileSDK/Extension','1.4.5-alpha.1'
 end
 
 post_install do |installer|
