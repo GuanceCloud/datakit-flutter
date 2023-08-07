@@ -1,8 +1,13 @@
-## 0.4.1-dev.1
+## legacy 0.4.3-dev.3
+* Android ft-sdk:1.3.16-alpha02
+* iOS 适配 1.4.6-alpha.1
+
+---
+## legacy 0.4.1-dev.1
 * iOS 适配 1.4.3-alpha.1
 * Android 适配 ft-sdk:1.3.12-beta01，ft-native:1.0.0-beta01
 
-
+---
 ## 0.4.0-dev.2
 * SDK version 显示问题修复
 
