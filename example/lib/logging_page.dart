@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 
-class LoggingScreen extends StatefulWidget {
+class LoggingPage extends StatefulWidget {
 
   @override
-  _LoggingScreenState createState() => _LoggingScreenState();
+  _LoggingPageState createState() => _LoggingPageState();
 }
 
-class _LoggingScreenState extends State<LoggingScreen> {
+class _LoggingPageState extends State<LoggingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

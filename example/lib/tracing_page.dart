@@ -8,7 +8,7 @@ import 'package:http/io_client.dart';
 const String requestUrl =
     "http://testing-ft2x-api.cloudcare.cn/api/v1/account/permissions";
 
-class CustomTracingScreen extends StatelessWidget {
+class CustomTracingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +48,7 @@ class CustomTracingScreen extends StatelessWidget {
   }
 }
 
-class AutoTracing extends StatelessWidget {
+class AutoTracingPage extends StatelessWidget {
   final client = IOClient();
   final dio = Dio();
 

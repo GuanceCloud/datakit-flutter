@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class WebViewScreen extends StatefulWidget {
+class WebViewPage extends StatefulWidget {
   final String url;
 
-  WebViewScreen({required this.url});
+  WebViewPage({required this.url});
 
   @override
-  _WebViewScreenState createState() => _WebViewScreenState();
+  _WebViewPageState createState() => _WebViewPageState();
 }
 
-class _WebViewScreenState extends State<WebViewScreen> {
+class _WebViewPageState extends State<WebViewPage> {
   var loadingPercentage = 0;
   late WebViewController _controller;
 

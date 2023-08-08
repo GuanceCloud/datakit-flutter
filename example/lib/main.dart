@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:agent_example/rum_screen.dart';
-import 'package:agent_example/tracing_screen.dart';
-import 'package:agent_example/view_without_route_name.dart';
-import 'package:agent_example/webview_screen.dart';
+import 'package:agent_example/rum_page.dart';
+import 'package:agent_example/tracing_page.dart';
+import 'package:agent_example/view_without_route_name_page.dart';
+import 'package:agent_example/webview_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'ft_get_view_name.dart';
-import 'logging_screen.dart';
+import 'logging_page.dart';
 
 const serverUrl = String.fromEnvironment("SERVER_URL");
 const appAndroidId = String.fromEnvironment("ANDROID_APP_ID");
@@ -64,30 +64,29 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomeRoute(),
+      home: HomePage(),
       navigatorObservers: [
         //RUM View： 使用路由跳转时，监控页面生命周期
         FTRouteObserver(),
       ],
       routes: <String, WidgetBuilder>{
         //路由跳转
-        'logging': (BuildContext context) => LoggingScreen(),
-        'rum': (BuildContext context) => RUMScreen(),
-        'tracing_custom': (BuildContext context) => CustomTracingScreen(),
-        'tracing_auto': (BuildContext context) => AutoTracing(),
-        'webview': (BuildContext context) =>
-            WebViewScreen(url: webViewViewUrl),
+        'logging': (BuildContext context) => LoggingPage(),
+        'rum': (BuildContext context) => RUMPage(),
+        'tracing_custom': (BuildContext context) => CustomTracingPage(),
+        'tracing_auto': (BuildContext context) => AutoTracingPage(),
+        'webview': (BuildContext context) => WebViewPage(url: webViewViewUrl),
       },
     );
   }
 }
 
-class HomeRoute extends StatefulWidget {
+class HomePage extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
+class _HomeState extends State<HomePage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();

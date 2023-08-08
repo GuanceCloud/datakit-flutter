@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 import 'package:uuid/uuid.dart';
 
-class RUMScreen extends StatefulWidget {
+class RUMPage extends StatefulWidget {
   @override
-  _RUMScreenState createState() => _RUMScreenState();
+  _RUMPageState createState() => _RUMPageState();
 }
 
-class _RUMScreenState extends State<RUMScreen> {
+class _RUMPageState extends State<RUMPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
