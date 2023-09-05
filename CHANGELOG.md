@@ -1,3 +1,7 @@
+## 0.4.3-dev.5
+* Android ft-sdk:1.3.16-alpha05
+
+---
 ## 0.4.3-dev.4
 * Android ft-sdk:1.3.16-beta01
 * iOS 适配 1.4.6-alpha.4
