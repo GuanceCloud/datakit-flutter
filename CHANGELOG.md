@@ -1,3 +1,8 @@
+## 0.4.3-pre.1
+* Android ft-sdk:1.3.17-beta01,ft-plugin:1.2.2-beta01
+* iOS 1.4.7-beta.1
+
+---
 ## 0.4.3-dev.5
 * Android ft-sdk:1.3.16-alpha05
 
