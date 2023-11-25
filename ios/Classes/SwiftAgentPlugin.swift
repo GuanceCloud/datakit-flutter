@@ -72,7 +72,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             }
             result(nil)
         case SwiftAgentPlugin.METHOD_UNBIND_USER:
-            FTMobileAgent.sharedInstance().logout()
+            FTMobileAgent.sharedInstance().unbindUser()
             result(nil)
         case SwiftAgentPlugin.METHOD_TRACK_EVENT_FROM_EXTENSION:
             if let groupIdentifier = args["groupIdentifier"] as? String{
@@ -131,7 +131,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 traceConfig.enableAutoTrace = enableAutoTrace
             }
             if let traceType = args["traceType"] as? Int {
-                traceConfig.networkTraceType = FTNetworkTraceType.init(rawValue: traceType)!
+                traceConfig.networkTraceType = FTNetworkTraceType.init(rawValue: UInt(traceType))!
             }
             FTMobileAgent.sharedInstance().startTrace(withConfigOptions: traceConfig)
             result(nil)
