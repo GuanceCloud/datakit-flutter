@@ -14,20 +14,24 @@ class FTMobileFlutter {
   /// 配置
   static Future<void> sdkConfig(
       {required String serverUrl,
-      bool? useOAID,
       bool? debug,
       String? serviceName,
       EnvType? envType,
+      String? env,
       bool? enableAccessAndroidID,
       int? dataSyncRetryCount,
       Map<String, String>? globalContext,
       List<String>? iOSGroupIdentifiers}) async {
     Map<String, dynamic> map = {};
     map["metricsUrl"] = serverUrl;
-    map["useOAID"] = useOAID;
     map["debug"] = debug;
     map["serviceName"] = serviceName;
-    map["env"] = envType?.index;
+    if (envType != null) {
+      map["env"] = envType.toString();
+    }
+    if (env != null) {
+      map["env"] = env;
+    }
     map["groupIdentifiers"] = iOSGroupIdentifiers;
     if (globalContext == null) {
       globalContext = {};

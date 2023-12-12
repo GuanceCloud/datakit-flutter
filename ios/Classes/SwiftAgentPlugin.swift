@@ -47,9 +47,8 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 if let debug = args["debug"] as? Bool {
                     config.enableSDKDebugLog = debug
                 }
-                if let env = args["env"] as? Int {
-                    let entType: FTEnv? = FTEnv.init(rawValue: env)
-                    config.env = entType ?? .prod
+                if let env = args["env"] as? String {
+                    config.env = env
                 }
                 if let serviceName = args["serviceName"] as? String {
                     config.service = serviceName
@@ -73,7 +72,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             }
             result(nil)
         case SwiftAgentPlugin.METHOD_UNBIND_USER:
-            FTMobileAgent.sharedInstance().logout()
+            FTMobileAgent.sharedInstance().unbindUser()
             result(nil)
         case SwiftAgentPlugin.METHOD_TRACK_EVENT_FROM_EXTENSION:
             if let groupIdentifier = args["groupIdentifier"] as? String{
@@ -103,6 +102,10 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             if let enableCustomLog = args["enableCustomLog"] as? Bool {
                 logConfig.enableCustomLog = enableCustomLog
             }
+            if let printCustomLogToConsole = args["printCustomLogToConsole"] as? Bool {
+                logConfig.printCustomLogToConsole = printCustomLogToConsole
+            }
+
             if let globalContext = args["globalContext"] as? Dictionary<String, String> {
                 logConfig.globalContext = globalContext
             }
@@ -128,7 +131,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 traceConfig.enableAutoTrace = enableAutoTrace
             }
             if let traceType = args["traceType"] as? Int {
-                traceConfig.networkTraceType = FTNetworkTraceType.init(rawValue: traceType)!
+                traceConfig.networkTraceType = FTNetworkTraceType.init(rawValue: UInt(traceType))!
             }
             FTMobileAgent.sharedInstance().startTrace(withConfigOptions: traceConfig)
             result(nil)
