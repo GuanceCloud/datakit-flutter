@@ -24,3 +24,5 @@ const methodRumAddResource = "ftRumAddResource";
 const methodTraceConfig = "ftTraceConfig";
 const methodTrace = "ftTrace";
 const methodGetTraceGetHeader = "ftTraceGetHeader";
+const methodSetInnerLogHandler = "ftSetInnerLogHandler";
+const methodInvokeInnerLog = "ftInvokeInnerLog";

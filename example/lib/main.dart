@@ -24,16 +24,23 @@ void main() async {
       serverUrl: serverUrl,
       debug: true,
       serviceName: "flutter_agent",
+      // dataSyncRetryCount: 0,
       iOSGroupIdentifiers: [
         "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo"
       ],
     );
-    await FTLogger()
-        .logConfig( enableCustomLog: true);
+    await FTLogger().logConfig(enableCustomLog: true);
+
+    // await FTMobileFlutter.registerInnerLogHandler((level, tag, message) {
+    //   if (level == "E") {
+    //     FTLogger()
+    //         .logging("[$tag]$message", FTLogStatus.error, isSilence: true);
+    //   }
+    // });
     await FTTracer().setConfig(
         enableLinkRUMData: true,
         traceType: TraceType.ddTrace,
-        enableAutoTrace: true);//  Trace 在 Http 请求 Trace Header
+        enableAutoTrace: true); //  Trace 在 Http 请求 Trace Header
     await FTRUMManager().setConfig(
         androidAppId: appAndroidId,
         iOSAppId: appIOSId,
