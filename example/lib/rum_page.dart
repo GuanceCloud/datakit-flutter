@@ -95,12 +95,12 @@ class _RUMPageState extends State<RUMPage> {
       Map<String, dynamic> responseHeader = {};
 
       request!.headers.forEach((name, values) {
-        requestHeader[name] = values;
+        requestHeader[name] = values.toString();
       });
       var responseBody = "";
       if (response != null) {
         response.headers.forEach((name, values) {
-          responseHeader[name] = values;
+          responseHeader[name] = values.toString();
         });
         responseBody = await response.transform(Utf8Decoder()).join();
       }
