@@ -26,11 +26,19 @@ void main() async {
       serverUrl: serverUrl,
       debug: true,
       serviceName: "flutter_agent",
+      // dataSyncRetryCount: 0,
       iOSGroupIdentifiers: [
         "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo"
       ],
     );
     await FTLogger().logConfig(enableCustomLog: true);
+
+    // await FTMobileFlutter.registerInnerLogHandler((level, tag, message) {
+    //   if (level == "E") {
+    //     FTLogger()
+    //         .logging("[$tag]$message", FTLogStatus.error, isSilence: true);
+    //   }
+    // });
     await FTTracer().setConfig(
         enableLinkRUMData: true,
         traceType: TraceType.ddTrace,
@@ -40,8 +48,7 @@ void main() async {
         iOSAppId: appIOSId,
         enableNativeAppUIBlock: true,
         enableNativeUserAction: true,
-        enableUserResource: true,
-        // RUM Resource Http 数据抓取
+        enableUserResource: true, // RUM Resource Http 数据抓取
         errorMonitorType: ErrorMonitorType.all.value,
         deviceMetricsMonitorType: DeviceMetricsMonitorType.all.value);
     FTMobileFlutter.trackEventFromExtension(

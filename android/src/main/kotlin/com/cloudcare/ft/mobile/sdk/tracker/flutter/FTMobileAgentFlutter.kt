@@ -1,6 +1,8 @@
 package com.cloudcare.ft.mobile.sdk.tracker.flutter
 
 import android.app.Application
+import android.os.Handler
+import android.os.Looper
 import android.view.ViewGroup
 import com.ft.sdk.DetectFrequency
 import com.ft.sdk.FTLogger
@@ -19,6 +21,7 @@ import com.ft.sdk.garble.bean.NetStatusBean
 import com.ft.sdk.garble.bean.ResourceParams
 import com.ft.sdk.garble.bean.Status
 import com.ft.sdk.garble.bean.UserData
+import com.ft.sdk.garble.utils.LogUtils
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -37,6 +40,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     private lateinit var application: Application
     private var viewGroup: ViewGroup? = null
+
+    private val handler = Handler(Looper.getMainLooper())
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "ft_mobile_agent_flutter")
@@ -97,6 +102,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
         const val METHOD_TRACE_CONFIG = "ftTraceConfig"
         const val METHOD_GET_TRACE_HEADER = "ftTraceGetHeader"
         const val METHOD_ENABLE_ACCESS_ANDROID_ID = "ftEnableAccessAndroidID"
+        const val METHOD_SET_INNER_LOG_HANDLER = "ftSetInnerLogHandler"
+        const val METHOD_INVOKE_INNER_LOG = "ftInvokeInnerLog"
 
 
     }
@@ -110,6 +117,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val metricsUrl: String = call.argument<String>("metricsUrl")!!
                 val debug: Boolean? = call.argument<Boolean>("debug")
                 val serviceName: String? = call.argument<String?>("serviceName")
+                val dataSyncRetryCount: Int? = call.argument<Int>("dataSyncRetryCount")
                 val envType: String? = call.argument<String?>("env");
                 val globalContext: Map<String, String>? = call.argument("globalContext")
                 val enableAccessAndroidID: Boolean? =
@@ -121,6 +129,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
                 globalContext?.forEach {
                     sdkConfig.addGlobalContext(it.key, it.value)
+                }
+
+                if (dataSyncRetryCount != null) {
+                    sdkConfig.setDataSyncRetryCount(dataSyncRetryCount)
                 }
 
                 if (enableAccessAndroidID != null) {
@@ -264,10 +276,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
             METHOD_RUM_ADD_RESOURCE -> {
                 val key: String? = call.argument<String>("key")
                 val method: String? = call.argument<String>("resourceMethod")
-                val requestHeader: Map<String, String>? =
-                    call.argument<Map<String, String>>("requestHeader")
-                val responseHeader: Map<String, String>? =
-                    call.argument<Map<String, String>>("responseHeader")
+                val requestHeader: Map<String, Any>? =
+                    call.argument<Map<String, Any>>("requestHeader")
+                val responseHeader: Map<String, Any>? =
+                    call.argument<Map<String, Any>>("responseHeader")
                 val responseBody: String? = call.argument<String>("responseBody")
 //                val responseConnection: String? = call.argument<String>("responseConnection")
 //                val responseContentType: String? = call.argument<String>("responseContentType")
@@ -285,8 +297,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 //                val sslStartTime: Long? = call.argument<Long>("sslStartTime")
 //                val sslEndTime: Long? = call.argument<Long>("sslEndTime")
                 val responseContentType =
-                    responseHeader?.get("content-type")
-                val responseConnection: String? = responseHeader?.get("connection")
+                    responseHeader?.get("content-type")?.toString()
+                val responseConnection: String? = responseHeader?.get("connection")?.toString()
                 val responseContentEncoding: String? = responseContentType?.split(";")?.last()
                 val params = ResourceParams()
                 val netStatusBean = NetStatusBean()
@@ -366,10 +378,15 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val content: String = call.argument<String>("content") ?: ""
                 val status: Status =
                     Status.values()[call.argument<Int>("status") ?: Status.INFO.ordinal]
+                val isSilence: Boolean? = call.argument<Boolean>("isSilence")
                 val mapProperty: Map<String, Any>? = call.argument("property")
                 val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
 
-                FTLogger.getInstance().logBackground(content, status, property)
+                if (isSilence != null) {
+                    FTLogger.getInstance().logBackground(content, status, property, isSilence)
+                } else {
+                    FTLogger.getInstance().logBackground(content, status, property)
+                }
                 result.success(null)
             }
 
@@ -467,6 +484,22 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 FTSdk.setEnableAccessAndroidID(enableAccessAndroidID!!)
                 result.success(null)
             }
+
+            METHOD_SET_INNER_LOG_HANDLER -> {
+                LogUtils.registerInnerLogHandler { level, tag, message ->
+                    handler.post {
+                        channel.invokeMethod(
+                            METHOD_INVOKE_INNER_LOG, mapOf(
+                                "level" to level,
+                                "tag" to tag,
+                                "message" to message
+                            )
+                        )
+                    }
+                }
+                result.success(null)
+            }
+
 
             else -> {
                 result.notImplemented()

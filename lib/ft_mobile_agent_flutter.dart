@@ -19,6 +19,7 @@ class FTMobileFlutter {
       EnvType? envType,
       String? env,
       bool? enableAccessAndroidID,
+      int? dataSyncRetryCount,
       Map<String, String>? globalContext,
       List<String>? iOSGroupIdentifiers}) async {
     Map<String, dynamic> map = {};
@@ -38,9 +39,13 @@ class FTMobileFlutter {
     globalContext["sdk_package_flutter"] = packageVersion;
     map["globalContext"] = globalContext;
     if (Platform.isAndroid) {
+      map["dataSyncRetryCount"] = dataSyncRetryCount;
       map["enableAccessAndroidID"] = enableAccessAndroidID;
     }
     await channel.invokeMethod(methodConfig, map);
+    if (Platform.isAndroid) {
+      _configChannel();
+    }
   }
 
   ///绑定用户
@@ -88,6 +93,34 @@ class FTMobileFlutter {
     } else {
       return <String, dynamic>{};
     }
+  }
+
+  static void Function(String level, String tag, String message)?
+      innerLogHandler;
+
+  ///设置内部日志接管对象
+  static Future<void> registerInnerLogHandler(
+      void Function(String level, String tag, String message) handler) async {
+    if (!Platform.isAndroid) return null;
+    FTMobileFlutter.innerLogHandler = handler;
+    return await channel.invokeMethod(methodSetInnerLogHandler);
+  }
+
+  static _configChannel() {
+    channel.setMethodCallHandler((call) async {
+      var args = call.arguments;
+
+      switch (call.method) {
+        case methodInvokeInnerLog:
+          String level = args["level"] ?? "";
+          String tag = args["tag"] ?? "";
+          String message = args["message"] ?? "";
+          FTMobileFlutter.innerLogHandler?.call(level, tag, message);
+          break;
+        default:
+          print('no method handler for method ${call.method}');
+      }
+    });
   }
 }
 

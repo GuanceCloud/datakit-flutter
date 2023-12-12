@@ -14,10 +14,11 @@ class FTLogger {
   ///[status] 日志状态
   ///[property] 附加属性参数(可选)
   Future<void> logging(String content, FTLogStatus status,
-      {Map<String, String>? property}) async {
+      {Map<String, String>? property, bool? isSilence}) async {
     Map<String, dynamic> map = {};
     map["content"] = content;
     map["status"] = status.index;
+    map["isSilence"] = isSilence;
     map["property"] = property;
     await channel.invokeMethod(methodLog, map);
   }
