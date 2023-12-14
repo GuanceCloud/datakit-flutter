@@ -297,15 +297,27 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 //                val responseEndTime: Long? = call.argument<Long>("responseEndTime")
 //                val sslStartTime: Long? = call.argument<Long>("sslStartTime")
 //                val sslEndTime: Long? = call.argument<Long>("sslEndTime")
-                val responseContentType =
-                    responseHeader?.get("content-type")?.toString()
-                val responseConnection: String? = responseHeader?.get("connection")?.toString()
-                val responseContentEncoding: String? = responseContentType?.split(";")?.last()
+
+
                 val params = ResourceParams()
                 val netStatusBean = NetStatusBean()
-                params.responseHeader = responseHeader.toString()
                 params.resourceMethod = method
-                params.requestHeader = requestHeader.toString()
+
+                if (requestHeader != null) {
+                    params.requestHeaderMap = getHashMap(requestHeader)
+                }
+
+                if (responseHeader != null) {
+                    params.responseHeaderMap = getHashMap(responseHeader)
+                }
+
+                val responseContentType =
+                    responseHeader?.get("content-type")?.toString()?.replace(Regex("[\\[\\]]"), "")
+                val responseConnection: String? =
+                    responseHeader?.get("connection")?.toString()?.replace(Regex("[\\[\\]]"), "")
+                val responseContentEncoding: String? =
+                    responseContentType?.split(";")?.last()
+
                 params.resourceStatus = resourceStatus ?: 0
                 params.responseBody = responseBody ?: ""
                 params.responseConnection = responseConnection ?: ""
@@ -506,6 +518,18 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 result.notImplemented()
             }
         }
+    }
+
+    private fun getHashMap(header: Map<String, Any>): HashMap<String, List<String>> {
+        val hashMap = hashMapOf<String, List<String>>()
+        header.forEach { it ->
+            if (it.value is String) {
+                hashMap[it.key] = listOf(it.value.toString())
+            } else if (it.value is List<*>) {
+                hashMap[it.key] = it.value as List<String>
+            }
+        }
+        return hashMap
     }
 
 
