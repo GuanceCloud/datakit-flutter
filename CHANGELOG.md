@@ -1,3 +1,9 @@
+## 0.4.4-dev.1
+* Android 添加最大重试次数配置，添加内部日志接管对象, 处理 addResource 某些情况出现异常的的问题
+* Android 适配 ft-sdk:1.3.17-alpha05
+* iOS 1.4.8-alpha.3
+
+---
 ## 0.4.3-pre.1
 * Android ft-sdk:1.3.17-beta01,ft-plugin:1.2.2-beta01
 * iOS 1.4.7-beta.1
