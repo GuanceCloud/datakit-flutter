@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+import 'dart:convert';
 
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -17,29 +17,32 @@ class FTTracingHttpClient extends http.BaseClient {
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
     if (request is! http.Request) return _innerClient.send(request);
     String key = Uuid().v4();
-    final traceHeaders = await FTTracer().getTraceHeader(request.url.toString(),key: key );
+    final traceHeaders =
+        await FTTracer().getTraceHeader(request.url.toString(), key: key);
     request.headers.addAll(traceHeaders);
     FTRUMManager().startResource(key);
     http.StreamedResponse? response;
     String errorMessage = "";
     try {
       response = await _innerClient.send(request);
-      Stream<List<int>>  stream = response.stream.asBroadcastStream();
-      stream.listen((List<int> event) async{
-        Uint8List body = await ByteStream.fromBytes(event).toBytes();
-        Response res =  Response.bytes(body, response!.statusCode,headers: response.headers);
-        String bodyStr = res.body;
+      Stream<List<int>> stream = response.stream.asBroadcastStream();
+
+      List<int> bodyBytes = [];
+      stream.listen((List<int> event) async {
+        bodyBytes.addAll(event);
+      }, onDone: () {
         FTRUMManager().stopResource(key);
         FTRUMManager().addResource(
           key: key,
           url: request.url.toString(),
           requestHeader: request.headers,
           httpMethod: request.method,
-          responseHeader: response.headers,
-          resourceStatus: response.statusCode,
-          responseBody: bodyStr,
+          responseHeader: response?.headers,
+          resourceStatus: response?.statusCode,
+          responseBody: utf8.decode(bodyBytes, allowMalformed: true),
         );
       });
+
       return StreamedResponse(stream, response.statusCode,
           contentLength: response.contentLength,
           headers: response.headers,
@@ -50,11 +53,11 @@ class FTTracingHttpClient extends http.BaseClient {
       errorMessage = e.toString();
       FTRUMManager().stopResource(key);
       FTRUMManager().addResource(
-        key: key,
-        url: request.url.toString(),
-        requestHeader: request.headers,
-        httpMethod: request.method,
-      );
+          key: key,
+          url: request.url.toString(),
+          requestHeader: request.headers,
+          httpMethod: request.method,
+          responseBody: errorMessage);
       throw e;
     } finally {
       // FTTracer().addTrace(
@@ -66,6 +69,4 @@ class FTTracingHttpClient extends http.BaseClient {
       //     errorMessage: errorMessage);
     }
   }
-
-
 }
