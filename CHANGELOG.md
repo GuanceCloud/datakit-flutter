@@ -1,3 +1,13 @@
+## legacy 0.4.4-dev.2
+* Android 适配 ft-sdk:1.3.17-alpha05
+* iOS 1.4.8-alpha.3
+
+---
+## legacy 0.4.4-dev.1
+* 添加最大重试次数配置
+* 添加内部日志接管对象
+
+---
 ## legacy 0.4.3-dev.3
 * Android ft-sdk:1.3.16-alpha02
 * iOS 适配 1.4.6-alpha.1
@@ -8,11 +18,11 @@
 * Android 适配 ft-sdk:1.3.12-beta01，ft-native:1.0.0-beta01
 
 ---
-## 0.4.0-dev.2
+## legacy 0.4.0-dev.2
 * SDK version 显示问题修复
 
 ---
-## 0.4.0-dev.1
+## legacy 0.4.0-dev.1
 * 修正 ios
 * android ft-sdk:1.3.12-alpha01
 * ios sdk 1.4.1-alpha.3
