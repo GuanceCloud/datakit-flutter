@@ -1,0 +1,3 @@
+-dontwarn com.ft.sdk.**
+-keep class com.ft.sdk.**{*;}
+-keep class ftnative.*{*;}
