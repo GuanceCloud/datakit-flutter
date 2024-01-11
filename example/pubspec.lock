@@ -89,7 +89,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.4.3-pre.1"
+    version: "0.4.5-dev.1"
   http:
     dependency: "direct main"
     description:

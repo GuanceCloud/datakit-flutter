@@ -34,31 +34,6 @@ class FTTracer {
     await channel.invokeMethod(methodTraceConfig, map);
   }
 
-  // /// 上传 Trace 数据
-  // /// [key] 唯一 id
-  // /// [httpMethod] 请求方法
-  // /// [requestHeader] 请求头参数
-  // /// [statusCode] 返回状态码
-  // /// [responseHeader] 返回头参数
-  // /// [errorMessage] 错误消息
-  // Future<void> addTrace({
-  //   required String key,
-  //   required String httpMethod,
-  //   required Map<String, dynamic> requestHeader,
-  //   int? statusCode,
-  //   Map<String, dynamic>? responseHeader,
-  //   String? errorMessage,
-  // }) async {
-  //   var map = Map<String, dynamic>();
-  //   map["key"] = key;
-  //   map["httpMethod"] = httpMethod;
-  //   map["requestHeader"] = requestHeader;
-  //   map["responseHeader"] = responseHeader;
-  //   map["statusCode"] = statusCode;
-  //   map["errorMessage"] = errorMessage;
-  //   await channel.invokeMethod(methodTrace, map);
-  // }
-
   /// 获取 trace http 请求头数据
   /// [key] 唯一 id
   /// [url] 请求地址

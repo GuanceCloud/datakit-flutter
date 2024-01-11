@@ -114,7 +114,9 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 //        }
         when (call.method) {
             METHOD_CONFIG -> {
-                val metricsUrl: String = call.argument<String>("metricsUrl")!!
+                val datakitUrl: String? = call.argument<String>("datakitUrl")
+                val datawayUrl: String? = call.argument<String>("datawayUrl")
+                val cliToken: String? = call.argument<String>("cliToken")
                 val debug: Boolean? = call.argument<Boolean>("debug")
                 val serviceName: String? = call.argument<String?>("serviceName")
                 val dataSyncRetryCount: Int? = call.argument<Int>("dataSyncRetryCount")
@@ -122,7 +124,13 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val globalContext: Map<String, String>? = call.argument("globalContext")
                 val enableAccessAndroidID: Boolean? =
                     call.argument<Boolean>("enableAccessAndroidID")
-                val sdkConfig = FTSDKConfig.builder(metricsUrl).setEnv(envType)
+                val sdkConfig =
+                    if (datakitUrl != null) FTSDKConfig.builder(datakitUrl) else FTSDKConfig.builder(
+                        datawayUrl,
+                        cliToken
+                    )
+
+                sdkConfig.setEnv(envType)
 
                 if (debug != null) {
                     sdkConfig.isDebug = debug
@@ -145,6 +153,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 if (envType != null) {
                     sdkConfig.env = envType;
                 }
+
+
 
                 FTSdk.install(sdkConfig)
                 result.success(null)
@@ -244,14 +254,15 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val stack: String? = call.argument<String>("stack")
                 val message: String? = call.argument<String>("message")
                 val state: Int? = call.argument<Int>("appState")
+                var errorType: String? = call.argument<String>("errorType")
                 val mapProperty: Map<String, Any>? = call.argument("property")
                 val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
 
                 val appState: AppState = AppState.values()[state ?: AppState.UNKNOWN.ordinal]
-                FTRUMGlobalManager.get().addError(
-                    stack, message,
-                    ErrorType.FLUTTER, appState, property
-                )
+                if (errorType.isNullOrEmpty()) {
+                    errorType = ErrorType.FLUTTER.toString()
+                }
+                FTRUMGlobalManager.get().addError(stack, message, errorType, appState, property)
                 result.success(null)
 
             }
