@@ -53,7 +53,10 @@ class _RUMState extends State<RUM> {
           ListTile(
             title: Text("Add Error"),
             onTap: () async {
-              FTRUMManager().addCustomError("error stack", "error message",property: {"error_property": "ft_value"});
+              FTRUMManager().addCustomError("error stack", "error message",
+                  property: {"error_property": "ft_value"},
+                  // errorType: "custom_error_type"
+              );
             },
           ),
           ListTile(

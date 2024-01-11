@@ -42,26 +42,28 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         }
         switch call.method {
         case SwiftAgentPlugin.METHOD_CONFIG:
-            if let metricsUrl = args["metricsUrl"] {
-                let config: FTMobileConfig = FTMobileConfig(metricsUrl: metricsUrl as! String)
-                if let debug = args["debug"] as? Bool {
-                    config.enableSDKDebugLog = debug
-                }
-                if let env = args["env"] as? String {
-                    config.env = env
-                }
-                if let serviceName = args["serviceName"] as? String {
-                    config.service = serviceName
-                }
-                if let globalContext = args["globalContext"] as? Dictionary<String, String> {
-                    config.globalContext = globalContext
-                }
-                if let groupIdentifiers = args["groupIdentifiers"] as? Array<String>{
-                    config.groupIdentifiers = groupIdentifiers
-                }
-                FTMobileAgent.start(withConfigOptions: config)
+            var datakitUrl = args["datakitUrl"] as? String
+            var datawayUrl = args["datawayUrl"] as? String
+            var cliToken = args["cliToken"] as? String
+            let config: FTMobileConfig =  if datakitUrl != nil { FTMobileConfig(datakitUrl: datakitUrl!)} else {FTMobileConfig(datawayUrl: datawayUrl!, clientToken: cliToken!)}
+            
+            
+            if let debug = args["debug"] as? Bool {
+                config.enableSDKDebugLog = debug
             }
-
+            if let env = args["env"] as? String {
+                config.env = env
+            }
+            if let serviceName = args["serviceName"] as? String {
+                config.service = serviceName
+            }
+            if let globalContext = args["globalContext"] as? Dictionary<String, String> {
+                config.globalContext = globalContext
+            }
+            if let groupIdentifiers = args["groupIdentifiers"] as? Array<String>{
+                config.groupIdentifiers = groupIdentifiers
+            }
+            FTMobileAgent.start(withConfigOptions: config)
             result(nil)
         case SwiftAgentPlugin.METHOD_BIND_USER:
             if let userId = args["userId"] as? String {
@@ -202,8 +204,14 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         case SwiftAgentPlugin.METHOD_RUM_ADD_ERROR:
             let stack = args["stack"] as? String ?? ""
             let message = args["message"] as? String ?? ""
+            var errorType = args["errorType"] as? String ?? ""
             let property = args["property"] as? Dictionary<String, Any> ?? nil
-            FTExternalDataManager.shared().addError(withType: "flutter", message: message, stack: stack,property: property)
+            
+            if(errorType.isEmpty){
+                errorType = "flutter_crash"
+            }
+            
+            FTExternalDataManager.shared().addError(withType: errorType, message: message, stack: stack,property: property)
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_START_RESOURCE:
             let key = args["key"] as! String

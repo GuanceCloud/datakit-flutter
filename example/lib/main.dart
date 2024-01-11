@@ -21,7 +21,7 @@ void main() async {
 
     //初始化 SDK
     await FTMobileFlutter.sdkConfig(
-      serverUrl: serverUrl,
+      datakitUrl: serverUrl,
       debug: true,
       serviceName: "flutter_agent",
       // dataSyncRetryCount: 0,

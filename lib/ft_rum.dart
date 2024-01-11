@@ -123,13 +123,15 @@ class FTRUMManager {
   ///[stack] 堆栈日志
   /// [message]错误信息
   ///[appState] 应用状态
+  /// [errorType] 自定义 errorType
   /// [property] 附加属性参数(可选)
   Future<void> addCustomError(String stack, String message,
-      {Map<String, String>? property}) async {
+      {Map<String, String>? property, String? errorType}) async {
     Map<String, dynamic> map = {};
     map["stack"] = stack;
     map["message"] = message;
     map["appState"] = appState.index;
+    map["errorType"] = errorType;
     map["property"] = property;
     await channel.invokeMethod(methodRumAddError, map);
   }

@@ -31,7 +31,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 31
+    compileSdk 34
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -47,7 +47,7 @@ android {
 def kotlin_coroutines_version = '1.5.2'
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.cloudcare.ft.mobile.sdk.tracker.agent:ft-sdk:1.3.17-alpha05'
+    implementation 'com.cloudcare.ft.mobile.sdk.tracker.agent:ft-sdk:1.4.1-alpha01'
     implementation 'com.cloudcare.ft.mobile.sdk.tracker.agent:ft-native:1.0.0-beta01'
 
     implementation 'com.google.code.gson:gson:2.8.5'
