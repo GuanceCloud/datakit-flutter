@@ -1,6 +1,7 @@
 ## 0.4.5-dev.1
 1.新增 dataway 上传方式
 2.Error 数据新增 errorType 数据
+3.修复 iOS enableUserResource 关闭，获取 trace header 崩溃的问题
 
 ---
 ## 0.4.4-dev.1
