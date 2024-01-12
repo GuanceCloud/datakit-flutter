@@ -1,3 +1,10 @@
+## legacy 0.4.5-dev.1
+* 新增 dataway 上传方式
+* Error 数据新增 errorType 数据
+* 修复 iOS enableUserResource 关闭，获取 trace header 崩溃的问题
+
+---
+
 ## legacy 0.4.4-dev.2
 * Android 适配 ft-sdk:1.3.17-alpha05
 * iOS 1.4.8-alpha.3
