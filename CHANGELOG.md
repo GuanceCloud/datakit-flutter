@@ -1,7 +1,13 @@
+## 0.4.5-pre.1
+1.Android 适配 1.4.1-beta01，iOS 适配 1.4.9-beta.1
+2.0.4.5-dev.1
+
+---
 ## 0.4.5-dev.1
 1.新增 dataway 上传方式
 2.Error 数据新增 errorType 数据
 3.修复 iOS enableUserResource 关闭，获取 trace header 崩溃的问题
+4.iOS 适配 1.4.9-alpha.5，Android 适配 1.4.1-alpha01
 
 ---
 ## 0.4.4-dev.1
