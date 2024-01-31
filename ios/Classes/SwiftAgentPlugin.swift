@@ -42,10 +42,15 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         }
         switch call.method {
         case SwiftAgentPlugin.METHOD_CONFIG:
-            var datakitUrl = args["datakitUrl"] as? String
-            var datawayUrl = args["datawayUrl"] as? String
-            var cliToken = args["cliToken"] as? String
-            let config: FTMobileConfig =  if datakitUrl != nil { FTMobileConfig(datakitUrl: datakitUrl!)} else {FTMobileConfig(datawayUrl: datawayUrl!, clientToken: cliToken!)}
+            let datakitUrl = args["datakitUrl"] as? String
+            let datawayUrl = args["datawayUrl"] as? String
+            let cliToken = args["cliToken"] as? String
+            let config: FTMobileConfig
+            if let datakitUrl = datakitUrl {
+                config = FTMobileConfig(datakitUrl: datakitUrl)
+            } else  {
+                config = FTMobileConfig(datawayUrl: datawayUrl!, clientToken: cliToken!)
+            }
             
             
             if let debug = args["debug"] as? Bool {
@@ -250,7 +255,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             FTExternalDataManager.shared().stopResource(withKey: key,property: property)
             result(nil)
         default:
-            result(FlutterMethodNotImplemented);
+            result(FlutterMethodNotImplemented)
         }
     }
 
