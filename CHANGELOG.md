@@ -1,3 +1,7 @@
+## 0.4.5-pre.4
+* iOS 适配 1.4.9-beta.5，iOS webview 数据 time 精度问题
+
+---
 ## 0.4.5-pre.3
 * iOS 适配 1.4.9-beta.4，处理 macOS 编译环境兼容问题
 
