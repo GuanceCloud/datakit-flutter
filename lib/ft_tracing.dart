@@ -53,10 +53,34 @@ class FTTracer {
 
 /// 使用 trace trace 类型
 enum TraceType {
+  ///
+  ///  datadog trace
+  ///
+  ///  x-datadog-trace-id
+  ///  x-datadog-parent-id
+  ///  x-datadog-sampling-priority
+  ///  x-datadog-origin
+  ///
   ddTrace,
+
+  ///
+  ///  zipkin multi header
+  ///
+  ///  X-B3-TraceId
+  ///  X-B3-SpanId
+  ///  X-B3-Sampled
+  ///
   zipkinMultiHeader,
+
+  /// zipkin single header,b3
   zipkinSingleHeader,
+
+  ///  w3c, traceparent
   traceparent,
+
+  /// skywalking 8.0+, sw-8
   skywalking,
+
+  /// jaeger, header uber-trace-id
   jaeger
 }

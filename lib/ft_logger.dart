@@ -53,12 +53,27 @@ class FTLogger {
 
 /// 设置日志等级
 enum FTLogStatus {
+  ///提示
   info,
+
+  ///警告
   warning,
+
+  ///错误
   error,
+
+  ///严重
   critical,
+
+  ///恢复
   ok,
 }
 
 /// 日志丢弃方式
-enum FTLogCacheDiscard { discard, discardOldest }
+enum FTLogCacheDiscard {
+  ///丢弃新日志
+  discard,
+
+  /// 丢弃旧日志
+  discardOldest
+}

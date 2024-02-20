@@ -86,7 +86,7 @@ class FTRUMManager {
   }
 
   /// view 创建,这个方法需要在 [starView] 之前被调用，目前 flutter route 中未有
-  /// [viewName]界面名称
+  /// [viewName] 界面名称
   /// [duration]
   Future<void> createView(String viewName, int duration) async {
     Map<String, dynamic> map = {};
@@ -120,9 +120,9 @@ class FTRUMManager {
   }
 
   ///添加自定义错误
-  ///[stack] 堆栈日志
-  /// [message]错误信息
-  ///[appState] 应用状态
+  /// [stack] 堆栈日志
+  /// [message] 错误信息
+  /// [appState] 应用状态
   /// [errorType] 自定义 errorType
   /// [property] 附加属性参数(可选)
   Future<void> addCustomError(String stack, String message,
@@ -137,7 +137,7 @@ class FTRUMManager {
   }
 
   ///开始资源请求
-  ///[key] 唯一 id
+  /// [key] 唯一 id
   /// [property] 附加属性参数(可选)
   Future<void> startResource(String key,
       {Map<String, String>? property}) async {
@@ -148,7 +148,7 @@ class FTRUMManager {
   }
 
   ///结束资源请求
-  ///[key] 唯一 id
+  /// [key] 唯一 id
   /// [property] 附加属性参数(可选)
   Future<void> stopResource(String key, {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
@@ -187,13 +187,30 @@ class FTRUMManager {
 
 /// app 运行状态
 enum AppState {
-  unknown, //未知
-  startup, //启动
-  run //运行
+  ///未知
+  unknown,
+
+  ///启动
+  startup,
+
+  ///正在运行
+  run
 }
 
-/// 监控类型
-enum ErrorMonitorType { all, battery, memory, cpu }
+/// 设置辅助监控信息，添加附加监控数据到 `RUM` Error 数据中
+enum ErrorMonitorType {
+  /// 所有数据
+  all,
+
+  /// 电池余量
+  battery,
+
+  /// 内存用量
+  memory,
+
+  /// CPU 占有率
+  cpu
+}
 
 extension ErrorMonitorTypeExt on ErrorMonitorType {
   int get value {
@@ -210,7 +227,23 @@ extension ErrorMonitorTypeExt on ErrorMonitorType {
   }
 }
 
-enum DeviceMetricsMonitorType { all, battery, memory, cpu, fps }
+/// 在 View 周期中，添加监控数据
+enum DeviceMetricsMonitorType {
+  /// 所有数据
+  all,
+
+  /// 监控当前页的最高输出电流输出情况
+  battery,
+
+  /// 监控当前应用使用内存情况
+  memory,
+
+  /// 监控 CPU 跳动次数
+  cpu,
+
+  /// 监控屏幕帧率
+  fps
+}
 
 extension DeviceMetricsMonitorTypeExt on DeviceMetricsMonitorType {
   int get value {
@@ -229,4 +262,16 @@ extension DeviceMetricsMonitorTypeExt on DeviceMetricsMonitorType {
   }
 }
 
-enum DetectFrequency { normal, frequent, rare }
+///
+///  检测周期，单位毫秒 MS
+///
+enum DetectFrequency {
+  /// 默认检测频率 500 ms 一次
+  normal,
+
+  /// 高频采集，100 ms 一次
+  frequent,
+
+  /// 低频率采集 1000 ms 一次
+  rare
+}
