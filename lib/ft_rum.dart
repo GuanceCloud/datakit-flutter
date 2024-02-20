@@ -60,7 +60,7 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumConfig, map);
   }
 
-  /// 执行 action
+  /// 添加 action
   /// [actionName] action 名称
   /// [actionType] action 类型
   /// [property] 附加属性参数(可选)
