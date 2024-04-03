@@ -14,6 +14,7 @@ import com.ft.sdk.FTSdk
 import com.ft.sdk.FTTraceConfig
 import com.ft.sdk.FTTraceManager
 import com.ft.sdk.LogCacheDiscard
+import com.ft.sdk.SyncPageSize
 import com.ft.sdk.TraceType
 import com.ft.sdk.garble.bean.AppState
 import com.ft.sdk.garble.bean.ErrorType
@@ -124,6 +125,11 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val globalContext: Map<String, String>? = call.argument("globalContext")
                 val enableAccessAndroidID: Boolean? =
                     call.argument<Boolean>("enableAccessAndroidID")
+                val autoSync: Boolean? = call.argument<Boolean>("autoSync")
+                val syncPageSize: Int? = call.argument<Int>("syncPageSize")
+                val customSyncPageSize: Int? = call.argument<Int>("customSyncPageSize")
+                val syncSleepTime: Int? = call.argument<Int>("syncSleepTime")
+
                 val sdkConfig =
                     if (datakitUrl != null) FTSDKConfig.builder(datakitUrl) else FTSDKConfig.builder(
                         datawayUrl,
@@ -154,7 +160,21 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                     sdkConfig.env = envType;
                 }
 
+                if (autoSync != null) {
+                    sdkConfig.setAutoSync(autoSync)
+                }
 
+                if (syncPageSize != null) {
+                    sdkConfig.setSyncPageSize(SyncPageSize.values()[syncPageSize])
+                }
+
+                if (customSyncPageSize != null) {
+                    sdkConfig.setCustomSyncPageSize(customSyncPageSize)
+                }
+
+                if (syncSleepTime != null) {
+                    sdkConfig.setSyncSleepTime(syncSleepTime)
+                }
 
                 FTSdk.install(sdkConfig)
                 result.success(null)
@@ -359,6 +379,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val logCacheDiscard: LogCacheDiscard =
                     LogCacheDiscard.values()[call.argument<Int>("logCacheDiscard")
                         ?: LogCacheDiscard.DISCARD.ordinal]
+                val logCacheLimitCount: Int? = call.argument<Int>("logCacheLimitCount")
 
                 val logConfig = FTLoggerConfig()
                     .setEnableCustomLog(true)
@@ -386,6 +407,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 if (printCustomLogToConsole != null) {
                     logConfig.isPrintCustomLogToConsole = printCustomLogToConsole;
+                }
+
+                if (logCacheLimitCount != null) {
+                    logConfig.logCacheLimitCount = logCacheLimitCount;
                 }
 
                 globalContext?.forEach {

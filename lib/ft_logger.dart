@@ -20,7 +20,7 @@ class FTLogger {
     map["status"] = status.index;
     map["isSilence"] = isSilence;
     map["property"] = property;
-    await channel.invokeMethod(methodLog, map);
+    await channel.invokeMethod(methodLogging, map);
   }
 
   /// 配置日志输出配置
@@ -37,6 +37,7 @@ class FTLogger {
       bool? enableCustomLog,
       bool? printCustomLogToConsole,
       FTLogCacheDiscard? discardStrategy,
+      int? logCacheLimitCount,
       List<FTLogStatus>? logLevelFilters,
       Map<String, String>? globalContext}) async {
     Map<String, dynamic> map = {};
@@ -45,6 +46,7 @@ class FTLogger {
     map["enableLinkRumData"] = enableLinkRumData;
     map["enableCustomLog"] = enableCustomLog;
     map["logCacheDiscard"] = discardStrategy;
+    map["logCacheLimitCount"] = logCacheLimitCount;
     map["printCustomLogToConsole"] = printCustomLogToConsole;
     map["globalContext"] = globalContext;
     await channel.invokeMethod(methodLogConfig, map);

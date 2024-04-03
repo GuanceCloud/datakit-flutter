@@ -9,7 +9,7 @@ const methodUnbindUser = "ftUnBindUser";
 const methodEnableAccessAndroidID = "ftEnableAccessAndroidID";
 const methodTrackEventFromExtension = "ftTrackEventFromExtension";
 const methodLogConfig = "ftLogConfig";
-const methodLog = "ftLogging";
+const methodLogging = "ftLogging";
 
 const methodRumConfig = "ftRumConfig";
 const methodRumAddAction = "ftRumAddAction";

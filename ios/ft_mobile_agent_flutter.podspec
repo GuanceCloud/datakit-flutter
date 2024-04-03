@@ -11,11 +11,11 @@ Pod::Spec.new do |s|
                        DESC
   s.homepage         = 'http://example.com'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
+  s.author           = { 'Shanghai Guance Information Technology Co.,Ltd' => 'zhangbo@guance.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'FTMobileSDK/FTMobileAgent', "1.4.9-beta.5"
+  s.dependency 'FTMobileSDK/FTMobileAgent', "1.4.11"
   s.ios.deployment_target = '8.0'
 
   # Flutter.framework does not contain a i386 slice. Only x86_64 simulators are supported.
