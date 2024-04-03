@@ -24,7 +24,7 @@ void main() {
     methodBindUser,
     methodUnbindUser,
     methodLogConfig,
-    methodLog,
+    methodLogging,
     methodRumConfig,
     methodRumAddAction,
     methodRumCreateView,
@@ -46,7 +46,7 @@ void main() {
         case methodBindUser:
         case methodUnbindUser:
         case methodLogConfig:
-        case methodLog:
+        case methodLogging:
         case methodRumConfig:
         case methodRumAddAction:
         case methodRumCreateView:

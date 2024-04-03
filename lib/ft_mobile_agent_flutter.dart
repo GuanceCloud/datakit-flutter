@@ -37,6 +37,10 @@ class FTMobileFlutter {
       String? env,
       bool? enableAccessAndroidID,
       int? dataSyncRetryCount,
+      bool? autoSync,
+      SyncPageSize? syncPageSize,
+      int? customSyncPageSize,
+      int? syncSleepTime,
       Map<String, String>? globalContext,
       List<String>? iOSGroupIdentifiers}) async {
     Map<String, dynamic> map = {};
@@ -44,16 +48,19 @@ class FTMobileFlutter {
     if (datakitUrl != null && datakitUrl.isNotEmpty) {
       map["datakitUrl"] = datakitUrl;
     }
+
+    map["env"] = envType?.toString();
+    if (env != null && env.isNotEmpty) {
+      map["env"] = env;
+    }
     map["datawayUrl"] = datawayUrl;
     map["cliToken"] = cliToken;
     map["debug"] = debug;
     map["serviceName"] = serviceName;
-    if (envType != null) {
-      map["env"] = envType.toString();
-    }
-    if (env != null) {
-      map["env"] = env;
-    }
+    map["autoSync"] = autoSync;
+    map["syncPageSize"] = syncPageSize?.index;
+    map["customSyncPageSize"] = customSyncPageSize;
+    map["syncSleepTime"] = syncSleepTime;
     map["groupIdentifiers"] = iOSGroupIdentifiers;
     if (globalContext == null) {
       globalContext = {};
@@ -164,3 +171,9 @@ class FTMobileFlutter {
 ///[common]
 ///[local] 本地
 enum EnvType { prod, gray, pre, common, local }
+
+///
+///[mini]   5 条
+///[medium] 10 条
+///[large]  50 条
+enum SyncPageSize { mini, medium, large }

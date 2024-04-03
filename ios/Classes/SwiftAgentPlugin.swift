@@ -63,6 +63,23 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             if let groupIdentifiers = args["groupIdentifiers"] as? Array<String>{
                 config.groupIdentifiers = groupIdentifiers
             }
+
+            if let autoSync = args["autoSync"] as? Bool{
+                config.autoSync = autoSync
+            }
+
+            if let syncPageSize = args["syncPageSize"] as? Int{
+                config.setSyncPageSizeWithType(FTSyncPageSize.init(rawValue: UInt(syncPageSize))!)
+            }
+
+            if let customSyncPageSize = args["customSyncPageSize"] as? Int{
+                config.syncPageSize = Int32(customSyncPageSize)
+            }
+
+            if let syncSleepTime = args["syncSleepTime"] as? Int{
+                config.syncSleepTime = Int32(syncSleepTime)
+            }
+
             FTMobileAgent.start(withConfigOptions: config)
             result(nil)
         case SwiftAgentPlugin.METHOD_BIND_USER:
@@ -106,6 +123,10 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             }
             if let printCustomLogToConsole = args["printCustomLogToConsole"] as? Bool {
                 logConfig.printCustomLogToConsole = printCustomLogToConsole
+            }
+
+            if let logCacheLimitCount = args["logCacheLimitCount"] as? Int {
+                logConfig.logCacheLimitCount = Int32(logCacheLimitCount)
             }
 
             if let globalContext = args["globalContext"] as? Dictionary<String, String> {
