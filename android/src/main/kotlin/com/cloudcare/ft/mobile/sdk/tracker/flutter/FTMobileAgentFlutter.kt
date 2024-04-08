@@ -83,6 +83,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
     companion object {
         const val LOG_TAG = "FTMobileAgentFlutter"
         const val METHOD_CONFIG = "ftConfig"
+        const val METHOD_FLUSH_SYNC_DATA = "ftFlushSyncData"
 
         const val METHOD_BIND_USER = "ftBindUser"
         const val METHOD_UNBIND_USER = "ftUnBindUser"
@@ -177,6 +178,11 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
 
                 FTSdk.install(sdkConfig)
+                result.success(null)
+            }
+
+            METHOD_FLUSH_SYNC_DATA -> {
+                FTSdk.flushSyncData()
                 result.success(null)
             }
 
