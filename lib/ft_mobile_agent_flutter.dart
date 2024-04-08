@@ -147,6 +147,11 @@ class FTMobileFlutter {
     return await channel.invokeMethod(methodSetInnerLogHandler);
   }
 
+  /// 立即同步数据
+  static Future<void> flushSyncData() async {
+    return await channel.invokeMethod(methodFlushSyncData);
+  }
+
   static _configChannel() {
     channel.setMethodCallHandler((call) async {
       var args = call.arguments;

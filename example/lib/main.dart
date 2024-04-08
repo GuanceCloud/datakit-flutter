@@ -18,48 +18,57 @@ const appIOSId = String.fromEnvironment("IOS_APP_ID");
 void main() async {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
-
-    //初始化 SDK
-    await FTMobileFlutter.sdkConfig(
-      datakitUrl: serverUrl,
-      debug: true,
-      serviceName: "flutter_agent",
-      // dataSyncRetryCount: 0,
-      iOSGroupIdentifiers: [
-        "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo"
-      ],
-    );
-    await FTLogger().logConfig(enableCustomLog: true);
-
-    // await FTMobileFlutter.registerInnerLogHandler((level, tag, message) {
-    //   if (level == "E") {
-    //     FTLogger()
-    //         .logging("[$tag]$message", FTLogStatus.error, isSilence: true);
-    //   }
-    // });
-    await FTTracer().setConfig(
-        enableLinkRUMData: true,
-        traceType: TraceType.ddTrace,
-        enableAutoTrace: true); //  Trace 在 Http 请求 Trace Header
-    await FTRUMManager().setConfig(
-        androidAppId: appAndroidId,
-        iOSAppId: appIOSId,
-        enableNativeAppUIBlock: true,
-        enableNativeUserAction: true,
-        enableUserResource: true,// RUM Resource Http 数据抓取
-        errorMonitorType: ErrorMonitorType.all.value,
-        deviceMetricsMonitorType: DeviceMetricsMonitorType.all.value);
-    FTMobileFlutter.trackEventFromExtension(
-        "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo");
-
-    FlutterError.onError = FTRUMManager().addFlutterError;
-
+    await sdkInit();
     runApp(MyApp());
   }, (Object error, StackTrace stack) {
     //RUM Error： 记录 自动抓取 error 数据
     FTRUMManager().addError(error, stack);
   });
+
   print("=======config here");
+}
+
+Future<void> sdkInit() async {
+  //初始化 SDK
+  await FTMobileFlutter.sdkConfig(
+    datakitUrl: serverUrl,
+    debug: true,
+    serviceName: "flutter_agent",
+    // dataSyncRetryCount: 0,
+    // autoSync: false,
+    // customSyncPageSize: 30,
+    // syncSleepTime: 100,
+    iOSGroupIdentifiers: [
+      "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo"
+    ],
+  );
+  await FTLogger().logConfig(
+      enableCustomLog: true,
+      // logCacheLimitCount: 10000
+  );
+  // await FTMobileFlutter.registerInnerLogHandler((level, tag, message) {
+  //   if (level == "E") {
+  //     FTLogger()
+  //         .logging("[$tag]$message", FTLogStatus.error, isSilence: true);
+  //   }
+  // });
+  await FTTracer().setConfig(
+      enableLinkRUMData: true,
+      traceType: TraceType.ddTrace,
+      enableAutoTrace: true); //  Trace 在 Http 请求 Trace Header
+  await FTRUMManager().setConfig(
+      androidAppId: appAndroidId,
+      iOSAppId: appIOSId,
+      enableNativeAppUIBlock: true,
+      enableNativeUserAction: true,
+      enableUserResource: true,
+      // RUM Resource Http 数据抓取
+      errorMonitorType: ErrorMonitorType.all.value,
+      deviceMetricsMonitorType: DeviceMetricsMonitorType.all.value);
+  FTMobileFlutter.trackEventFromExtension(
+      "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo");
+
+  FlutterError.onError = FTRUMManager().addFlutterError;
 }
 
 class MyApp extends StatelessWidget {
@@ -144,10 +153,30 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
                 _buildTracerAutoWidget(),
                 _buildRUMWidget(),
                 _buildNoNavigatorObserversWidget(),
+                _buildLazyInitWidget(),
+                _buildFlushSyncDataWidget(),
               ],
             ),
           ),
         ));
+  }
+
+  Widget _buildLazyInitWidget() {
+    return ElevatedButton(
+      child: Text("延迟初始化 SDK"),
+      onPressed: () {
+        sdkInit();
+      },
+    );
+  }
+
+  Widget _buildFlushSyncDataWidget() {
+    return ElevatedButton(
+      child: Text("手动同步数据"),
+      onPressed: () {
+        FTMobileFlutter.flushSyncData();
+      },
+    );
   }
 
   Widget _buildBindUserWidget() {

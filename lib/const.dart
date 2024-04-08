@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 const MethodChannel channel = const MethodChannel('ft_mobile_agent_flutter');
 
 const methodConfig = "ftConfig";
+const methodFlushSyncData = "ftFlushSyncData";
 
 const methodBindUser = "ftBindUser";
 const methodUnbindUser = "ftUnBindUser";

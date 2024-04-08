@@ -5,7 +5,7 @@ import FTMobileSDK
 public class SwiftAgentPlugin: NSObject, FlutterPlugin {
 
     static let METHOD_CONFIG = "ftConfig"
-
+    static let METHOD_FLUSH_SYNC_DATA = "ftFlushSyncData"
 
     static let METHOD_BIND_USER = "ftBindUser"
     static let METHOD_UNBIND_USER = "ftUnBindUser"
@@ -81,6 +81,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             }
 
             FTMobileAgent.start(withConfigOptions: config)
+            result(nil)
+        case SwiftAgentPlugin.METHOD_FLUSH_SYNC_DATA:
+            FTMobileAgent.sharedInstance().flushSyncData()
             result(nil)
         case SwiftAgentPlugin.METHOD_BIND_USER:
             if let userId = args["userId"] as? String {
