@@ -83,14 +83,14 @@ class MyApp extends StatelessWidget {
       home: HomePage(),
       navigatorObservers: [
         //RUM View： 使用路由跳转时，监控页面生命周期
-        FTRouteObserver(),
+        // FTRouteObserver(),
         // RUM View： routeFilter 过滤不需要参与监听的页面
-        // FTRouteObserver(routeFilter: (Route? route, Route? previousRoute) {
-        //   if (route is DialogRoute || previousRoute is DialogRoute) {
-        //     return true;
-        //   }
-        //   return false;
-        // }),
+        FTRouteObserver(routeFilter: (Route? route, Route? previousRoute) {
+          if (route is DialogRoute) {
+            return true;
+          }
+          return false;
+        }),
       ],
       routes: <String, WidgetBuilder>{
         //路由跳转
