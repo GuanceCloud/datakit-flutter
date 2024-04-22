@@ -4,7 +4,7 @@ import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 ///监控页面休眠和唤醒
 class FTLifeRecycleHandler with WidgetsBindingObserver {
   static final FTLifeRecycleHandler _singleton =
-  FTLifeRecycleHandler._internal();
+      FTLifeRecycleHandler._internal();
 
   factory FTLifeRecycleHandler() {
     return _singleton;
@@ -34,15 +34,24 @@ class FTLifeRecycleHandler with WidgetsBindingObserver {
 
 ///使用路由跳转时，监控页面生命周期
 class FTRouteObserver extends RouteObserver<PageRoute<dynamic>> {
-  FTRouteObserver();
+  bool Function(Route? route, Route? previousRoute)? _routeFilter;
 
-  Future<void> _sendScreenView(Route? route, Route? previousRoute) async {
+  FTRouteObserver(
+      {bool Function(Route<dynamic>?, Route<dynamic>?)? routeFilter})
+      : this._routeFilter = routeFilter;
+
+  Future<void> sendScreenView(Route? route, Route? previousRoute) async {
+    if (_routeFilter?.call(route, previousRoute) ?? false) {
+      return;
+    }
+
     String name = "";
 
     if (previousRoute != null) {
       await FTRUMManager().stopView();
     }
-    if (route is PageRoute) {
+
+    if (route != null) {
       name = route.settings.name ?? "";
       if (name.length == 0) {
         name = route.runtimeType.toString();
@@ -54,19 +63,19 @@ class FTRouteObserver extends RouteObserver<PageRoute<dynamic>> {
 
   @override
   void didPush(Route route, Route? previousRoute) {
-    _sendScreenView(route, previousRoute);
+    sendScreenView(route, previousRoute);
     super.didPush(route, previousRoute);
   }
 
   @override
   void didReplace({Route? newRoute, Route? oldRoute}) {
-    _sendScreenView(newRoute, oldRoute);
+    sendScreenView(newRoute, oldRoute);
     super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
   }
 
   @override
   void didPop(Route route, Route? previousRoute) {
-    _sendScreenView(previousRoute, route);
+    sendScreenView(previousRoute, route);
     super.didPop(route, previousRoute);
   }
 }

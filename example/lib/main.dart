@@ -45,8 +45,8 @@ Future<void> sdkInit() async {
     ],
   );
   await FTLogger().logConfig(
-      enableCustomLog: true,
-      // logCacheLimitCount: 10000
+    enableCustomLog: true,
+    // logCacheLimitCount: 10000
   );
   // await FTMobileFlutter.registerInnerLogHandler((level, tag, message) {
   //   if (level == "E") {
@@ -84,6 +84,13 @@ class MyApp extends StatelessWidget {
       navigatorObservers: [
         //RUM View： 使用路由跳转时，监控页面生命周期
         FTRouteObserver(),
+        // RUM View： routeFilter 过滤不需要参与监听的页面
+        // FTRouteObserver(routeFilter: (Route? route, Route? previousRoute) {
+        //   if (route is DialogRoute || previousRoute is DialogRoute) {
+        //     return true;
+        //   }
+        //   return false;
+        // }),
       ],
       routes: <String, WidgetBuilder>{
         //路由跳转
@@ -157,6 +164,7 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
                 _buildNoNavigatorObserversWidget(),
                 _buildLazyInitWidget(),
                 _buildFlushSyncDataWidget(),
+                _buildDialogWidget()
               ],
             ),
           ),
@@ -258,6 +266,16 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
         Navigator.of(context).push(
           FTMaterialPageRoute(builder: (context) => new NoRouteNamePage()),
         );
+      },
+    );
+  }
+
+  Widget _buildDialogWidget() {
+    return ElevatedButton(
+      child: Text("关于对话框"),
+      onPressed: () {
+        showAboutDialog(
+            context: context);
       },
     );
   }
