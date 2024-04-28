@@ -6,6 +6,10 @@
 * FTRouteObserver 添加 routeFilter, 可以过滤不进行 View 追踪的页面
 
 ---
+## 0.4.6-pre.1
+* 同 0.4.6-dev.1
+
+---
 ## 0.4.6-dev.1
 * Android 适配 ft-sdk:1.4.3, ft-native:1.1.0, ft-plugin:1.3.0
 * iOS 适配 1.4.11
