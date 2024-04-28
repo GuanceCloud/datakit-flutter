@@ -1,3 +1,7 @@
+>相关 SDK 更新内容
+> * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
+> * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md) 
+
 ## 0.5.0-dev.2
 * FTRouteObserver 添加 routeFilter, 可以过滤不进行 View 追踪的页面
 
