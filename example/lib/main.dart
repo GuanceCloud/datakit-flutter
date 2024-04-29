@@ -83,14 +83,17 @@ class MyApp extends StatelessWidget {
       home: HomePage(),
       navigatorObservers: [
         //RUM View： 使用路由跳转时，监控页面生命周期
-        // FTRouteObserver(),
+        FTRouteObserver(),
         // RUM View： routeFilter 过滤不需要参与监听的页面
-        FTRouteObserver(routeFilter: (Route? route, Route? previousRoute) {
-          if (route is DialogRoute) {
-            return true;
-          }
-          return false;
-        }),
+        // FTRouteObserver(routeFilter: (Route? route, Route? previousRoute) {
+        //   if (route is DialogRoute || previousRoute is DialogRoute) {
+        //     return true;
+        //   }
+        //   return false;
+        // }),
+
+        //RUM View 过滤 DialogRoute 类型的组件
+        //FTDialogRouteFilterObserver(filterOnlyNoSettingName: true)
       ],
       routes: <String, WidgetBuilder>{
         //路由跳转
@@ -275,7 +278,7 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
       child: Text("关于对话框"),
       onPressed: () {
         showAboutDialog(
-            context: context);
+            context: context, routeSettings: RouteSettings(name: "About"));
       },
     );
   }
