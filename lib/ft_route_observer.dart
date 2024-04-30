@@ -35,6 +35,7 @@ class FTLifeRecycleHandler with WidgetsBindingObserver {
 /// 使用路由跳转时，监控页面生命周期，过滤 DialogRoute 类型的组件
 class FTDialogRouteFilterObserver extends FTRouteObserver {
 
+  /// [filterOnlyNoSettingName] 仅过滤 [RouteSettings.name] 为 null 的数据
   FTDialogRouteFilterObserver({bool filterOnlyNoSettingName = false}) {
     _routeFilter = (route, pre) {
       if (route is DialogRoute) {
@@ -54,15 +55,17 @@ class FTDialogRouteFilterObserver extends FTRouteObserver {
   }
 }
 
+typedef RouteFilter = bool Function(Route? route, Route? previousRoute);
+
 ///使用路由跳转时，监控页面生命周期
 class FTRouteObserver extends RouteObserver<PageRoute<dynamic>> {
-  bool Function(Route? route, Route? previousRoute)? _routeFilter;
+  RouteFilter? _routeFilter;
 
   ///
   /// [routeFilter] 设置过滤，需要过滤的返回 true，不需要过滤返回 false
   ///
   FTRouteObserver(
-      {bool Function(Route<dynamic>?, Route<dynamic>?)? routeFilter})
+      {RouteFilter? routeFilter})
       : this._routeFilter = routeFilter;
 
   Future<void> sendScreenView(Route? route, Route? previousRoute) async {

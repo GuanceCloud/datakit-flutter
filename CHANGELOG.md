@@ -2,6 +2,11 @@
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md) 
 
+## 0.5.0-pre.1
+* 同 0.5.0-dev.2，0.5.0-dev.3
+
+---
+
 ## 0.5.0-dev.3
 * 添加 FTDialogRouteFilterObserver，针对 DialogRoute 类型页面进行针对过滤
 

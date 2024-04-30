@@ -165,6 +165,7 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
                 _buildTracerAutoWidget(),
                 _buildRUMWidget(),
                 _buildNoNavigatorObserversWidget(),
+                _buildConfigRouteSettingWidget(),
                 _buildLazyInitWidget(),
                 _buildFlushSyncDataWidget(),
                 _buildDialogWidget()
@@ -268,6 +269,19 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
       onPressed: () {
         Navigator.of(context).push(
           FTMaterialPageRoute(builder: (context) => new NoRouteNamePage()),
+        );
+      },
+    );
+  }
+
+  Widget _buildConfigRouteSettingWidget() {
+    return ElevatedButton(
+      child: Text("设置 RouteSetting 中 name 属性"),
+      onPressed: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (context) => new NoRouteNamePage(),
+              settings: RouteSettings(name: "RouteSettingName")),
         );
       },
     );
