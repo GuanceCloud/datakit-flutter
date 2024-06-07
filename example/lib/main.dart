@@ -86,14 +86,16 @@ class MyApp extends StatelessWidget {
         FTRouteObserver(),
         // RUM View： routeFilter 过滤不需要参与监听的页面
         // FTRouteObserver(routeFilter: (Route? route, Route? previousRoute) {
-        //   if (route is DialogRoute || previousRoute is DialogRoute) {
+        //   if (route is DialogRoute ||
+        //       previousRoute is DialogRoute ||
+        //       route is PopupRoute ||
+        //       previousRoute is PopupRoute) {
         //     return true;
         //   }
         //   return false;
         // }),
-
-        //RUM View 过滤 DialogRoute 类型的组件
-        //FTDialogRouteFilterObserver(filterOnlyNoSettingName: true)
+        //RUM View 过滤 DialogRoute PopRoute类型的组件
+        // FTDialogRouteFilterObserver(filterOnlyNoSettingName: false,filterPopRoute: true)
       ],
       routes: <String, WidgetBuilder>{
         //路由跳转
@@ -168,7 +170,8 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
                 _buildConfigRouteSettingWidget(),
                 _buildLazyInitWidget(),
                 _buildFlushSyncDataWidget(),
-                _buildDialogWidget()
+                _buildDialogWidget(),
+                _buildPopRouteWidget()
               ],
             ),
           ),
@@ -295,6 +298,35 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
             context: context, routeSettings: RouteSettings(name: "About"));
       },
     );
+  }
+
+  Widget _buildPopRouteWidget() {
+    return ElevatedButton(
+        onPressed: () {
+          showModalBottomSheet<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return Container(
+                height: 200,
+                color: Colors.amber,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      const Text('Modal BottomSheet'),
+                      ElevatedButton(
+                        child: const Text('Close BottomSheet'),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
+        child: Text("BottomSheet"));
   }
 
   void _showPermissionTip(String tip, List<Permission> permissions) {

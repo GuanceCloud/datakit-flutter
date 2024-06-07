@@ -32,23 +32,26 @@ class FTLifeRecycleHandler with WidgetsBindingObserver {
   }
 }
 
-/// 使用路由跳转时，监控页面生命周期，过滤 DialogRoute 类型的组件
+/// 使用路由跳转时，监控页面生命周期，过滤 DialogRoute 与 PopupRoute 类型的组件
 class FTDialogRouteFilterObserver extends FTRouteObserver {
-
   /// [filterOnlyNoSettingName] 仅过滤 [RouteSettings.name] 为 null 的数据
-  FTDialogRouteFilterObserver({bool filterOnlyNoSettingName = false}) {
+  /// [filterPopRoute] 过滤 PopupRoute 类型的
+  FTDialogRouteFilterObserver({
+    bool filterOnlyNoSettingName = false,
+    bool filterPopRoute = true,
+  }) {
     _routeFilter = (route, pre) {
-      if (route is DialogRoute) {
+      if (route is DialogRoute || (filterPopRoute && route is PopupRoute)) {
         if (!filterOnlyNoSettingName) {
           return true;
         }
-        return route.settings.name == null;
+        return route?.settings.name == null;
       }
-      if (pre is DialogRoute) {
+      if (pre is DialogRoute || (filterPopRoute && pre is PopupRoute)) {
         if (!filterOnlyNoSettingName) {
           return true;
         }
-        return pre.settings.name == null;
+        return pre?.settings.name == null;
       }
       return false;
     };
@@ -64,9 +67,7 @@ class FTRouteObserver extends RouteObserver<PageRoute<dynamic>> {
   ///
   /// [routeFilter] 设置过滤，需要过滤的返回 true，不需要过滤返回 false
   ///
-  FTRouteObserver(
-      {RouteFilter? routeFilter})
-      : this._routeFilter = routeFilter;
+  FTRouteObserver({RouteFilter? routeFilter}) : this._routeFilter = routeFilter;
 
   Future<void> sendScreenView(Route? route, Route? previousRoute) async {
     if (_routeFilter?.call(route, previousRoute) ?? false) {
