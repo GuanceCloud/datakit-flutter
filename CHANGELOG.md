@@ -2,7 +2,7 @@
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md) 
 
-## 0.5.1-dev.1
+## 0.5.1-dev.3
 * 扩充 FTDialogRouteFilterObserver，针对 PopupRoute 类型页面进行过滤
 
 ---
