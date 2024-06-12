@@ -7,6 +7,7 @@ import 'package:agent_example/view_without_route_name_page.dart';
 import 'package:agent_example/webview_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'ft_get_view_name.dart';
@@ -83,7 +84,7 @@ class MyApp extends StatelessWidget {
       home: HomePage(),
       navigatorObservers: [
         //RUM View： 使用路由跳转时，监控页面生命周期
-        FTRouteObserver(),
+        // FTRouteObserver(),
         // RUM View： routeFilter 过滤不需要参与监听的页面
         // FTRouteObserver(routeFilter: (Route? route, Route? previousRoute) {
         //   if (route is DialogRoute ||
@@ -95,7 +96,8 @@ class MyApp extends StatelessWidget {
         //   return false;
         // }),
         //RUM View 过滤 DialogRoute PopRoute类型的组件
-        // FTDialogRouteFilterObserver(filterOnlyNoSettingName: false,filterPopRoute: true)
+        FTDialogRouteFilterObserver(
+            filterOnlyNoSettingName: false, filterPopRoute: true)
       ],
       routes: <String, WidgetBuilder>{
         //路由跳转
@@ -119,7 +121,10 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     if (Platform.isAndroid) {
-      requestPermission([Permission.phone]);
+      requestPermission(
+          [Permission.phone, Permission.camera, Permission.photos]);
+    } else if (Platform.isIOS) {
+      requestPermission([Permission.camera, Permission.photos]);
     }
 
     WidgetsBinding.instance.addObserver(this); //添加观察者
@@ -171,7 +176,8 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
                 _buildLazyInitWidget(),
                 _buildFlushSyncDataWidget(),
                 _buildDialogWidget(),
-                _buildPopRouteWidget()
+                _buildPopRouteWidget(),
+                _buildImagePicker()
               ],
             ),
           ),
@@ -327,6 +333,17 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
           );
         },
         child: Text("BottomSheet"));
+  }
+
+  Widget _buildImagePicker() {
+    return ElevatedButton(
+        onPressed: () async {
+          FTRUMManager().starView("Image Picker");
+          final ImagePicker picker = ImagePicker();
+          final XFile? files =
+              await picker.pickImage(source: ImageSource.gallery);
+        },
+        child: Text("Image Picker"));
   }
 
   void _showPermissionTip(String tip, List<Permission> permissions) {

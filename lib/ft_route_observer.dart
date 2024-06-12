@@ -14,12 +14,20 @@ class FTLifeRecycleHandler with WidgetsBindingObserver {
 
   String _currentPageName = "";
 
+  bool isAdded = false;
+
   void initObserver() {
-    WidgetsBinding.instance.addObserver(this);
+    if (!isAdded) {
+      WidgetsBinding.instance.addObserver(this);
+      isAdded = true;
+    }
   }
 
   void removeObserver() {
-    WidgetsBinding.instance.removeObserver(this);
+    if (isAdded) {
+      WidgetsBinding.instance.removeObserver(this);
+      isAdded = false;
+    }
   }
 
   @override
