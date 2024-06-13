@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 
 ///监控页面休眠和唤醒
-class FTLifeRecycleHandler with WidgetsBindingObserver {
+@Deprecated(
+    "Just remove. Same staff will be done in FTRouteObserver and FTDialogRouteFilterObserver")
+class FTLifeRecycleHandler {
   static final FTLifeRecycleHandler _singleton =
       FTLifeRecycleHandler._internal();
 
@@ -12,32 +14,9 @@ class FTLifeRecycleHandler with WidgetsBindingObserver {
 
   FTLifeRecycleHandler._internal();
 
-  String _currentPageName = "";
+  void initObserver() {}
 
-  bool isAdded = false;
-
-  void initObserver() {
-    if (!isAdded) {
-      WidgetsBinding.instance.addObserver(this);
-      isAdded = true;
-    }
-  }
-
-  void removeObserver() {
-    if (isAdded) {
-      WidgetsBinding.instance.removeObserver(this);
-      isAdded = false;
-    }
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      FTRUMManager().stopView();
-    } else if (state == AppLifecycleState.resumed) {
-      FTRUMManager().starView(_currentPageName);
-    }
-  }
+  void removeObserver() {}
 }
 
 /// 使用路由跳转时，监控页面生命周期，过滤 DialogRoute 与 PopupRoute 类型的组件
@@ -69,19 +48,23 @@ class FTDialogRouteFilterObserver extends FTRouteObserver {
 typedef RouteFilter = bool Function(Route? route, Route? previousRoute);
 
 ///使用路由跳转时，监控页面生命周期
-class FTRouteObserver extends RouteObserver<PageRoute<dynamic>> {
+class FTRouteObserver extends RouteObserver<PageRoute<dynamic>>
+    with WidgetsBindingObserver {
   RouteFilter? _routeFilter;
+  String _currentPageName = "";
 
   ///
   /// [routeFilter] 设置过滤，需要过滤的返回 true，不需要过滤返回 false
   ///
-  FTRouteObserver({RouteFilter? routeFilter}) : this._routeFilter = routeFilter;
+  FTRouteObserver({RouteFilter? routeFilter}) {
+    this._routeFilter = routeFilter;
+    WidgetsBinding.instance.addObserver(this);
+  }
 
   Future<void> sendScreenView(Route? route, Route? previousRoute) async {
     if (_routeFilter?.call(route, previousRoute) ?? false) {
       return;
     }
-
     String name = "";
 
     if (previousRoute != null) {
@@ -94,7 +77,16 @@ class FTRouteObserver extends RouteObserver<PageRoute<dynamic>> {
         name = route.runtimeType.toString();
       }
       await FTRUMManager().starView(name);
-      FTLifeRecycleHandler()._currentPageName = name;
+      _currentPageName = name;
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      FTRUMManager().stopView();
+    } else if (state == AppLifecycleState.resumed) {
+      FTRUMManager().starView(_currentPageName);
     }
   }
 

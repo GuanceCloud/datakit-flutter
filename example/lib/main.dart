@@ -128,10 +128,6 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
     }
 
     WidgetsBinding.instance.addObserver(this); //添加观察者
-
-    //RUM View：休眠与唤醒事件
-    //添加应用休眠和唤醒监听
-    FTLifeRecycleHandler().initObserver();
   }
 
   @override
@@ -147,9 +143,6 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-
-    //RUM View：休眠与唤醒事件
-    FTLifeRecycleHandler().removeObserver();
     WidgetsBinding.instance.removeObserver(this); //添加观察者
   }
 
@@ -338,8 +331,8 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
   Widget _buildImagePicker() {
     return ElevatedButton(
         onPressed: () async {
-          FTRUMManager().starView("Image Picker");
           final ImagePicker picker = ImagePicker();
+          FTRUMManager().startAction("Image Picker", "image_pick");
           final XFile? files =
               await picker.pickImage(source: ImageSource.gallery);
         },
