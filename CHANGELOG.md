@@ -5,10 +5,12 @@
 ## 0.5.1-dev.4
 * 优化休眠唤醒页面监听的设置方式，无需设置 FTLifeRecycleHandler
 * 修正 Android 特殊场景长时间使用后，会偶现频繁刷新 session_id 的问题
+* Android 适配 ft-sdk 1.5.1.-alpha03
 
 ---
 ## 0.5.1-dev.3
 * 扩充 FTDialogRouteFilterObserver，针对 PopupRoute 类型页面进行过滤
+* Android 适配 ft-sdk 1.5.0，iOS 适配 1.5.0
 
 ---
 
