@@ -2,6 +2,13 @@
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md) 
 
+## 0.5.1-pre.1
+* 优化休眠唤醒页面监听的设置方式，无需设置 FTLifeRecycleHandler
+* 修正 Android 特殊场景长时间使用后，会偶现频繁刷新 session_id 的问题
+* Android 适配 ft-sdk 1.5.1
+
+---
+
 ## 0.5.1-dev.4
 * 优化休眠唤醒页面监听的设置方式，无需设置 FTLifeRecycleHandler
 * 修正 Android 特殊场景长时间使用后，会偶现频繁刷新 session_id 的问题
