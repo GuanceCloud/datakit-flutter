@@ -2,7 +2,7 @@
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md) 
 
-## 0.5.1-pre.4
+## 0.5.1-pre.5
 * 适配 iOS 1.5.3
 * 适配 Android ft-sdk: 1.6.0, ft-plugin 1.3.3
 
