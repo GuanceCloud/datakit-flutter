@@ -1,7 +1,10 @@
 >相关 SDK 更新内容
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md) 
+## 0.5.1-pre.6
+* 修正内部版本标记错误的问题
 
+---
 ## 0.5.1-pre.5
 * 适配 iOS 1.5.3
 * 适配 Android ft-sdk: 1.6.0, ft-plugin 1.3.3
