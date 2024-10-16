@@ -5,14 +5,6 @@ import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 @Deprecated(
     "Just remove. Same staff will be done in FTRouteObserver and FTDialogRouteFilterObserver")
 class FTLifeRecycleHandler {
-  static final FTLifeRecycleHandler _singleton =
-      FTLifeRecycleHandler._internal();
-
-  factory FTLifeRecycleHandler() {
-    return _singleton;
-  }
-
-  FTLifeRecycleHandler._internal();
 
   void initObserver() {}
 
@@ -48,17 +40,14 @@ class FTDialogRouteFilterObserver extends FTRouteObserver {
 typedef RouteFilter = bool Function(Route? route, Route? previousRoute);
 
 ///使用路由跳转时，监控页面生命周期
-class FTRouteObserver extends RouteObserver<PageRoute<dynamic>>
-    with WidgetsBindingObserver {
+class FTRouteObserver extends RouteObserver<PageRoute<dynamic>> {
   RouteFilter? _routeFilter;
-  String _currentPageName = "";
 
   ///
   /// [routeFilter] 设置过滤，需要过滤的返回 true，不需要过滤返回 false
   ///
   FTRouteObserver({RouteFilter? routeFilter}) {
     this._routeFilter = routeFilter;
-    WidgetsBinding.instance.addObserver(this);
   }
 
   Future<void> sendScreenView(Route? route, Route? previousRoute) async {
@@ -77,18 +66,10 @@ class FTRouteObserver extends RouteObserver<PageRoute<dynamic>>
         name = route.runtimeType.toString();
       }
       await FTRUMManager().starView(name);
-      _currentPageName = name;
+      FTLifeRecycleMonitor.instance._currentPageName = name;
     }
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-      FTRUMManager().stopView();
-    } else if (state == AppLifecycleState.resumed) {
-      FTRUMManager().starView(_currentPageName);
-    }
-  }
 
   @override
   void didPush(Route route, Route? previousRoute) {
@@ -106,5 +87,24 @@ class FTRouteObserver extends RouteObserver<PageRoute<dynamic>>
   void didPop(Route route, Route? previousRoute) {
     sendScreenView(previousRoute, route);
     super.didPop(route, previousRoute);
+  }
+}
+
+class FTLifeRecycleMonitor with WidgetsBindingObserver {
+  static final FTLifeRecycleMonitor instance = FTLifeRecycleMonitor._internal();
+  String _currentPageName = "";
+
+  // 私有构造函数
+  FTLifeRecycleMonitor._internal() {
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      FTRUMManager().stopView();
+    } else if (state == AppLifecycleState.resumed) {
+      FTRUMManager().starView(_currentPageName);
+    }
   }
 }

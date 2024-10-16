@@ -1,6 +1,11 @@
 >相关 SDK 更新内容
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md) 
+## 0.5.1-pre.7
+* 修正应用前后台切换产生多个 View 数据的问题
+（ MaterialApp 被重新加载，产生 FTRouteObserver 存在多个实例，从而产生多份监听数据）
+
+---
 ## 0.5.1-pre.6
 * 修正内部版本标记错误的问题
 
