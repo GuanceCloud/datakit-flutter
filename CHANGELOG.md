@@ -1,6 +1,19 @@
 >相关 SDK 更新内容
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md) 
+## 0.5.1-pre.8
+* 适配 Android ft-sdk: 1.6.1
+  * 修复 RUM 单独调用自定义 startView，导致监控指标 FTMetricsMTR 线程未被回收的问题
+  * 支持通过 FTSdk.appendGlobalContext(globalContext)、FTSdk.appendRUMGlobalContext(globalContext)、
+    FTSdk.appendLogGlobalContext(globalContext)添加动态属性
+  * 支持通过 FTSdk.clearAllData() 清理未上报缓存数据
+  * SDK setSyncSleepTime 最大限制延长为 5000 ms
+* 适配 iOS 1.5.4
+  * 添加全局、log、RUM globalContext 属性动态设置方式
+  * 添加清除数据方法，支持删除所有尚未上传至服务器的数据
+  * 调整同步间歇支持的最大时间间隔至 5000 毫秒
+
+---
 ## 0.5.1-pre.7
 * 修正应用前后台切换产生多个 View 数据的问题
 （ MaterialApp 被重新加载，产生 FTRouteObserver 存在多个实例，从而产生多份监听数据）
