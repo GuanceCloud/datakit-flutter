@@ -152,6 +152,35 @@ class FTMobileFlutter {
     return await channel.invokeMethod(methodFlushSyncData);
   }
 
+  /// 动态设置全局 tag
+  static Future<void> appendGlobalContext(
+      Map<String, dynamic> globalContext) async {
+    Map<String, dynamic> map = {};
+    map["globalContext"] = globalContext;
+    return await channel.invokeMethod(methodAppendGlobalContext, map);
+  }
+
+  /// 动态设置 RUM 全局 tag
+  static Future<void> appendRUMGlobalContext(
+      Map<String, String> globalContext) async {
+    Map<String, dynamic> map = {};
+    map["globalContext"] = globalContext;
+    return await channel.invokeMethod(methodAppendRUMGlobalContext, map);
+  }
+
+  /// 动态设置 log 全局 tag
+  static Future<void> appendLogGlobalContext(
+      Map<String, dynamic> globalContext) async {
+    Map<String, dynamic> map = {};
+    map["globalContext"] = globalContext;
+    return await channel.invokeMethod(methodAppendLogGlobalContext, map);
+  }
+
+  /// 清理缓存
+  static Future<void> clearAllData() async {
+    return await channel.invokeMethod(methodAppendLogGlobalContext);
+  }
+
   static _configChannel() {
     channel.setMethodCallHandler((call) async {
       var args = call.arguments;

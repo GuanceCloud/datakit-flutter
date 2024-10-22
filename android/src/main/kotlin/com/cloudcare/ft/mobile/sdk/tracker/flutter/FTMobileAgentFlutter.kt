@@ -87,6 +87,12 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         const val METHOD_BIND_USER = "ftBindUser"
         const val METHOD_UNBIND_USER = "ftUnBindUser"
+        const val METHOD_ENABLE_ACCESS_ANDROID_ID = "ftEnableAccessAndroidID"
+
+        const val METHOD_APPEND_GLOBAL_CONTEXT = "ftAppendGlobalContext"
+        const val METHOD_APPEND_RUM_GLOBAL_CONTEXT = "ftAppendRUMGlobalContext"
+        const val METHOD_APPEND_LOG_GLOBAL_CONTEXT = "ftAppendLogGlobalContext"
+        const val METHOD_CLEAR_ALL_DATA = "ftClearAllData"
 
         const val METHOD_LOG_CONFIG = "ftLogConfig"
         const val METHOD_LOGGING = "ftLogging"
@@ -103,7 +109,6 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         const val METHOD_TRACE_CONFIG = "ftTraceConfig"
         const val METHOD_GET_TRACE_HEADER = "ftTraceGetHeader"
-        const val METHOD_ENABLE_ACCESS_ANDROID_ID = "ftEnableAccessAndroidID"
         const val METHOD_SET_INNER_LOG_HANDLER = "ftSetInnerLogHandler"
         const val METHOD_INVOKE_INNER_LOG = "ftInvokeInnerLog"
 
@@ -554,6 +559,29 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 result.success(null)
             }
 
+            METHOD_APPEND_GLOBAL_CONTEXT -> {
+                val globalContext: Map<String, Any>? = call.argument("globalContext")
+                FTSdk.appendGlobalContext(globalContext?.let { HashMap(it) })
+                result.success(null)
+            }
+
+            METHOD_APPEND_LOG_GLOBAL_CONTEXT -> {
+                val globalContext: Map<String, Any>? = call.argument("globalContext")
+                FTSdk.appendLogGlobalContext(globalContext?.let { HashMap(it) })
+                result.success(null)
+            }
+
+            METHOD_APPEND_RUM_GLOBAL_CONTEXT -> {
+                val globalContext: Map<String, Any>? = call.argument("globalContext")
+                FTSdk.appendRUMGlobalContext(globalContext?.let { HashMap(it) })
+                result.success(null)
+
+            }
+
+            METHOD_CLEAR_ALL_DATA ->{
+                FTSdk.clearAllData()
+                result.success(null)
+            }
 
             else -> {
                 result.notImplemented()

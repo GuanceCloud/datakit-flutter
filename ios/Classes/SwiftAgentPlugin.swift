@@ -11,6 +11,12 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     static let METHOD_UNBIND_USER = "ftUnBindUser"
     static let METHOD_TRACK_EVENT_FROM_EXTENSION = "ftTrackEventFromExtension"
 
+    static let METHOD_APPEND_GLOBAL_CONTEXT = "ftAppendGlobalContext"
+    static let METHOD_APPEND_RUM_GLOBAL_CONTEXT = "ftAppendRUMGlobalContext"
+    static let METHOD_APPEND_LOG_GLOBAL_CONTEXT = "ftAppendLogGlobalContext"
+    
+    static let METHOD_CLEAR_ALL_DATA = "ftClearAllData"
+
     static let METHOD_LOG_CONFIG = "ftLogConfig"
     static let METHOD_LOGGING = "ftLogging"
 
@@ -107,6 +113,25 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                     result(["groupIdentifier":groupId,"datas":datas] as [String : Any])
                 }
             }
+
+        case SwiftAgentPlugin.METHOD_APPEND_GLOBAL_CONTEXT:
+            if let globalContext = args["globalContext"] as? Dictionary<String, Any> {
+                FTMobileAgent.appendGlobalContext(globalContext)
+            }
+            result(nil)
+        case SwiftAgentPlugin.METHOD_APPEND_LOG_GLOBAL_CONTEXT:
+            if let globalContext = args["globalContext"] as? Dictionary<String, Any> {
+                FTMobileAgent.appendGlobalContext(globalContext)
+            }
+            result(nil)
+        case SwiftAgentPlugin.METHOD_APPEND_RUM_GLOBAL_CONTEXT:
+            if let globalContext = args["globalContext"] as? Dictionary<String, Any> {
+                FTMobileAgent.appendGlobalContext(globalContext)
+            }
+            result(nil)
+        case SwiftAgentPlugin.METHOD_CLEAR_ALL_DATA:
+            FTMobileAgent.clearAllData()
+            result(nil)
         case SwiftAgentPlugin.METHOD_LOG_CONFIG:
 
             let logConfig = FTLoggerConfig()

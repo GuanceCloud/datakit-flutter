@@ -13,6 +13,7 @@ const initRouteName = "/";
 const nextRouteName = "next_route";
 
 const requestUrl = "https://docs.guance.com/";
+const fakeToken = "fakeToken";
 
 void main() {
   const MethodChannel channel = MethodChannel('ft_mobile_agent_flutter');
@@ -40,7 +41,8 @@ void main() {
   Map<String, bool> callResult = {};
 
   setUp(() async {
-    channel.setMockMethodCallHandler((MethodCall methodCall) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       switch (methodCall.method) {
         case methodConfig:
         case methodBindUser:
@@ -67,7 +69,9 @@ void main() {
   });
 
   test('Invoke All Channel ', () async {
-    await FTMobileFlutter.sdkConfig(serverUrl: requestUrl);
+    await FTMobileFlutter.sdkConfig(datakitUrl: requestUrl);
+    await FTMobileFlutter.sdkConfig(
+        datawayUrl: requestUrl, cliToken: fakeToken);
     await FTMobileFlutter.bindRUMUserData("userid");
     await FTMobileFlutter.unbindRUMUserData();
 
@@ -108,7 +112,6 @@ void main() {
   });
 
   test("LifeCycle Test", () {
-    FTLifeRecycleHandler().initObserver();
     WidgetsBinding.instance
         .handleAppLifecycleStateChanged(AppLifecycleState.paused);
 
@@ -119,7 +122,6 @@ void main() {
 
     expect(callResult[methodRumStartView], true);
 
-    FTLifeRecycleHandler().removeObserver();
     callResult.clear();
 
     WidgetsBinding.instance
@@ -143,7 +145,8 @@ void main() {
   });
 
   tearDown(() {
-    channel.setMockMethodCallHandler(null);
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (null));
   });
 }
 

@@ -1,7 +1,11 @@
 >相关 SDK 更新内容
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md) 
-## 0.5.1-pre.8
+## 0.5.2-dev.1
+* 支持通过 FTMobileFlutter.clearAllData() 清理未上报缓存数据
+* 支持通过 FTMobileFlutter.appendGlobalContext(globalContext)、
+  FTMobileFlutter.appendRUMGlobalContext(globalContext)、
+  FTMobileFlutter.appendLogGlobalContext(globalContext) 添加动态属性
 * 适配 Android ft-sdk: 1.6.1
   * 修复 RUM 单独调用自定义 startView，导致监控指标 FTMetricsMTR 线程未被回收的问题
   * 支持通过 FTSdk.appendGlobalContext(globalContext)、FTSdk.appendRUMGlobalContext(globalContext)、

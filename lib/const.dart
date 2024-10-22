@@ -9,6 +9,11 @@ const methodBindUser = "ftBindUser";
 const methodUnbindUser = "ftUnBindUser";
 const methodEnableAccessAndroidID = "ftEnableAccessAndroidID";
 const methodTrackEventFromExtension = "ftTrackEventFromExtension";
+const methodAppendGlobalContext = "ftAppendGlobalContext";
+const methodAppendRUMGlobalContext = "ftAppendRUMGlobalContext";
+const methodAppendLogGlobalContext = "ftAppendLogGlobalContext";
+const methodClearAllData = "ftClearAllData";
+
 const methodLogConfig = "ftLogConfig";
 const methodLogging = "ftLogging";
 

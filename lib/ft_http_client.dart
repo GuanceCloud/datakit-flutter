@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:ft_mobile_agent_flutter/ft_rum.dart';
 import 'package:ft_mobile_agent_flutter/ft_tracing.dart';
 import 'package:uuid/uuid.dart';
@@ -13,7 +12,7 @@ enum _RequestMethod { get, post, delete, head, patch, put }
 
 extension _RequestMethodExt on _RequestMethod {
   String get value {
-    return describeEnum(this);
+    return this.name;
   }
 }
 
@@ -232,7 +231,8 @@ class _GCHttpRequest implements HttpClientRequest {
     return innerFuture.then((value) {
       var requestHeaders = Map<String, String>();
       _request.headers.forEach((name, values) {
-        requestHeaders[name] = values.toString().replaceAll(RegExp(r"[\[\]]"), "");
+        requestHeaders[name] =
+            values.toString().replaceAll(RegExp(r"[\[\]]"), "");
       });
       return _FTHttpResponse(value, _uniqueKey, _url, method, requestHeaders);
     }, onError: (e, st) {
@@ -246,7 +246,8 @@ class _GCHttpRequest implements HttpClientRequest {
     return _request.close().then((value) {
       var requestHeaders = Map<String, String>();
       _request.headers.forEach((name, values) {
-        requestHeaders[name] = values.toString().replaceAll(RegExp(r"[\[\]]"), "");
+        requestHeaders[name] =
+            values.toString().replaceAll(RegExp(r"[\[\]]"), "");
       });
       return _FTHttpResponse(value, _uniqueKey, _url, method, requestHeaders);
     }, onError: (e, st) async {

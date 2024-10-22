@@ -170,7 +170,9 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
                 _buildFlushSyncDataWidget(),
                 _buildDialogWidget(),
                 _buildPopRouteWidget(),
-                _buildImagePicker()
+                _buildImagePicker(),
+                _buildGlobalContext(),
+                _buildCleanAllData()
               ],
             ),
           ),
@@ -334,9 +336,27 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
           final ImagePicker picker = ImagePicker();
           FTRUMManager().startAction("Image Picker", "image_pick");
           final XFile? files =
-              await picker.pickImage(source: ImageSource.gallery);
+          await picker.pickImage(source: ImageSource.gallery);
         },
         child: Text("Image Picker"));
+  }
+
+  Widget _buildGlobalContext() {
+    return ElevatedButton(
+        onPressed: () async {
+          FTMobileFlutter.appendGlobalContext({"global_key": "global_value"});
+          FTMobileFlutter.appendLogGlobalContext({"log_key": "log_value"});
+          FTMobileFlutter.appendRUMGlobalContext({"rum_key": "rum_value"});
+        },
+        child: Text("添加动态标签"));
+  }
+
+  Widget _buildCleanAllData() {
+    return ElevatedButton(
+        onPressed: () async {
+          FTMobileFlutter.clearAllData();
+        },
+        child: Text("清理缓存"));
   }
 
   void _showPermissionTip(String tip, List<Permission> permissions) {
