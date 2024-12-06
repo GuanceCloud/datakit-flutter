@@ -135,6 +135,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val syncPageSize: Int? = call.argument<Int>("syncPageSize")
                 val customSyncPageSize: Int? = call.argument<Int>("customSyncPageSize")
                 val syncSleepTime: Int? = call.argument<Int>("syncSleepTime")
+                val compressIntakeRequests: Boolean? = call.argument<Boolean>("compressIntakeRequests")
 
                 val sdkConfig =
                     if (datakitUrl != null) FTSDKConfig.builder(datakitUrl) else FTSDKConfig.builder(
@@ -182,6 +183,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                     sdkConfig.setSyncSleepTime(syncSleepTime)
                 }
 
+                if (compressIntakeRequests != null) {
+                    sdkConfig.setCompressIntakeRequests(compressIntakeRequests)
+                }
+
                 FTSdk.install(sdkConfig)
                 result.success(null)
             }
@@ -198,6 +203,9 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val enableUserView: Boolean? = call.argument<Boolean>("enableUserView")
                 val enableUserResource: Boolean? = call.argument<Boolean>("enableUserResource")
                 val enableAppUIBlock: Boolean? = call.argument<Boolean>("enableAppUIBlock")
+                val enableTrackNativeAppANR: Boolean? = call.argument<Boolean>("enableTrackNativeAppANR")
+                val enableTrackNativeCrash: Boolean? = call.argument<Boolean>("enableTrackNativeCrash")
+                val uiBlockDurationMS: Long? = call.argument<Long>("uiBlockDurationMS")
                 val errorMonitorType: Long? = call.argument<Long>("errorMonitorType")
                 val deviceMetricsMonitorType: Long? =
                     call.argument<Long>("deviceMetricsMonitorType")
@@ -221,9 +229,18 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
 
                 if (enableAppUIBlock != null) {
-                    rumConfig.isEnableTrackAppUIBlock = enableAppUIBlock
+                    if (uiBlockDurationMS != null) {
+                        rumConfig.setEnableTrackAppUIBlock(enableAppUIBlock, uiBlockDurationMS)
+                    } else {
+                        rumConfig.isEnableTrackAppUIBlock = enableAppUIBlock
+                    }
                 }
-
+                if (enableTrackNativeCrash != null) {
+                    rumConfig.isEnableTrackAppCrash = enableTrackNativeCrash
+                }
+                if (enableTrackNativeAppANR != null) {
+                    rumConfig.isEnableTrackAppANR = enableTrackNativeAppANR
+                }
                 if (errorMonitorType != null) {
                     rumConfig.extraMonitorTypeWithError = errorMonitorType.toInt()
 

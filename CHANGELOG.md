@@ -1,11 +1,21 @@
 >相关 SDK 更新内容
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md) 
+
+## 0.5.2-dev.2
+* 支持通过 FTMobileFlutter.sdkConfig(compressIntakeRequests) 开启压缩配置
+* 支持通过 FTRUMManager().setConfig(enableNativeAppUIBlock, uiBlockDurationMS) 开启 Native LongTask 检测和设置检测时间范围
+* 支持通过 FTRUMManager().setConfig(enableTrackNativeAppANR) 开启 Native ANR 监测
+* 支持通过 FTRUMManager().setConfig(enableTrackNativeCrash) 开启 AndroidJava Crash、Android C/C++ Crash、iOS Crash 的监测
+* 兼容高版本 AGP 7.3+ 版本 namespace 适配改动
+* 适配 Android ft-sdk 1.6.2, 1.6.3, 1.6.4 内容，适配 iOS 1.5.5, 1.5.6, 1.5.7 内容
+
+---
 ## 0.5.2-dev.1
 * 支持通过 FTMobileFlutter.clearAllData() 清理未上报缓存数据
-* 支持通过 FTMobileFlutter.appendGlobalContext(globalContext)、
-  FTMobileFlutter.appendRUMGlobalContext(globalContext)、
-  FTMobileFlutter.appendLogGlobalContext(globalContext) 添加动态属性
+
+---
+## 0.5.1-pre.8
 * 适配 Android ft-sdk: 1.6.1
   * 修复 RUM 单独调用自定义 startView，导致监控指标 FTMetricsMTR 线程未被回收的问题
   * 支持通过 FTSdk.appendGlobalContext(globalContext)、FTSdk.appendRUMGlobalContext(globalContext)、

@@ -90,7 +90,11 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             if let syncSleepTime = args["syncSleepTime"] as? Int{
                 config.syncSleepTime = Int32(syncSleepTime)
             }
-            
+
+            if let compressIntakeRequests = args["compressIntakeRequests"] as? Bool{
+               config.compressIntakeRequests = compressIntakeRequests
+            }
+
             FTMobileAgent.start(withConfigOptions: config)
             result(nil)
         case SwiftAgentPlugin.METHOD_FLUSH_SYNC_DATA:
@@ -217,6 +221,15 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 }
                 if let enableUserResource = args["enableUserResource"] as? Bool {
                     rumConfig.enableTraceUserResource = enableUserResource
+                }
+                if let enableTrackNativeAppANR = args["enableTrackNativeAppANR"] as? Bool {
+                    rumConfig.enableTrackAppANR = enableTrackNativeAppANR
+                }
+                if let enableTrackNativeCrash = args["enableTrackNativeCrash"] as? Bool {
+                    rumConfig.enableTrackAppCrash = enableTrackNativeCrash
+                }
+                if let uiBlockDurationMS = args["uiBlockDurationMS"] as? Int {
+                    rumConfig.freezeDurationMs = uiBlockDurationMS
                 }
                 if let enableAppUIBlock = args["enableAppUIBlock"] as? Bool {
                     rumConfig.enableTrackAppFreeze = enableAppUIBlock

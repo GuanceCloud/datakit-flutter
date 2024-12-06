@@ -25,6 +25,10 @@ class FTRUMManager {
   /// [enableNativeUserAction] 是否进行 Native Action 追踪，Button 点击事件，纯 flutter 应用建议关闭
   /// [enableNativeUserView] 是否进行 Native View 自动追踪，纯 Flutter 应用建议关闭
   /// [enableNativeUserResource] 是否进行 Native Resource 自动追踪，纯 Flutter 应用建议关闭
+  /// [enableNativeAppUIBlock] 是否进行 Native Longtask 自动追踪
+  /// [uiBlockDurationMS] 是否对 LongTask uiBlockDurationMS 的时间范围进行设置
+  /// [enableTrackNativeAppANR]是否开启 Native ANR 监测
+  /// [enableTrackNativeCrash] 是否开启 Android Java Crash 和 C/C++ 崩溃的监测
   /// [errorMonitorType] 监控补充类型
   /// [deviceMonitorType] 监控补充类型
   /// [globalContext] 自定义全局参数
@@ -37,6 +41,9 @@ class FTRUMManager {
       bool? enableNativeUserView,
       bool? enableNativeUserResource,
       bool? enableNativeAppUIBlock,
+      int? uiBlockDurationMS,
+      bool? enableTrackNativeAppANR,
+      bool? enableTrackNativeCrash,
       int? errorMonitorType,
       int? deviceMetricsMonitorType,
       DetectFrequency? detectFrequency,
@@ -52,6 +59,9 @@ class FTRUMManager {
     map["enableUserView"] = enableNativeUserView;
     map["enableUserResource"] = enableNativeUserResource;
     map["enableAppUIBlock"] = enableNativeAppUIBlock;
+    map["uiBlockDurationMS"] = uiBlockDurationMS;
+    map["enableTrackNativeAppANR"] = enableTrackNativeAppANR;
+    map["enableTrackNativeCrash"] = enableTrackNativeCrash;
     map["errorMonitorType"] = errorMonitorType;
     map["deviceMetricsMonitorType"] = deviceMetricsMonitorType;
     map["detectFrequency"] = detectFrequency?.index;

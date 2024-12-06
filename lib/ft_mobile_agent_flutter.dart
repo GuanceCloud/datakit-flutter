@@ -41,6 +41,7 @@ class FTMobileFlutter {
       SyncPageSize? syncPageSize,
       int? customSyncPageSize,
       int? syncSleepTime,
+      bool? compressIntakeRequests,
       Map<String, String>? globalContext,
       List<String>? iOSGroupIdentifiers}) async {
     Map<String, dynamic> map = {};
@@ -61,6 +62,7 @@ class FTMobileFlutter {
     map["syncPageSize"] = syncPageSize?.index;
     map["customSyncPageSize"] = customSyncPageSize;
     map["syncSleepTime"] = syncSleepTime;
+    map["compressIntakeRequests"] = compressIntakeRequests;
     map["groupIdentifiers"] = iOSGroupIdentifiers;
     if (globalContext == null) {
       globalContext = {};
