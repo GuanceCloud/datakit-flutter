@@ -135,7 +135,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val syncPageSize: Int? = call.argument<Int>("syncPageSize")
                 val customSyncPageSize: Int? = call.argument<Int>("customSyncPageSize")
                 val syncSleepTime: Int? = call.argument<Int>("syncSleepTime")
-                val compressIntakeRequests: Boolean? = call.argument<Boolean>("compressIntakeRequests")
+                val compressIntakeRequests: Boolean? =
+                    call.argument<Boolean>("compressIntakeRequests")
 
                 val sdkConfig =
                     if (datakitUrl != null) FTSDKConfig.builder(datakitUrl) else FTSDKConfig.builder(
@@ -203,9 +204,11 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val enableUserView: Boolean? = call.argument<Boolean>("enableUserView")
                 val enableUserResource: Boolean? = call.argument<Boolean>("enableUserResource")
                 val enableAppUIBlock: Boolean? = call.argument<Boolean>("enableAppUIBlock")
-                val enableTrackNativeAppANR: Boolean? = call.argument<Boolean>("enableTrackNativeAppANR")
-                val enableTrackNativeCrash: Boolean? = call.argument<Boolean>("enableTrackNativeCrash")
-                val uiBlockDurationMS: Long? = call.argument<Long>("uiBlockDurationMS")
+                val enableTrackNativeAppANR: Boolean? =
+                    call.argument<Boolean>("enableTrackNativeAppANR")
+                val enableTrackNativeCrash: Boolean? =
+                    call.argument<Boolean>("enableTrackNativeCrash")
+                val uiBlockDurationMS: Number? = call.argument<Number>("nativeUiBlockDurationMS")
                 val errorMonitorType: Long? = call.argument<Long>("errorMonitorType")
                 val deviceMetricsMonitorType: Long? =
                     call.argument<Long>("deviceMetricsMonitorType")
@@ -230,7 +233,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 if (enableAppUIBlock != null) {
                     if (uiBlockDurationMS != null) {
-                        rumConfig.setEnableTrackAppUIBlock(enableAppUIBlock, uiBlockDurationMS)
+                        rumConfig.setEnableTrackAppUIBlock(
+                            enableAppUIBlock,
+                            uiBlockDurationMS.toLong()
+                        )
                     } else {
                         rumConfig.isEnableTrackAppUIBlock = enableAppUIBlock
                     }
@@ -278,8 +284,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
             METHOD_RUM_CREATE_VIEW -> {
                 val viewName: String? = call.argument<String>("viewName")
-                val duration: Long? = call.argument<Long>("duration")
-                FTRUMGlobalManager.get().onCreateView(viewName, duration ?: -1L)
+                val duration: Number? = call.argument<Number>("duration")
+                FTRUMGlobalManager.get().onCreateView(viewName, duration?.toLong() ?: -1L)
                 result.success(null)
             }
 
@@ -595,7 +601,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
             }
 
-            METHOD_CLEAR_ALL_DATA ->{
+            METHOD_CLEAR_ALL_DATA -> {
                 FTSdk.clearAllData()
                 result.success(null)
             }

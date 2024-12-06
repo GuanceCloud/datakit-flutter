@@ -228,7 +228,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 if let enableTrackNativeCrash = args["enableTrackNativeCrash"] as? Bool {
                     rumConfig.enableTrackAppCrash = enableTrackNativeCrash
                 }
-                if let uiBlockDurationMS = args["uiBlockDurationMS"] as? Int {
+                if let uiBlockDurationMS = args["nativeUiBlockDurationMS"] as? Int {
                     rumConfig.freezeDurationMs = uiBlockDurationMS
                 }
                 if let enableAppUIBlock = args["enableAppUIBlock"] as? Bool {

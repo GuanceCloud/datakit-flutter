@@ -41,7 +41,7 @@ class FTRUMManager {
       bool? enableNativeUserView,
       bool? enableNativeUserResource,
       bool? enableNativeAppUIBlock,
-      int? uiBlockDurationMS,
+      int? nativeUiBlockDurationMS,
       bool? enableTrackNativeAppANR,
       bool? enableTrackNativeCrash,
       int? errorMonitorType,
@@ -59,7 +59,7 @@ class FTRUMManager {
     map["enableUserView"] = enableNativeUserView;
     map["enableUserResource"] = enableNativeUserResource;
     map["enableAppUIBlock"] = enableNativeAppUIBlock;
-    map["uiBlockDurationMS"] = uiBlockDurationMS;
+    map["nativeUiBlockDurationMS"] = nativeUiBlockDurationMS;
     map["enableTrackNativeAppANR"] = enableTrackNativeAppANR;
     map["enableTrackNativeCrash"] = enableTrackNativeCrash;
     map["errorMonitorType"] = errorMonitorType;

@@ -41,6 +41,7 @@ Future<void> sdkInit() async {
     // autoSync: false,
     // customSyncPageSize: 30,
     // syncSleepTime: 100,
+    compressIntakeRequests: true,
     iOSGroupIdentifiers: [
       "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo"
     ],
@@ -64,8 +65,10 @@ Future<void> sdkInit() async {
       iOSAppId: appIOSId,
       enableNativeAppUIBlock: true,
       enableNativeUserAction: true,
-      enableUserResource: true,
-      // RUM Resource Http 数据抓取
+      enableUserResource: true, // RUM Resource Http 数据抓取
+      nativeUiBlockDurationMS: 100,
+      enableTrackNativeAppANR: true,
+      enableTrackNativeCrash: true,
       errorMonitorType: ErrorMonitorType.all.value,
       deviceMetricsMonitorType: DeviceMetricsMonitorType.all.value);
   FTMobileFlutter.trackEventFromExtension(
