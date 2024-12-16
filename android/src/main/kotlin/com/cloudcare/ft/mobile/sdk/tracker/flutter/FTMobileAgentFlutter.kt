@@ -427,7 +427,11 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                     val arr: Array<Status?> = arrayOfNulls(logTypeArr.size)
 
                     logTypeArr.forEachIndexed { index, it ->
-                        arr[index] = Status.values().find { status -> it == status.ordinal }!!
+                        arr[index] = Status.values()
+                            .find { status ->
+                                if (it > Status.INFO.ordinal)
+                                    it + 1 == status.ordinal else it == status.ordinal
+                            }!!
                     }
                     logConfig.setLogLevelFilters(arr)
                 }
