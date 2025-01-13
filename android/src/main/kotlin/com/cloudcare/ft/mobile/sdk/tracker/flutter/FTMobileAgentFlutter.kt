@@ -25,7 +25,7 @@ import com.ft.sdk.garble.bean.ResourceParams
 import com.ft.sdk.garble.bean.Status
 import com.ft.sdk.garble.bean.UserData
 import com.ft.sdk.garble.utils.LogUtils
-import com.google.gson.Gson
+//import com.google.gson.Gson
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -208,7 +208,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
                 FTSdk.install(sdkConfig)
                 result.success(null)
-                LogUtils.d(LOG_TAG, Gson().toJson(sdkConfig))
+//                LogUtils.d(LOG_TAG, Gson().toJson(sdkConfig))
             }
 
             METHOD_FLUSH_SYNC_DATA -> {
@@ -302,7 +302,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 FTSdk.initRUMWithConfig(rumConfig)
                 result.success(null)
-                LogUtils.d(LOG_TAG, Gson().toJson(rumConfig))
+//                LogUtils.d(LOG_TAG, Gson().toJson(rumConfig))
 
             }
 
@@ -487,7 +487,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 FTSdk.initLogWithConfig(logConfig)
                 result.success(null)
-                LogUtils.d(LOG_TAG, Gson().toJson(logConfig))
+//                LogUtils.d(LOG_TAG, Gson().toJson(logConfig))
             }
 
 
@@ -535,7 +535,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 FTSdk.initTraceWithConfig(traceConfig)
                 result.success(null)
-                LogUtils.d(LOG_TAG, Gson().toJson(traceConfig))
+//                LogUtils.d(LOG_TAG, Gson().toJson(traceConfig))
 
             }
 //            METHOD_TRACE -> {
