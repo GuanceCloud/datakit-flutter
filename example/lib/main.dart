@@ -42,6 +42,8 @@ Future<void> sdkInit() async {
     // customSyncPageSize: 30,
     // syncSleepTime: 100,
     compressIntakeRequests: true,
+    dbCacheLimit: 60 * 1024 * 1204,
+    enableLimitWithDbSize: true,
     iOSGroupIdentifiers: [
       "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo"
     ],
@@ -65,7 +67,9 @@ Future<void> sdkInit() async {
       iOSAppId: appIOSId,
       enableNativeAppUIBlock: true,
       enableNativeUserAction: true,
-      enableUserResource: true, // RUM Resource Http 数据抓取
+      enableUserResource: true,
+      // RUM Resource Http 数据抓取
+      rumCacheLimitCount: 1234567,
       nativeUiBlockDurationMS: 100,
       enableTrackNativeAppANR: true,
       enableTrackNativeCrash: true,
@@ -339,7 +343,7 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
           final ImagePicker picker = ImagePicker();
           FTRUMManager().startAction("Image Picker", "image_pick");
           final XFile? files =
-          await picker.pickImage(source: ImageSource.gallery);
+              await picker.pickImage(source: ImageSource.gallery);
         },
         child: Text("Image Picker"));
   }

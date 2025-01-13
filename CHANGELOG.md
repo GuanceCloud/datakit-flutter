@@ -2,11 +2,19 @@
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md) 
 
+## 0.5.3-dev.1
+* 支持通过 `FTRUMManager.sdkConfig(rumCacheLimitCount,rumCacheDiscard)` 
+  限制 RUM 数据缓存条目数上限，默认 100_000
+* 支持通过 `FTMobileFlutter.sdkConfig(enableLimitWithDbSize,dbCacheLimit,dbCacheDiscard)` 设置限制总缓存大小， 
+  开启之后 `FTRUMManager.sdkConfig(rumCacheLimitCount)`, `FTLogger.logConfig(logCacheLimitCount)`
+* 适配 Android ft-sdk 1.6.7 内容，适配 iOS 1.5.9
+
+---
 ## 0.5.2-dev.2
-* 支持通过 FTMobileFlutter.sdkConfig(compressIntakeRequests) 开启压缩配置
-* 支持通过 FTRUMManager().setConfig(enableNativeAppUIBlock, uiBlockDurationMS) 开启 Native LongTask 检测和设置检测时间范围
-* 支持通过 FTRUMManager().setConfig(enableTrackNativeAppANR) 开启 Native ANR 监测
-* 支持通过 FTRUMManager().setConfig(enableTrackNativeCrash) 开启 AndroidJava Crash、Android C/C++ Crash、iOS Crash 的监测
+* 支持通过 `FTMobileFlutter.sdkConfig(compressIntakeRequests)` 开启压缩配置
+* 支持通过 `FTRUMManager().setConfig(enableNativeAppUIBlock, uiBlockDurationMS)` 开启 Native LongTask 检测和设置检测时间范围
+* 支持通过 `FTRUMManager().setConfig(enableTrackNativeAppANR)` 开启 Native ANR 监测
+* 支持通过 `FTRUMManager().setConfig(enableTrackNativeCrash)` 开启 AndroidJava Crash、Android C/C++ Crash、iOS Crash 的监测
 * 兼容高版本 AGP 7.3+ 版本 namespace 适配改动
 * 适配 Android ft-sdk 1.6.2, 1.6.3, 1.6.4 内容，适配 iOS 1.5.5, 1.5.6, 1.5.7 内容
 

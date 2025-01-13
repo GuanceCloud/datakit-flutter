@@ -4,6 +4,7 @@ import android.app.Application
 import android.os.Handler
 import android.os.Looper
 import android.view.ViewGroup
+import com.ft.sdk.DBCacheDiscard
 import com.ft.sdk.DetectFrequency
 import com.ft.sdk.FTLogger
 import com.ft.sdk.FTLoggerConfig
@@ -14,6 +15,7 @@ import com.ft.sdk.FTSdk
 import com.ft.sdk.FTTraceConfig
 import com.ft.sdk.FTTraceManager
 import com.ft.sdk.LogCacheDiscard
+import com.ft.sdk.RUMCacheDiscard
 import com.ft.sdk.SyncPageSize
 import com.ft.sdk.TraceType
 import com.ft.sdk.garble.bean.AppState
@@ -23,6 +25,7 @@ import com.ft.sdk.garble.bean.ResourceParams
 import com.ft.sdk.garble.bean.Status
 import com.ft.sdk.garble.bean.UserData
 import com.ft.sdk.garble.utils.LogUtils
+import com.google.gson.Gson
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -126,17 +129,25 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val cliToken: String? = call.argument<String>("cliToken")
                 val debug: Boolean? = call.argument<Boolean>("debug")
                 val serviceName: String? = call.argument<String?>("serviceName")
-                val dataSyncRetryCount: Int? = call.argument<Int>("dataSyncRetryCount")
+                val dataSyncRetryCount: Number? = call.argument<Number>("dataSyncRetryCount")
                 val envType: String? = call.argument<String?>("env");
                 val globalContext: Map<String, String>? = call.argument("globalContext")
                 val enableAccessAndroidID: Boolean? =
                     call.argument<Boolean>("enableAccessAndroidID")
                 val autoSync: Boolean? = call.argument<Boolean>("autoSync")
-                val syncPageSize: Int? = call.argument<Int>("syncPageSize")
-                val customSyncPageSize: Int? = call.argument<Int>("customSyncPageSize")
-                val syncSleepTime: Int? = call.argument<Int>("syncSleepTime")
+                val syncPageSize: Number? = call.argument<Number>("syncPageSize")
+                val customSyncPageSize: Number? = call.argument<Number>("customSyncPageSize")
+                val syncSleepTime: Number? = call.argument<Number>("syncSleepTime")
                 val compressIntakeRequests: Boolean? =
                     call.argument<Boolean>("compressIntakeRequests")
+                val enableLimitWithDbSize: Boolean? =
+                    call.argument<Boolean>("enableLimitWithDbSize")
+                val dbCacheLimit: Number? =
+                    call.argument<Number>("dbCacheLimit")
+                val dbCacheDiscard: DBCacheDiscard =
+                    DBCacheDiscard.values()[call.argument<Number>("dbCacheDiscard")?.toInt()
+                        ?: DBCacheDiscard.DISCARD.ordinal]
+
 
                 val sdkConfig =
                     if (datakitUrl != null) FTSDKConfig.builder(datakitUrl) else FTSDKConfig.builder(
@@ -144,7 +155,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                         cliToken
                     )
 
-                sdkConfig.setEnv(envType)
+                sdkConfig.setEnv(envType).setDbCacheDiscard(dbCacheDiscard)
 
                 if (debug != null) {
                     sdkConfig.isDebug = debug
@@ -154,7 +165,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
 
                 if (dataSyncRetryCount != null) {
-                    sdkConfig.setDataSyncRetryCount(dataSyncRetryCount)
+                    sdkConfig.setDataSyncRetryCount(dataSyncRetryCount.toInt())
                 }
 
                 if (enableAccessAndroidID != null) {
@@ -173,23 +184,31 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
 
                 if (syncPageSize != null) {
-                    sdkConfig.setSyncPageSize(SyncPageSize.values()[syncPageSize])
+                    sdkConfig.setSyncPageSize(SyncPageSize.values()[syncPageSize.toInt()])
                 }
 
                 if (customSyncPageSize != null) {
-                    sdkConfig.setCustomSyncPageSize(customSyncPageSize)
+                    sdkConfig.setCustomSyncPageSize(customSyncPageSize.toInt())
                 }
 
                 if (syncSleepTime != null) {
-                    sdkConfig.setSyncSleepTime(syncSleepTime)
+                    sdkConfig.setSyncSleepTime(syncSleepTime.toInt())
                 }
 
                 if (compressIntakeRequests != null) {
                     sdkConfig.setCompressIntakeRequests(compressIntakeRequests)
                 }
 
+                if (enableLimitWithDbSize != null) {
+                    if (dbCacheLimit != null) {
+                        sdkConfig.enableLimitWithDbSize(dbCacheLimit.toLong())
+                    } else {
+                        sdkConfig.enableLimitWithDbSize()
+                    }
+                }
                 FTSdk.install(sdkConfig)
                 result.success(null)
+                LogUtils.d(LOG_TAG, Gson().toJson(sdkConfig))
             }
 
             METHOD_FLUSH_SYNC_DATA -> {
@@ -209,12 +228,18 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val enableTrackNativeCrash: Boolean? =
                     call.argument<Boolean>("enableTrackNativeCrash")
                 val uiBlockDurationMS: Number? = call.argument<Number>("nativeUiBlockDurationMS")
-                val errorMonitorType: Long? = call.argument<Long>("errorMonitorType")
-                val deviceMetricsMonitorType: Long? =
-                    call.argument<Long>("deviceMetricsMonitorType")
-                val detectFrequency: Int? = call.argument<Int>("detectFrequency")
+                val errorMonitorType: Number? = call.argument<Number>("errorMonitorType")
+                val deviceMetricsMonitorType: Number? =
+                    call.argument<Number>("deviceMetricsMonitorType")
+                val detectFrequency: Number? = call.argument<Number>("detectFrequency")
                 val globalContext: Map<String, String>? = call.argument("globalContext")
+                val rumCacheDiscard: RUMCacheDiscard =
+                    RUMCacheDiscard.values()[call.argument<Number>("rumCacheDiscard")?.toInt()
+                        ?: RUMCacheDiscard.DISCARD.ordinal]
+                val rumCacheLimitCount: Number? = call.argument<Number>("rumCacheLimitCount")
+
                 val rumConfig = FTRUMConfig().setRumAppId(rumAppId)
+                    .setRumCacheDiscardStrategy(rumCacheDiscard)
                 if (sampleRate != null) {
                     rumConfig.samplingRate = sampleRate
                 }
@@ -257,7 +282,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                     if (detectFrequency != null) {
                         val detectFrequencyEnum: DetectFrequency =
-                            DetectFrequency.values()[detectFrequency]
+                            DetectFrequency.values()[detectFrequency.toInt()]
                         rumConfig.setDeviceMetricsMonitorType(
                             deviceMetricsMonitorType.toInt(),
                             detectFrequencyEnum
@@ -271,8 +296,14 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                     rumConfig.addGlobalContext(it.key, it.value)
                 }
 
+                if (rumCacheLimitCount != null) {
+                    rumConfig.rumCacheLimitCount = rumCacheLimitCount.toInt()
+                }
+
                 FTSdk.initRUMWithConfig(rumConfig)
                 result.success(null)
+                LogUtils.d(LOG_TAG, Gson().toJson(rumConfig))
+
             }
 
             METHOD_RUM_ADD_ACTION -> {
@@ -416,7 +447,6 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val logCacheLimitCount: Int? = call.argument<Int>("logCacheLimitCount")
 
                 val logConfig = FTLoggerConfig()
-                    .setEnableCustomLog(true)
                     .setLogCacheDiscardStrategy(logCacheDiscard)
 
                 if (sampleRate != null) {
@@ -457,6 +487,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 FTSdk.initLogWithConfig(logConfig)
                 result.success(null)
+                LogUtils.d(LOG_TAG, Gson().toJson(logConfig))
             }
 
 
@@ -504,6 +535,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 FTSdk.initTraceWithConfig(traceConfig)
                 result.success(null)
+                LogUtils.d(LOG_TAG, Gson().toJson(traceConfig))
+
             }
 //            METHOD_TRACE -> {
 //                val key: String? = call.argument<String>("key")

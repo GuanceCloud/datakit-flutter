@@ -32,6 +32,8 @@ class FTRUMManager {
   /// [errorMonitorType] 监控补充类型
   /// [deviceMonitorType] 监控补充类型
   /// [globalContext] 自定义全局参数
+  /// [rumCacheLimitCount] RUM 最大缓存量,  默认 100_000
+  /// [rumCacheDiscard] RUM 数据废弃策略
   Future<void> setConfig(
       {String? androidAppId,
       String? iOSAppId,
@@ -47,7 +49,10 @@ class FTRUMManager {
       int? errorMonitorType,
       int? deviceMetricsMonitorType,
       DetectFrequency? detectFrequency,
-      Map<String, String>? globalContext}) async {
+      Map<String, String>? globalContext,
+      int? rumCacheLimitCount,
+      FTRUMCacheDiscard? rumCacheDiscard,
+      }) async {
     Map<String, dynamic> map = {};
     if (Platform.isAndroid) {
       map["rumAppId"] = androidAppId;
@@ -66,6 +71,8 @@ class FTRUMManager {
     map["deviceMetricsMonitorType"] = deviceMetricsMonitorType;
     map["detectFrequency"] = detectFrequency?.index;
     map["globalContext"] = globalContext;
+    map["rumCacheLimitCount"] = rumCacheLimitCount;
+    map["rumCacheDiscard"] = rumCacheDiscard?.index;
     internalConfig.traceResource = enableUserResource;
     await channel.invokeMethod(methodRumConfig, map);
   }
@@ -284,4 +291,13 @@ enum DetectFrequency {
 
   /// 低频率采集 1000 ms 一次
   rare
+}
+
+/// RUM 丢弃方式
+enum FTRUMCacheDiscard {
+  ///丢弃新日志
+  discard,
+
+  /// 丢弃旧日志
+  discardOldest
 }

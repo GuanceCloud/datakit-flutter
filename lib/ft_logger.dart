@@ -28,7 +28,7 @@ class FTLogger {
   /// [enableLinkRumData] 是否与 RUM 关联
   /// [enableCustomLog] 是否开启自定义日志
   /// [printCustomLogToConsole] 是否打印自定义到控制台
-  /// [discardStrategy] 日志丢弃策略
+  /// [logCacheDiscard] 日志丢弃策略
   /// [logLevelFilters] 日志等级过滤
   /// [globalContext] 自定义全局参数
   Future<void> logConfig(
@@ -36,7 +36,7 @@ class FTLogger {
       bool? enableLinkRumData,
       bool? enableCustomLog,
       bool? printCustomLogToConsole,
-      FTLogCacheDiscard? discardStrategy,
+      FTLogCacheDiscard? logCacheDiscard,
       int? logCacheLimitCount,
       List<FTLogStatus>? logLevelFilters,
       Map<String, String>? globalContext}) async {
@@ -45,7 +45,7 @@ class FTLogger {
     map["logType"] = logLevelFilters?.map((e) => e.index).toList();
     map["enableLinkRumData"] = enableLinkRumData;
     map["enableCustomLog"] = enableCustomLog;
-    map["logCacheDiscard"] = discardStrategy;
+    map["logCacheDiscard"] = logCacheDiscard;
     map["logCacheLimitCount"] = logCacheLimitCount;
     map["printCustomLogToConsole"] = printCustomLogToConsole;
     map["globalContext"] = globalContext;

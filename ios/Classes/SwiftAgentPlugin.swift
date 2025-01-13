@@ -94,6 +94,19 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             if let compressIntakeRequests = args["compressIntakeRequests"] as? Bool{
                config.compressIntakeRequests = compressIntakeRequests
             }
+            
+            if let dbCacheDiscardType = args["dbCacheDiscard"] as? Int {
+                let dbCacheDiscard = FTDBCacheDiscard.init(rawValue: dbCacheDiscardType)
+                config.dbDiscardType = dbCacheDiscard ?? FTDBCacheDiscard.discard
+            }
+            
+            if let enableLimitWithDbSize = args["enableLimitWithDbSize"] as? Bool{
+                config.enableLimitWithDbSize = enableLimitWithDbSize
+            }
+            
+            if let dbCacheLimit = args["dbCacheLimit"] as? Int{
+                config.dbCacheLimit = dbCacheLimit
+            }
 
             FTMobileAgent.start(withConfigOptions: config)
             result(nil)
@@ -246,6 +259,15 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 if let detectFrequency = args["detectFrequency"] as? Int {
                     rumConfig.monitorFrequency = FTMonitorFrequency.init(rawValue: UInt(detectFrequency))!
                 }
+
+                if let rumCacheLimitCount = args["rumCacheLimitCount"] as? Int {
+                    rumConfig.rumCacheLimitCount = Int32(rumCacheLimitCount)
+                }
+                
+                if let rumDiscardType = args["rumCacheDiscard"] as? Int {
+                    let rumCacheDiscard = FTRUMCacheDiscard.init(rawValue: rumDiscardType)
+                    rumConfig.rumDiscardType = rumCacheDiscard ?? FTRUMCacheDiscard.discard
+                }            
                 FTMobileAgent.sharedInstance().startRum(withConfigOptions: rumConfig)
             }
             result(nil)

@@ -42,6 +42,9 @@ class FTMobileFlutter {
       int? customSyncPageSize,
       int? syncSleepTime,
       bool? compressIntakeRequests,
+      bool? enableLimitWithDbSize,
+      int? dbCacheLimit,
+      FTDBCacheDiscard? dbCacheDiscard,
       Map<String, String>? globalContext,
       List<String>? iOSGroupIdentifiers}) async {
     Map<String, dynamic> map = {};
@@ -69,6 +72,9 @@ class FTMobileFlutter {
     }
     globalContext["sdk_package_flutter"] = packageVersion;
     map["globalContext"] = globalContext;
+    map["enableLimitWithDbSize"] = enableLimitWithDbSize;
+    map["dbCacheLimit"] = dbCacheLimit;
+    map["dbCacheDiscard"] = dbCacheDiscard?.index;
     if (Platform.isAndroid) {
       map["dataSyncRetryCount"] = dataSyncRetryCount;
       map["enableAccessAndroidID"] = enableAccessAndroidID;
@@ -213,3 +219,12 @@ enum EnvType { prod, gray, pre, common, local }
 ///[medium] 10 条
 ///[large]  50 条
 enum SyncPageSize { mini, medium, large }
+
+/// DB 丢弃方式
+enum FTDBCacheDiscard {
+  ///丢弃新日志
+  discard,
+
+  /// 丢弃旧日志
+  discardOldest
+}
