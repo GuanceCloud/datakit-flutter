@@ -31,3 +31,5 @@ void setFTOverrides() {
   }
   HttpOverrides.global = FTHttpOverrides();
 }
+
+bool Function(String url)? isInTakeUrl;

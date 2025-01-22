@@ -70,6 +70,9 @@ Future<void> sdkInit() async {
       enableUserResource: true,
       // RUM Resource Http 数据抓取
       rumCacheLimitCount: 1234567,
+      isInTakeUrl: (url) {
+        return true;
+      },
       nativeUiBlockDurationMS: 100,
       enableTrackNativeAppANR: true,
       enableTrackNativeCrash: true,

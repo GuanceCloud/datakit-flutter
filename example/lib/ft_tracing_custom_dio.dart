@@ -7,12 +7,22 @@ import 'package:uuid/uuid.dart';
 class FTInterceptor extends Interceptor {
   static const String _dioKey = "ft-dio-key";
 
+  // Adding a function that can be passed externally to decide whether to skip a URL
+  final bool Function(String url)? isInTakeUrl;
+
+  FTInterceptor({this.isInTakeUrl});
+
   @override
-  void onRequest(
-      RequestOptions options, RequestInterceptorHandler handler) async {
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+    // Skip request if the external handler decides so
+    if (isInTakeUrl != null && !isInTakeUrl!(options.uri.toString())) {
+      handler.next(options);
+      return;
+    }
+
     String key = Uuid().v4();
     final traceHeaders =
-    await FTTracer().getTraceHeader(options.uri.toString(),key: key);
+    await FTTracer().getTraceHeader(options.uri.toString(), key: key);
     traceHeaders[_dioKey] = key;
     options.headers.addAll(traceHeaders);
     FTRUMManager().startResource(key);
@@ -21,15 +31,14 @@ class FTInterceptor extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
+    // Skip response processing if the external handler decides so
+    if (isInTakeUrl != null && !isInTakeUrl!(response.requestOptions.uri.toString())) {
+      handler.next(response);
+      return;
+    }
+
     RequestOptions options = response.requestOptions;
     var key = options.headers[_dioKey];
-    // FTTracer().addTrace(
-    //     key: key,
-    //     httpMethod: options.method,
-    //     requestHeader: options.headers,
-    //     responseHeader: response.headers.map,
-    //     statusCode: response.statusCode,
-    //     errorMessage: "");
     FTRUMManager().stopResource(key);
     FTRUMManager().addResource(
       key: key,
@@ -46,15 +55,14 @@ class FTInterceptor extends Interceptor {
 
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) {
+    // Skip error processing if the external handler decides so
+    if (isInTakeUrl != null && !isInTakeUrl!(err.requestOptions.uri.toString())) {
+      handler.next(err);
+      return;
+    }
+
     RequestOptions options = err.requestOptions;
     var key = options.headers[_dioKey];
-    // FTTracer().addTrace(
-    //     key: key,
-    //     httpMethod: options.method,
-    //     requestHeader: options.headers,
-    //     responseHeader: err.response?.headers.map,
-    //     statusCode: err.response?.statusCode,
-    //     errorMessage: err.message);
     FTRUMManager().stopResource(key);
     FTRUMManager().addResource(
       key: key,
@@ -65,7 +73,6 @@ class FTInterceptor extends Interceptor {
       resourceStatus: err.response?.statusCode,
       responseBody: err.response?.data?.toString(),
     );
-
 
     handler.next(err);
   }

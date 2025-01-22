@@ -51,7 +51,7 @@ android {
 //def kotlin_coroutines_version = '1.5.2'
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0"
-    implementation 'com.cloudcare.ft.mobile.sdk.tracker.agent:ft-sdk:1.6.7'
+    implementation 'com.cloudcare.ft.mobile.sdk.tracker.agent:ft-sdk:1.6.8'
     implementation 'com.cloudcare.ft.mobile.sdk.tracker.agent:ft-native:1.1.1'
 
     implementation 'com.google.code.gson:gson:2.8.5'

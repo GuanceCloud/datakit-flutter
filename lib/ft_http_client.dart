@@ -10,6 +10,8 @@ import 'internal/ft_sdk_config.dart' as internalConfig;
 
 enum _RequestMethod { get, post, delete, head, patch, put }
 
+const responseReadLimit = 33554432; //32 MB data
+
 extension _RequestMethodExt on _RequestMethod {
   String get value {
     return this.name;
@@ -44,31 +46,31 @@ class FTHttpClient implements HttpClient {
     HttpClientRequest request;
     String urlString = url.toString();
 
+    bool isUrlInTake = internalConfig.isInTakeUrl?.call(urlString) ?? true;
+
     try {
-      uniqueKey = _uuid.v4();
+      if (isUrlInTake && internalConfig.traceResource) {
+        uniqueKey = _uuid.v4();
+        FTRUMManager().startResource(uniqueKey);
+      }
+
       final traceHeaders = internalConfig.traceHeader
-          ? await FTTracer().getTraceHeader(urlString,
-              key: internalConfig.traceResource ? uniqueKey : null)
+          ? await FTTracer().getTraceHeader(urlString, key: uniqueKey)
           : {};
       request = await _httpClient.openUrl(method, url);
       traceHeaders.forEach((key, value) {
         request.headers.add(key, value);
       });
-      if (internalConfig.traceResource) {
-        FTRUMManager().startResource(uniqueKey);
-      }
     } catch (e) {
       if (uniqueKey != null) {
         try {
-          if (internalConfig.traceResource) {
-            FTRUMManager().stopResource(uniqueKey);
-            FTRUMManager().addResource(
-                key: uniqueKey,
-                url: urlString,
-                httpMethod: "",
-                requestHeader: {},
-                responseBody: e.toString());
-          }
+          FTRUMManager().stopResource(uniqueKey);
+          FTRUMManager().addResource(
+              key: uniqueKey,
+              url: urlString,
+              httpMethod: "",
+              requestHeader: {},
+              responseBody: e.toString());
         } catch (innerE) {}
       }
       rethrow;
@@ -257,7 +259,6 @@ class _GCHttpRequest implements HttpClientRequest {
   }
 
   void _onStreamError(Object e, StackTrace? st) {
-    if (!internalConfig.traceResource) return;
     try {
       if (_uniqueKey != null) {
         FTRUMManager().stopResource(_uniqueKey!);
@@ -370,7 +371,10 @@ class _FTHttpResponse extends Stream<List<int>> implements HttpClientResponse {
     List<int> bodyBytes = [];
     void Function(List<int> event)? func = (event) {
       if (onData != null) {
-        bodyBytes.addAll(event);
+        // read bytes limit
+        if (bodyBytes.length <= responseReadLimit) {
+          bodyBytes.addAll(event);
+        }
         onData.call(event);
       }
     };
@@ -410,11 +414,9 @@ class _FTHttpResponse extends Stream<List<int>> implements HttpClientResponse {
   }
 
   void _onFinish(String? body, Object? error, StackTrace? stackTrace) {
-    if (!internalConfig.traceResource) return;
     try {
-      final statusCode = response.statusCode;
-
       if (uniqueKey != null) {
+        final statusCode = response.statusCode;
         FTRUMManager().stopResource(uniqueKey!);
         if (_lastError != null) {
           FTRUMManager().addResource(
@@ -436,6 +438,7 @@ class _FTHttpResponse extends Stream<List<int>> implements HttpClientResponse {
             httpMethod: method,
             responseHeader: map,
             resourceStatus: statusCode,
+            resourceSize: contentLength,
             responseBody: body ?? "",
           );
         }

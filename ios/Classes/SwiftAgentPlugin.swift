@@ -107,6 +107,10 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             if let dbCacheLimit = args["dbCacheLimit"] as? Int{
                 config.dbCacheLimit = dbCacheLimit
             }
+            
+            if let pkgInfo = args["pkgInfo"] as? String {
+                config.addPkgInfo("flutter", value: pkgInfo)
+            }
 
             FTMobileAgent.start(withConfigOptions: config)
             result(nil)
@@ -267,7 +271,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 if let rumDiscardType = args["rumCacheDiscard"] as? Int {
                     let rumCacheDiscard = FTRUMCacheDiscard.init(rawValue: rumDiscardType)
                     rumConfig.rumDiscardType = rumCacheDiscard ?? FTRUMCacheDiscard.discard
-                }            
+                }
                 FTMobileAgent.sharedInstance().startRum(withConfigOptions: rumConfig)
             }
             result(nil)
@@ -315,6 +319,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             let urlStr = args["url"] as! String
             let resourceMethod = args["resourceMethod"] as! String
             let requestHeader = args["requestHeader"] as! Dictionary<String, Any>
+
             if let url = URL.init(string: urlStr) {
                 let content = FTResourceContentModel.init()
                 content.url = url
@@ -328,6 +333,10 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 }
                 if let resourceStatus = args["resourceStatus"] as? Int {
                     content.httpStatusCode = resourceStatus
+                }
+                let metrics = FTResourceMetricsModel.init()
+                if let resourceSize = args["resourceSize"] as? Int {
+                    metrics.responseSize = NSNumber.init(value: resourceSize)
                 }
 
                 FTExternalDataManager.shared().addResource(withKey: key, metrics: nil, content: content)

@@ -34,6 +34,7 @@ class FTRUMManager {
   /// [globalContext] 自定义全局参数
   /// [rumCacheLimitCount] RUM 最大缓存量,  默认 100_000
   /// [rumCacheDiscard] RUM 数据废弃策略
+  /// [isInTakeUrl] RUM resource url 过滤，true 是接受数据采集
   Future<void> setConfig(
       {String? androidAppId,
       String? iOSAppId,
@@ -52,7 +53,7 @@ class FTRUMManager {
       Map<String, String>? globalContext,
       int? rumCacheLimitCount,
       FTRUMCacheDiscard? rumCacheDiscard,
-      }) async {
+      bool Function(String url)? isInTakeUrl}) async {
     Map<String, dynamic> map = {};
     if (Platform.isAndroid) {
       map["rumAppId"] = androidAppId;
@@ -74,6 +75,7 @@ class FTRUMManager {
     map["rumCacheLimitCount"] = rumCacheLimitCount;
     map["rumCacheDiscard"] = rumCacheDiscard?.index;
     internalConfig.traceResource = enableUserResource;
+    internalConfig.isInTakeUrl = isInTakeUrl;
     await channel.invokeMethod(methodRumConfig, map);
   }
 
@@ -189,7 +191,8 @@ class FTRUMManager {
       required Map<String, dynamic> requestHeader,
       Map<String, dynamic>? responseHeader,
       String? responseBody = "",
-      int? resourceStatus}) async {
+      int? resourceStatus,
+      int? resourceSize}) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
     map["url"] = url;
@@ -198,6 +201,7 @@ class FTRUMManager {
     map["responseHeader"] = responseHeader;
     map["responseBody"] = responseBody;
     map["resourceStatus"] = resourceStatus;
+    map["resourceSize"] = resourceSize;
     await channel.invokeMethod(methodRumAddResource, map);
   }
 }

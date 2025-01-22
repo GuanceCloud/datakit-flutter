@@ -70,7 +70,6 @@ class FTMobileFlutter {
     if (globalContext == null) {
       globalContext = {};
     }
-    globalContext["sdk_package_flutter"] = packageVersion;
     map["globalContext"] = globalContext;
     map["enableLimitWithDbSize"] = enableLimitWithDbSize;
     map["dbCacheLimit"] = dbCacheLimit;
@@ -79,6 +78,7 @@ class FTMobileFlutter {
       map["dataSyncRetryCount"] = dataSyncRetryCount;
       map["enableAccessAndroidID"] = enableAccessAndroidID;
     }
+    map["pkgInfo"] = packageVersion;
     await channel.invokeMethod(methodConfig, map);
     if (Platform.isAndroid) {
       _configChannel();

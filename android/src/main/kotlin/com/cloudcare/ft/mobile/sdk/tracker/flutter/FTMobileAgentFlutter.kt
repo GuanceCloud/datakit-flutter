@@ -14,6 +14,7 @@ import com.ft.sdk.FTSDKConfig
 import com.ft.sdk.FTSdk
 import com.ft.sdk.FTTraceConfig
 import com.ft.sdk.FTTraceManager
+import com.ft.sdk.InnerClassProxy
 import com.ft.sdk.LogCacheDiscard
 import com.ft.sdk.RUMCacheDiscard
 import com.ft.sdk.SyncPageSize
@@ -147,7 +148,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val dbCacheDiscard: DBCacheDiscard =
                     DBCacheDiscard.values()[call.argument<Number>("dbCacheDiscard")?.toInt()
                         ?: DBCacheDiscard.DISCARD.ordinal]
-
+                val pkgInfo: String? = call.argument<String?>("pkgInfo")
 
                 val sdkConfig =
                     if (datakitUrl != null) FTSDKConfig.builder(datakitUrl) else FTSDKConfig.builder(
@@ -205,6 +206,9 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                     } else {
                         sdkConfig.enableLimitWithDbSize()
                     }
+                }
+                if (pkgInfo != null) {
+                    InnerClassProxy.addPkgInfo(sdkConfig, "flutter", pkgInfo)
                 }
                 FTSdk.install(sdkConfig)
                 result.success(null)
@@ -382,6 +386,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 //                val responseContentEncoding: String? =
 //                    call.argument<String>("responseContentEncoding")
                 val resourceStatus: Int? = call.argument<Int>("resourceStatus")
+                val resourceSize: Number? = call.argument<Number>("resourceSize")
                 val url: String? = call.argument<String>("url")
 //                val fetchStartTime: Long? = call.argument<Long>("fetchStartTime")
 //                val tcpStartTime: Long? = call.argument<Long>("tcpStartTime")
@@ -404,6 +409,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 if (responseHeader != null) {
                     params.responseHeaderMap = getHashMap(responseHeader)
+                }
+
+                if (resourceSize != null) {
+                    params.responseContentLength = resourceSize.toLong()
                 }
 
                 val responseContentType =
