@@ -2,6 +2,12 @@
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md) 
 
+## 0.5.3-dev.2
+* 支持通过 FTRUMManager.sdkConfig(inTakeUrl) 过滤需要采集的地址
+* 优化 Resource 采集 resourceSize 计算方式
+
+---
+
 ## 0.5.3-dev.1
 * 支持通过 `FTRUMManager.sdkConfig(rumCacheLimitCount,rumCacheDiscard)` 
   限制 RUM 数据缓存条目数上限，默认 100_000
