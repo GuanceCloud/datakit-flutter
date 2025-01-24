@@ -1,6 +1,6 @@
 import UIKit
 import Flutter
-import FTMobileSDK
+//import FTMobileSDK
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {

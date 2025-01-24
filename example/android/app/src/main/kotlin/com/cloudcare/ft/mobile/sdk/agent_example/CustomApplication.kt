@@ -1,12 +1,12 @@
 package com.cloudcare.ft.mobile.sdk.agent_example
 
-import com.ft.sdk.DeviceMetricsMonitorType
-import com.ft.sdk.ErrorMonitorType
-import com.ft.sdk.FTLoggerConfig
-import com.ft.sdk.FTRUMConfig
-import com.ft.sdk.FTSDKConfig
-import com.ft.sdk.FTSdk
-import com.ft.sdk.FTTraceConfig
+//import com.ft.sdk.DeviceMetricsMonitorType
+//import com.ft.sdk.ErrorMonitorType
+//import com.ft.sdk.FTLoggerConfig
+//import com.ft.sdk.FTRUMConfig
+//import com.ft.sdk.FTSDKConfig
+//import com.ft.sdk.FTSdk
+//import com.ft.sdk.FTTraceConfig
 import io.flutter.app.FlutterApplication
 
 /**
