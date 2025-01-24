@@ -7,7 +7,7 @@ import 'package:agent_example/view_without_route_name_page.dart';
 import 'package:agent_example/webview_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
-import 'package:ft_mobile_agent_flutter/ft_http_override.dart';
+import 'package:ft_mobile_agent_flutter/ft_http_override_config.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 

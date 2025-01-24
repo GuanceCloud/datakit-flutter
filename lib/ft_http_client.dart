@@ -6,7 +6,7 @@ import 'package:ft_mobile_agent_flutter/ft_rum.dart';
 import 'package:ft_mobile_agent_flutter/ft_tracing.dart';
 import 'package:uuid/uuid.dart';
 
-import 'ft_http_override.dart';
+import 'ft_http_override_config.dart';
 
 enum _RequestMethod { get, post, delete, head, patch, put }
 

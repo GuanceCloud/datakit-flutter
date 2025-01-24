@@ -3,7 +3,7 @@ library ft_mobile_agent_flutter;
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:ft_mobile_agent_flutter/ft_http_override.dart';
+import 'package:ft_mobile_agent_flutter/ft_http_override_config.dart';
 
 import 'const.dart';
 
