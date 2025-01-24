@@ -2,12 +2,9 @@
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md) 
 
-## 0.5.3-pre.1
+## 0.5.3-pre.2
 * 优化 FTHttpOverrideConfig 配置方式，支持脱离 SDK Config 配置
-
----
-## 0.5.3-dev.2
-* 支持通过 FTRUMManager.sdkConfig(inTakeUrl) 过滤需要采集的地址
+* 支持通过 FTRUMManager.sdkConfig(inTakeUrl) 过滤不需要采集的 url
 * 优化 Resource 采集 resourceSize 计算方式
 
 ---

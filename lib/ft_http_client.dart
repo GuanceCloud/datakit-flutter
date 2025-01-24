@@ -47,10 +47,10 @@ class FTHttpClient implements HttpClient {
     HttpClientRequest request;
     String urlString = url.toString();
 
-    bool isUrlInTake = FTHttpOverrideConfig.global.isInTakeUrl?.call(urlString) ?? true;
+    bool isUrlInTake = FTHttpOverrideConfig.global.isInTakeUrl?.call(urlString) ?? false;
 
     try {
-      if (isUrlInTake && FTHttpOverrideConfig.global.traceResource) {
+      if (!isUrlInTake && FTHttpOverrideConfig.global.traceResource) {
         uniqueKey = _uuid.v4();
         FTRUMManager().startResource(uniqueKey);
       }

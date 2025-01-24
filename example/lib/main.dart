@@ -43,7 +43,7 @@ Future<void> sdkInit() async {
     // customSyncPageSize: 30,
     // syncSleepTime: 100,
     compressIntakeRequests: true,
-    dbCacheLimit: 60 * 1024 * 1204,
+    // dbCacheLimit: 60 * 1024 * 1204,
     enableLimitWithDbSize: true,
     iOSGroupIdentifiers: [
       "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo"
@@ -70,11 +70,9 @@ Future<void> sdkInit() async {
       enableNativeUserAction: true,
       enableUserResource: true,
       // RUM Resource Http 数据抓取
-      rumCacheLimitCount: 1234567,
       isInTakeUrl: (url) {
-        return true;
+        return false;
       },
-      nativeUiBlockDurationMS: 100,
       enableTrackNativeAppANR: true,
       enableTrackNativeCrash: true,
       errorMonitorType: ErrorMonitorType.all.value,
