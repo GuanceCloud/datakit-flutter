@@ -6,7 +6,7 @@ import 'package:ft_mobile_agent_flutter/ft_rum.dart';
 import 'package:ft_mobile_agent_flutter/ft_tracing.dart';
 import 'package:uuid/uuid.dart';
 
-import 'internal/ft_sdk_config.dart' as internalConfig;
+import 'ft_http_override.dart';
 
 enum _RequestMethod { get, post, delete, head, patch, put }
 
@@ -19,9 +19,10 @@ extension _RequestMethodExt on _RequestMethod {
 }
 
 class FTHttpOverrides extends HttpOverrides {
+
   @override
   HttpClient createHttpClient(SecurityContext? context) {
-    if (internalConfig.traceHeader || internalConfig.traceResource) {
+    if (FTHttpOverrideConfig.global.traceHeader || FTHttpOverrideConfig.global.traceResource) {
       return FTHttpClient(super.createHttpClient(context));
     }
     return super.createHttpClient(context);
@@ -46,15 +47,15 @@ class FTHttpClient implements HttpClient {
     HttpClientRequest request;
     String urlString = url.toString();
 
-    bool isUrlInTake = internalConfig.isInTakeUrl?.call(urlString) ?? true;
+    bool isUrlInTake = FTHttpOverrideConfig.global.isInTakeUrl?.call(urlString) ?? true;
 
     try {
-      if (isUrlInTake && internalConfig.traceResource) {
+      if (isUrlInTake && FTHttpOverrideConfig.global.traceResource) {
         uniqueKey = _uuid.v4();
         FTRUMManager().startResource(uniqueKey);
       }
 
-      final traceHeaders = internalConfig.traceHeader
+      final traceHeaders = FTHttpOverrideConfig.global.traceHeader
           ? await FTTracer().getTraceHeader(urlString, key: uniqueKey)
           : {};
       request = await _httpClient.openUrl(method, url);

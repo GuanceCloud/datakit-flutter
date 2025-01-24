@@ -1,7 +1,6 @@
 import 'dart:async';
 
-import 'package:ft_mobile_agent_flutter/internal/ft_sdk_config.dart'
-    as internalConfig;
+import 'package:ft_mobile_agent_flutter/ft_http_override.dart';
 
 import 'const.dart';
 
@@ -30,7 +29,7 @@ class FTTracer {
     map["traceType"] = traceType?.index;
     map["enableLinkRUMData"] = enableLinkRUMData;
     map["enableNativeAutoTrace"] = enableNativeAutoTrace;
-    internalConfig.traceHeader = enableAutoTrace;
+    FTHttpOverrideConfig.global.traceHeader = enableAutoTrace;
     await channel.invokeMethod(methodTraceConfig, map);
   }
 

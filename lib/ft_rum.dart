@@ -3,8 +3,7 @@ library ft_mobile_agent_flutter;
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:ft_mobile_agent_flutter/internal/ft_sdk_config.dart'
-    as internalConfig;
+import 'package:ft_mobile_agent_flutter/ft_http_override.dart';
 
 import 'const.dart';
 
@@ -74,8 +73,8 @@ class FTRUMManager {
     map["globalContext"] = globalContext;
     map["rumCacheLimitCount"] = rumCacheLimitCount;
     map["rumCacheDiscard"] = rumCacheDiscard?.index;
-    internalConfig.traceResource = enableUserResource;
-    internalConfig.isInTakeUrl = isInTakeUrl;
+    FTHttpOverrideConfig.global.traceResource = enableUserResource;
+    FTHttpOverrideConfig.global.isInTakeUrl = isInTakeUrl;
     await channel.invokeMethod(methodRumConfig, map);
   }
 

@@ -7,6 +7,7 @@ import 'package:agent_example/view_without_route_name_page.dart';
 import 'package:agent_example/webview_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
+import 'package:ft_mobile_agent_flutter/ft_http_override.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -81,6 +82,12 @@ Future<void> sdkInit() async {
   FTMobileFlutter.trackEventFromExtension(
       "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo");
 
+  FlutterError.onError = FTRUMManager().addFlutterError;
+}
+//原生混合项目再 flutter 中做的初始化
+Future<void> sdkNativeMixInit() async {
+  FTHttpOverrideConfig.global.traceHeader = true;
+  FTHttpOverrideConfig.global.traceResource = true;
   FlutterError.onError = FTRUMManager().addFlutterError;
 }
 
