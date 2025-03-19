@@ -94,7 +94,11 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             if let compressIntakeRequests = args["compressIntakeRequests"] as? Bool{
                config.compressIntakeRequests = compressIntakeRequests
             }
-            
+
+             if let enableDataIntegerCompatible = args["enableDataIntegerCompatible"] as? Bool{
+               config.enableDataIntegerCompatible = enableDataIntegerCompatible
+             }
+
             if let dbCacheDiscardType = args["dbCacheDiscard"] as? Int {
                 let dbCacheDiscard = FTDBCacheDiscard.init(rawValue: dbCacheDiscardType)
                 config.dbDiscardType = dbCacheDiscard ?? FTDBCacheDiscard.discard

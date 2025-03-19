@@ -2,6 +2,11 @@
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md) 
 
+## 0.5.4-pre.1
+* 适配 iOS 1.5.14 版本，适配 Android 1.6.9
+* FTMobileFlutter.setConfig(enableDataIntegerCompatible) 默认开启
+
+---
 ## 0.5.3-pre.4
 * 适配 iOS 1.5.12 版本
 

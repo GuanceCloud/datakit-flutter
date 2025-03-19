@@ -141,6 +141,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val syncSleepTime: Number? = call.argument<Number>("syncSleepTime")
                 val compressIntakeRequests: Boolean? =
                     call.argument<Boolean>("compressIntakeRequests")
+                val enableDataIntegerCompatible: Boolean? =
+                    call.argument<Boolean>("enableDataIntegerCompatible")
                 val enableLimitWithDbSize: Boolean? =
                     call.argument<Boolean>("enableLimitWithDbSize")
                 val dbCacheLimit: Number? =
@@ -198,6 +200,12 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 if (compressIntakeRequests != null) {
                     sdkConfig.setCompressIntakeRequests(compressIntakeRequests)
+                }
+
+                if (enableDataIntegerCompatible != null) {
+                    if(enableDataIntegerCompatible){
+                        sdkConfig.enableDataIntegerCompatible()
+                    }
                 }
 
                 if (enableLimitWithDbSize != null) {

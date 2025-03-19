@@ -45,6 +45,7 @@ class FTMobileFlutter {
       bool? enableLimitWithDbSize,
       int? dbCacheLimit,
       FTDBCacheDiscard? dbCacheDiscard,
+      bool? enableDataIntegerCompatible,
       Map<String, String>? globalContext,
       List<String>? iOSGroupIdentifiers}) async {
     Map<String, dynamic> map = {};
@@ -66,6 +67,7 @@ class FTMobileFlutter {
     map["customSyncPageSize"] = customSyncPageSize;
     map["syncSleepTime"] = syncSleepTime;
     map["compressIntakeRequests"] = compressIntakeRequests;
+    map["enableDataIntegerCompatible"] = enableDataIntegerCompatible;
     map["groupIdentifiers"] = iOSGroupIdentifiers;
     if (globalContext == null) {
       globalContext = {};
