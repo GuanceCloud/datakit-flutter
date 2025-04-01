@@ -15,7 +15,7 @@ class FTMobileFlutter {
   /// [serverUrl] datakit 访问 URL 地址，例子：http://10.0.0.1:9529，端口默认 9529。deprecated
   /// [datakitUrl] datakit 访问 URL 地址，例子：http://10.0.0.1:9529，端口默认 9529。 datakit 与 dataway 配置二选一
   /// [datawayUrl] dataway 访问 URL 地址，例子：http://10.0.0.1:9528，端口默认 9528，注意：安装 SDK 设备需能访问这地址.注意：datakit 和 dataway 配置两者二选一
-  /// [cliToken] dataway 认证 token，需要与 [dataw] 同时配置
+  /// [cliToken] dataway 认证 token，需要与 [datawayUrl] 同时配置
   /// [debug] 默认为 false，开启后方可打印 SDK 运行日志
   /// [serviceName] 应用服务名
   /// [envType] 默认为 EnvType.PROD，envType 与 env 二选一

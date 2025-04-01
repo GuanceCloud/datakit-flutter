@@ -13,6 +13,7 @@ class FTLogger {
   ///[content] 日志内容
   ///[status] 日志状态
   ///[property] 附加属性参数(可选)
+  ///[isSilence]
   Future<void> logging(String content, FTLogStatus status,
       {Map<String, String>? property, bool? isSilence}) async {
     Map<String, dynamic> map = {};
