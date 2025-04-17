@@ -24,8 +24,8 @@ class FTRUMManager {
   /// [enableNativeUserAction] 是否进行 Native Action 追踪，Button 点击事件，纯 flutter 应用建议关闭
   /// [enableNativeUserView] 是否进行 Native View 自动追踪，纯 Flutter 应用建议关闭
   /// [enableNativeUserResource] 是否进行 Native Resource 自动追踪，纯 Flutter 应用建议关闭
-  /// [enableNativeAppUIBlock] 是否进行 Native Longtask 自动追踪
-  /// [uiBlockDurationMS] 是否对 LongTask uiBlockDurationMS 的时间范围进行设置
+  /// [enableNativeAppUIBlock] 是否进行 Native Freeze 自动追踪
+  /// [uiBlockDurationMS] 是否对 Freeze uiBlockDurationMS 的时间范围进行设置
   /// [enableTrackNativeAppANR]是否开启 Native ANR 监测
   /// [enableTrackNativeCrash] 是否开启 Android Java Crash 和 C/C++ 崩溃的监测
   /// [errorMonitorType] 监控补充类型
