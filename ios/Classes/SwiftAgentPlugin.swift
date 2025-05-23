@@ -111,7 +111,23 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             if let dbCacheLimit = args["dbCacheLimit"] as? Int{
                 config.dbCacheLimit = dbCacheLimit
             }
-            
+
+            if let dataModifierDict = context["dataModifier"] as? [String: Any] {
+                config.dataModifier = { (key: String, value: Any) -> Any? in
+                    return dataModifierDict[key] ?? value
+                }
+            }
+
+            if let dataModifierDict = context["lineDataModifier"] as? [String: Any] {
+                config.lineDataModifier = { (measurement: String, data: [String: Any]) -> [String: Any]? in
+                    if measurement == FT_LOGGER_SOURCE || measurement == FT_LOGGER_TVOS_SOURCE {
+                        return dataModifierDict["log"] as? [String: Any]
+                    } else {
+                        return dataModifierDict[measurement] as? [String: Any]
+                    }
+                }
+            }
+
             if let pkgInfo = args["pkgInfo"] as? String {
                 config.addPkgInfo("flutter", value: pkgInfo)
             }
@@ -233,6 +249,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 let rumConfig = FTRumConfig(appid: rumAppId)
                 if let sampleRate = args["sampleRate"] as? Float {
                     rumConfig.samplerate = Int32(Int(sampleRate * 100))
+                }
+                if let sessionOnErrorSampleRate = args["sessionOnErrorSampleRate"] as? Float {
+                    rumConfig.sessionOnErrorSampleRate = Int32(Int(sessionOnErrorSampleRate * 100))
                 }
                 if let enableUserAction = args["enableUserAction"] as? Bool {
                     rumConfig.enableTraceUserAction = enableUserAction

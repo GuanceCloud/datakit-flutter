@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.ViewGroup
 import com.ft.sdk.DBCacheDiscard
+import com.ft.sdk.DataModifier
 import com.ft.sdk.DetectFrequency
 import com.ft.sdk.FTLogger
 import com.ft.sdk.FTLoggerConfig
@@ -15,6 +16,7 @@ import com.ft.sdk.FTSdk
 import com.ft.sdk.FTTraceConfig
 import com.ft.sdk.FTTraceManager
 import com.ft.sdk.InnerClassProxy
+import com.ft.sdk.LineDataModifier
 import com.ft.sdk.LogCacheDiscard
 import com.ft.sdk.RUMCacheDiscard
 import com.ft.sdk.SyncPageSize
@@ -25,6 +27,7 @@ import com.ft.sdk.garble.bean.NetStatusBean
 import com.ft.sdk.garble.bean.ResourceParams
 import com.ft.sdk.garble.bean.Status
 import com.ft.sdk.garble.bean.UserData
+import com.ft.sdk.garble.utils.Constants
 import com.ft.sdk.garble.utils.LogUtils
 //import com.google.gson.Gson
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -150,6 +153,9 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val dbCacheDiscard: DBCacheDiscard =
                     DBCacheDiscard.values()[call.argument<Number>("dbCacheDiscard")?.toInt()
                         ?: DBCacheDiscard.DISCARD.ordinal]
+
+                val dataModifier: Map<String, Any>? = call.argument("dataModifier")
+                val lineDataModifier: Map<String, Map<String, Any>>? = call.argument("lineDataModifier")
                 val pkgInfo: String? = call.argument<String?>("pkgInfo")
 
                 val sdkConfig =
@@ -203,7 +209,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
 
                 if (enableDataIntegerCompatible != null) {
-                    if(enableDataIntegerCompatible){
+                    if (enableDataIntegerCompatible) {
                         sdkConfig.enableDataIntegerCompatible()
                     }
                 }
@@ -215,6 +221,29 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                         sdkConfig.enableLimitWithDbSize()
                     }
                 }
+                if (dataModifier != null) {
+                    sdkConfig.setDataModifier(object : DataModifier {
+                        override fun modify(key: String, value: Any): Any? {
+                            return dataModifier[key]
+                        }
+                    })
+                }
+
+                if (lineDataModifier != null) {
+                    sdkConfig.setLineDataModifier(object :LineDataModifier{
+                        override fun modify(
+                            measurement: String?,
+                            data: HashMap<String, Any>?
+                        ): Map<String, Any>? {
+                            return if(measurement == Constants.FT_LOG_DEFAULT_MEASUREMENT){
+                                lineDataModifier["log"]
+                            }else{
+                                lineDataModifier[measurement]
+                            }
+                        }
+                    })
+                }
+
                 if (pkgInfo != null) {
                     InnerClassProxy.addPkgInfo(sdkConfig, "flutter", pkgInfo)
                 }
@@ -230,7 +259,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
             METHOD_RUM_CONFIG -> {
                 val rumAppId: String = call.argument<String>("rumAppId")!!
-                val sampleRate: Float? = call.argument<Float>("sampleRate")
+                val sampleRate: Double? = call.argument<Double>("sampleRate")
+                val sessionOnErrorSampleRate: Double? = call.argument<Double>("sessionOnErrorSampleRate")
                 val enableUserAction: Boolean? = call.argument<Boolean>("enableUserAction")
                 val enableUserView: Boolean? = call.argument<Boolean>("enableUserView")
                 val enableUserResource: Boolean? = call.argument<Boolean>("enableUserResource")
@@ -253,7 +283,11 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val rumConfig = FTRUMConfig().setRumAppId(rumAppId)
                     .setRumCacheDiscardStrategy(rumCacheDiscard)
                 if (sampleRate != null) {
-                    rumConfig.samplingRate = sampleRate
+                    rumConfig.samplingRate = sampleRate.toFloat()
+                }
+
+                if (sessionOnErrorSampleRate != null) {
+                    rumConfig.sessionErrorSampleRate = sessionOnErrorSampleRate.toFloat()
                 }
 
                 if (enableUserAction != null) {
@@ -450,7 +484,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
             }
 
             METHOD_LOG_CONFIG -> {
-                val sampleRate: Float? = call.argument<Float>("sampleRate")
+                val sampleRate: Double? = call.argument<Double>("sampleRate")
                 val logTypeArr: List<Int>? = call.argument<List<Int>>("logType")
                 val enableLinkRumData: Boolean? = call.argument<Boolean>("enableLinkRumData")
                 val enableCustomLog: Boolean? = call.argument<Boolean>("enableCustomLog")
@@ -467,7 +501,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                     .setLogCacheDiscardStrategy(logCacheDiscard)
 
                 if (sampleRate != null) {
-                    logConfig.samplingRate = sampleRate
+                    logConfig.samplingRate = sampleRate.toFloat()
                 }
 
                 if (logTypeArr != null) {
@@ -525,14 +559,14 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
             }
 
             METHOD_TRACE_CONFIG -> {
-                val sampleRate: Float? = call.argument<Float>("sampleRate")
+                val sampleRate: Double? = call.argument<Double>("sampleRate")
                 val traceType = call.argument<Int>("traceType")
                 val enableLinkRUMData = call.argument<Boolean>("enableLinkRUMData")
                 val enableAutoTrace = call.argument<Boolean>("enableNativeAutoTrace")
 
                 val traceConfig = FTTraceConfig()
                 if (sampleRate != null) {
-                    traceConfig.samplingRate = sampleRate
+                    traceConfig.samplingRate = sampleRate.toFloat()
                 }
 
                 if (traceType != null) {

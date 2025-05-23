@@ -45,6 +45,8 @@ Future<void> sdkInit() async {
     compressIntakeRequests: true,
     // dbCacheLimit: 60 * 1024 * 1204,
     enableLimitWithDbSize: true,
+    // dataModifier: {"device_uuid":"xxx"},
+    // lineDataModifier: {"view":{"view_name":"xxx"}},
     iOSGroupIdentifiers: [
       "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo"
     ],

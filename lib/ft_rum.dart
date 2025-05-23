@@ -18,11 +18,13 @@ class FTRUMManager {
   FTRUMManager._internal();
 
   /// 设置 RUM 追踪条件
-  /// [androidAppId] appId，监测中申请
-  /// [iOSAppId] appId，监测中申请
-  /// [sampleRate] 采样率
+  /// [androidAppId] app_id，应用访问监测控制台申请
+  /// [iOSAppId] app_id，应用访问监测控制台申请
+  /// [sampleRate] 采样率，取值范围 [0,1]，0 表示不采集，1 表示全采集，默认值为 1。作用域为同一 session_id 下所有 View，Action，LongTask，Error 数据
+  /// [sessionOnErrorSampleRate] 设置错误采集率，当会话未被 setSamplingRate 采样时，若会话期间发生错误，可以采集到错误前 1 分钟范围的数据，取值范围 [0,1]，0 表示不采集，1 表示全采集，默认值为 0。作用域为同一 session_id 下所有 View，Action，LongTask，Error 数据
   /// [enableNativeUserAction] 是否进行 Native Action 追踪，Button 点击事件，纯 flutter 应用建议关闭
   /// [enableNativeUserView] 是否进行 Native View 自动追踪，纯 Flutter 应用建议关闭
+  /// [enableNativeUserViewInFragment] 是否自动追踪 Native Fragment 类型的页面数据，默认为 false
   /// [enableNativeUserResource] 是否进行 Native Resource 自动追踪，纯 Flutter 应用建议关闭
   /// [enableNativeAppUIBlock] 是否进行 Native Freeze 自动追踪
   /// [uiBlockDurationMS] 是否对 Freeze uiBlockDurationMS 的时间范围进行设置
@@ -38,9 +40,11 @@ class FTRUMManager {
       {String? androidAppId,
       String? iOSAppId,
       double? sampleRate,
+      double? sessionOnErrorSampleRate,
       bool enableUserResource = false,
       bool? enableNativeUserAction,
       bool? enableNativeUserView,
+      bool? enableNativeUserViewInFragment,
       bool? enableNativeUserResource,
       bool? enableNativeAppUIBlock,
       int? nativeUiBlockDurationMS,
@@ -60,8 +64,10 @@ class FTRUMManager {
       map["rumAppId"] = iOSAppId;
     }
     map["sampleRate"] = sampleRate;
+    map["sessionOnErrorSampleRate"] = sessionOnErrorSampleRate;
     map["enableUserAction"] = enableNativeUserAction;
     map["enableUserView"] = enableNativeUserView;
+    map["enableUserViewInFragment"] = enableNativeUserViewInFragment;
     map["enableUserResource"] = enableNativeUserResource;
     map["enableAppUIBlock"] = enableNativeAppUIBlock;
     map["nativeUiBlockDurationMS"] = nativeUiBlockDurationMS;
