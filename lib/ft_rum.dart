@@ -24,7 +24,7 @@ class FTRUMManager {
   /// [sessionOnErrorSampleRate] 设置错误采集率，当会话未被 setSamplingRate 采样时，若会话期间发生错误，可以采集到错误前 1 分钟范围的数据，取值范围 [0,1]，0 表示不采集，1 表示全采集，默认值为 0。作用域为同一 session_id 下所有 View，Action，LongTask，Error 数据
   /// [enableNativeUserAction] 是否进行 Native Action 追踪，Button 点击事件，纯 flutter 应用建议关闭
   /// [enableNativeUserView] 是否进行 Native View 自动追踪，纯 Flutter 应用建议关闭
-  /// [enableNativeUserViewInFragment] 是否自动追踪 Native Fragment 类型的页面数据，默认为 false
+  /// [enableNativeUserViewInFragment] 是否自动追踪 Native Fragment 类型的页面数据，默认为 false。仅支持 Android
   /// [enableNativeUserResource] 是否进行 Native Resource 自动追踪，纯 Flutter 应用建议关闭
   /// [enableNativeAppUIBlock] 是否进行 Native Freeze 自动追踪
   /// [uiBlockDurationMS] 是否对 Freeze uiBlockDurationMS 的时间范围进行设置

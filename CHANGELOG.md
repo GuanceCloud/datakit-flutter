@@ -2,7 +2,7 @@
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md)
 
-## 0.5.5
+## 0.5.6
 * 添加 `FTRUMManager().setConfig(sessionOnErrorSampleRate)` 支持错误采样，在未被 setSamplingRate采样时，
   在发生错误时可以对 1 分钟前的 rum 的数据进行取样采集
 * 添加 `FTMobileFlutter.sdkConfig(dataModifier, lineDataModifier)` 支持数据写入替换，支持数据脱敏
