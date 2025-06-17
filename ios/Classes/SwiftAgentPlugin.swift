@@ -184,7 +184,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 logConfig.discardType = logCacheDiscard ?? FTLogCacheDiscard.discard
             }
 
-            if let sampleRate = context["sampleRate"] as? Float {
+            if let sampleRate = context["sampleRate"] as? Double {
                 logConfig.samplerate = Int32(Int(sampleRate * 100))
             }
             if let logTypeArr = context["logType"] as? [Int] {
@@ -221,7 +221,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             result(nil)
         case SwiftAgentPlugin.METHOD_TRACE_CONFIG:
             let traceConfig = FTTraceConfig()
-            if let sampleRate = context["sampleRate"] as? Float {
+            if let sampleRate = context["sampleRate"] as? Double {
                 traceConfig.samplerate = Int32(Int(sampleRate * 100))
             }
             if let enableLinkRUMData = context["enableLinkRUMData"] as? Bool {
@@ -250,10 +250,10 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         case SwiftAgentPlugin.METHOD_RUM_CONFIG:
             if let rumAppId = context["rumAppId"] as? String {
                 let rumConfig = FTRumConfig(appid: rumAppId)
-                if let sampleRate = context["sampleRate"] as? Float {
+                if let sampleRate = context["sampleRate"] as? Double {
                     rumConfig.samplerate = Int32(Int(sampleRate * 100))
                 }
-                if let sessionOnErrorSampleRate = context["sessionOnErrorSampleRate"] as? Float {
+                if let sessionOnErrorSampleRate = context["sessionOnErrorSampleRate"] as? Double {
                     rumConfig.sessionOnErrorSampleRate = Int32(Int(sessionOnErrorSampleRate * 100))
                 }
                 if let enableUserAction = context["enableUserAction"] as? Bool {
