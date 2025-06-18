@@ -190,10 +190,8 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             if let sampleRate = context["sampleRate"] as? Double {
                 logConfig.samplerate = Int32(Int(sampleRate * 100))
             }
-            if let logTypeArr = context["logType"] as? [Int] {
-                logConfig.logLevelFilter = logTypeArr.map { number in
-                    NSNumber.init(integerLiteral: number)
-                }
+            if let logTypeArr = context["logType"] as? [Any] {
+                logConfig.logLevelFilter = logTypeArr
             }
             if let enableLinkRumData = context["enableLinkRumData"] as? Bool {
                 logConfig.enableLinkRumData = enableLinkRumData
