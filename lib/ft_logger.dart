@@ -46,7 +46,7 @@ class FTLogger {
     map["logType"] = logLevelFilters?.map((e) => e.index).toList();
     map["enableLinkRumData"] = enableLinkRumData;
     map["enableCustomLog"] = enableCustomLog;
-    map["logCacheDiscard"] = logCacheDiscard;
+    map["logCacheDiscard"] = logCacheDiscard?.index;
     map["logCacheLimitCount"] = logCacheLimitCount;
     map["printCustomLogToConsole"] = printCustomLogToConsole;
     map["globalContext"] = globalContext;
