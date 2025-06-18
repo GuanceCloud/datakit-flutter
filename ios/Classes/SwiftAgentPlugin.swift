@@ -137,7 +137,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
 
             FTMobileAgent.start(withConfigOptions: config)
 #if FTTesting
-            FTTypeValidator.validateBase(context)
+            FTTypeValidator.validateBase(context,config:config)
 #endif
             result(nil)
         case SwiftAgentPlugin.METHOD_FLUSH_SYNC_DATA:
@@ -214,7 +214,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             }
             FTMobileAgent.sharedInstance().startLogger(withConfigOptions: logConfig)
 #if FTTesting
-            FTTypeValidator.validateLog(context)
+            FTTypeValidator.validateLog(context,config:logConfig)
 #endif
             result(nil)
         case SwiftAgentPlugin.METHOD_LOGGING:
@@ -240,7 +240,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             }
             FTMobileAgent.sharedInstance().startTrace(withConfigOptions: traceConfig)
 #if FTTesting
-            FTTypeValidator.validateTrace(context)
+            FTTypeValidator.validateTrace(context,config:traceConfig)
 #endif
             result(nil)
         case SwiftAgentPlugin.METHOD_GET_TRACE_HEADER:
@@ -307,12 +307,10 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                     rumConfig.rumDiscardType = rumCacheDiscard ?? FTRUMCacheDiscard.discard
                 }
                 FTMobileAgent.sharedInstance().startRum(withConfigOptions: rumConfig)
-            }
-            
 #if FTTesting
-            FTTypeValidator.validateRUM(context)
+            FTTypeValidator.validateRUM(context, config: rumConfig)
 #endif
-            
+            }
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_ADD_ACTION:
             let actionName = context["actionName"] as! String
