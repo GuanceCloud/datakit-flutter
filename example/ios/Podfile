@@ -82,7 +82,15 @@ post_install do |installer|
                   'PERMISSION_SENSORS=0',
 
                   ## dart: PermissionGroup.bluetooth
-                  'PERMISSION_BLUETOOTH=0'
+                  'PERMISSION_BLUETOOTH=0',
+                  
+                  ## ft_mobile_agent_flutter: test
+                  'FTTesting=1'
+              ]
+              ## ft_mobile_agent_flutter: test
+              config.build_settings['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] = [
+                  '$(inherited)',
+                  'FTTesting'
               ]
         end
   end

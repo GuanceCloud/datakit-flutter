@@ -136,6 +136,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             }
 
             FTMobileAgent.start(withConfigOptions: config)
+#if FTTesting
+            FTTypeValidator.validateBase(context)
+#endif
             result(nil)
         case SwiftAgentPlugin.METHOD_FLUSH_SYNC_DATA:
             FTMobileAgent.sharedInstance().flushSyncData()
@@ -210,7 +213,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 logConfig.globalContext = globalContext
             }
             FTMobileAgent.sharedInstance().startLogger(withConfigOptions: logConfig)
-
+#if FTTesting
+            FTTypeValidator.validateLog(context)
+#endif
             result(nil)
         case SwiftAgentPlugin.METHOD_LOGGING:
             if let content = context["content"] as? String {
@@ -234,6 +239,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 traceConfig.networkTraceType = FTNetworkTraceType.init(rawValue: UInt(traceType))!
             }
             FTMobileAgent.sharedInstance().startTrace(withConfigOptions: traceConfig)
+#if FTTesting
+            FTTypeValidator.validateTrace(context)
+#endif
             result(nil)
         case SwiftAgentPlugin.METHOD_GET_TRACE_HEADER:
             let urlStr = context["url"] as! String
@@ -300,6 +308,11 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 }
                 FTMobileAgent.sharedInstance().startRum(withConfigOptions: rumConfig)
             }
+            
+#if FTTesting
+            FTTypeValidator.validateRUM(context)
+#endif
+            
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_ADD_ACTION:
             let actionName = context["actionName"] as! String
