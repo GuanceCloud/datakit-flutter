@@ -137,7 +137,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
 
             FTMobileAgent.start(withConfigOptions: config)
 #if FTTesting
-            FTTypeValidator.validateBase(context,config:config)
+            test("validateBase:",context,config)
 #endif
             result(nil)
         case SwiftAgentPlugin.METHOD_FLUSH_SYNC_DATA:
@@ -212,7 +212,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             }
             FTMobileAgent.sharedInstance().startLogger(withConfigOptions: logConfig)
 #if FTTesting
-            FTTypeValidator.validateLog(context,config:logConfig)
+            test("validateLog:",context,logConfig)
 #endif
             result(nil)
         case SwiftAgentPlugin.METHOD_LOGGING:
@@ -238,7 +238,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             }
             FTMobileAgent.sharedInstance().startTrace(withConfigOptions: traceConfig)
 #if FTTesting
-            FTTypeValidator.validateTrace(context,config:traceConfig)
+            test("validateTrace:",context,traceConfig)
 #endif
             result(nil)
         case SwiftAgentPlugin.METHOD_GET_TRACE_HEADER:
@@ -306,7 +306,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 }
                 FTMobileAgent.sharedInstance().startRum(withConfigOptions: rumConfig)
 #if FTTesting
-            FTTypeValidator.validateRUM(context, config: rumConfig)
+                test("validateRUM:",context,rumConfig)
 #endif
             }
             result(nil)
@@ -386,5 +386,16 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             result(FlutterMethodNotImplemented)
         }
     }
+#if FTTesting
+    func test(_ selectorName:String,_ context:[String:Any],_ config:Any){
+        if let validatorClass = NSClassFromString("FTTest.FTTypeValidator") {
+            let selector = NSSelectorFromString(selectorName)
+            if validatorClass.responds(to: selector) {
+                let param:[String : Any] = ["context":context,"config":config]
+                validatorClass.perform(selector, with: param, afterDelay: 0)
+            }
+        }
+    }
+#endif
 
 }

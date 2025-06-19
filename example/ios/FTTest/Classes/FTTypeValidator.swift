@@ -4,7 +4,6 @@
 //
 //  Created by hulilei on 2025/6/17.
 //
-#if FTTesting
 import FTMobileSDK
 import Foundation
 import os.log
@@ -197,7 +196,8 @@ extension NSNumber {
 }
     @available(iOS 14.0, *)
     let logger = Logger(subsystem: "com.example.app", category: "network")
-struct FTTypeValidator {
+
+@objc class FTTypeValidator:NSObject {
     /// 校验字典中指定 key 的 value 类型
     static func validate<T>(_ context: [String: Any], key: String, type: T.Type) -> Bool {
         return context[key] is T
@@ -251,11 +251,13 @@ struct FTTypeValidator {
             let str = res.count==0 ? "successful!":"failed with parameter:\(res)."
             let verificationStr = result.count>0 ? "----\nParameter type verification result :\n \(result)\n":""
             let unsetStr = empty.count == 0 ? "" : "----\n Unset parameters :\n \(empty)"
-            logger.info("[TEST] \(type) Configuration \(str)\n\(config.configDescription())\n\(verificationStr)\(unsetStr)")
+            logger.info("[TEST] \(type) Config \(str)\n\(verificationStr)\(unsetStr)")
         }
     }
     
-    static func validateRUM(_ context:[String: Any],config:FTRumConfig){
+    @objc static func validateRUM(_ param:[String: Any]){
+        let config = param["config"] as! FTRumConfig
+        let context = param["context"] as! [String:Any]
         let rules:[String : Any.Type] = [
             "rumAppId":String.self,
             "sampleRate":Double.self,
@@ -276,7 +278,9 @@ struct FTTypeValidator {
         ]
         validateAll(context, rules: rules,type: "RUM",config:config )
     }
-    static func validateLog(_ context:[String: Any],config:FTLoggerConfig){
+    @objc static func validateLog(_ param:[String: Any]){
+        let config = param["config"] as! FTLoggerConfig
+        let context = param["context"] as! [String:Any]
         let rules:[String : Any.Type] = [
             "sampleRate":Double.self,
             "logCacheDiscard":Int.self,
@@ -289,7 +293,9 @@ struct FTTypeValidator {
         ]
         validateAll(context, rules: rules, type: "Log",config: config)
     }
-    static func validateTrace(_ context:[String: Any],config:FTTraceConfig){
+    @objc static func validateTrace(_ param:[String: Any]){
+        let config = param["config"] as! FTTraceConfig
+        let context = param["context"] as! [String:Any]
         let rules:[String : Any.Type] = [
             "sampleRate":Double.self,
             "enableLinkRUMData":Bool.self,
@@ -298,7 +304,9 @@ struct FTTypeValidator {
         ]
         validateAll(context, rules: rules, type: "Trace",config: config)
     }
-    static func validateBase(_ context:[String: Any],config:FTMobileConfig){
+    @objc static func validateBase(_ param:[String: Any]){
+        let config = param["config"] as! FTMobileConfig
+        let context = param["context"] as! [String:Any]
         let rules:[String : Any.Type] = [
             "datakitUrl":String.self,
             "datawayUrl":String.self,
@@ -324,4 +332,3 @@ struct FTTypeValidator {
         validateAll(context, rules: rules, type: "SDK",config:config)
     }
 }
-#endif
