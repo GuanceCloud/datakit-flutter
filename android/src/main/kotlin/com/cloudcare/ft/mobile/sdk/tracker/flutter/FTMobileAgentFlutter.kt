@@ -223,7 +223,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
                 if (dataModifier != null) {
                     sdkConfig.setDataModifier(object : DataModifier {
-                        override fun modify(key: String, value: Any): Any? {
+                        override fun modify(key: String, value: Any?): Any? {
                             return dataModifier[key]
                         }
                     })
@@ -233,8 +233,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                     sdkConfig.setLineDataModifier(object :LineDataModifier{
                         override fun modify(
                             measurement: String?,
-                            data: HashMap<String, Any>?
-                        ): Map<String, Any>? {
+                            data: HashMap<String, Any?>?
+                        ): Map<String, Any?>? {
                             return if(measurement == Constants.FT_LOG_DEFAULT_MEASUREMENT){
                                 lineDataModifier["log"]
                             }else{
