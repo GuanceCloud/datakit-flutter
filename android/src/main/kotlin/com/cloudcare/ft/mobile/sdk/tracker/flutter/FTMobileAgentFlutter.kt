@@ -29,7 +29,6 @@ import com.ft.sdk.garble.bean.Status
 import com.ft.sdk.garble.bean.UserData
 import com.ft.sdk.garble.utils.Constants
 import com.ft.sdk.garble.utils.LogUtils
-//import com.google.gson.Gson
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -88,7 +87,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
     // depending on the user's project. onAttachedToEngine or registerWith must both be defined
     // in the same class.
     companion object {
-        const val LOG_TAG = "FTMobileAgentFlutter"
+        const val LOG_TAG = "${Constants.LOG_TAG_PREFIX}FTMobileAgentFlutter"
         const val METHOD_CONFIG = "ftConfig"
         const val METHOD_FLUSH_SYNC_DATA = "ftFlushSyncData"
 
@@ -119,8 +118,60 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
         const val METHOD_SET_INNER_LOG_HANDLER = "ftSetInnerLogHandler"
         const val METHOD_INVOKE_INNER_LOG = "ftInvokeInnerLog"
 
+        const val KEY_DATAKIT_URL = "datakitUrl"
+        const val KEY_DATAWAY_URL = "datawayUrl"
+        const val KEY_CLI_TOKEN = "cliToken"
+        const val KEY_DEBUG = "debug"
+        const val KEY_SERVICE_NAME = "serviceName"
+        const val KEY_DATA_SYNC_RETRY_COUNT = "dataSyncRetryCount"
+        const val KEY_ENV_TYPE = "env"
+        const val KEY_GLOBAL_CONTEXT = "globalContext"
+        const val KEY_ENABLE_ACCESS_ANDROID_ID = "enableAccessAndroidID"
+        const val KEY_AUTO_SYNC = "autoSync"
+        const val KEY_SYNC_PAGE_SIZE = "syncPageSize"
+        const val KEY_CUSTOM_SYNC_PAGE_SIZE = "customSyncPageSize"
+        const val KEY_SYNC_SLEEP_TIME = "syncSleepTime"
+        const val KEY_COMPRESS_INTAKE_REQUESTS = "compressIntakeRequests"
+        const val KEY_ENABLE_DATA_INTEGER_COMPATIBLE = "enableDataIntegerCompatible"
+        const val KEY_ENABLE_LIMIT_WITH_DB_SIZE = "enableLimitWithDbSize"
+        const val KEY_DB_CACHE_LIMIT = "dbCacheLimit"
+        const val KEY_DB_CACHE_DISCARD = "dbCacheDiscard"
+        const val KEY_DATA_MODIFIER = "dataModifier"
+        const val KEY_LINE_DATA_MODIFIER = "lineDataModifier"
+        const val KEY_PKG_INFO = "pkgInfo"
+
+        const val KEY_SAMPLE_RATE = "sampleRate"
+        const val KEY_TRACE_TYPE = "traceType"
+        const val KEY_ENABLE_LINK_RUM_DATA = "enableLinkRUMData"
+        const val KEY_ENABLE_NATIVE_AUTO_TRACE = "enableNativeAutoTrace"
+
+        const val KEY_RUM_APP_ID = "rumAppId"
+        const val KEY_SESSION_ON_ERROR_SAMPLE_RATE = "sessionOnErrorSampleRate"
+        const val KEY_ENABLE_USER_ACTION = "enableUserAction"
+        const val KEY_ENABLE_USER_VIEW = "enableUserView"
+        const val KEY_ENABLE_USER_VIEW_IN_FRAGMENT = "enableUserViewInFragment"
+        const val KEY_ENABLE_USER_RESOURCE = "enableUserResource"
+        const val KEY_ENABLE_APP_UI_BLOCK = "enableAppUIBlock"
+        const val KEY_ENABLE_TRACK_NATIVE_APP_ANR = "enableTrackNativeAppANR"
+        const val KEY_ENABLE_TRACK_NATIVE_CRASH = "enableTrackNativeCrash"
+        const val KEY_NATIVE_UI_BLOCK_DURATION_MS = "nativeUiBlockDurationMS"
+        const val KEY_ERROR_MONITOR_TYPE = "errorMonitorType"
+        const val KEY_DEVICE_METRICS_MONITOR_TYPE = "deviceMetricsMonitorType"
+        const val KEY_DETECT_FREQUENCY = "detectFrequency"
+        const val KEY_RUM_CACHE_DISCARD = "rumCacheDiscard"
+        const val KEY_RUM_CACHE_LIMIT_COUNT = "rumCacheLimitCount"
+
+        const val KEY_LOG_TYPE = "logType"
+        const val KEY_ENABLE_CUSTOM_LOG = "enableCustomLog"
+        const val KEY_PRINT_CUSTOM_LOG_TO_CONSOLE = "printCustomLogToConsole"
+        const val KEY_LOG_CACHE_DISCARD = "logCacheDiscard"
+        const val KEY_LOG_CACHE_LIMIT_COUNT = "logCacheLimitCount"
+
+        const val DEBUG = false
+        val tester: Any? = if (DEBUG) FTConfigCheck() else null
 
     }
+
 
     override fun onMethodCall(call: MethodCall, result: Result) {
 //        if (BuildConfig.DEBUG) {
@@ -128,35 +179,36 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 //        }
         when (call.method) {
             METHOD_CONFIG -> {
-                val datakitUrl: String? = call.argument<String>("datakitUrl")
-                val datawayUrl: String? = call.argument<String>("datawayUrl")
-                val cliToken: String? = call.argument<String>("cliToken")
-                val debug: Boolean? = call.argument<Boolean>("debug")
-                val serviceName: String? = call.argument<String?>("serviceName")
-                val dataSyncRetryCount: Number? = call.argument<Number>("dataSyncRetryCount")
-                val envType: String? = call.argument<String?>("env");
-                val globalContext: Map<String, String>? = call.argument("globalContext")
+                val datakitUrl: String? = call.argument<String>(KEY_DATAKIT_URL)
+                val datawayUrl: String? = call.argument<String>(KEY_DATAWAY_URL)
+                val cliToken: String? = call.argument<String>(KEY_CLI_TOKEN)
+                val debug: Boolean? = call.argument<Boolean>(KEY_DEBUG)
+                val serviceName: String? = call.argument<String?>(KEY_SERVICE_NAME)
+                val dataSyncRetryCount: Number? = call.argument<Number>(KEY_DATA_SYNC_RETRY_COUNT)
+                val envType: String? = call.argument<String?>(KEY_ENV_TYPE);
+                val globalContext: Map<String, String>? = call.argument(KEY_GLOBAL_CONTEXT)
                 val enableAccessAndroidID: Boolean? =
-                    call.argument<Boolean>("enableAccessAndroidID")
-                val autoSync: Boolean? = call.argument<Boolean>("autoSync")
-                val syncPageSize: Number? = call.argument<Number>("syncPageSize")
-                val customSyncPageSize: Number? = call.argument<Number>("customSyncPageSize")
-                val syncSleepTime: Number? = call.argument<Number>("syncSleepTime")
+                    call.argument<Boolean>(KEY_ENABLE_ACCESS_ANDROID_ID)
+                val autoSync: Boolean? = call.argument<Boolean>(KEY_AUTO_SYNC)
+                val syncPageSize: Number? = call.argument<Number>(KEY_SYNC_PAGE_SIZE)
+                val customSyncPageSize: Number? = call.argument<Number>(KEY_CUSTOM_SYNC_PAGE_SIZE)
+                val syncSleepTime: Number? = call.argument<Number>(KEY_SYNC_SLEEP_TIME)
                 val compressIntakeRequests: Boolean? =
-                    call.argument<Boolean>("compressIntakeRequests")
+                    call.argument<Boolean>(KEY_COMPRESS_INTAKE_REQUESTS)
                 val enableDataIntegerCompatible: Boolean? =
-                    call.argument<Boolean>("enableDataIntegerCompatible")
+                    call.argument<Boolean>(KEY_ENABLE_DATA_INTEGER_COMPATIBLE)
                 val enableLimitWithDbSize: Boolean? =
-                    call.argument<Boolean>("enableLimitWithDbSize")
+                    call.argument<Boolean>(KEY_ENABLE_LIMIT_WITH_DB_SIZE)
                 val dbCacheLimit: Number? =
-                    call.argument<Number>("dbCacheLimit")
+                    call.argument<Number>(KEY_DB_CACHE_LIMIT)
                 val dbCacheDiscard: DBCacheDiscard =
-                    DBCacheDiscard.values()[call.argument<Number>("dbCacheDiscard")?.toInt()
+                    DBCacheDiscard.values()[call.argument<Number>(KEY_DB_CACHE_DISCARD)?.toInt()
                         ?: DBCacheDiscard.DISCARD.ordinal]
 
-                val dataModifier: Map<String, Any>? = call.argument("dataModifier")
-                val lineDataModifier: Map<String, Map<String, Any>>? = call.argument("lineDataModifier")
-                val pkgInfo: String? = call.argument<String?>("pkgInfo")
+                val dataModifier: Map<String, Any>? = call.argument(KEY_DATA_MODIFIER)
+                val lineDataModifier: Map<String, Map<String, Any>>? =
+                    call.argument(KEY_LINE_DATA_MODIFIER)
+                val pkgInfo: String? = call.argument<String?>(KEY_PKG_INFO)
 
                 val sdkConfig =
                     if (datakitUrl != null) FTSDKConfig.builder(datakitUrl) else FTSDKConfig.builder(
@@ -223,21 +275,21 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
                 if (dataModifier != null) {
                     sdkConfig.setDataModifier(object : DataModifier {
-                        override fun modify(key: String, value: Any): Any? {
+                        override fun modify(key: String, value: Any?): Any? {
                             return dataModifier[key]
                         }
                     })
                 }
 
                 if (lineDataModifier != null) {
-                    sdkConfig.setLineDataModifier(object :LineDataModifier{
+                    sdkConfig.setLineDataModifier(object : LineDataModifier {
                         override fun modify(
                             measurement: String?,
                             data: HashMap<String, Any>?
                         ): Map<String, Any>? {
-                            return if(measurement == Constants.FT_LOG_DEFAULT_MEASUREMENT){
+                            return if (measurement == Constants.FT_LOG_DEFAULT_MEASUREMENT) {
                                 lineDataModifier["log"]
-                            }else{
+                            } else {
                                 lineDataModifier[measurement]
                             }
                         }
@@ -250,6 +302,11 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 FTSdk.install(sdkConfig)
                 result.success(null)
 //                LogUtils.d(LOG_TAG, Gson().toJson(sdkConfig))
+                if (DEBUG) {
+                    if (tester is FTConfigCheck) {
+                        tester.validateSDKConfig(tester.flutterArgsConvert(call), sdkConfig)
+                    }
+                }
             }
 
             METHOD_FLUSH_SYNC_DATA -> {
@@ -258,27 +315,33 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
             }
 
             METHOD_RUM_CONFIG -> {
-                val rumAppId: String = call.argument<String>("rumAppId")!!
-                val sampleRate: Double? = call.argument<Double>("sampleRate")
-                val sessionOnErrorSampleRate: Double? = call.argument<Double>("sessionOnErrorSampleRate")
-                val enableUserAction: Boolean? = call.argument<Boolean>("enableUserAction")
-                val enableUserView: Boolean? = call.argument<Boolean>("enableUserView")
-                val enableUserResource: Boolean? = call.argument<Boolean>("enableUserResource")
-                val enableAppUIBlock: Boolean? = call.argument<Boolean>("enableAppUIBlock")
+                val rumAppId: String = call.argument<String>(KEY_RUM_APP_ID)!!
+                val sampleRate: Double? = call.argument<Double>(KEY_SAMPLE_RATE)
+                val sessionOnErrorSampleRate: Double? =
+                    call.argument<Double>(KEY_SESSION_ON_ERROR_SAMPLE_RATE)
+                val enableUserAction: Boolean? = call.argument<Boolean>(KEY_ENABLE_USER_ACTION)
+                val enableUserView: Boolean? = call.argument<Boolean>(KEY_ENABLE_USER_VIEW)
+                val enableUserViewInFragment: Boolean? = call.argument<Boolean>(
+                    KEY_ENABLE_USER_VIEW_IN_FRAGMENT
+                )
+                val enableUserResource: Boolean? = call.argument<Boolean>(KEY_ENABLE_USER_RESOURCE)
+                val enableAppUIBlock: Boolean? = call.argument<Boolean>(KEY_ENABLE_APP_UI_BLOCK)
                 val enableTrackNativeAppANR: Boolean? =
-                    call.argument<Boolean>("enableTrackNativeAppANR")
+                    call.argument<Boolean>(KEY_ENABLE_TRACK_NATIVE_APP_ANR)
                 val enableTrackNativeCrash: Boolean? =
-                    call.argument<Boolean>("enableTrackNativeCrash")
-                val uiBlockDurationMS: Number? = call.argument<Number>("nativeUiBlockDurationMS")
-                val errorMonitorType: Number? = call.argument<Number>("errorMonitorType")
+                    call.argument<Boolean>(KEY_ENABLE_TRACK_NATIVE_CRASH)
+                val uiBlockDurationMS: Number? = call.argument<Number>(
+                    KEY_NATIVE_UI_BLOCK_DURATION_MS
+                )
+                val errorMonitorType: Number? = call.argument<Number>(KEY_ERROR_MONITOR_TYPE)
                 val deviceMetricsMonitorType: Number? =
-                    call.argument<Number>("deviceMetricsMonitorType")
-                val detectFrequency: Number? = call.argument<Number>("detectFrequency")
-                val globalContext: Map<String, String>? = call.argument("globalContext")
+                    call.argument<Number>(KEY_DEVICE_METRICS_MONITOR_TYPE)
+                val detectFrequency: Number? = call.argument<Number>(KEY_DETECT_FREQUENCY)
+                val globalContext: Map<String, String>? = call.argument(KEY_GLOBAL_CONTEXT)
                 val rumCacheDiscard: RUMCacheDiscard =
-                    RUMCacheDiscard.values()[call.argument<Number>("rumCacheDiscard")?.toInt()
+                    RUMCacheDiscard.values()[call.argument<Number>(KEY_RUM_CACHE_DISCARD)?.toInt()
                         ?: RUMCacheDiscard.DISCARD.ordinal]
-                val rumCacheLimitCount: Number? = call.argument<Number>("rumCacheLimitCount")
+                val rumCacheLimitCount: Number? = call.argument<Number>(KEY_RUM_CACHE_LIMIT_COUNT)
 
                 val rumConfig = FTRUMConfig().setRumAppId(rumAppId)
                     .setRumCacheDiscardStrategy(rumCacheDiscard)
@@ -296,6 +359,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 if (enableUserView != null) {
                     rumConfig.isEnableTraceUserView = enableUserView
+                }
+
+                if (enableUserViewInFragment != null) {
+                    rumConfig.isEnableTraceUserViewInFragment = enableUserViewInFragment
                 }
 
                 if (enableUserResource != null) {
@@ -348,6 +415,11 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 FTSdk.initRUMWithConfig(rumConfig)
                 result.success(null)
+                if (DEBUG) {
+                    if (tester is FTConfigCheck) {
+                        tester.validateRUMConfig(tester.flutterArgsConvert(call), rumConfig)
+                    }
+                }
 //                LogUtils.d(LOG_TAG, Gson().toJson(rumConfig))
 
             }
@@ -484,18 +556,18 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
             }
 
             METHOD_LOG_CONFIG -> {
-                val sampleRate: Double? = call.argument<Double>("sampleRate")
-                val logTypeArr: List<Int>? = call.argument<List<Int>>("logType")
-                val enableLinkRumData: Boolean? = call.argument<Boolean>("enableLinkRumData")
-                val enableCustomLog: Boolean? = call.argument<Boolean>("enableCustomLog")
+                val sampleRate: Double? = call.argument<Double>(KEY_SAMPLE_RATE)
+                val logTypeArr: List<Int>? = call.argument<List<Int>>(KEY_LOG_TYPE)
+                val enableLinkRumData: Boolean? = call.argument<Boolean>(KEY_ENABLE_LINK_RUM_DATA)
+                val enableCustomLog: Boolean? = call.argument<Boolean>(KEY_ENABLE_CUSTOM_LOG)
                 val printCustomLogToConsole: Boolean? =
-                    call.argument<Boolean>("printCustomLogToConsole")
-                val globalContext: Map<String, String>? = call.argument("globalContext")
+                    call.argument<Boolean>(KEY_PRINT_CUSTOM_LOG_TO_CONSOLE)
+                val globalContext: Map<String, String>? = call.argument(KEY_GLOBAL_CONTEXT)
 
                 val logCacheDiscard: LogCacheDiscard =
-                    LogCacheDiscard.values()[call.argument<Int>("logCacheDiscard")
+                    LogCacheDiscard.values()[call.argument<Int>(KEY_LOG_CACHE_DISCARD)
                         ?: LogCacheDiscard.DISCARD.ordinal]
-                val logCacheLimitCount: Int? = call.argument<Int>("logCacheLimitCount")
+                val logCacheLimitCount: Int? = call.argument<Int>(KEY_LOG_CACHE_LIMIT_COUNT)
 
                 val logConfig = FTLoggerConfig()
                     .setLogCacheDiscardStrategy(logCacheDiscard)
@@ -538,6 +610,12 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 FTSdk.initLogWithConfig(logConfig)
                 result.success(null)
+
+                if (DEBUG) {
+                    if (tester is FTConfigCheck) {
+                        tester.validateLogConfig(tester.flutterArgsConvert(call), logConfig)
+                    }
+                }
 //                LogUtils.d(LOG_TAG, Gson().toJson(logConfig))
             }
 
@@ -559,10 +637,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
             }
 
             METHOD_TRACE_CONFIG -> {
-                val sampleRate: Double? = call.argument<Double>("sampleRate")
-                val traceType = call.argument<Int>("traceType")
-                val enableLinkRUMData = call.argument<Boolean>("enableLinkRUMData")
-                val enableAutoTrace = call.argument<Boolean>("enableNativeAutoTrace")
+                val sampleRate: Double? = call.argument<Double>(KEY_SAMPLE_RATE)
+                val traceType = call.argument<Int>(KEY_TRACE_TYPE)
+                val enableLinkRUMData = call.argument<Boolean>(KEY_ENABLE_LINK_RUM_DATA)
+                val enableAutoTrace = call.argument<Boolean>(KEY_ENABLE_NATIVE_AUTO_TRACE)
 
                 val traceConfig = FTTraceConfig()
                 if (sampleRate != null) {
@@ -586,6 +664,11 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 FTSdk.initTraceWithConfig(traceConfig)
                 result.success(null)
+                if (DEBUG) {
+                    if (tester is FTConfigCheck) {
+                        tester.validateTraceConfig(tester.flutterArgsConvert(call), traceConfig)
+                    }
+                }
 //                LogUtils.d(LOG_TAG, Gson().toJson(traceConfig))
 
             }
