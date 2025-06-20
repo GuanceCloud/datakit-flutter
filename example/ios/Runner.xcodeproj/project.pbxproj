@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
+		1711823C2E052E4E0036C3A5 /* TestDebug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 171182382E052E4E0036C3A5 /* TestDebug.xcconfig */; };
+		1711823D2E052E4E0036C3A5 /* FTPluginTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171182352E052E4E0036C3A5 /* FTPluginTest.swift */; };
+		1711823F2E052E4E0036C3A5 /* TestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 1711823A2E052E4E0036C3A5 /* TestUtils.m */; };
 		17E0793F2922473A0014A420 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17E0793E2922473A0014A420 /* WidgetKit.framework */; };
 		17E079412922473A0014A420 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17E079402922473A0014A420 /* SwiftUI.framework */; };
 		17E079442922473A0014A420 /* TodayDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E079432922473A0014A420 /* TodayDemo.swift */; };
@@ -20,10 +23,18 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		9E9568E89B30A2FD76FA1B59 /* libPods-FTPluginTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01257754CC678B20FF8B7107 /* libPods-FTPluginTests.a */; };
 		FFB1EC63D800AC4C412124A0 /* libPods-TodayDemoExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 622BBC96A383CDFBE3606B7A /* libPods-TodayDemoExtension.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		171182272E052E3E0036C3A5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 97C146E61CF9000F007C117D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 97C146ED1CF9000F007C117D;
+			remoteInfo = Runner;
+		};
 		17E079482922473C0014A420 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 97C146E61CF9000F007C117D /* Project object */;
@@ -58,9 +69,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		01257754CC678B20FF8B7107 /* libPods-FTPluginTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FTPluginTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		16ED2CAF61093D5011FB4133 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
+		171182232E052E3E0036C3A5 /* FTPluginTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FTPluginTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		171182352E052E4E0036C3A5 /* FTPluginTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FTPluginTest.swift; sourceTree = "<group>"; };
+		171182372E052E4E0036C3A5 /* FTPluginTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FTPluginTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		171182382E052E4E0036C3A5 /* TestDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestDebug.xcconfig; sourceTree = "<group>"; };
+		171182392E052E4E0036C3A5 /* TestUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestUtils.h; sourceTree = "<group>"; };
+		1711823A2E052E4E0036C3A5 /* TestUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestUtils.m; sourceTree = "<group>"; };
 		17E0793D2922473A0014A420 /* TodayDemoExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TodayDemoExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		17E0793E2922473A0014A420 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		17E079402922473A0014A420 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -71,6 +89,7 @@
 		17E07956292249690014A420 /* TodayDemoExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TodayDemoExtension.entitlements; sourceTree = "<group>"; };
 		17E0795829224D280014A420 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
+		54A40B746B7CEE6BF79907F0 /* Pods-FTPluginTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FTPluginTests.debug.xcconfig"; path = "Target Support Files/Pods-FTPluginTests/Pods-FTPluginTests.debug.xcconfig"; sourceTree = "<group>"; };
 		622BBC96A383CDFBE3606B7A /* libPods-TodayDemoExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TodayDemoExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -86,11 +105,21 @@
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A724E3DFB8C09E691C0C95A5 /* Pods-TodayDemoExtension.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TodayDemoExtension.profile.xcconfig"; path = "Target Support Files/Pods-TodayDemoExtension/Pods-TodayDemoExtension.profile.xcconfig"; sourceTree = "<group>"; };
 		B73A6BD4F47749EAC92B5BD1 /* Pods-TodayDemoExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TodayDemoExtension.debug.xcconfig"; path = "Target Support Files/Pods-TodayDemoExtension/Pods-TodayDemoExtension.debug.xcconfig"; sourceTree = "<group>"; };
+		EB423FBCE2C07AC3B4482AD6 /* Pods-FTPluginTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FTPluginTests.release.xcconfig"; path = "Target Support Files/Pods-FTPluginTests/Pods-FTPluginTests.release.xcconfig"; sourceTree = "<group>"; };
 		F1916183E9B83D0265EE2E8D /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		F39F40376792E78E544D8AC2 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
+		FC58F354C9043AEFF3586BD7 /* Pods-FTPluginTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FTPluginTests.profile.xcconfig"; path = "Target Support Files/Pods-FTPluginTests/Pods-FTPluginTests.profile.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		171182202E052E3E0036C3A5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9E9568E89B30A2FD76FA1B59 /* libPods-FTPluginTests.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		17E0793A2922473A0014A420 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -112,6 +141,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1711823B2E052E4E0036C3A5 /* FTPluginTests */ = {
+			isa = PBXGroup;
+			children = (
+				171182352E052E4E0036C3A5 /* FTPluginTest.swift */,
+				171182372E052E4E0036C3A5 /* FTPluginTests-Bridging-Header.h */,
+				171182382E052E4E0036C3A5 /* TestDebug.xcconfig */,
+				171182392E052E4E0036C3A5 /* TestUtils.h */,
+				1711823A2E052E4E0036C3A5 /* TestUtils.m */,
+			);
+			path = FTPluginTests;
+			sourceTree = "<group>";
+		};
 		17E079422922473A0014A420 /* TodayDemo */ = {
 			isa = PBXGroup;
 			children = (
@@ -130,6 +171,7 @@
 				17E079402922473A0014A420 /* SwiftUI.framework */,
 				91CE17D9C3C54543C40ABF06 /* libPods-Runner.a */,
 				622BBC96A383CDFBE3606B7A /* libPods-TodayDemoExtension.a */,
+				01257754CC678B20FF8B7107 /* libPods-FTPluginTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -143,6 +185,9 @@
 				B73A6BD4F47749EAC92B5BD1 /* Pods-TodayDemoExtension.debug.xcconfig */,
 				93700FAF61D196033B295E40 /* Pods-TodayDemoExtension.release.xcconfig */,
 				A724E3DFB8C09E691C0C95A5 /* Pods-TodayDemoExtension.profile.xcconfig */,
+				54A40B746B7CEE6BF79907F0 /* Pods-FTPluginTests.debug.xcconfig */,
+				EB423FBCE2C07AC3B4482AD6 /* Pods-FTPluginTests.release.xcconfig */,
+				FC58F354C9043AEFF3586BD7 /* Pods-FTPluginTests.profile.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -165,6 +210,7 @@
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
 				17E079422922473A0014A420 /* TodayDemo */,
+				1711823B2E052E4E0036C3A5 /* FTPluginTests */,
 				97C146EF1CF9000F007C117D /* Products */,
 				44022CD4EF2E9A31839948D2 /* Pods */,
 				1BE6F755A3224C8F20FA2525 /* Frameworks */,
@@ -176,6 +222,7 @@
 			children = (
 				97C146EE1CF9000F007C117D /* Runner.app */,
 				17E0793D2922473A0014A420 /* TodayDemoExtension.appex */,
+				171182232E052E3E0036C3A5 /* FTPluginTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -207,6 +254,26 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		171182222E052E3E0036C3A5 /* FTPluginTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1711822C2E052E3F0036C3A5 /* Build configuration list for PBXNativeTarget "FTPluginTests" */;
+			buildPhases = (
+				580716EFD920EB2B9ADA300A /* [CP] Check Pods Manifest.lock */,
+				1711821F2E052E3E0036C3A5 /* Sources */,
+				171182202E052E3E0036C3A5 /* Frameworks */,
+				171182212E052E3E0036C3A5 /* Resources */,
+				606A82820F8580B9971139A5 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				171182282E052E3E0036C3A5 /* PBXTargetDependency */,
+			);
+			name = FTPluginTests;
+			productName = FTPluginTests;
+			productReference = 171182232E052E3E0036C3A5 /* FTPluginTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		17E0793C2922473A0014A420 /* TodayDemoExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 17E0794F2922473C0014A420 /* Build configuration list for PBXNativeTarget "TodayDemoExtension" */;
@@ -259,6 +326,9 @@
 				LastUpgradeCheck = 1510;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
+					171182222E052E3E0036C3A5 = {
+						CreatedOnToolsVersion = 16.2;
+					};
 					17E0793C2922473A0014A420 = {
 						CreatedOnToolsVersion = 14.0.1;
 						DevelopmentTeam = RRLM22BB37;
@@ -286,11 +356,20 @@
 			targets = (
 				97C146ED1CF9000F007C117D /* Runner */,
 				17E0793C2922473A0014A420 /* TodayDemoExtension */,
+				171182222E052E3E0036C3A5 /* FTPluginTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		171182212E052E3E0036C3A5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1711823C2E052E4E0036C3A5 /* TestDebug.xcconfig in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		17E0793B2922473A0014A420 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -351,6 +430,46 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		580716EFD920EB2B9ADA300A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-FTPluginTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		606A82820F8580B9971139A5 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FTPluginTests/Pods-FTPluginTests-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FTMobileSDK-5578c257/FTSDKPrivacyInfo.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FTSDKPrivacyInfo.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FTPluginTests/Pods-FTPluginTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		9740EEB61CF901F6004384FC /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -373,11 +492,13 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FTMobileSDK-5578c257/FTSDKPrivacyInfo.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/image_picker_ios/image_picker_ios_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview_privacy.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FTSDKPrivacyInfo.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/image_picker_ios_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/webview_flutter_wkwebview_privacy.bundle",
 			);
@@ -411,6 +532,15 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1711821F2E052E3E0036C3A5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1711823D2E052E4E0036C3A5 /* FTPluginTest.swift in Sources */,
+				1711823F2E052E4E0036C3A5 /* TestUtils.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		17E079392922473A0014A420 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -432,6 +562,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		171182282E052E3E0036C3A5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 97C146ED1CF9000F007C117D /* Runner */;
+			targetProxy = 171182272E052E3E0036C3A5 /* PBXContainerItemProxy */;
+		};
 		17E079492922473C0014A420 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 17E0793C2922473A0014A420 /* TodayDemoExtension */;
@@ -459,6 +594,94 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		171182292E052E3F0036C3A5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 171182382E052E4E0036C3A5 /* TestDebug.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RRLM22BB37;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = guance.FTPluginTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "FTPluginTests/FTPluginTests-Bridging-Header.h";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SWIFT_MODULE_NAME)-Swift.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		1711822A2E052E3F0036C3A5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EB423FBCE2C07AC3B4482AD6 /* Pods-FTPluginTests.release.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RRLM22BB37;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = guance.FTPluginTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "FTPluginTests/FTPluginTests-Bridging-Header.h";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SWIFT_MODULE_NAME)-Swift.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		1711822B2E052E3F0036C3A5 /* Profile */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FC58F354C9043AEFF3586BD7 /* Pods-FTPluginTests.profile.xcconfig */;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = RRLM22BB37;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = guance.FTPluginTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "FTPluginTests/FTPluginTests-Bridging-Header.h";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SWIFT_MODULE_NAME)-Swift.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Profile;
+		};
 		17E0794C2922473C0014A420 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B73A6BD4F47749EAC92B5BD1 /* Pods-TodayDemoExtension.debug.xcconfig */;
@@ -469,7 +692,6 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = TodayDemoExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -510,7 +732,6 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = TodayDemoExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -549,7 +770,6 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = TodayDemoExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -632,7 +852,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -644,6 +863,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -770,7 +990,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -782,6 +1001,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -803,7 +1023,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
@@ -815,6 +1034,7 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -834,6 +1054,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1711822C2E052E3F0036C3A5 /* Build configuration list for PBXNativeTarget "FTPluginTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				171182292E052E3F0036C3A5 /* Debug */,
+				1711822A2E052E3F0036C3A5 /* Release */,
+				1711822B2E052E3F0036C3A5 /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		17E0794F2922473C0014A420 /* Build configuration list for PBXNativeTarget "TodayDemoExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -29,7 +29,7 @@ flutter_ios_podfile_setup
 
 target 'Runner' do
   use_modular_headers!
-
+  pod 'FTTest', :path=>'FTTest'
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
@@ -37,6 +37,12 @@ target 'TodayDemoExtension' do
   use_modular_headers!
 
   pod 'FTMobileSDK/Extension','1.5.16'
+end
+
+target 'FTPluginTests' do
+  use_modular_headers!
+  pod 'FTTest', :path=>'FTTest'
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
 post_install do |installer|
@@ -82,7 +88,15 @@ post_install do |installer|
                   'PERMISSION_SENSORS=0',
 
                   ## dart: PermissionGroup.bluetooth
-                  'PERMISSION_BLUETOOTH=0'
+                  'PERMISSION_BLUETOOTH=0',
+                  
+                  ## ft_mobile_agent_flutter: test
+                  'FTTesting=1'
+              ]
+              ## ft_mobile_agent_flutter: test
+              config.build_settings['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] = [
+                  '$(inherited)',
+                  'FTTesting'
               ]
         end
   end
