@@ -263,6 +263,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val sessionOnErrorSampleRate: Double? = call.argument<Double>("sessionOnErrorSampleRate")
                 val enableUserAction: Boolean? = call.argument<Boolean>("enableUserAction")
                 val enableUserView: Boolean? = call.argument<Boolean>("enableUserView")
+                val enableUserViewInFragment: Boolean? = call.argument<Boolean>("enableUserViewInFragment")
                 val enableUserResource: Boolean? = call.argument<Boolean>("enableUserResource")
                 val enableAppUIBlock: Boolean? = call.argument<Boolean>("enableAppUIBlock")
                 val enableTrackNativeAppANR: Boolean? =
@@ -296,6 +297,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 if (enableUserView != null) {
                     rumConfig.isEnableTraceUserView = enableUserView
+                }
+
+                if (enableUserViewInFragment != null) {
+                    rumConfig.isEnableTraceUserViewInFragment = enableUserViewInFragment
                 }
 
                 if (enableUserResource != null) {
