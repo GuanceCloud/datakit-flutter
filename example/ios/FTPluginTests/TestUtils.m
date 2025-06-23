@@ -67,7 +67,7 @@
              @"enableUserResource":@(YES),
              @"enableTrackNativeAppANR":@(YES),
              @"enableTrackNativeCrash":@(YES),
-             @"nativeUiBlockDurationMS":@(YES),
+             @"nativeUiBlockDurationMS":@(1000),
              @"enableAppUIBlock":@(YES),
              @"errorMonitorType":@(2),
              @"globalContext":@{@"rum_key":@"rum_value"},

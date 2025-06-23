@@ -83,8 +83,8 @@ final class FTPluginTest: XCTestCase {
     func testLogConfigEmpty() throws {
         sdkInit()
         let plugin =  SwiftAgentPlugin()
-        let arguments = TestUtils.logConfigEmptyDict()
-        let methodCall = FlutterMethodCall.init(methodName: "ftLogConfig", arguments: arguments)
+        let arguments = TestUtils.rumConfigEmptyDict()
+        let methodCall = FlutterMethodCall(methodName: "ftLogConfig", arguments: arguments)
         
         plugin.handle(methodCall) { result in
             if let result = result as? Bool{
@@ -96,8 +96,8 @@ final class FTPluginTest: XCTestCase {
     func testRumConfig() throws {
         sdkInit()
         let plugin =  SwiftAgentPlugin()
-        let arguments = TestUtils.logConfigDict()
-        let methodCall = FlutterMethodCall.init(methodName: "ftRumConfig", arguments: arguments)
+        let arguments = TestUtils.rumConfigDict()
+        let methodCall = FlutterMethodCall(methodName: "ftRumConfig", arguments: arguments)
         
         plugin.handle(methodCall) { result in
             if let result = result as? Bool{
