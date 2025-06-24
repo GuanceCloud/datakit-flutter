@@ -136,6 +136,10 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             }
 
             FTMobileAgent.start(withConfigOptions: config)
+#if FT_SDK_TESTING
+            result(test("validateBase:",context,config))
+            return
+#endif
             result(nil)
         case SwiftAgentPlugin.METHOD_FLUSH_SYNC_DATA:
             FTMobileAgent.sharedInstance().flushSyncData()
@@ -187,10 +191,8 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             if let sampleRate = context["sampleRate"] as? Double {
                 logConfig.samplerate = Int32(Int(sampleRate * 100))
             }
-            if let logTypeArr = context["logType"] as? [Int] {
-                logConfig.logLevelFilter = logTypeArr.map { number in
-                    NSNumber.init(integerLiteral: number)
-                }
+            if let logTypeArr = context["logType"] as? [Any] {
+                logConfig.logLevelFilter = logTypeArr
             }
             if let enableLinkRumData = context["enableLinkRumData"] as? Bool {
                 logConfig.enableLinkRumData = enableLinkRumData
@@ -210,7 +212,10 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 logConfig.globalContext = globalContext
             }
             FTMobileAgent.sharedInstance().startLogger(withConfigOptions: logConfig)
-
+#if FT_SDK_TESTING
+            result(test("validateLog:",context,logConfig))
+            return
+#endif
             result(nil)
         case SwiftAgentPlugin.METHOD_LOGGING:
             if let content = context["content"] as? String {
@@ -234,6 +239,10 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 traceConfig.networkTraceType = FTNetworkTraceType.init(rawValue: UInt(traceType))!
             }
             FTMobileAgent.sharedInstance().startTrace(withConfigOptions: traceConfig)
+#if FT_SDK_TESTING
+            result(test("validateTrace:",context,traceConfig))
+            return
+#endif
             result(nil)
         case SwiftAgentPlugin.METHOD_GET_TRACE_HEADER:
             let urlStr = context["url"] as! String
@@ -299,6 +308,10 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                     rumConfig.rumDiscardType = rumCacheDiscard ?? FTRUMCacheDiscard.discard
                 }
                 FTMobileAgent.sharedInstance().startRum(withConfigOptions: rumConfig)
+#if FT_SDK_TESTING
+                result(test("validateRUM:",context,rumConfig))
+                return
+#endif
             }
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_ADD_ACTION:
@@ -377,5 +390,21 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             result(FlutterMethodNotImplemented)
         }
     }
+#if FT_SDK_TESTING
+    func test(_ selectorName:String,_ context:[String:Any],_ config:Any)->Bool{
+        if let validatorClass = NSClassFromString("FTTest.FTTypeValidator") as? NSObject.Type {
+            let selector = NSSelectorFromString(selectorName)
+            if validatorClass.responds(to: selector) {
+                let param:[String : Any] = ["context":context,"config":config]
+                let res = validatorClass.perform(selector, with: param)?
+                    .takeUnretainedValue()
+                if let res = res as? Bool {
+                    return res
+                }
+            }
+        }
+        return false
+    }
+#endif
 
 }
