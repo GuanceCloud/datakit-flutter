@@ -260,22 +260,22 @@ extension NSNumber {
         let config = param["config"] as! FTRumConfig
         let context = param["context"] as! [String:Any]
         let rules:[String : Any.Type] = [
-            "rumAppId":String.self,
-            "sampleRate":Double.self,
-            "sessionOnErrorSampleRate":Double.self,
-            "enableUserAction":Bool.self,
-            "enableUserView":Bool.self,
-            "enableUserResource":Bool.self,
-            "enableTrackNativeAppANR":Bool.self,
-            "enableTrackNativeCrash":Bool.self,
-            "nativeUiBlockDurationMS":Int.self,
-            "enableAppUIBlock":Bool.self,
-            "errorMonitorType":Int.self,
-            "globalContext":Dictionary<String, String>.self,
-            "deviceMetricsMonitorType":Int.self,
-            "detectFrequency":Int.self,
-            "rumCacheLimitCount":Int.self,
-            "rumCacheDiscard":Int.self,
+            Constants.RUM.rumAppId:String.self,
+            Constants.RUM.sampleRate:Double.self,
+            Constants.RUM.sessionOnErrorSampleRate:Double.self,
+            Constants.RUM.enableUserAction:Bool.self,
+            Constants.RUM.enableUserView:Bool.self,
+            Constants.RUM.enableUserResource:Bool.self,
+            Constants.RUM.enableTrackNativeAppANR:Bool.self,
+            Constants.RUM.enableTrackNativeCrash:Bool.self,
+            Constants.RUM.nativeUiBlockDurationMS:Int.self,
+            Constants.RUM.enableAppUIBlock:Bool.self,
+            Constants.RUM.errorMonitorType:Int.self,
+            Constants.RUM.globalContext:Dictionary<String, String>.self,
+            Constants.RUM.deviceMetricsMonitorType:Int.self,
+            Constants.RUM.detectFrequency:Int.self,
+            Constants.RUM.rumCacheLimitCount:Int.self,
+            Constants.RUM.rumCacheDiscard:Int.self,
         ]
         return NSNumber(booleanLiteral:validateAll(context, rules: rules,type: "RUM",config:config ))
     }
@@ -283,14 +283,14 @@ extension NSNumber {
         let config = param["config"] as! FTLoggerConfig
         let context = param["context"] as! [String:Any]
         let rules:[String : Any.Type] = [
-            "sampleRate":Double.self,
-            "logCacheDiscard":Int.self,
-            "logType":[Any].self,
-            "enableLinkRumData":Bool.self,
-            "enableCustomLog":Bool.self,
-            "printCustomLogToConsole":Bool.self,
-            "logCacheLimitCount":Int.self,
-            "globalContext":Dictionary<String, String>.self,
+            Constants.Log.sampleRate:Double.self,
+            Constants.Log.logCacheDiscard:Int.self,
+            Constants.Log.logType:[Any].self,
+            Constants.Log.enableLinkRumData:Bool.self,
+            Constants.Log.enableCustomLog:Bool.self,
+            Constants.Log.printCustomLogToConsole:Bool.self,
+            Constants.Log.logCacheLimitCount:Int.self,
+            Constants.Log.globalContext:Dictionary<String, String>.self,
         ]
         return  NSNumber(booleanLiteral:validateAll(context, rules: rules, type: "Log",config: config))
     }
@@ -298,10 +298,10 @@ extension NSNumber {
         let config = param["config"] as! FTTraceConfig
         let context = param["context"] as! [String:Any]
         let rules:[String : Any.Type] = [
-            "sampleRate":Double.self,
-            "enableLinkRUMData":Bool.self,
-            "enableNativeAutoTrace":Bool.self,
-            "traceType":Int.self,
+            Constants.Trace.sampleRate:Double.self,
+            Constants.Trace.enableLinkRUMData:Bool.self,
+            Constants.Trace.enableNativeAutoTrace:Bool.self,
+            Constants.Trace.traceType:Int.self,
         ]
         return NSNumber(booleanLiteral:validateAll(context, rules: rules, type: "Trace",config: config))
     }
@@ -309,26 +309,26 @@ extension NSNumber {
         let config = param["config"] as! FTMobileConfig
         let context = param["context"] as! [String:Any]
         let rules:[String : Any.Type] = [
-            "datakitUrl":String.self,
-            "datawayUrl":String.self,
-            "cliToken":String.self,
-            "debug":Bool.self,
-            "env":String.self,
-            "serviceName":String.self,
-            "autoSync":Bool.self,
-            "syncPageSize":Int.self,
-            "customSyncPageSize":Int.self,
-            "syncSleepTime":Int.self,
-            "compressIntakeRequests":Bool.self,
-            "enableDataIntegerCompatible":Bool.self,
-            "dbCacheDiscard":Int.self,
-            "groupIdentifiers":[String].self,
-            "enableLimitWithDbSize":Bool.self,
-            "dbCacheLimit":Int.self,
-            "dataModifier":[String:Any].self,
-            "lineDataModifier":[String:Any].self,
-            "pkgInfo":String.self,
-            "globalContext":Dictionary<String, String>.self,
+            Constants.Base.datakitUrl:String.self,
+            Constants.Base.datawayUrl:String.self,
+            Constants.Base.cliToken:String.self,
+            Constants.Base.debug:Bool.self,
+            Constants.Base.env:String.self,
+            Constants.Base.serviceName:String.self,
+            Constants.Base.autoSync:Bool.self,
+            Constants.Base.syncPageSize:Int.self,
+            Constants.Base.customSyncPageSize:Int.self,
+            Constants.Base.syncSleepTime:Int.self,
+            Constants.Base.compressIntakeRequests:Bool.self,
+            Constants.Base.enableDataIntegerCompatible:Bool.self,
+            Constants.Base.dbCacheDiscard:Int.self,
+            Constants.Base.groupIdentifiers:[String].self,
+            Constants.Base.enableLimitWithDbSize:Bool.self,
+            Constants.Base.dbCacheLimit:Int.self,
+            Constants.Base.dataModifier:[String:Any].self,
+            Constants.Base.lineDataModifier:[String:Any].self,
+            Constants.Base.pkgInfo:String.self,
+            Constants.Base.globalContext:Dictionary<String, String>.self,
         ]
         return NSNumber(booleanLiteral:validateAll(context, rules: rules, type: "SDK",config:config))
     }

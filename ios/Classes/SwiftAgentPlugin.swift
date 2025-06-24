@@ -136,8 +136,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             }
 
             FTMobileAgent.start(withConfigOptions: config)
-#if FTTesting
+#if FT_SDK_TESTING
             result(test("validateBase:",context,config))
+            return
 #endif
             result(nil)
         case SwiftAgentPlugin.METHOD_FLUSH_SYNC_DATA:
@@ -211,8 +212,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 logConfig.globalContext = globalContext
             }
             FTMobileAgent.sharedInstance().startLogger(withConfigOptions: logConfig)
-#if FTTesting
+#if FT_SDK_TESTING
             result(test("validateLog:",context,logConfig))
+            return
 #endif
             result(nil)
         case SwiftAgentPlugin.METHOD_LOGGING:
@@ -237,8 +239,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 traceConfig.networkTraceType = FTNetworkTraceType.init(rawValue: UInt(traceType))!
             }
             FTMobileAgent.sharedInstance().startTrace(withConfigOptions: traceConfig)
-#if FTTesting
+#if FT_SDK_TESTING
             result(test("validateTrace:",context,traceConfig))
+            return
 #endif
             result(nil)
         case SwiftAgentPlugin.METHOD_GET_TRACE_HEADER:
@@ -305,8 +308,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                     rumConfig.rumDiscardType = rumCacheDiscard ?? FTRUMCacheDiscard.discard
                 }
                 FTMobileAgent.sharedInstance().startRum(withConfigOptions: rumConfig)
-#if FTTesting
+#if FT_SDK_TESTING
                 result(test("validateRUM:",context,rumConfig))
+                return
 #endif
             }
             result(nil)
@@ -386,7 +390,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             result(FlutterMethodNotImplemented)
         }
     }
-#if FTTesting
+#if FT_SDK_TESTING
     func test(_ selectorName:String,_ context:[String:Any],_ config:Any)->Bool{
         if let validatorClass = NSClassFromString("FTTest.FTTypeValidator") as? NSObject.Type {
             let selector = NSSelectorFromString(selectorName)
