@@ -136,8 +136,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             }
 
             FTMobileAgent.start(withConfigOptions: config)
-#if FTTesting
-            test("validateBase:",context,config)
+#if FT_SDK_TESTING
+            result(test("validateBase:",context,config))
+            return
 #endif
             result(nil)
         case SwiftAgentPlugin.METHOD_FLUSH_SYNC_DATA:
@@ -211,8 +212,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 logConfig.globalContext = globalContext
             }
             FTMobileAgent.sharedInstance().startLogger(withConfigOptions: logConfig)
-#if FTTesting
-            test("validateLog:",context,logConfig)
+#if FT_SDK_TESTING
+            result(test("validateLog:",context,logConfig))
+            return
 #endif
             result(nil)
         case SwiftAgentPlugin.METHOD_LOGGING:
@@ -237,8 +239,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 traceConfig.networkTraceType = FTNetworkTraceType.init(rawValue: UInt(traceType))!
             }
             FTMobileAgent.sharedInstance().startTrace(withConfigOptions: traceConfig)
-#if FTTesting
-            test("validateTrace:",context,traceConfig)
+#if FT_SDK_TESTING
+            result(test("validateTrace:",context,traceConfig))
+            return
 #endif
             result(nil)
         case SwiftAgentPlugin.METHOD_GET_TRACE_HEADER:
@@ -305,8 +308,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                     rumConfig.rumDiscardType = rumCacheDiscard ?? FTRUMCacheDiscard.discard
                 }
                 FTMobileAgent.sharedInstance().startRum(withConfigOptions: rumConfig)
-#if FTTesting
-                test("validateRUM:",context,rumConfig)
+#if FT_SDK_TESTING
+                result(test("validateRUM:",context,rumConfig))
+                return
 #endif
             }
             result(nil)
@@ -386,15 +390,20 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             result(FlutterMethodNotImplemented)
         }
     }
-#if FTTesting
-    func test(_ selectorName:String,_ context:[String:Any],_ config:Any){
-        if let validatorClass = NSClassFromString("FTTest.FTTypeValidator") {
+#if FT_SDK_TESTING
+    func test(_ selectorName:String,_ context:[String:Any],_ config:Any)->Bool{
+        if let validatorClass = NSClassFromString("FTTest.FTTypeValidator") as? NSObject.Type {
             let selector = NSSelectorFromString(selectorName)
             if validatorClass.responds(to: selector) {
                 let param:[String : Any] = ["context":context,"config":config]
-                validatorClass.perform(selector, with: param, afterDelay: 0)
+                let res = validatorClass.perform(selector, with: param)?
+                    .takeUnretainedValue()
+                if let res = res as? Bool {
+                    return res
+                }
             }
         }
+        return false
     }
 #endif
 

@@ -291,9 +291,9 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                     sdkConfig.setLineDataModifier(object : LineDataModifier {
                         override fun modify(
                             measurement: String?,
-                            data: HashMap<String, Any>?
-                        ): Map<String, Any>? {
-                            return if (measurement == Constants.FT_LOG_DEFAULT_MEASUREMENT) {
+                            data: HashMap<String, Any?>?
+                        ): Map<String, Any?>? {
+                            return if(measurement == Constants.FT_LOG_DEFAULT_MEASUREMENT){
                                 lineDataModifier["log"]
                             } else {
                                 lineDataModifier[measurement]

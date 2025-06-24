@@ -2,11 +2,11 @@
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md)
 
-## 0.5.6+1
-* 修复 iOS RUM sampleRate，sessionOnErrorSampleRate， Log sampleRate ，Trace sampleRate 
+## 0.5.6+2
+* FTMobileFlutter.sdkConfig(dataModifier) 之后，引发含有 null 数据无法采集的问题
+* 修复 iOS RUM sampleRate，sessionOnErrorSampleRate， Log sampleRate ，Trace sampleRate
   在 Flutter channel 中传递失效的问题
 ---
-
 ## 0.5.6
 * 添加 `FTRUMManager().setConfig(sessionOnErrorSampleRate)` 支持错误采样，在未被 setSamplingRate采样时，
   在发生错误时可以对 1 分钟前的 rum 的数据进行取样采集
