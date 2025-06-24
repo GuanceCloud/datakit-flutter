@@ -67,7 +67,7 @@ public class FTConfigCheck {
      * @param args
      * @param sdkConfig
      */
-    public void validateSDKConfig(Map<String, Object> args, FTSDKConfig sdkConfig) {
+    public boolean validateSDKConfig(Map<String, Object> args, FTSDKConfig sdkConfig) {
         Map<String, Object> configMap = new HashMap<String, Object>() {{
             put(KEY_DATAKIT_URL, sdkConfig.getDatakitUrl());
             put(KEY_DATAWAY_URL, sdkConfig.getDatawayUrl());
@@ -100,6 +100,7 @@ public class FTConfigCheck {
                 boolean match = SyncPageSize.values()[syncPageSize].getValue() == sdkConfig.getPageSize();
                 if (!match) {
                     logNotMatch(keyStr, value, sdkConfig.getDataModifier());
+                    return false;
                 }
                 continue;
             }
@@ -113,6 +114,8 @@ public class FTConfigCheck {
                 boolean match = value != null && sdkConfig.getDataModifier() != null;
                 if (!match) {
                     logNotMatch(keyStr, value, sdkConfig.getDataModifier());
+                    return false;
+
                 }
                 continue;
             }
@@ -121,19 +124,24 @@ public class FTConfigCheck {
                 boolean match = value != null && sdkConfig.getLineDataModifier() != null;
                 if (!match) {
                     logNotMatch(keyStr, value, sdkConfig.getLineDataModifier());
+                    return false;
                 }
                 continue;
             }
 
-            normalItemCheck(keyStr, value, configMap);
+            boolean match = normalItemCheck(keyStr, value, configMap);
+            if (!match) {
+                return false;
+            }
         }
+        return true;
     }
 
     /**
      * @param args
      * @param sdkConfig
      */
-    public void validateRUMConfig(Map<String, Object> args, FTRUMConfig sdkConfig) {
+    public boolean validateRUMConfig(Map<String, Object> args, FTRUMConfig sdkConfig) {
         Map<String, Object> configMap = new HashMap<String, Object>() {{
             put(KEY_RUM_APP_ID, sdkConfig.getRumAppId());
             put(KEY_SAMPLE_RATE, sdkConfig.getSamplingRate());
@@ -148,10 +156,10 @@ public class FTConfigCheck {
             put(KEY_ENABLE_TRACK_NATIVE_CRASH, sdkConfig.isEnableTrackAppCrash());
             put(KEY_ERROR_MONITOR_TYPE, sdkConfig.getExtraMonitorTypeWithError());
             put(KEY_DEVICE_METRICS_MONITOR_TYPE, sdkConfig.getDeviceMetricsMonitorType());
-            put(KEY_DETECT_FREQUENCY, sdkConfig.getDeviceMetricsDetectFrequency());
+            put(KEY_DETECT_FREQUENCY, sdkConfig.getDeviceMetricsDetectFrequency().ordinal());
             put(KEY_GLOBAL_CONTEXT, sdkConfig.getGlobalContext());
             put(KEY_RUM_CACHE_LIMIT_COUNT, sdkConfig.getRumCacheLimitCount());
-            put(KEY_RUM_CACHE_DISCARD, sdkConfig.getRumCacheDiscardStrategy());
+            put(KEY_RUM_CACHE_DISCARD, sdkConfig.getRumCacheDiscardStrategy().ordinal());
         }};
 
         for (Map.Entry<String, Object> entry : args.entrySet()) {
@@ -160,36 +168,49 @@ public class FTConfigCheck {
             Object value = entry.getValue();
 
             if (KEY_GLOBAL_CONTEXT.equals(keyStr)) {
-                globalContextCheck((Map<?, ?>) value, keyStr, sdkConfig.getGlobalContext());
+                boolean match = globalContextCheck((Map<?, ?>) value, keyStr, sdkConfig.getGlobalContext());
+                if (!match) {
+                    return false;
+                }
                 continue;
             }
 
             if (KEY_DEVICE_METRICS_MONITOR_TYPE.equals(keyStr)) {
                 boolean match = ((Number) value).intValue() == sdkConfig.getDeviceMetricsMonitorType();
-                if (!match) logNotMatch(keyStr, value, sdkConfig.getDeviceMetricsMonitorType());
+                if (!match) {
+                    logNotMatch(keyStr, value, sdkConfig.getDeviceMetricsMonitorType());
+                    return false;
+                }
                 continue;
             }
 
             if (KEY_ERROR_MONITOR_TYPE.equals(keyStr)) {
                 boolean match = ((Number) value).intValue() == sdkConfig.getExtraMonitorTypeWithError();
-                if (!match) logNotMatch(keyStr, value, sdkConfig.getExtraMonitorTypeWithError());
+                if (!match) {
+                    logNotMatch(keyStr, value, sdkConfig.getExtraMonitorTypeWithError());
+                    return false;
+                }
                 continue;
             }
 
-            normalItemCheck(keyStr, value, configMap);
+            boolean check = normalItemCheck(keyStr, value, configMap);
+            if (!check) {
+                return false;
+            }
         }
+        return true;
     }
 
     /**
      * @param args
      * @param sdkConfig
      */
-    public void validateLogConfig(Map<String, Object> args, FTLoggerConfig sdkConfig) {
+    public boolean validateLogConfig(Map<String, Object> args, FTLoggerConfig sdkConfig) {
         Map<String, Object> configMap = new HashMap<String, Object>() {{
             put(KEY_SAMPLE_RATE, sdkConfig.getSamplingRate());
             put(KEY_ENABLE_LINK_RUM_DATA, sdkConfig.isEnableLinkRumData());
             put(KEY_ENABLE_CUSTOM_LOG, sdkConfig.isEnableCustomLog());
-            put(KEY_LOG_CACHE_DISCARD, sdkConfig.getLogCacheDiscardStrategy());
+            put(KEY_LOG_CACHE_DISCARD, sdkConfig.getLogCacheDiscardStrategy().ordinal());
             put(KEY_LOG_CACHE_LIMIT_COUNT, sdkConfig.getLogCacheLimitCount());
             put(KEY_PRINT_CUSTOM_LOG_TO_CONSOLE, sdkConfig.isPrintCustomLogToConsole());
             put(KEY_GLOBAL_CONTEXT, sdkConfig.getGlobalContext());
@@ -219,8 +240,9 @@ public class FTConfigCheck {
                                 break;
                             }
                         }
-                        if (status != null && !sdkConfig.checkLogLevel(status.name())) {
-                            logNotMatch(keyStr, value, status.name());
+                        if (status != null && !sdkConfig.checkLogLevel(status.name)) {
+                            logNotMatch(keyStr, value, status.name);
+                            return false;
                         }
                     }
                 }
@@ -228,19 +250,26 @@ public class FTConfigCheck {
             }
 
             if (KEY_GLOBAL_CONTEXT.equals(keyStr)) {
-                globalContextCheck((Map<?, ?>) value, keyStr, sdkConfig.getGlobalContext());
+                boolean match = globalContextCheck((Map<?, ?>) value, keyStr, sdkConfig.getGlobalContext());
+                if (!match) {
+                    return false;
+                }
                 continue;
             }
 
-            normalItemCheck(keyStr, value, configMap);
+            boolean match = normalItemCheck(keyStr, value, configMap);
+            if (!match) {
+                return false;
+            }
         }
+        return true;
     }
 
     /**
      * @param args
      * @param sdkConfig
      */
-    public void validateTraceConfig(Map<String, Object> args, FTTraceConfig sdkConfig) {
+    public boolean validateTraceConfig(Map<String, Object> args, FTTraceConfig sdkConfig) {
         Map<String, Object> configMap = new HashMap<String, Object>() {{
             put(KEY_SAMPLE_RATE, sdkConfig.getSamplingRate());
             put(KEY_TRACE_TYPE, sdkConfig.getTraceType().ordinal());
@@ -254,8 +283,12 @@ public class FTConfigCheck {
             String keyStr = entry.getKey();
             Object value = entry.getValue();
 
-            normalItemCheck(keyStr, value, configMap);
+            boolean match = normalItemCheck(keyStr, value, configMap);
+            if (!match) {
+                return false;
+            }
         }
+        return true;
     }
 
     /**
@@ -263,30 +296,42 @@ public class FTConfigCheck {
      * @param keyStr
      * @param realGlobalContext
      */
-    private void globalContextCheck(Map<?, ?> flutterMap, String keyStr, Map<?, ?> realGlobalContext) {
+    private boolean globalContextCheck(Map<?, ?> flutterMap, String keyStr, Map<?, ?> realGlobalContext) {
         if (flutterMap != null) {
             for (Map.Entry<?, ?> entry : flutterMap.entrySet()) {
                 boolean match = Objects.equals(realGlobalContext.get(entry.getKey()), entry.getValue());
                 if (!match) {
                     LogUtils.e(LOG_TAG, "key:" + keyStr + ", value:" + entry.getValue() +
                             ", config:" + realGlobalContext + ", not match");
+                    return false;
                 }
             }
         }
+        return true;
     }
+
+    private static final double EPSILON = 1e-6;
 
     /**
      * @param keyStr
      * @param value
      * @param configMap
      */
-    private void normalItemCheck(String keyStr, Object value, Map<String, Object> configMap) {
+    private boolean normalItemCheck(String keyStr, Object value, Map<String, Object> configMap) {
         if (configMap.containsKey(keyStr)) {
             Object configValue = configMap.get(keyStr);
-            if (!Objects.equals(value, configValue)) {
+            if (value instanceof Number && configValue instanceof Number) {
+                double d1 = ((Number) value).doubleValue();
+                double d2 = ((Number) configValue).doubleValue();
+                if (Math.abs(d1 - d2) > EPSILON) {
+                    return false; // 超出误差范围，认为不相等
+                }
+            } else if (!Objects.equals(value, configValue)) {
                 logNotMatch(keyStr, value, configValue);
+                return false;
             }
         }
+        return true;
     }
 
     /**
@@ -320,10 +365,14 @@ public class FTConfigCheck {
      * @param args
      */
     private void checkArguments(String method, Map<String, Object> args) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("method:").append(method).append(" not set:[");
         for (Map.Entry<String, Object> entry : args.entrySet()) {
             if (entry.getValue() == null) {
-                LogUtils.d("FTConfigCheck", method + "\nnot set:" + entry.getKey());
+                builder.append(entry.getKey()).append(" ");
             }
         }
+        builder.append("]");
+        LogUtils.d(LOG_TAG, builder.toString());
     }
 }

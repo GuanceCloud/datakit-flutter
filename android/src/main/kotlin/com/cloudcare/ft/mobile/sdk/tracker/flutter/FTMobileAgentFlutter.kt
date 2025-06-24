@@ -4,6 +4,7 @@ import android.app.Application
 import android.os.Handler
 import android.os.Looper
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
 import com.ft.sdk.DBCacheDiscard
 import com.ft.sdk.DataModifier
 import com.ft.sdk.DetectFrequency
@@ -48,12 +49,14 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
     private lateinit var application: Application
     private var viewGroup: ViewGroup? = null
 
-    private val handler = Handler(Looper.getMainLooper())
+    private var handler: Handler? = null
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "ft_mobile_agent_flutter")
         channel.setMethodCallHandler(this)
         application = flutterPluginBinding.applicationContext as Application
+        handler = Handler(Looper.getMainLooper())
+//        setChancelDebug(false)
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
@@ -166,10 +169,13 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
         const val KEY_PRINT_CUSTOM_LOG_TO_CONSOLE = "printCustomLogToConsole"
         const val KEY_LOG_CACHE_DISCARD = "logCacheDiscard"
         const val KEY_LOG_CACHE_LIMIT_COUNT = "logCacheLimitCount"
+    }
 
-        const val DEBUG = false
-        val tester: Any? = if (DEBUG) FTConfigCheck() else null
+    private var tester: Any? = null
 
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun setChancelDebug(debug: Boolean) {
+        tester = if (debug) FTConfigCheck() else null
     }
 
 
@@ -300,12 +306,17 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                     InnerClassProxy.addPkgInfo(sdkConfig, "flutter", pkgInfo)
                 }
                 FTSdk.install(sdkConfig)
-                result.success(null)
 //                LogUtils.d(LOG_TAG, Gson().toJson(sdkConfig))
-                if (DEBUG) {
-                    if (tester is FTConfigCheck) {
-                        tester.validateSDKConfig(tester.flutterArgsConvert(call), sdkConfig)
-                    }
+                if (tester != null) {
+                    result.success(
+                        (tester as? FTConfigCheck)?.validateSDKConfig(
+                            (tester as? FTConfigCheck)?.flutterArgsConvert(
+                                call
+                            ), sdkConfig
+                        )
+                    )
+                } else {
+                    result.success(null)
                 }
             }
 
@@ -414,11 +425,17 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
 
                 FTSdk.initRUMWithConfig(rumConfig)
-                result.success(null)
-                if (DEBUG) {
-                    if (tester is FTConfigCheck) {
-                        tester.validateRUMConfig(tester.flutterArgsConvert(call), rumConfig)
-                    }
+
+                if (tester != null) {
+                    result.success(
+                        (tester as? FTConfigCheck)?.validateRUMConfig(
+                            (tester as? FTConfigCheck)?.flutterArgsConvert(
+                                call
+                            ), rumConfig
+                        )
+                    )
+                } else {
+                    result.success(null)
                 }
 //                LogUtils.d(LOG_TAG, Gson().toJson(rumConfig))
 
@@ -609,12 +626,17 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
 
                 FTSdk.initLogWithConfig(logConfig)
-                result.success(null)
 
-                if (DEBUG) {
-                    if (tester is FTConfigCheck) {
-                        tester.validateLogConfig(tester.flutterArgsConvert(call), logConfig)
-                    }
+                if (tester != null) {
+                    result.success(
+                        (tester as? FTConfigCheck)?.validateLogConfig(
+                            (tester as? FTConfigCheck)?.flutterArgsConvert(
+                                call
+                            ), logConfig
+                        )
+                    )
+                } else {
+                    result.success(null)
                 }
 //                LogUtils.d(LOG_TAG, Gson().toJson(logConfig))
             }
@@ -663,11 +685,17 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
 
                 FTSdk.initTraceWithConfig(traceConfig)
-                result.success(null)
-                if (DEBUG) {
-                    if (tester is FTConfigCheck) {
-                        tester.validateTraceConfig(tester.flutterArgsConvert(call), traceConfig)
-                    }
+                if (tester != null) {
+                    result.success(
+                        (tester as? FTConfigCheck)?.validateTraceConfig(
+                            (tester as? FTConfigCheck)?.flutterArgsConvert(
+                                call
+                            ), traceConfig
+                        )
+                    )
+                } else {
+                    result.success(null)
+
                 }
 //                LogUtils.d(LOG_TAG, Gson().toJson(traceConfig))
 
@@ -740,7 +768,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
             METHOD_SET_INNER_LOG_HANDLER -> {
                 LogUtils.registerInnerLogHandler { level, tag, message ->
-                    handler.post {
+                    handler?.post {
                         channel.invokeMethod(
                             METHOD_INVOKE_INNER_LOG, mapOf(
                                 "level" to level,
