@@ -35,8 +35,7 @@ end
 
 target 'TodayDemoExtension' do
   use_modular_headers!
-
-  pod 'FTMobileSDK/Extension','1.5.16'
+  pod 'FTMobileSDK/Extension'
 end
 
 target 'FTPluginTests' do
@@ -91,12 +90,12 @@ post_install do |installer|
                   'PERMISSION_BLUETOOTH=0',
                   
                   ## ft_mobile_agent_flutter: test
-                  'FTTesting=1'
+                  'FT_SDK_TESTING=1'
               ]
               ## ft_mobile_agent_flutter: test
               config.build_settings['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] = [
                   '$(inherited)',
-                  'FTTesting'
+                  'FT_SDK_TESTING'
               ]
         end
   end

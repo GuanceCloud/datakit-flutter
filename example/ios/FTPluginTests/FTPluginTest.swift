@@ -6,115 +6,131 @@
 //
 
 import XCTest
-import ft_mobile_agent_flutter
 import Flutter
-import FTTest
-import FTMobileSDK
+@testable import ft_mobile_agent_flutter
+@testable import FTTest
+@testable import FTMobileSDK
 
 final class FTPluginTest: XCTestCase {
-
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
+        FTLog.enable(true)
        
     }
 
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
+        FTMobileAgent.shutDown()
     }
 
-    func testSdkConfigEmpty() throws {
-        let plugin =  SwiftAgentPlugin()
-        let arguments = TestUtils.sdkConfigEmptyDict()
-        let methodCall = FlutterMethodCall.init(methodName: "ftConfig", arguments: arguments)
-        
-        plugin.handle(methodCall) { result in
-            if let result = result as? Bool{
-                XCTAssertTrue(result == true)
-            }
-        }
-    }
     func testSdkConfig() throws {
         let plugin =  SwiftAgentPlugin()
-        let arguments = TestUtils.sdkConfigDict()
-        let methodCall = FlutterMethodCall.init(methodName: "ftConfig", arguments: arguments)
+        let arguments = FTTestUtils.sdkConfigDict()
+        let methodCall = FlutterMethodCall(methodName: "ftConfig", arguments: arguments)
         
         plugin.handle(methodCall) { result in
+            var testResult = false
             if let result = result as? Bool{
-                XCTAssertTrue(result == true)
+                testResult = result
             }
+            XCTAssertTrue(testResult)
+        }
+    }
+    func testSdkConfigEmpty() throws {
+        let plugin =  SwiftAgentPlugin()
+        let arguments = FTTestUtils.sdkConfigEmptyDict()
+        let methodCall = FlutterMethodCall(methodName: "ftConfig", arguments: arguments)
+        plugin.handle(methodCall) { result in
+            var testResult = false
+            if let result = result as? Bool{
+                testResult = result
+            }
+            XCTAssertTrue(testResult)
         }
     }
     func testTraceConfig() throws {
         sdkInit()
         let plugin =  SwiftAgentPlugin()
-        let arguments = TestUtils.traceConfigDict()
-        let methodCall = FlutterMethodCall.init(methodName: "ftTraceConfig", arguments: arguments)
+        let arguments = FTTestUtils.traceConfigDict()
+        let methodCall = FlutterMethodCall(methodName: "ftTraceConfig", arguments: arguments)
         
         plugin.handle(methodCall) { result in
+            var testResult = false
             if let result = result as? Bool{
-                XCTAssertTrue(result == true)
+                testResult = result
             }
+            XCTAssertTrue(testResult)
         }
     }
     func testTraceConfigEmpty() throws {
         sdkInit()
         let plugin =  SwiftAgentPlugin()
-        let arguments = TestUtils.traceConfigEmptyDict()
-        let methodCall = FlutterMethodCall.init(methodName: "ftTraceConfig", arguments: arguments)
+        let arguments = FTTestUtils.traceConfigEmptyDict()
+        let methodCall = FlutterMethodCall(methodName: "ftTraceConfig", arguments: arguments)
         
         plugin.handle(methodCall) { result in
+            var testResult = false
             if let result = result as? Bool{
-                XCTAssertTrue(result == true)
+                testResult = result
             }
+            XCTAssertTrue(testResult)
         }
     }
     func testLogConfig() throws {
         sdkInit()
         let plugin =  SwiftAgentPlugin()
-        let arguments = TestUtils.logConfigDict()
-        let methodCall = FlutterMethodCall.init(methodName: "ftLogConfig", arguments: arguments)
+        let arguments = FTTestUtils.logConfigDict()
+        let methodCall = FlutterMethodCall(methodName: "ftLogConfig", arguments: arguments)
         
+        var testResult = false
         plugin.handle(methodCall) { result in
             if let result = result as? Bool{
-                XCTAssertTrue(result == true)
+                testResult = result
             }
         }
+        XCTAssertTrue(testResult)
     }
     func testLogConfigEmpty() throws {
         sdkInit()
         let plugin =  SwiftAgentPlugin()
-        let arguments = TestUtils.rumConfigEmptyDict()
+        let arguments = FTTestUtils.logConfigEmptyDict()
         let methodCall = FlutterMethodCall(methodName: "ftLogConfig", arguments: arguments)
         
         plugin.handle(methodCall) { result in
+            var testResult = false
             if let result = result as? Bool{
-                XCTAssertTrue(result == true)
+                testResult = result
             }
+            XCTAssertTrue(testResult)
         }
     }
     
     func testRumConfig() throws {
         sdkInit()
         let plugin =  SwiftAgentPlugin()
-        let arguments = TestUtils.rumConfigDict()
+        let arguments = FTTestUtils.rumConfigDict()
         let methodCall = FlutterMethodCall(methodName: "ftRumConfig", arguments: arguments)
         
         plugin.handle(methodCall) { result in
+            var testResult = false
             if let result = result as? Bool{
-                XCTAssertTrue(result == true)
+                testResult = result
             }
+            XCTAssertTrue(testResult)
         }
     }
     func testRumConfigEmpty() throws {
         sdkInit()
         let plugin =  SwiftAgentPlugin()
-        let arguments = TestUtils.logConfigEmptyDict()
-        let methodCall = FlutterMethodCall.init(methodName: "ftRumConfig", arguments: arguments)
+        let arguments = FTTestUtils.rumConfigEmptyDict()
+        let methodCall = FlutterMethodCall(methodName: "ftRumConfig", arguments: arguments)
         
         plugin.handle(methodCall) { result in
+            var testResult = false
             if let result = result as? Bool{
-                XCTAssertTrue(result == true)
+                testResult = result
             }
+            XCTAssertTrue(testResult)
         }
     }
     func sdkInit(){
