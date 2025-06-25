@@ -61,9 +61,8 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 return
             }
             
-            
-            if let debug = context["debug"] as? Bool {
-                config.enableSDKDebugLog = debug
+            if let debug = context["debug"] as? NSNumber {
+                config.enableSDKDebugLog = debug.boolValue
             }
             if let env = context["env"] as? String {
                 config.env = env
@@ -78,41 +77,42 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 config.groupIdentifiers = groupIdentifiers
             }
             
-            if let autoSync = context["autoSync"] as? Bool{
-                config.autoSync = autoSync
+            if let autoSync = context["autoSync"] as? NSNumber {
+                config.autoSync = autoSync.boolValue
             }
             
-            if let syncPageSize = context["syncPageSize"] as? Int{
-                config.setSyncPageSizeWithType(FTSyncPageSize.init(rawValue: UInt(syncPageSize))!)
+            if let syncPageSize = context["syncPageSize"] as? NSNumber{
+                if let syncPageSizeType = FTSyncPageSize(rawValue: syncPageSize.uintValue) {
+                    config.setSyncPageSizeWithType(syncPageSizeType)
+                }
             }
             
-            if let customSyncPageSize = context["customSyncPageSize"] as? Int{
-                config.syncPageSize = Int32(customSyncPageSize)
+            if let customSyncPageSize = context["customSyncPageSize"] as? NSNumber{
+                config.syncPageSize = customSyncPageSize.int32Value
             }
             
-            if let syncSleepTime = context["syncSleepTime"] as? Int{
-                config.syncSleepTime = Int32(syncSleepTime)
+            if let syncSleepTime = context["syncSleepTime"] as? NSNumber{
+                config.syncSleepTime = syncSleepTime.int32Value
             }
 
-            if let compressIntakeRequests = context["compressIntakeRequests"] as? Bool{
-               config.compressIntakeRequests = compressIntakeRequests
+            if let compressIntakeRequests = context["compressIntakeRequests"] as? NSNumber{
+                config.compressIntakeRequests = compressIntakeRequests.boolValue
             }
 
-             if let enableDataIntegerCompatible = context["enableDataIntegerCompatible"] as? Bool{
-               config.enableDataIntegerCompatible = enableDataIntegerCompatible
+             if let enableDataIntegerCompatible = context["enableDataIntegerCompatible"] as? NSNumber{
+                 config.enableDataIntegerCompatible = enableDataIntegerCompatible.boolValue
              }
 
-            if let dbCacheDiscardType = context["dbCacheDiscard"] as? Int {
-                let dbCacheDiscard = FTDBCacheDiscard.init(rawValue: dbCacheDiscardType)
-                config.dbDiscardType = dbCacheDiscard ?? FTDBCacheDiscard.discard
+            if let dbCacheDiscardType = context["dbCacheDiscard"] as? NSNumber {
+                config.dbDiscardType = FTDBCacheDiscard(rawValue: dbCacheDiscardType.intValue) ?? .discard
             }
             
-            if let enableLimitWithDbSize = context["enableLimitWithDbSize"] as? Bool{
-                config.enableLimitWithDbSize = enableLimitWithDbSize
+            if let enableLimitWithDbSize = context["enableLimitWithDbSize"] as? NSNumber{
+                config.enableLimitWithDbSize = enableLimitWithDbSize.boolValue
             }
             
-            if let dbCacheLimit = context["dbCacheLimit"] as? Int{
-                config.dbCacheLimit = dbCacheLimit
+            if let dbCacheLimit = context["dbCacheLimit"] as? NSNumber{
+                config.dbCacheLimit = dbCacheLimit.intValue
             }
 
             if let dataModifierDict = context["dataModifier"] as? [String: Any] {
@@ -191,29 +191,28 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         case SwiftAgentPlugin.METHOD_LOG_CONFIG:
 
             let logConfig = FTLoggerConfig()
-            if let logCacheDiscardType = context["logCacheDiscard"] as? Int {
-                let logCacheDiscard = FTLogCacheDiscard.init(rawValue: logCacheDiscardType)
-                logConfig.discardType = logCacheDiscard ?? FTLogCacheDiscard.discard
+            if let logCacheDiscardType = context["logCacheDiscard"] as? NSNumber {
+                logConfig.discardType = FTLogCacheDiscard(rawValue: logCacheDiscardType.intValue) ?? .discard
             }
 
-            if let sampleRate = context["sampleRate"] as? Double {
-                logConfig.samplerate = Int32(Int(sampleRate * 100))
+            if let sampleRate = context["sampleRate"] as? NSNumber {
+                logConfig.samplerate = Int32(sampleRate.doubleValue * 100)
             }
             if let logTypeArr = context["logType"] as? [Any] {
                 logConfig.logLevelFilter = logTypeArr
             }
-            if let enableLinkRumData = context["enableLinkRumData"] as? Bool {
-                logConfig.enableLinkRumData = enableLinkRumData
+            if let enableLinkRumData = context["enableLinkRumData"] as? NSNumber {
+                logConfig.enableLinkRumData = enableLinkRumData.boolValue
             }
-            if let enableCustomLog = context["enableCustomLog"] as? Bool {
-                logConfig.enableCustomLog = enableCustomLog
+            if let enableCustomLog = context["enableCustomLog"] as? NSNumber {
+                logConfig.enableCustomLog = enableCustomLog.boolValue
             }
-            if let printCustomLogToConsole = context["printCustomLogToConsole"] as? Bool {
-                logConfig.printCustomLogToConsole = printCustomLogToConsole
+            if let printCustomLogToConsole = context["printCustomLogToConsole"] as? NSNumber {
+                logConfig.printCustomLogToConsole = printCustomLogToConsole.boolValue
             }
             
-            if let logCacheLimitCount = context["logCacheLimitCount"] as? Int {
-                logConfig.logCacheLimitCount = Int32(logCacheLimitCount)
+            if let logCacheLimitCount = context["logCacheLimitCount"] as? NSNumber {
+                logConfig.logCacheLimitCount = logCacheLimitCount.int32Value
             }
             
             if let globalContext = context["globalContext"] as? Dictionary<String, String> {
@@ -227,24 +226,24 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             result(nil)
         case SwiftAgentPlugin.METHOD_LOGGING:
             if let content = context["content"] as? String {
-                let status = context["status"] as? Int ?? 0
+                let status = context["status"] as? NSNumber ?? NSNumber(value: 0)
                 let property = context["property"] as? Dictionary<String, Any> ?? nil
-                FTMobileAgent.sharedInstance().logging(content, status: FTLogStatus.init(rawValue: status)!,property: property)
+                FTMobileAgent.sharedInstance().logging(content, status: FTLogStatus.init(rawValue: status.intValue)!,property: property)
             }
             result(nil)
         case SwiftAgentPlugin.METHOD_TRACE_CONFIG:
             let traceConfig = FTTraceConfig()
-            if let sampleRate = context["sampleRate"] as? Double {
-                traceConfig.samplerate = Int32(Int(sampleRate * 100))
+            if let sampleRate = context["sampleRate"] as? NSNumber {
+                traceConfig.samplerate = Int32(sampleRate.doubleValue * 100)
             }
-            if let enableLinkRUMData = context["enableLinkRUMData"] as? Bool {
-                traceConfig.enableLinkRumData = enableLinkRUMData
+            if let enableLinkRUMData = context["enableLinkRUMData"] as? NSNumber {
+                traceConfig.enableLinkRumData = enableLinkRUMData.boolValue
             }
-            if let enableAutoTrace = context["enableNativeAutoTrace"] as? Bool {
-                traceConfig.enableAutoTrace = enableAutoTrace
+            if let enableAutoTrace = context["enableNativeAutoTrace"] as? NSNumber {
+                traceConfig.enableAutoTrace = enableAutoTrace.boolValue
             }
-            if let traceType = context["traceType"] as? Int {
-                traceConfig.networkTraceType = FTNetworkTraceType.init(rawValue: UInt(traceType))!
+            if let traceType = context["traceType"] as? NSNumber {
+                traceConfig.networkTraceType = FTNetworkTraceType(rawValue: traceType.uintValue)!
             }
             FTMobileAgent.sharedInstance().startTrace(withConfigOptions: traceConfig)
 #if FT_SDK_TESTING
@@ -267,53 +266,54 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         case SwiftAgentPlugin.METHOD_RUM_CONFIG:
             if let rumAppId = context["rumAppId"] as? String {
                 let rumConfig = FTRumConfig(appid: rumAppId)
-                if let sampleRate = context["sampleRate"] as? Double {
-                    rumConfig.samplerate = Int32(Int(sampleRate * 100))
+                if let sampleRate = context["sampleRate"] as? NSNumber {
+                    rumConfig.samplerate = Int32(sampleRate.doubleValue * 100)
                 }
-                if let sessionOnErrorSampleRate = context["sessionOnErrorSampleRate"] as? Double {
-                    rumConfig.sessionOnErrorSampleRate = Int32(Int(sessionOnErrorSampleRate * 100))
+                if let sessionOnErrorSampleRate = context["sessionOnErrorSampleRate"] as? NSNumber {
+                    rumConfig.sessionOnErrorSampleRate = Int32(sessionOnErrorSampleRate.doubleValue * 100)
                 }
-                if let enableUserAction = context["enableUserAction"] as? Bool {
-                    rumConfig.enableTraceUserAction = enableUserAction
+                if let enableUserAction = context["enableUserAction"] as? NSNumber {
+                    rumConfig.enableTraceUserAction = enableUserAction.boolValue
                 }
-                if let enableUserView = context["enableUserView"] as? Bool {
-                    rumConfig.enableTraceUserView = enableUserView
+                if let enableUserView = context["enableUserView"] as? NSNumber {
+                    rumConfig.enableTraceUserView = enableUserView.boolValue
                 }
-                if let enableUserResource = context["enableUserResource"] as? Bool {
-                    rumConfig.enableTraceUserResource = enableUserResource
+                if let enableUserResource = context["enableUserResource"] as? NSNumber {
+                    rumConfig.enableTraceUserResource = enableUserResource.boolValue
                 }
-                if let enableTrackNativeAppANR = context["enableTrackNativeAppANR"] as? Bool {
-                    rumConfig.enableTrackAppANR = enableTrackNativeAppANR
+                if let enableTrackNativeAppANR = context["enableTrackNativeAppANR"] as? NSNumber {
+                    rumConfig.enableTrackAppANR = enableTrackNativeAppANR.boolValue
                 }
-                if let enableTrackNativeCrash = context["enableTrackNativeCrash"] as? Bool {
-                    rumConfig.enableTrackAppCrash = enableTrackNativeCrash
+                if let enableTrackNativeCrash = context["enableTrackNativeCrash"] as? NSNumber {
+                    rumConfig.enableTrackAppCrash = enableTrackNativeCrash.boolValue
                 }
-                if let uiBlockDurationMS = context["nativeUiBlockDurationMS"] as? Int {
-                    rumConfig.freezeDurationMs = uiBlockDurationMS
+                if let uiBlockDurationMS = context["nativeUiBlockDurationMS"] as? NSNumber {
+                    rumConfig.freezeDurationMs = uiBlockDurationMS.intValue
                 }
-                if let enableAppUIBlock = context["enableAppUIBlock"] as? Bool {
-                    rumConfig.enableTrackAppFreeze = enableAppUIBlock
+                if let enableAppUIBlock = context["enableAppUIBlock"] as? NSNumber {
+                    rumConfig.enableTrackAppFreeze = enableAppUIBlock.boolValue
                 }
-                if let monitorType = context["errorMonitorType"] as? Int {
-                    rumConfig.errorMonitorType =  FTErrorMonitorType.init(rawValue: UInt(monitorType))
+                if let monitorType = context["errorMonitorType"] as? NSNumber {
+                    rumConfig.errorMonitorType =  FTErrorMonitorType(rawValue: monitorType.uintValue)
                 }
                 if let globalContext = context["globalContext"] as? Dictionary<String, String> {
                     rumConfig.globalContext = globalContext
                 }
-                if let deviceMetricsMonitorType = context["deviceMetricsMonitorType"] as? Int {
-                     rumConfig.deviceMetricsMonitorType = FTDeviceMetricsMonitorType(rawValue:UInt(deviceMetricsMonitorType))
+                if let deviceMetricsMonitorType = context["deviceMetricsMonitorType"] as? NSNumber {
+                    rumConfig.deviceMetricsMonitorType = FTDeviceMetricsMonitorType(rawValue:deviceMetricsMonitorType.uintValue)
                 }
-                if let detectFrequency = context["detectFrequency"] as? Int {
-                    rumConfig.monitorFrequency = FTMonitorFrequency.init(rawValue: UInt(detectFrequency))!
+                if let detectFrequency = context["detectFrequency"] as? NSNumber {
+                    if  let monitorFrequency = FTMonitorFrequency(rawValue: detectFrequency.uintValue) {
+                        rumConfig.monitorFrequency = monitorFrequency
+                    }
                 }
 
-                if let rumCacheLimitCount = context["rumCacheLimitCount"] as? Int {
-                    rumConfig.rumCacheLimitCount = Int32(rumCacheLimitCount)
+                if let rumCacheLimitCount = context["rumCacheLimitCount"] as? NSNumber {
+                    rumConfig.rumCacheLimitCount = rumCacheLimitCount.int32Value
                 }
                 
-                if let rumDiscardType = context["rumCacheDiscard"] as? Int {
-                    let rumCacheDiscard = FTRUMCacheDiscard.init(rawValue: rumDiscardType)
-                    rumConfig.rumDiscardType = rumCacheDiscard ?? FTRUMCacheDiscard.discard
+                if let rumDiscardType = context["rumCacheDiscard"] as? NSNumber {
+                    rumConfig.rumDiscardType = FTRUMCacheDiscard(rawValue: rumDiscardType.intValue) ?? .discard
                 }
 
                 if let enableTraceWebView = context["enableTraceWebView"] as? Bool {
@@ -339,8 +339,8 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_CREATE_VIEW:
             if let viewName = context["viewName"] as? String {
-                let loadDuration = context["duration"] as? Int ?? -1
-                FTExternalDataManager.shared().onCreateView(viewName, loadTime: NSNumber.init(value: loadDuration))
+                let loadDuration = context["duration"] as? NSNumber ?? NSNumber(value: -1)
+                FTExternalDataManager.shared().onCreateView(viewName, loadTime: loadDuration)
             }
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_START_VIEW:
@@ -387,12 +387,12 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 if let responseBody = context["responseBody"] as? String {
                     content.responseBody = responseBody
                 }
-                if let resourceStatus = context["resourceStatus"] as? Int {
-                    content.httpStatusCode = resourceStatus
+                if let resourceStatus = context["resourceStatus"] as? NSNumber {
+                    content.httpStatusCode = resourceStatus.intValue
                 }
                 let metrics = FTResourceMetricsModel.init()
-                if let resourceSize = context["resourceSize"] as? Int {
-                    metrics.responseSize = NSNumber.init(value: resourceSize)
+                if let resourceSize = context["resourceSize"] as? NSNumber {
+                    metrics.responseSize = resourceSize
                 }
 
                 FTExternalDataManager.shared().addResource(withKey: key, metrics: nil, content: content)
