@@ -56,7 +56,9 @@ class FTRUMManager {
       Map<String, String>? globalContext,
       int? rumCacheLimitCount,
       FTRUMCacheDiscard? rumCacheDiscard,
-      bool Function(String url)? isInTakeUrl}) async {
+      bool Function(String url)? isInTakeUrl,
+      bool? enableTraceWebView,
+      List<String>? allowWebViewHost}) async {
     Map<String, dynamic> map = {};
     if (Platform.isAndroid) {
       map["rumAppId"] = androidAppId;
@@ -79,6 +81,8 @@ class FTRUMManager {
     map["globalContext"] = globalContext;
     map["rumCacheLimitCount"] = rumCacheLimitCount;
     map["rumCacheDiscard"] = rumCacheDiscard?.index;
+    map["enableTraceWebView"] = enableTraceWebView;
+    map["allowWebViewHost"] = allowWebViewHost;
     FTHttpOverrideConfig.global.traceResource = enableUserResource;
     FTHttpOverrideConfig.global.isInTakeUrl = isInTakeUrl;
     await channel.invokeMethod(methodRumConfig, map);

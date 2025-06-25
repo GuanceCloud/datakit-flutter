@@ -141,6 +141,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
         const val KEY_DB_CACHE_DISCARD = "dbCacheDiscard"
         const val KEY_DATA_MODIFIER = "dataModifier"
         const val KEY_LINE_DATA_MODIFIER = "lineDataModifier"
+        const val KEY_ENABLE_REMOTE_CONFIGURATION= "enableRemoteConfiguration"
+        const val KEY_REMOTE_CONFIG_MINI_UPDATE_INTERVAL= "remoteConfigMiniUpdateInterval"
+        const val KEY_ENABLE_TRACE_WEBVIEW= "enableTraceWebView"
+        const val KEY_ALLOW_WEBVIEW_HOST= "allowWebViewHost"
         const val KEY_PKG_INFO = "pkgInfo"
 
         const val KEY_SAMPLE_RATE = "sampleRate"
@@ -302,6 +306,14 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                     })
                 }
 
+                if(enableRemoteConfiguration != null){
+                    sdkConfig.setRemoteConfiguration(enableRemoteConfiguration)
+                }
+
+                if (remoteConfigMiniUpdateInterval != null) {
+                    sdkConfig.setRemoteConfigMiniUpdateInterval(remoteConfigMiniUpdateInterval.toInt())
+                }
+
                 if (pkgInfo != null) {
                     InnerClassProxy.addPkgInfo(sdkConfig, "flutter", pkgInfo)
                 }
@@ -353,6 +365,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                     RUMCacheDiscard.values()[call.argument<Number>(KEY_RUM_CACHE_DISCARD)?.toInt()
                         ?: RUMCacheDiscard.DISCARD.ordinal]
                 val rumCacheLimitCount: Number? = call.argument<Number>(KEY_RUM_CACHE_LIMIT_COUNT)
+
+                val enableTraceWebView: Boolean? = call.argument<Boolean>(KEY_ENABLE_TRACE_WEBVIEW)
+                val allowWebViewHost: List<String>? = call.argument<List<String>>(KEY_ENABLE_TRACE_WEBVIEW)
+
 
                 val rumConfig = FTRUMConfig().setRumAppId(rumAppId)
                     .setRumCacheDiscardStrategy(rumCacheDiscard)
@@ -422,6 +438,15 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 if (rumCacheLimitCount != null) {
                     rumConfig.rumCacheLimitCount = rumCacheLimitCount.toInt()
+                }
+
+                if (enableTraceWebView != null) {
+                    rumConfig.setEnableTraceWebView(enableTraceWebView)
+                }
+
+                if (allowWebViewHost != null) {
+                    val arr: Array<String?> = allowWebViewHost.toTypedArray()
+                    rumConfig.setAllowWebViewHost(arr)
                 }
 
                 FTSdk.initRUMWithConfig(rumConfig)

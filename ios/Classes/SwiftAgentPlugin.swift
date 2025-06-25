@@ -130,6 +130,14 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                     }
                 }
             }
+            
+            if let enableRemoteConfiguration = context["enableRemoteConfiguration"] as? Bool{
+                config.remoteConfiguration = enableRemoteConfiguration
+            }
+            
+            if let remoteConfigMiniUpdateInterval = context["remoteConfigMiniUpdateInterval"] as? Int{
+                config.remoteConfigMiniUpdateInterval = Int32(remoteConfigMiniUpdateInterval)
+            }
 
             if let pkgInfo = context["pkgInfo"] as? String {
                 config.addPkgInfo("flutter", value: pkgInfo)
@@ -307,6 +315,15 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                     let rumCacheDiscard = FTRUMCacheDiscard.init(rawValue: rumDiscardType)
                     rumConfig.rumDiscardType = rumCacheDiscard ?? FTRUMCacheDiscard.discard
                 }
+
+                if let enableTraceWebView = context["enableTraceWebView"] as? Bool {
+                    rumConfig.enableTraceWebView = enableTraceWebView
+                }
+                
+                if let allowWebViewHost = context["allowWebViewHost"] as? Array<String> {
+                    rumConfig.allowWebViewHost = allowWebViewHost
+                }
+
                 FTMobileAgent.sharedInstance().startRum(withConfigOptions: rumConfig)
 #if FT_SDK_TESTING
                 result(test("validateRUM:",context,rumConfig))

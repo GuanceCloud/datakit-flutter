@@ -25,7 +25,7 @@ class FTMobileFlutter {
   /// [dataModifier] 数据更改器，对单个字段进行更改 {key:value},设置后 SDK 根据 key 将原始值替换为设置的 value
   /// [lineDataModifier] 数据更改器，对单条数据数据进行更改 {"measurement":measurement,"data":{key:value}},设置后 SDK 根据 key 将原始值替换为设置的 value
   /// [iOSGroupIdentifiers]
-  /// [dataSyncRetryCount]
+  /// [dataSyncRetryCount] 仅 Android
   ///
   static Future<void> sdkConfig(
       {@Deprecated('using datakitUrl instead') String? serverUrl,
@@ -50,6 +50,8 @@ class FTMobileFlutter {
       Map<String, String>? globalContext,
       Map<String, Object>? dataModifier,
       Map<String, Map<String, Object>>? lineDataModifier,
+      bool? enableRemoteConfiguration,
+      int? remoteConfigMiniUpdateInterval,
       List<String>? iOSGroupIdentifiers}) async {
     Map<String, dynamic> map = {};
     map["datakitUrl"] = serverUrl;
@@ -83,8 +85,10 @@ class FTMobileFlutter {
       map["dataSyncRetryCount"] = dataSyncRetryCount;
       map["enableAccessAndroidID"] = enableAccessAndroidID;
     }
-    map["dataModifier"]=dataModifier;
-    map["lineDataModifier"]=lineDataModifier;
+    map["dataModifier"] = dataModifier;
+    map["lineDataModifier"] = lineDataModifier;
+    map["enableRemoteConfiguration"] = enableRemoteConfiguration;
+    map["remoteConfigMiniUpdateInterval"] = remoteConfigMiniUpdateInterval;
     map["pkgInfo"] = packageVersion;
     await channel.invokeMethod(methodConfig, map);
     if (Platform.isAndroid) {
