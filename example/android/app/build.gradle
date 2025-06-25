@@ -36,7 +36,7 @@ if (flutterVersionName == null) {
 //apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdk 34
+    compileSdk 35
 //    ndkVersion '21.3.6528147'
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'

@@ -56,7 +56,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
         channel.setMethodCallHandler(this)
         application = flutterPluginBinding.applicationContext as Application
         handler = Handler(Looper.getMainLooper())
-//        setChancelDebug(false)
+//        setChancelDebug(true)
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
