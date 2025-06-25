@@ -2,6 +2,14 @@
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md)
 
+## 0.5.7-dev.1
+* 添加 FTMobileFlutter.sdkConfig(enableRemoteConfiguration,remoteConfigMiniUpdateInterval)，
+  支持通过 enableRemoteConfiguration = true 开启远程条件配置功能，并在在开启远程控制之后，通过
+  remoteConfigMiniUpdateInterval 设置最短更新时间间隔
+* 添加 FTRUMManager.setConfig(enableTraceWebView,allowWebViewHost) ，支持通过 enableTraceWebView 配置
+  是否开启通过 Android SDK 采集 WebView 数据, 通过 allowWebViewHost 可以控制需要过滤 host 地址
+* 适配 iOS 1.5.17 版本，适配 Android 1.6.12
+---
 ## 0.5.6+2
 * FTMobileFlutter.sdkConfig(dataModifier) 之后，引发含有 null 数据无法采集的问题
 * 修复 iOS RUM sampleRate，sessionOnErrorSampleRate， Log sampleRate ，Trace sampleRate
