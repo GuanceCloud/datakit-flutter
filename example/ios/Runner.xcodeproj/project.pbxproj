@@ -10,6 +10,7 @@
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		1711823D2E052E4E0036C3A5 /* FTPluginTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171182352E052E4E0036C3A5 /* FTPluginTest.swift */; };
 		171182732E0A52B70036C3A5 /* FTTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171182722E0A52B70036C3A5 /* FTTestUtils.swift */; };
+		177D279D2E0AA6BD003A0BBC /* TestDebug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 177D279C2E0AA6BD003A0BBC /* TestDebug.xcconfig */; };
 		17E0793F2922473A0014A420 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17E0793E2922473A0014A420 /* WidgetKit.framework */; };
 		17E079412922473A0014A420 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17E079402922473A0014A420 /* SwiftUI.framework */; };
 		17E079442922473A0014A420 /* TodayDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E079432922473A0014A420 /* TodayDemo.swift */; };
@@ -17,13 +18,13 @@
 		17E0794A2922473C0014A420 /* TodayDemoExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 17E0793D2922473A0014A420 /* TodayDemoExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		17E07955292248520014A420 /* WidgetNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E079532922484B0014A420 /* WidgetNetwork.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
-		5A72BFB1D01724DC19540688 /* Pods_TodayDemoExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C4F55A6C98BB26CF9A5AEC4 /* Pods_TodayDemoExtension.framework */; };
-		73BB14D36AAE59F757ADAA7C /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F53255294E887ECC78488050 /* Pods_Runner.framework */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
+		8BFCE704D0729737DAA060A6 /* libPods-FTPluginTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A2DDD1694BF2D8FF8D7BE59 /* libPods-FTPluginTests.a */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
-		BE88A4AE0285F5D76DEE473E /* Pods_FTPluginTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDA4495DE365F4E2F6053A59 /* Pods_FTPluginTests.framework */; };
+		E2CF05B9BD90C1A58CDDC2B8 /* libPods-TodayDemoExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 957A3134ECB8F8BC148B7046 /* libPods-TodayDemoExtension.a */; };
+		EEBF9500F1E7CC9CE2192927 /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 67604DAA692C0F00F0AE6514 /* libPods-Runner.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,6 +75,7 @@
 		171182232E052E3E0036C3A5 /* FTPluginTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FTPluginTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		171182352E052E4E0036C3A5 /* FTPluginTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FTPluginTest.swift; sourceTree = "<group>"; };
 		171182722E0A52B70036C3A5 /* FTTestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FTTestUtils.swift; sourceTree = "<group>"; };
+		177D279C2E0AA6BD003A0BBC /* TestDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestDebug.xcconfig; sourceTree = "<group>"; };
 		17E0793D2922473A0014A420 /* TodayDemoExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TodayDemoExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		17E0793E2922473A0014A420 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		17E079402922473A0014A420 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -84,12 +86,14 @@
 		17E07956292249690014A420 /* TodayDemoExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TodayDemoExtension.entitlements; sourceTree = "<group>"; };
 		17E0795829224D280014A420 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
-		4C4F55A6C98BB26CF9A5AEC4 /* Pods_TodayDemoExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TodayDemoExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4A2DDD1694BF2D8FF8D7BE59 /* libPods-FTPluginTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FTPluginTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		54A40B746B7CEE6BF79907F0 /* Pods-FTPluginTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FTPluginTests.debug.xcconfig"; path = "Target Support Files/Pods-FTPluginTests/Pods-FTPluginTests.debug.xcconfig"; sourceTree = "<group>"; };
+		67604DAA692C0F00F0AE6514 /* libPods-Runner.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Runner.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		93700FAF61D196033B295E40 /* Pods-TodayDemoExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TodayDemoExtension.release.xcconfig"; path = "Target Support Files/Pods-TodayDemoExtension/Pods-TodayDemoExtension.release.xcconfig"; sourceTree = "<group>"; };
+		957A3134ECB8F8BC148B7046 /* libPods-TodayDemoExtension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TodayDemoExtension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -102,9 +106,7 @@
 		EB423FBCE2C07AC3B4482AD6 /* Pods-FTPluginTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FTPluginTests.release.xcconfig"; path = "Target Support Files/Pods-FTPluginTests/Pods-FTPluginTests.release.xcconfig"; sourceTree = "<group>"; };
 		F1916183E9B83D0265EE2E8D /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		F39F40376792E78E544D8AC2 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
-		F53255294E887ECC78488050 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC58F354C9043AEFF3586BD7 /* Pods-FTPluginTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FTPluginTests.profile.xcconfig"; path = "Target Support Files/Pods-FTPluginTests/Pods-FTPluginTests.profile.xcconfig"; sourceTree = "<group>"; };
-		FDA4495DE365F4E2F6053A59 /* Pods_FTPluginTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FTPluginTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,7 +114,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BE88A4AE0285F5D76DEE473E /* Pods_FTPluginTests.framework in Frameworks */,
+				8BFCE704D0729737DAA060A6 /* libPods-FTPluginTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -122,7 +124,7 @@
 			files = (
 				17E079412922473A0014A420 /* SwiftUI.framework in Frameworks */,
 				17E0793F2922473A0014A420 /* WidgetKit.framework in Frameworks */,
-				5A72BFB1D01724DC19540688 /* Pods_TodayDemoExtension.framework in Frameworks */,
+				E2CF05B9BD90C1A58CDDC2B8 /* libPods-TodayDemoExtension.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,7 +132,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				73BB14D36AAE59F757ADAA7C /* Pods_Runner.framework in Frameworks */,
+				EEBF9500F1E7CC9CE2192927 /* libPods-Runner.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -140,6 +142,7 @@
 		1711823B2E052E4E0036C3A5 /* FTPluginTests */ = {
 			isa = PBXGroup;
 			children = (
+				177D279C2E0AA6BD003A0BBC /* TestDebug.xcconfig */,
 				171182352E052E4E0036C3A5 /* FTPluginTest.swift */,
 				171182722E0A52B70036C3A5 /* FTTestUtils.swift */,
 			);
@@ -162,9 +165,9 @@
 			children = (
 				17E0793E2922473A0014A420 /* WidgetKit.framework */,
 				17E079402922473A0014A420 /* SwiftUI.framework */,
-				FDA4495DE365F4E2F6053A59 /* Pods_FTPluginTests.framework */,
-				F53255294E887ECC78488050 /* Pods_Runner.framework */,
-				4C4F55A6C98BB26CF9A5AEC4 /* Pods_TodayDemoExtension.framework */,
+				4A2DDD1694BF2D8FF8D7BE59 /* libPods-FTPluginTests.a */,
+				67604DAA692C0F00F0AE6514 /* libPods-Runner.a */,
+				957A3134ECB8F8BC148B7046 /* libPods-TodayDemoExtension.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -255,6 +258,7 @@
 				1711821F2E052E3E0036C3A5 /* Sources */,
 				171182202E052E3E0036C3A5 /* Frameworks */,
 				171182212E052E3E0036C3A5 /* Resources */,
+				1420E6EE9F62FBB03D42C727 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -296,7 +300,7 @@
 				97C146EC1CF9000F007C117D /* Resources */,
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
-				8A083ECD9B920BA7D92FF303 /* [CP] Embed Pods Frameworks */,
+				177F4756C80184BE84FD3B2E /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -320,7 +324,6 @@
 				TargetAttributes = {
 					171182222E052E3E0036C3A5 = {
 						CreatedOnToolsVersion = 16.2;
-						TestTargetID = 97C146ED1CF9000F007C117D;
 					};
 					17E0793C2922473A0014A420 = {
 						CreatedOnToolsVersion = 14.0.1;
@@ -359,6 +362,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				177D279D2E0AA6BD003A0BBC /* TestDebug.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -384,6 +388,50 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1420E6EE9F62FBB03D42C727 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-FTPluginTests/Pods-FTPluginTests-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FTMobileSDK-5578c257/FTSDKPrivacyInfo.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/image_picker_ios/image_picker_ios_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview_privacy.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FTSDKPrivacyInfo.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/image_picker_ios_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/webview_flutter_wkwebview_privacy.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-FTPluginTests/Pods-FTPluginTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		177F4756C80184BE84FD3B2E /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FTMobileSDK-5578c257/FTSDKPrivacyInfo.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/image_picker_ios/image_picker_ios_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview_privacy.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FTSDKPrivacyInfo.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/image_picker_ios_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/webview_flutter_wkwebview_privacy.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		3B06AD1E1E4923F5004D2608 /* Thin Binary */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -442,32 +490,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		8A083ECD9B920BA7D92FF303 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/FTMobileSDK/FTMobileSDK.framework",
-				"${BUILT_PRODUCTS_DIR}/FTTest/FTTest.framework",
-				"${BUILT_PRODUCTS_DIR}/ft_mobile_agent_flutter/ft_mobile_agent_flutter.framework",
-				"${BUILT_PRODUCTS_DIR}/image_picker_ios/image_picker_ios.framework",
-				"${BUILT_PRODUCTS_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FTMobileSDK.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FTTest.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ft_mobile_agent_flutter.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/image_picker_ios.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/webview_flutter_wkwebview.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		9740EEB61CF901F6004384FC /* Run Script */ = {
@@ -574,9 +596,8 @@
 /* Begin XCBuildConfiguration section */
 		171182292E052E3F0036C3A5 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 54A40B746B7CEE6BF79907F0 /* Pods-FTPluginTests.debug.xcconfig */;
+			baseConfigurationReference = 177D279C2E0AA6BD003A0BBC /* TestDebug.xcconfig */;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -601,7 +622,6 @@
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SWIFT_MODULE_NAME)-Swift.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
 			};
 			name = Debug;
 		};
@@ -609,7 +629,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB423FBCE2C07AC3B4482AD6 /* Pods-FTPluginTests.release.xcconfig */;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -633,7 +652,6 @@
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SWIFT_MODULE_NAME)-Swift.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
 			};
 			name = Release;
 		};
@@ -641,7 +659,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FC58F354C9043AEFF3586BD7 /* Pods-FTPluginTests.profile.xcconfig */;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -665,7 +682,6 @@
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SWIFT_MODULE_NAME)-Swift.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
 			};
 			name = Profile;
 		};

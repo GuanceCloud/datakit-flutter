@@ -36,10 +36,17 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-  
-  shared_pods
+end
+
+target 'TodayDemoExtension' do
+  use_modular_headers!
+  pod 'FTMobileSDK/Extension'
+end
+
+target 'FTPluginTests' do
+  use_modular_headers!
   pod 'FTTest', :path=>'FTTest'
-  
+
   target 'FTPluginTests' do
     inherit! :search_paths
   end
