@@ -88,7 +88,7 @@ extension FTMobileConfig:ConfigValidator {
     @objc var enableRemoteConfiguration:Bool{
         return remoteConfiguration
     }
-    
+
     var specialKey: [String]{
         return [Constants.Base.dataModifier,
                 Constants.Base.lineDataModifier,
@@ -104,18 +104,21 @@ extension FTMobileConfig:ConfigValidator {
         case Constants.Base.pkgInfo:
             return value as! String == self.pkgInfo()["flutter"] as! String
         case Constants.Base.syncPageSize:
-            var syncPageSize = context[Constants.Base.syncPageSize] as! UInt
-            switch syncPageSize {
-            case FTSyncPageSize.mini.rawValue:
-                syncPageSize = 5
-            case FTSyncPageSize.medium.rawValue:
-                syncPageSize = 10
-            case FTSyncPageSize.max.rawValue:
-                syncPageSize = 50
-            default:
-                syncPageSize = 0
+            if let customSyncPageSize = context[Constants.Base.syncPageSize] as? Int {
+                return self.syncPageSize == customSyncPageSize
+            }else if let value = value as? Int,let syncType = FTSyncPageSize(rawValue: UInt(value)){
+                switch syncType{
+                case .mini:
+                    return self.syncPageSize == 5
+                case .medium:
+                    return self.syncPageSize == 10
+                case .max:
+                    return self.syncPageSize == 50
+                @unknown default:
+                    return self.syncPageSize == 10
+                }
             }
-            return self.syncPageSize == syncPageSize
+            return false
         case Constants.Base.cliToken,Constants.Base.datawayUrl:
             if datakitUrl.count>0 {
                 return true
