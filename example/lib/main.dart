@@ -139,10 +139,11 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
     super.initState();
     if (Platform.isAndroid) {
       requestPermission(
-          [Permission.phone, Permission.camera, Permission.photos]);
-    } else if (Platform.isIOS) {
-      requestPermission([Permission.camera, Permission.photos]);
+          [Permission.phone]);
     }
+    // else if (Platform.isIOS) {
+    //   requestPermission([Permission.camera, Permission.photos]);
+    // }
 
     WidgetsBinding.instance.addObserver(this); //添加观察者
   }
