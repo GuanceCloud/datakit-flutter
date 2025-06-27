@@ -104,7 +104,7 @@ extension FTMobileConfig:ConfigValidator {
         case Constants.Base.pkgInfo:
             return value as! String == self.pkgInfo()["flutter"] as! String
         case Constants.Base.syncPageSize:
-            if let customSyncPageSize = context[Constants.Base.syncPageSize] as? Int {
+            if let customSyncPageSize = context[Constants.Base.customSyncPageSize] as? Int {
                 return self.syncPageSize == customSyncPageSize
             }else if let value = value as? Int,let syncType = FTSyncPageSize(rawValue: UInt(value)){
                 switch syncType{

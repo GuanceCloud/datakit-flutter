@@ -52,7 +52,7 @@ final class FTPluginTest: XCTestCase {
     func testSdkConfigSpecialKey() throws {
         let plugin =  SwiftAgentPlugin()
         let arguments = FTTestUtils.sdkConfigSpecialKeyDict()
-        let methodCall = FlutterMethodCall(methodName: "ftConfig", arguments: arguments)
+        let methodCall = FlutterMethodCall(methodName: SwiftAgentPlugin.METHOD_CONFIG, arguments: arguments)
         plugin.handle(methodCall) { result in
             var testResult = false
             if let result = result as? Bool{

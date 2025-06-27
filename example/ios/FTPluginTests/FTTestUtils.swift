@@ -34,7 +34,7 @@ class FTTestUtils {
             Constants.Base.dbCacheDiscard:NSNumber(value: 1),
             
             // 集合类型
-            Constants.Base.groupIdentifiers: ["111", "222"],
+            Constants.Base.groupIdentifiers: ["com.fake.identifier1", "com.fake.identifier2"],
             // 字典类型
             Constants.Base.dataModifier: ["device_uuid": "xxx"],
             Constants.Base.lineDataModifier: ["view_url": "xxx"],
@@ -44,35 +44,14 @@ class FTTestUtils {
         ]
     }
     static func sdkConfigSpecialKeyDict()->[String:Any]{
-        return [
-            // 字符串类型
-            Constants.Base.datakitUrl: NSNull(),
-            Constants.Base.datawayUrl: "bbb",
-            Constants.Base.cliToken: "token",
-            Constants.Base.env: "test",
-            Constants.Base.serviceName: "testService",
-            Constants.Base.pkgInfo: "0.0.1",
-            // 布尔类型
-            Constants.Base.debug: NSNumber(value: true),
-            Constants.Base.autoSync: NSNumber(value: false),
-            Constants.Base.compressIntakeRequests: NSNumber(value: true),
-            Constants.Base.enableDataIntegerCompatible:  NSNumber(value: true),
-            Constants.Base.enableLimitWithDbSize:NSNumber(value: true),
-            
-            // 数值类型
-            Constants.Base.syncPageSize: NSNumber(value: 1),
-            Constants.Base.customSyncPageSize:  NSNull(),
-            Constants.Base.syncSleepTime: NSNumber(value: 100),
-            Constants.Base.dbCacheLimit: NSNumber(value: 60 * 1024 * 1024),
-            Constants.Base.dbCacheDiscard:NSNumber(value: 1),
-            
-            // 集合类型
-            Constants.Base.groupIdentifiers: ["111", "222"],
-            // 字典类型
-            Constants.Base.dataModifier: ["device_uuid": "xxx"],
-            Constants.Base.lineDataModifier: ["view_url": "xxx"],
-            Constants.Base.globalContext: ["test_key": "test_value"]
-        ]
+        let keysToDeleteValue: Set<String> = [Constants.Base.datakitUrl,Constants.Base.customSyncPageSize]
+        return Dictionary(uniqueKeysWithValues:FTTestUtils.sdkConfigDict().map { key, value in
+            if keysToDeleteValue.contains(key) {
+                return (key, NSNull())
+            } else {
+                return (key, value)
+            }
+        })
     }
     static  func sdkConfigEmptyDict()->[String:Any]{
         let keysToKeepValue: Set<String> = [Constants.Base.datakitUrl]
