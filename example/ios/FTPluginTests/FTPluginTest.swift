@@ -26,7 +26,7 @@ final class FTPluginTest: XCTestCase {
     func testSdkConfig() throws {
         let plugin =  SwiftAgentPlugin()
         let arguments = FTTestUtils.sdkConfigDict()
-        let methodCall = FlutterMethodCall(methodName: "ftConfig", arguments: arguments)
+        let methodCall = FlutterMethodCall(methodName: SwiftAgentPlugin.METHOD_CONFIG, arguments: arguments)
         
         plugin.handle(methodCall) { result in
             var testResult = false
@@ -39,7 +39,7 @@ final class FTPluginTest: XCTestCase {
     func testSdkConfigEmpty() throws {
         let plugin =  SwiftAgentPlugin()
         let arguments = FTTestUtils.sdkConfigEmptyDict()
-        let methodCall = FlutterMethodCall(methodName: "ftConfig", arguments: arguments)
+        let methodCall = FlutterMethodCall(methodName: SwiftAgentPlugin.METHOD_CONFIG, arguments: arguments)
         plugin.handle(methodCall) { result in
             var testResult = false
             if let result = result as? Bool{
@@ -52,7 +52,7 @@ final class FTPluginTest: XCTestCase {
         sdkInit()
         let plugin =  SwiftAgentPlugin()
         let arguments = FTTestUtils.traceConfigDict()
-        let methodCall = FlutterMethodCall(methodName: "ftTraceConfig", arguments: arguments)
+        let methodCall = FlutterMethodCall(methodName: SwiftAgentPlugin.METHOD_TRACE_CONFIG, arguments: arguments)
         
         plugin.handle(methodCall) { result in
             var testResult = false
@@ -66,7 +66,7 @@ final class FTPluginTest: XCTestCase {
         sdkInit()
         let plugin =  SwiftAgentPlugin()
         let arguments = FTTestUtils.traceConfigEmptyDict()
-        let methodCall = FlutterMethodCall(methodName: "ftTraceConfig", arguments: arguments)
+        let methodCall = FlutterMethodCall(methodName:  SwiftAgentPlugin.METHOD_TRACE_CONFIG, arguments: arguments)
         
         plugin.handle(methodCall) { result in
             var testResult = false
@@ -80,7 +80,7 @@ final class FTPluginTest: XCTestCase {
         sdkInit()
         let plugin =  SwiftAgentPlugin()
         let arguments = FTTestUtils.logConfigDict()
-        let methodCall = FlutterMethodCall(methodName: "ftLogConfig", arguments: arguments)
+        let methodCall = FlutterMethodCall(methodName:  SwiftAgentPlugin.METHOD_LOG_CONFIG, arguments: arguments)
         
         var testResult = false
         plugin.handle(methodCall) { result in
@@ -94,7 +94,7 @@ final class FTPluginTest: XCTestCase {
         sdkInit()
         let plugin =  SwiftAgentPlugin()
         let arguments = FTTestUtils.logConfigEmptyDict()
-        let methodCall = FlutterMethodCall(methodName: "ftLogConfig", arguments: arguments)
+        let methodCall = FlutterMethodCall(methodName: SwiftAgentPlugin.METHOD_LOG_CONFIG, arguments: arguments)
         
         plugin.handle(methodCall) { result in
             var testResult = false
@@ -109,7 +109,7 @@ final class FTPluginTest: XCTestCase {
         sdkInit()
         let plugin =  SwiftAgentPlugin()
         let arguments = FTTestUtils.rumConfigDict()
-        let methodCall = FlutterMethodCall(methodName: "ftRumConfig", arguments: arguments)
+        let methodCall = FlutterMethodCall(methodName: SwiftAgentPlugin.METHOD_RUM_CONFIG, arguments: arguments)
         
         plugin.handle(methodCall) { result in
             var testResult = false
@@ -123,7 +123,7 @@ final class FTPluginTest: XCTestCase {
         sdkInit()
         let plugin =  SwiftAgentPlugin()
         let arguments = FTTestUtils.rumConfigEmptyDict()
-        let methodCall = FlutterMethodCall(methodName: "ftRumConfig", arguments: arguments)
+        let methodCall = FlutterMethodCall(methodName: SwiftAgentPlugin.METHOD_RUM_CONFIG, arguments: arguments)
         
         plugin.handle(methodCall) { result in
             var testResult = false
@@ -134,7 +134,7 @@ final class FTPluginTest: XCTestCase {
         }
     }
     func sdkInit(){
-        let config = FTMobileConfig(datakitUrl: "aaa")
+        let config = FTMobileConfig(datakitUrl: FTTestUtils.fakeUrl)
         FTMobileAgent.start(withConfigOptions: config)
     }
 

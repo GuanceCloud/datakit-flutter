@@ -142,7 +142,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.5.6+2"
+    version: "0.5.7-dev.1"
   http:
     dependency: "direct main"
     description:

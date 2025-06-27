@@ -30,6 +30,8 @@ enum Constants {
         internal static let dbCacheLimit = "dbCacheLimit"
         internal static let pkgInfo = "pkgInfo"
         internal static let globalContext = "globalContext"
+        internal static let enableRemoteConfiguration = "enableRemoteConfiguration"
+        internal static let remoteConfigMiniUpdateInterval = "remoteConfigMiniUpdateInterval"
     }
     internal enum RUM {
         internal static let rumAppId = "rumAppId"
@@ -37,6 +39,7 @@ enum Constants {
         internal static let sessionOnErrorSampleRate = "sessionOnErrorSampleRate"
         internal static let enableUserAction = "enableUserAction"
         internal static let enableUserView = "enableUserView"
+        internal static let enableUserViewInFragment = "enableUserViewInFragment"
         internal static let enableUserResource = "enableUserResource"
         internal static let enableTrackNativeAppANR = "enableTrackNativeAppANR"
         internal static let enableTrackNativeCrash = "enableTrackNativeCrash"
@@ -48,6 +51,8 @@ enum Constants {
         internal static let rumCacheLimitCount = "rumCacheLimitCount"
         internal static let rumCacheDiscard = "rumCacheDiscard"
         internal static let globalContext = "globalContext"
+        internal static let enableTraceWebView = "enableTraceWebView"
+        internal static let allowWebViewHost = "allowWebViewHost"
     }
     internal enum Trace {
         internal static let sampleRate = "sampleRate"

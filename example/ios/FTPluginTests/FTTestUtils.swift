@@ -9,11 +9,12 @@ import Foundation
 @testable import FTTest
 
 class FTTestUtils {
+    static let fakeUrl = "http://fake.url"
     static func sdkConfigDict()->[String:Any]{
         return [
             // 字符串类型
-            Constants.Base.datakitUrl: "aaa",
-            Constants.Base.datawayUrl: "bbb",
+            Constants.Base.datakitUrl: fakeUrl,
+            Constants.Base.datawayUrl: fakeUrl,
             Constants.Base.cliToken: "token",
             Constants.Base.env: "test",
             Constants.Base.serviceName: "testService",
@@ -37,65 +38,24 @@ class FTTestUtils {
             // 字典类型
             Constants.Base.dataModifier: ["device_uuid": "xxx"],
             Constants.Base.lineDataModifier: ["view_url": "xxx"],
-            Constants.Base.globalContext: ["test_key": "test_value"]
+            Constants.Base.globalContext: ["test_key": "test_value"],
+            Constants.Base.enableRemoteConfiguration: NSNumber(value: true),
+            Constants.Base.remoteConfigMiniUpdateInterval: NSNumber(value: 200)
         ]
     }
     
     static  func sdkConfigEmptyDict()->[String:Any]{
-        return [
-            // 字符串类型
-            Constants.Base.datakitUrl: "aaa",
-            Constants.Base.datawayUrl: NSNull(),
-            Constants.Base.cliToken: NSNull(),
-            Constants.Base.env: NSNull(),
-            Constants.Base.serviceName: NSNull(),
-            Constants.Base.pkgInfo: NSNull(),
-            // 布尔类型
-            Constants.Base.debug: NSNull(),
-            Constants.Base.autoSync: NSNull(),
-            Constants.Base.compressIntakeRequests: NSNull(),
-            Constants.Base.enableDataIntegerCompatible:  NSNull(),
-            Constants.Base.enableLimitWithDbSize:NSNull(),
-            
-            // 数值类型
-            Constants.Base.syncPageSize: NSNull(),
-            Constants.Base.customSyncPageSize: NSNull(),
-            Constants.Base.syncSleepTime: NSNull(),
-            Constants.Base.dbCacheLimit: NSNull(),
-            Constants.Base.dbCacheDiscard:NSNull(),
-            
-            // 集合类型
-            Constants.Base.groupIdentifiers: NSNull(),
-            // 字典类型
-            Constants.Base.dataModifier: NSNull(),
-            Constants.Base.lineDataModifier:NSNull(),
-            Constants.Base.globalContext: NSNull()
-        ]
+        let keysToKeepValue: Set<String> = [Constants.Base.datakitUrl]
+        return Dictionary(uniqueKeysWithValues:FTTestUtils.sdkConfigDict().map { key, value in
+            if keysToKeepValue.contains(key) {
+                return (key, value)
+            } else {
+                return (key, NSNull())
+            }
+        })
     }
-    
     
     static func rumConfigDict()->[String:Any]{
-        return [
-            Constants.RUM.rumAppId: "app_id",
-            Constants.RUM.sampleRate: NSNull(),
-            Constants.RUM.sessionOnErrorSampleRate: NSNull(),
-            Constants.RUM.enableUserAction: NSNull(),
-            Constants.RUM.enableUserView: NSNull(),
-            Constants.RUM.enableUserResource: NSNull(),
-            Constants.RUM.enableTrackNativeAppANR: NSNull(),
-            Constants.RUM.enableTrackNativeCrash: NSNull(),
-            Constants.RUM.nativeUiBlockDurationMS: NSNull(),
-            Constants.RUM.enableAppUIBlock: NSNull(),
-            Constants.RUM.errorMonitorType: NSNull(),
-            Constants.RUM.globalContext: NSNull(),
-            Constants.RUM.deviceMetricsMonitorType: NSNull(),
-            Constants.RUM.detectFrequency: NSNull(),
-            Constants.RUM.rumCacheLimitCount: NSNull(),
-            Constants.RUM.rumCacheDiscard: NSNull()
-        ]
-    }
-    
-    static func rumConfigEmptyDict()->[String:Any]{
         return [
             Constants.RUM.rumAppId: "app_id",
             Constants.RUM.sampleRate: NSNumber(value: 0.7),
@@ -112,9 +72,23 @@ class FTTestUtils {
             Constants.RUM.deviceMetricsMonitorType: NSNumber(value: 1),
             Constants.RUM.detectFrequency: NSNumber(value: 1),
             Constants.RUM.rumCacheLimitCount: NSNumber(value: 10000),
-            Constants.RUM.rumCacheDiscard: NSNumber(value: 0)
+            Constants.RUM.rumCacheDiscard: NSNumber(value: 0),
+            Constants.RUM.enableTraceWebView: NSNumber(value: true),
+            Constants.RUM.allowWebViewHost: ["fake1.host.com", "fake2.host.com"],
         ]
     }
+    
+    static func rumConfigEmptyDict()->[String:Any]{
+        let keysToKeepValue: Set<String> = [Constants.RUM.rumAppId]
+        return Dictionary(uniqueKeysWithValues:FTTestUtils.rumConfigDict().map { key, value in
+            if keysToKeepValue.contains(key) {
+                return (key, value)
+            } else {
+                return (key, NSNull())
+            }
+        })
+    }
+    
     static func logConfigDict()->[String:Any]{
         return [
             Constants.Log.sampleRate: NSNumber(value: 0.4),
@@ -128,16 +102,9 @@ class FTTestUtils {
         ]
     }
     static func logConfigEmptyDict()->[String:Any]{
-        return [
-            Constants.Log.sampleRate: NSNull(),
-            Constants.Log.logCacheDiscard: NSNull(),
-            Constants.Log.logType: NSNull(),
-            Constants.Log.enableLinkRumData: NSNull(),
-            Constants.Log.enableCustomLog: NSNull(),
-            Constants.Log.printCustomLogToConsole: NSNull(),
-            Constants.Log.logCacheLimitCount: NSNull(),
-            Constants.Log.globalContext: NSNull(),
-        ]
+        return Dictionary(uniqueKeysWithValues:FTTestUtils.logConfigDict().keys.map { key in
+            return (key, NSNull())
+        })
     }
     
     static func traceConfigDict()->[String:Any]{
@@ -148,13 +115,12 @@ class FTTestUtils {
             Constants.Trace.traceType: NSNumber(value: 1),
         ]
     }
-    static func traceConfigEmptyDict()->[String:Any]{
-        return [
-            Constants.Trace.sampleRate: NSNull(),
-            Constants.Trace.enableLinkRUMData: NSNull(),
-            Constants.Trace.enableNativeAutoTrace: NSNull(),
-            Constants.Trace.traceType: NSNull(),
-        ]
+    static func traceConfigEmptyDict() -> [String: Any] {
+        return Dictionary(uniqueKeysWithValues:
+            FTTestUtils.traceConfigDict().keys.map { key in
+                (key, NSNull())
+            }
+        )
     }
     
 }

@@ -1,5 +1,6 @@
 package com.cloudcare.ft.mobile.sdk.tracker.flutter;
 
+import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.KEY_ALLOW_WEBVIEW_HOST;
 import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.KEY_AUTO_SYNC;
 import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.KEY_CLI_TOKEN;
 import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.KEY_COMPRESS_INTAKE_REQUESTS;
@@ -18,6 +19,8 @@ import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.K
 import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.KEY_ENABLE_LIMIT_WITH_DB_SIZE;
 import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.KEY_ENABLE_LINK_RUM_DATA;
 import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.KEY_ENABLE_NATIVE_AUTO_TRACE;
+import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.KEY_ENABLE_REMOTE_CONFIGURATION;
+import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.KEY_ENABLE_TRACE_WEBVIEW;
 import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.KEY_ENABLE_TRACK_NATIVE_APP_ANR;
 import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.KEY_ENABLE_TRACK_NATIVE_CRASH;
 import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.KEY_ENABLE_USER_ACTION;
@@ -33,6 +36,7 @@ import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.K
 import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.KEY_LOG_TYPE;
 import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.KEY_NATIVE_UI_BLOCK_DURATION_MS;
 import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.KEY_PRINT_CUSTOM_LOG_TO_CONSOLE;
+import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.KEY_REMOTE_CONFIG_MINI_UPDATE_INTERVAL;
 import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.KEY_RUM_APP_ID;
 import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.KEY_RUM_CACHE_DISCARD;
 import static com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.KEY_RUM_CACHE_LIMIT_COUNT;
@@ -52,6 +56,7 @@ import com.ft.sdk.garble.bean.Status;
 import com.ft.sdk.garble.utils.Constants;
 import com.ft.sdk.garble.utils.LogUtils;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -84,9 +89,11 @@ public class FTConfigCheck {
             put(KEY_GLOBAL_CONTEXT, sdkConfig.getGlobalContext());
             put(KEY_ENABLE_LIMIT_WITH_DB_SIZE, sdkConfig.isLimitWithDbSize());
             put(KEY_DB_CACHE_LIMIT, sdkConfig.getDbCacheLimit());
-            put(KEY_DB_CACHE_DISCARD, sdkConfig.getDbCacheDiscard());
+            put(KEY_DB_CACHE_DISCARD, sdkConfig.getDbCacheDiscard().ordinal());
             put(KEY_LINE_DATA_MODIFIER, sdkConfig.getLineDataModifier());
             put(KEY_DATA_MODIFIER, sdkConfig.getDataModifier());
+            put(KEY_ENABLE_REMOTE_CONFIGURATION, sdkConfig.isRemoteConfiguration());
+            put(KEY_REMOTE_CONFIG_MINI_UPDATE_INTERVAL, sdkConfig.getRemoteConfigMiniUpdateInterval());
         }};
 
         for (Map.Entry<String, Object> entry : args.entrySet()) {
@@ -96,10 +103,11 @@ public class FTConfigCheck {
             Object value = entry.getValue();
 
             if (KEY_SYNC_PAGE_SIZE.equals(keyStr)) {
-                int syncPageSize = (int) value;
-                boolean match = SyncPageSize.values()[syncPageSize].getValue() == sdkConfig.getPageSize();
+                int syncPageSizeOrdinal = (int) value;
+                int syncPageSize= SyncPageSize.values()[syncPageSizeOrdinal].getValue();
+                boolean match = syncPageSize == sdkConfig.getPageSize();
                 if (!match) {
-                    logNotMatch(keyStr, value, sdkConfig.getDataModifier());
+                    logNotMatch(keyStr, value, syncPageSize);
                     return false;
                 }
                 continue;
@@ -160,6 +168,8 @@ public class FTConfigCheck {
             put(KEY_GLOBAL_CONTEXT, sdkConfig.getGlobalContext());
             put(KEY_RUM_CACHE_LIMIT_COUNT, sdkConfig.getRumCacheLimitCount());
             put(KEY_RUM_CACHE_DISCARD, sdkConfig.getRumCacheDiscardStrategy().ordinal());
+            put(KEY_ENABLE_TRACE_WEBVIEW, sdkConfig.isEnableTraceWebView());
+            put(KEY_ALLOW_WEBVIEW_HOST, sdkConfig.getAllowWebViewHost());
         }};
 
         for (Map.Entry<String, Object> entry : args.entrySet()) {
@@ -188,6 +198,16 @@ public class FTConfigCheck {
                 boolean match = ((Number) value).intValue() == sdkConfig.getExtraMonitorTypeWithError();
                 if (!match) {
                     logNotMatch(keyStr, value, sdkConfig.getExtraMonitorTypeWithError());
+                    return false;
+                }
+                continue;
+            }
+
+            if (KEY_ALLOW_WEBVIEW_HOST.equals(keyStr) && value instanceof List) {
+                List<String> list = (List<String>) value;
+                boolean match =  Arrays.equals(list.toArray(new String[0]),(sdkConfig.getAllowWebViewHost()));
+                if (!match) {
+                    logNotMatch(keyStr, value, sdkConfig.getAllowWebViewHost());
                     return false;
                 }
                 continue;

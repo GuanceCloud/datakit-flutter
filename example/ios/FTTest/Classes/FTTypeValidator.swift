@@ -85,18 +85,38 @@ extension FTMobileConfig:ConfigValidator {
         return clientToken
     }
     
+    @objc var enableRemoteConfiguration:Bool{
+        return remoteConfiguration
+    }
+    
     var specialKey: [String]{
-        return ["dataModifier","lineDataModifier","syncPageSize","pkgInfo","cliToken","datawayUrl"]
+        return [Constants.Base.dataModifier,
+                Constants.Base.lineDataModifier,
+                Constants.Base.syncPageSize,
+                Constants.Base.pkgInfo,
+                Constants.Base.cliToken,
+                Constants.Base.datawayUrl]
     }
     func validatorSpecialKey(_ key:String,_ value:Any,_ context:Dictionary<String, Any>)->Bool{
         switch key{
-        case "dataModifier","lineDataModifier":
+        case Constants.Base.dataModifier,Constants.Base.lineDataModifier:
             return true
-        case "pkgInfo":
+        case Constants.Base.pkgInfo:
             return value as! String == self.pkgInfo()["flutter"] as! String
-        case "syncPageSize":
-            return self.syncPageSize == context["customSyncPageSize"] as! Int
-        case "cliToken","datawayUrl":
+        case Constants.Base.syncPageSize:
+            var syncPageSize = context[Constants.Base.syncPageSize] as! UInt
+            switch syncPageSize {
+            case FTSyncPageSize.mini.rawValue:
+                syncPageSize = 5
+            case FTSyncPageSize.medium.rawValue:
+                syncPageSize = 10
+            case FTSyncPageSize.max.rawValue:
+                syncPageSize = 50
+            default:
+                syncPageSize = 0
+            }
+            return self.syncPageSize == syncPageSize
+        case Constants.Base.cliToken,Constants.Base.datawayUrl:
             if datakitUrl.count>0 {
                 return true
             }else{
@@ -154,13 +174,14 @@ extension FTRumConfig:ConfigValidator{
         return enableTrackAppANR
     }
     var specialKey: [String]{
-        return ["sessionOnErrorSampleRate","enableUserViewInFragment"]
+        return [Constants.RUM.sessionOnErrorSampleRate,
+                Constants.RUM.enableUserViewInFragment]
     }
     func validatorSpecialKey(_ key: String, _ value: Any, _ context: Dictionary<String, Any>) -> Bool {
         switch key{
-        case "enableUserViewInFragment":
+        case Constants.RUM.enableUserViewInFragment:
             return true
-        case "sessionOnErrorSampleRate":
+        case Constants.RUM.sessionOnErrorSampleRate:
             return Double(sessionOnErrorSampleRate) / 100 == value as! Double
         default:
             return false

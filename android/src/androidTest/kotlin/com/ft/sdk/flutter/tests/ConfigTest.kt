@@ -1,6 +1,7 @@
 package com.ft.sdk.flutter.tests
 
 import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter
+import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_ALLOW_WEBVIEW_HOST
 import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_AUTO_SYNC
 import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_CLI_TOKEN
 import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_COMPRESS_INTAKE_REQUESTS
@@ -19,6 +20,8 @@ import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companio
 import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_ENABLE_LIMIT_WITH_DB_SIZE
 import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_ENABLE_LINK_RUM_DATA
 import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_ENABLE_NATIVE_AUTO_TRACE
+import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_ENABLE_REMOTE_CONFIGURATION
+import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_ENABLE_TRACE_WEBVIEW
 import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_ENABLE_TRACK_NATIVE_APP_ANR
 import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_ENABLE_TRACK_NATIVE_CRASH
 import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_ENABLE_USER_ACTION
@@ -34,6 +37,7 @@ import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companio
 import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_LOG_TYPE
 import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_NATIVE_UI_BLOCK_DURATION_MS
 import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_PRINT_CUSTOM_LOG_TO_CONSOLE
+import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_REMOTE_CONFIG_MINI_UPDATE_INTERVAL
 import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_RUM_APP_ID
 import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_RUM_CACHE_DISCARD
 import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_RUM_CACHE_LIMIT_COUNT
@@ -73,7 +77,9 @@ open class ConfigTest {
             KEY_DB_CACHE_LIMIT to 60 * 1024 * 1024,
             KEY_DATA_MODIFIER to mapOf("device_uuid" to "xxx"),
             KEY_LINE_DATA_MODIFIER to mapOf("view_url" to "xxx"),
-            KEY_GLOBAL_CONTEXT to mapOf("test_key" to "test_value")
+            KEY_GLOBAL_CONTEXT to mapOf("test_key" to "test_value"),
+            KEY_ENABLE_REMOTE_CONFIGURATION to true,
+            KEY_REMOTE_CONFIG_MINI_UPDATE_INTERVAL to 100
         )
 
         private val SDK_FAKE_EMPTY_MAP = SDK_FAKE_MAP.keys.associateWith { null }
@@ -95,7 +101,9 @@ open class ConfigTest {
             KEY_DEVICE_METRICS_MONITOR_TYPE to 1,
             KEY_DETECT_FREQUENCY to 1,
             KEY_RUM_CACHE_LIMIT_COUNT to 10000,
-            KEY_RUM_CACHE_DISCARD to 0
+            KEY_RUM_CACHE_DISCARD to 0,
+            KEY_ENABLE_TRACE_WEBVIEW to true,
+            KEY_ALLOW_WEBVIEW_HOST to listOf("fake1.host.com","fake2.host.com")
         )
 
         private val SDK_RUM_FAKE_EMPTY_MAP =
@@ -133,11 +141,12 @@ open class ConfigTest {
 
     @Test
     fun sdkConfigTest() {
-        val datakitMap = SDK_FAKE_MAP.filter { it.key == KEY_DATAWAY_URL }
+        val datakitMap = SDK_FAKE_MAP.filterNot {
+            it.key == KEY_DATAWAY_URL || it.key == KEY_CLI_TOKEN || it.key == KEY_SYNC_PAGE_SIZE  }
         checkMap(FTMobileAgentFlutter.METHOD_CONFIG, datakitMap)
 
         val datawayMap =
-            SDK_FAKE_MAP.filter { it.key == KEY_DATAWAY_URL || it.key == KEY_CLI_TOKEN }
+            SDK_FAKE_MAP.filterNot { it.key == KEY_DATAKIT_URL || it.key == KEY_CLI_TOKEN || it.key == KEY_CUSTOM_SYNC_PAGE_SIZE  }
         checkMap(FTMobileAgentFlutter.METHOD_CONFIG, datawayMap)
     }
 
