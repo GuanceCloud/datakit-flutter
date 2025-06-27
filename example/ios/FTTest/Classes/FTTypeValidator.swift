@@ -95,7 +95,21 @@ extension FTMobileConfig:ConfigValidator {
         case "pkgInfo":
             return value as! String == self.pkgInfo()["flutter"] as! String
         case "syncPageSize":
-            return self.syncPageSize == context["customSyncPageSize"] as! Int
+            if let customSyncPageSize = context["customSyncPageSize"] as? Int {
+                return self.syncPageSize == customSyncPageSize
+            }else if let value = value as? Int,let syncType = FTSyncPageSize(rawValue: UInt(value)){
+                switch syncType{
+                case .mini:
+                    return self.syncPageSize == 5
+                case .medium:
+                    return self.syncPageSize == 10
+                case .max:
+                    return self.syncPageSize == 50
+                @unknown default:
+                    return self.syncPageSize == 10
+                }
+            }
+            return false
         case "cliToken","datawayUrl":
             if datakitUrl.count>0 {
                 return true

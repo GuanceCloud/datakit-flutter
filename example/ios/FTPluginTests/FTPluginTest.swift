@@ -11,6 +11,7 @@ import Flutter
 @testable import FTTest
 @testable import FTMobileSDK
 
+
 final class FTPluginTest: XCTestCase {
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -37,6 +38,18 @@ final class FTPluginTest: XCTestCase {
     func testSdkConfigEmpty() throws {
         let plugin =  SwiftAgentPlugin()
         let arguments = FTTestUtils.sdkConfigEmptyDict()
+        let methodCall = FlutterMethodCall(methodName: "ftConfig", arguments: arguments)
+        plugin.handle(methodCall) { result in
+            var testResult = false
+            if let result = result as? Bool{
+                testResult = result
+            }
+            XCTAssertTrue(testResult)
+        }
+    }
+    func testSdkConfigSpecialKey() throws {
+        let plugin =  SwiftAgentPlugin()
+        let arguments = FTTestUtils.sdkConfigSpecialKeyDict()
         let methodCall = FlutterMethodCall(methodName: "ftConfig", arguments: arguments)
         plugin.handle(methodCall) { result in
             var testResult = false
