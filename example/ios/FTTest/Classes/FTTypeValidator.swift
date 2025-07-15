@@ -49,7 +49,7 @@ extension ConfigValidator{
         return mismatchedKeys
     }
     func isEqual(_ a: Any, _ b: Any) -> Bool {
-        // 处理基础类型比较
+        // Handle basic type comparison
         if let intA = a as? Int, let intB = b as? Int {
             return intA == intB
         }else if let doubleA = a as? Double, let doubleB = b as? Double {
@@ -63,7 +63,7 @@ extension ConfigValidator{
         }else if let dictA = a as? Dictionary<String,String>, let dictB = b as? Dictionary<String,String> {
             return dictA == dictB
         }
-        // 处理其他类型或自定义类型
+        // Handle other types or custom types
         return false
     }
 }
@@ -222,12 +222,12 @@ extension NSNumber {
     let logger = Logger(subsystem: "com.example.app", category: "test")
 
 @objc class FTTypeValidator:NSObject {
-    /// 校验字典中指定 key 的 value 类型
+    /// Validate the value type of the specified key in the dictionary
     static func validate<T>(_ context: [String: Any], key: String, type: T.Type) -> Bool {
         return context[key] is T
     }
     
-    /// 批量校验字典中的类型
+    /// Batch validate types in dictionary
     static func validateAll(_ context: Dictionary<String, Any>, rules: [String: Any.Type],type:String,config:ConfigValidator) -> Bool{
         var result = [String: String]()
         var empty = [String]()
@@ -240,7 +240,7 @@ extension NSNumber {
                 empty.append(key)
                 continue
             }
-            // 处理特殊桥接类型
+            // Handle special bridge types
             var validate = false
             switch expectedType {
             case is String.Type:

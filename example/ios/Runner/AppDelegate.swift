@@ -10,7 +10,7 @@ import Flutter
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
       
-      //原生混用初始化
+      // Native hybrid initialization
 //      var config:FTMobileConfig = FTMobileConfig.init(datakitUrl: "http://datakit.url")
 //      config.enableSDKDebugLog = true
 //      FTMobileAgent.start(withConfigOptions: config)

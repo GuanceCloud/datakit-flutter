@@ -15,14 +15,14 @@ class _RUMPageState extends State<RUMPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("RUM 数据采集"),
+        title: Text("RUM Data Collection"),
       ),
       body: Column(
         children: <Widget>[
           ListTile(
-            title: Text("Action 点击"),
+            title: Text("Action Click"),
             onTap: () {
-              FTRUMManager().startAction("[ListTile][Action 点击]", "click",
+              FTRUMManager().startAction("[ListTile][Action Click]", "click",
                   property: {"action_property": "ft_value"});
             },
           ),
@@ -49,7 +49,7 @@ class _RUMPageState extends State<RUMPage> {
           ListTile(
             title: Text("Resource Error"),
             onTap: () async {
-              FTRUMManager().startAction("Resource Error click", "click");
+              FTRUMManager().startAction("Resource Error Click", "click");
               httpClientGetHttp('https://console-api.guance.com/not/found/');
             },
           ),
@@ -65,7 +65,7 @@ class _RUMPageState extends State<RUMPage> {
           ListTile(
             title: Text("Add Flutter Error"),
             onTap: () async {
-              throw new Exception("Flutter error");
+              throw new Exception("Flutter Error");
             },
           ),
           ListTile(

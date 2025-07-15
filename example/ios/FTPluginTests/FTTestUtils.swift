@@ -12,30 +12,30 @@ class FTTestUtils {
     static let fakeUrl = "http://fake.url"
     static func sdkConfigDict()->[String:Any]{
         return [
-            // 字符串类型
+            // String type
             Constants.Base.datakitUrl: fakeUrl,
             Constants.Base.datawayUrl: fakeUrl,
             Constants.Base.cliToken: "token",
             Constants.Base.env: "test",
             Constants.Base.serviceName: "testService",
             Constants.Base.pkgInfo: "0.0.1",
-            // 布尔类型
+            // Boolean type
             Constants.Base.debug: NSNumber(value: true),
             Constants.Base.autoSync: NSNumber(value: false),
             Constants.Base.compressIntakeRequests: NSNumber(value: true),
             Constants.Base.enableDataIntegerCompatible:  NSNumber(value: true),
             Constants.Base.enableLimitWithDbSize:NSNumber(value: true),
             
-            // 数值类型
+            // Numeric type
             Constants.Base.syncPageSize: NSNumber(value: 1),
             Constants.Base.customSyncPageSize: NSNumber(value: 100),
             Constants.Base.syncSleepTime: NSNumber(value: 100),
             Constants.Base.dbCacheLimit: NSNumber(value: 60 * 1024 * 1024),
             Constants.Base.dbCacheDiscard:NSNumber(value: 1),
             
-            // 集合类型
+            // Collection type
             Constants.Base.groupIdentifiers: ["com.fake.identifier1", "com.fake.identifier2"],
-            // 字典类型
+            // Dictionary type
             Constants.Base.dataModifier: ["device_uuid": "xxx"],
             Constants.Base.lineDataModifier: ["view_url": "xxx"],
             Constants.Base.globalContext: ["test_key": "test_value"],

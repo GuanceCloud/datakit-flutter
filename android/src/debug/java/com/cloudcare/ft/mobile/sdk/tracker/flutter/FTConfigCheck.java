@@ -344,7 +344,7 @@ public class FTConfigCheck {
                 double d1 = ((Number) value).doubleValue();
                 double d2 = ((Number) configValue).doubleValue();
                 if (Math.abs(d1 - d2) > EPSILON) {
-                    return false; // 超出误差范围，认为不相等
+                    return false; // Exceeds error range, considered not equal
                 }
             } else if (!Objects.equals(value, configValue)) {
                 logNotMatch(keyStr, value, configValue);

@@ -10,18 +10,18 @@ package com.cloudcare.ft.mobile.sdk.agent_example
 import io.flutter.app.FlutterApplication
 
 /**
- * 如果需要统计【启动次数】和【启动时间】需要在此处添加自定义 Application
+ * If you need to count [startup count] and [startup time], you need to add a custom Application here
  */
 class CustomApplication : FlutterApplication() {
 
     override fun onCreate() {
         super.onCreate()
-        //原生混用初始化
+        // Native hybrid initialization
 //        val ftSDKConfig = FTSDKConfig.builder("http://datakit.url")
-//            .setDebug(true)//是否开启Debug模式（开启后能查看调试数据）
+//            .setDebug(true)// Whether to enable Debug mode (enable to view debug data)
 //        FTSdk.install(ftSDKConfig)
 //
-//        //配置 Log
+//        // Configure Log
 //        FTSdk.initLogWithConfig(
 //            FTLoggerConfig()
 //                .setEnableConsoleLog(true)
@@ -42,7 +42,7 @@ class CustomApplication : FlutterApplication() {
 //                .setEnableTrackAppANR(true)
 //        )
 //
-//        //配置 Trace
+//        // Configure Trace
 //        FTSdk.initTraceWithConfig(
 //            FTTraceConfig()
 //                .setSamplingRate(1f)

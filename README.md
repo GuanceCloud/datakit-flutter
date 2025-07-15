@@ -1,14 +1,14 @@
 
-# Datakit-Flutter
+# GuanceCloud SDK Flutter
 
 
-# 简介
+# Introduction
 ![](https://img.shields.io/badge/dynamic/json?label=pub.dev&color=blue&query=$.version&uri=https://static.guance.com/ft-sdk-package/badge/flutter/version.json) 
 ![](https://img.shields.io/badge/dynamic/json?label=legacy.github.tag&color=blue&query=$.version&uri=https://static.guance.com/ft-sdk-package/badge/flutter/legacy/version.json)
 ![](https://img.shields.io/badge/dynamic/json?label=platform&color=lightgrey&query=$.platform&uri=https://static.guance.com/ft-sdk-package/badge/flutter/info.json)
 
-基于 **观测云 iOS Android** SDK 的 **Plugin**
+Based on **Guance iOS Android** SDK **Plugin**
 
-# 使用文档
+# How to use
 
-请参考官方文档 [点击这里](https://docs.guance.com/real-user-monitoring/flutter/app-access/)
+Please refer to the official documentation [click here](https://docs.guance.com/real-user-monitoring/flutter/app-access/)

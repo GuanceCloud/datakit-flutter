@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 import 'package:uuid/uuid.dart';
 
-///使用 dio 库来进行网络请求
+/// Use dio library for network requests
 
 class FTInterceptor extends Interceptor {
   static const String _dioKey = "ft-dio-key";

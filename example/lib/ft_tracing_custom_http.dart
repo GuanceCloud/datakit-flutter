@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:uuid/uuid.dart';
 
-///使用 http 库来进行网络请求
+/// Use http library for network requests
 class FTTracingHttpClient extends http.BaseClient {
   final http.Client _innerClient;
 

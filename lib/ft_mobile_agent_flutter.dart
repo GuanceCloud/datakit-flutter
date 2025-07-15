@@ -11,21 +11,21 @@ export 'ft_rum.dart';
 export 'ft_tracing.dart';
 
 class FTMobileFlutter {
-  /// 配置
-  /// [serverUrl] datakit 访问 URL 地址，例子：http://10.0.0.1:9529，端口默认 9529。deprecated
-  /// [datakitUrl] datakit 访问 URL 地址，例子：http://10.0.0.1:9529，端口默认 9529。 datakit 与 dataway 配置二选一
-  /// [datawayUrl] dataway 访问 URL 地址，例子：http://10.0.0.1:9528，端口默认 9528，注意：安装 SDK 设备需能访问这地址.注意：datakit 和 dataway 配置两者二选一
-  /// [cliToken] dataway 认证 token，需要与 [datawayUrl] 同时配置
-  /// [debug] 默认为 false，开启后方可打印 SDK 运行日志
-  /// [serviceName] 应用服务名
-  /// [envType] 默认为 EnvType.PROD，envType 与 env 二选一
-  /// [env] 默认为 prod, envType 与 env 二选一
-  /// [enableAccessAndroidID] 开启获取 Android ID，默认，为 true，设置为 false，则 device_uuid 字段数据将不进行采集,市场隐私审核相关查看这里
-  /// [globalContext] SDK 全局属性
-  /// [dataModifier] 数据更改器，对单个字段进行更改 {key:value},设置后 SDK 根据 key 将原始值替换为设置的 value
-  /// [lineDataModifier] 数据更改器，对单条数据数据进行更改 {"measurement":measurement,"data":{key:value}},设置后 SDK 根据 key 将原始值替换为设置的 value
+  /// Configuration
+  /// [serverUrl] datakit access URL address, example: http://10.0.0.1:9529, default port 9529. deprecated
+  /// [datakitUrl] datakit access URL address, example: http://10.0.0.1:9529, default port 9529. Choose between datakit and dataway configuration
+  /// [datawayUrl] dataway access URL address, example: http://10.0.0.1:9528, default port 9528, note: SDK installation device needs to access this address. Note: Choose between datakit and dataway configuration
+  /// [cliToken] dataway authentication token, needs to be configured together with [datawayUrl]
+  /// [debug] Default is false, SDK runtime logs can be printed after enabling
+  /// [serviceName] Application service name
+  /// [envType] Default is EnvType.PROD, choose between envType and env
+  /// [env] Default is prod, choose between envType and env
+  /// [enableAccessAndroidID] Enable Android ID access, default is true, set to false to disable device_uuid field data collection, see here for market privacy review
+  /// [globalContext] SDK global attributes
+  /// [dataModifier] Data modifier, modify individual fields {key:value}, after setting SDK will replace original value with set value based on key
+  /// [lineDataModifier] Data modifier, modify single data {"measurement":measurement,"data":{key:value}}, after setting SDK will replace original value with set value based on key
   /// [iOSGroupIdentifiers]
-  /// [dataSyncRetryCount] 仅 Android
+  /// [dataSyncRetryCount] Android only
   ///
   static Future<void> sdkConfig(
       {@Deprecated('using datakitUrl instead') String? serverUrl,
@@ -96,12 +96,12 @@ class FTMobileFlutter {
     }
   }
 
-  ///绑定用户
+  /// Bind user
   ///
-  ///[userid] 用户 id
-  ///[userName] 用户名
-  ///[userEmail] 用户邮箱
-  ///[userExt] 扩展数据
+  /// [userid] User id
+  /// [userName] Username
+  /// [userEmail] User email
+  /// [userExt] Extended data
   static Future<void> bindRUMUserData(String userId,
       {String? userName, String? userEmail, Map<String, String>? ext}) async {
     Map<String, dynamic> map = {};
@@ -112,14 +112,14 @@ class FTMobileFlutter {
     return await channel.invokeMethod(methodBindUser, map);
   }
 
-  ///解绑用户
+  /// Unbind user
   static Future<void> unbindRUMUserData() async {
     return await channel.invokeMethod(methodUnbindUser);
   }
 
   ///
-  /// 是否开启使用 accessAndroidID，仅支持 Android
-  /// [enableAccessAndroidID] true 开启，false 不开启
+  /// Whether to enable accessAndroidID, Android only
+  /// [enableAccessAndroidID] true to enable, false to disable
   ///
   ///
   static Future<void> setEnableAccessAndroidID(
@@ -132,7 +132,7 @@ class FTMobileFlutter {
   }
 
   ///
-  /// 同步 ios extension 中的事件，仅支持 iOS
+  /// Sync events from iOS extension, iOS only
   /// [groupIdentifier] app groupId
   ///
   static Future<Map<String, dynamic>> trackEventFromExtension(
@@ -149,16 +149,16 @@ class FTMobileFlutter {
   }
 
   ///
-  /// 日志回调对象
+  /// Log callback object
   ///
-  ///[level]日志登记
-  ///[tag] 日志 tag
-  ///[message] 日志内容
+  /// [level] Log level
+  /// [tag] Log tag
+  /// [message] Log content
   static void Function(String level, String tag, String message)?
       innerLogHandler;
 
-  ///设置内部日志接管对象
-  ///[handler] 回调对象
+  /// Set internal log handler object
+  /// [handler] Callback object
   static Future<void> registerInnerLogHandler(
       void Function(String level, String tag, String message) handler) async {
     if (!Platform.isAndroid) return null;
@@ -166,12 +166,12 @@ class FTMobileFlutter {
     return await channel.invokeMethod(methodSetInnerLogHandler);
   }
 
-  /// 立即同步数据
+  /// Sync data immediately
   static Future<void> flushSyncData() async {
     return await channel.invokeMethod(methodFlushSyncData);
   }
 
-  /// 动态设置全局 tag
+  /// Dynamically set global tags
   static Future<void> appendGlobalContext(
       Map<String, dynamic> globalContext) async {
     Map<String, dynamic> map = {};
@@ -179,7 +179,7 @@ class FTMobileFlutter {
     return await channel.invokeMethod(methodAppendGlobalContext, map);
   }
 
-  /// 动态设置 RUM 全局 tag
+  /// Dynamically set RUM global tags
   static Future<void> appendRUMGlobalContext(
       Map<String, String> globalContext) async {
     Map<String, dynamic> map = {};
@@ -187,7 +187,7 @@ class FTMobileFlutter {
     return await channel.invokeMethod(methodAppendRUMGlobalContext, map);
   }
 
-  /// 动态设置 log 全局 tag
+  /// Dynamically set log global tags
   static Future<void> appendLogGlobalContext(
       Map<String, dynamic> globalContext) async {
     Map<String, dynamic> map = {};
@@ -195,7 +195,7 @@ class FTMobileFlutter {
     return await channel.invokeMethod(methodAppendLogGlobalContext, map);
   }
 
-  /// 清理缓存
+  /// Clear cache
   static Future<void> clearAllData() async {
     return await channel.invokeMethod(methodAppendLogGlobalContext);
   }
@@ -218,24 +218,24 @@ class FTMobileFlutter {
   }
 }
 
-///[prod] 生成
-///[gray] 灰度
-///[pre]  预发
-///[common]
-///[local] 本地
+/// [prod] Production
+/// [gray] Gray
+/// [pre] Pre-release
+/// [common]
+/// [local] Local
 enum EnvType { prod, gray, pre, common, local }
 
 ///
-///[mini]   5 条
-///[medium] 10 条
-///[large]  50 条
+/// [mini] 5 items
+/// [medium] 10 items
+/// [large] 50 items
 enum SyncPageSize { mini, medium, large }
 
-/// DB 丢弃方式
+/// DB discard method
 enum FTDBCacheDiscard {
-  ///丢弃新日志
+  /// Discard new logs
   discard,
 
-  /// 丢弃旧日志
+  /// Discard old logs
   discardOldest
 }

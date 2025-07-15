@@ -83,7 +83,7 @@ flutter {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0"
 
-    //原生混用初始化
+    // Native hybrid initialization
 //    implementation 'com.squareup.okhttp3:okhttp:4.5.0'
 //    implementation 'com.cloudcare.ft.mobile.sdk.tracker.agent:ft-sdk:1.6.8'
 //    implementation 'com.cloudcare.ft.mobile.sdk.tracker.agent:ft-native:1.1.1'

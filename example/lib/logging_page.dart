@@ -12,7 +12,7 @@ class _LoggingPageState extends State<LoggingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("日志输出"),
+        title: Text("Log Output"),
       ),
       body: Column(
         children: <Widget>[

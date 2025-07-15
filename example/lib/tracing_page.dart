@@ -13,7 +13,7 @@ class CustomTracingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("网络链路追踪(手动)"),
+        title: Text("Network Tracing (Manual)"),
       ),
       body: Column(
         children: <Widget>[
@@ -55,7 +55,7 @@ class AutoTracingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("网络链路追踪(自动)")),
+      appBar: AppBar(title: Text("Network Tracing (Auto)")),
       body: Column(
         children: <Widget>[
           ListTile(

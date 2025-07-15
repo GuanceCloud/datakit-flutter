@@ -5,9 +5,9 @@
 Pod::Spec.new do |s|
   s.name             = 'FTTest'
   s.version          = '0.0.1'
-  s.summary          = '基于观测云 ios 调用的 plugin 的测试'
+  s.summary          = 'Test for plugin based on Guance Cloud iOS calls'
   s.description      = <<-DESC
-基于观测云 ios android 调用的 plugin
+Plugin based on Guance Cloud iOS Android calls
                        DESC
   s.homepage         = 'http://example.com'
   s.license          = { :file => '../../../LICENSE' }

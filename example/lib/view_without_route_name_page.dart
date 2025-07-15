@@ -5,7 +5,7 @@ class NoRouteNamePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("不设置 Route Name"),
+        title: Text("No Route Name Set"),
       ),
     );
   }

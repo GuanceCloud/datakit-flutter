@@ -17,25 +17,25 @@ class FTRUMManager {
 
   FTRUMManager._internal();
 
-  /// 设置 RUM 追踪条件
-  /// [androidAppId] app_id，应用访问监测控制台申请
-  /// [iOSAppId] app_id，应用访问监测控制台申请
-  /// [sampleRate] 采样率，取值范围 [0,1]，0 表示不采集，1 表示全采集，默认值为 1。作用域为同一 session_id 下所有 View，Action，LongTask，Error 数据
-  /// [sessionOnErrorSampleRate] 设置错误采集率，当会话未被 setSamplingRate 采样时，若会话期间发生错误，可以采集到错误前 1 分钟范围的数据，取值范围 [0,1]，0 表示不采集，1 表示全采集，默认值为 0。作用域为同一 session_id 下所有 View，Action，LongTask，Error 数据
-  /// [enableNativeUserAction] 是否进行 Native Action 追踪，Button 点击事件，纯 flutter 应用建议关闭
-  /// [enableNativeUserView] 是否进行 Native View 自动追踪，纯 Flutter 应用建议关闭
-  /// [enableNativeUserViewInFragment] 是否自动追踪 Native Fragment 类型的页面数据，默认为 false。仅支持 Android
-  /// [enableNativeUserResource] 是否进行 Native Resource 自动追踪，纯 Flutter 应用建议关闭
-  /// [enableNativeAppUIBlock] 是否进行 Native Freeze 自动追踪
-  /// [uiBlockDurationMS] 是否对 Freeze uiBlockDurationMS 的时间范围进行设置
-  /// [enableTrackNativeAppANR]是否开启 Native ANR 监测
-  /// [enableTrackNativeCrash] 是否开启 Android Java Crash 和 C/C++ 崩溃的监测
-  /// [errorMonitorType] 监控补充类型
-  /// [deviceMonitorType] 监控补充类型
-  /// [globalContext] 自定义全局参数
-  /// [rumCacheLimitCount] RUM 最大缓存量,  默认 100_000
-  /// [rumCacheDiscard] RUM 数据废弃策略
-  /// [isInTakeUrl] RUM resource url 过滤，true 是接受数据采集
+  /// Set RUM tracking conditions
+  /// [androidAppId] app_id, apply through application monitoring console
+  /// [iOSAppId] app_id, apply through application monitoring console
+  /// [sampleRate] Sampling rate, range [0,1], 0 means no collection, 1 means full collection, default value is 1. Scope is all View, Action, LongTask, Error data under the same session_id
+  /// [sessionOnErrorSampleRate] Set error sampling rate, when session is not sampled by setSamplingRate, if error occurs during session, data from 1 minute before error can be collected, range [0,1], 0 means no collection, 1 means full collection, default value is 0. Scope is all View, Action, LongTask, Error data under the same session_id
+  /// [enableNativeUserAction] Whether to perform Native Action tracking, Button click events, pure flutter applications recommend turning off
+  /// [enableNativeUserView] Whether to perform Native View automatic tracking, pure Flutter applications recommend turning off
+  /// [enableNativeUserViewInFragment] Whether to automatically track Native Fragment type page data, default is false. Android only
+  /// [enableNativeUserResource] Whether to perform Native Resource automatic tracking, pure Flutter applications recommend turning off
+  /// [enableNativeAppUIBlock] Whether to perform Native Freeze automatic tracking
+  /// [uiBlockDurationMS] Whether to set time range for Freeze uiBlockDurationMS
+  /// [enableTrackNativeAppANR] Whether to enable Native ANR monitoring
+  /// [enableTrackNativeCrash] Whether to enable Android Java Crash and C/C++ crash monitoring
+  /// [errorMonitorType] Monitoring supplement type
+  /// [deviceMonitorType] Monitoring supplement type
+  /// [globalContext] Custom global parameters
+  /// [rumCacheLimitCount] RUM maximum cache amount, default 100_000
+  /// [rumCacheDiscard] RUM data discard strategy
+  /// [isInTakeUrl] RUM resource url filter, true means accept data collection
   Future<void> setConfig(
       {String? androidAppId,
       String? iOSAppId,
@@ -88,10 +88,10 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumConfig, map);
   }
 
-  /// 添加 action
-  /// [actionName] action 名称
-  /// [actionType] action 类型
-  /// [property] 附加属性参数(可选)
+  /// Add action
+  /// [actionName] Action name
+  /// [actionType] Action type
+  /// [property] Additional property parameters (optional)
   Future<void> startAction(String actionName, String actionType,
       {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
@@ -101,10 +101,10 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumAddAction, map);
   }
 
-  /// view 开始
-  /// [viewName] 界面名称
-  /// [viewReferer] 前一个界面名称
-  /// [property] 附加属性参数(可选)
+  /// View start
+  /// [viewName] Interface name
+  /// [viewReferer] Previous interface name
+  /// [property] Additional property parameters (optional)
   Future<void> starView(String viewName,
       {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
@@ -113,9 +113,9 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumStartView, map);
   }
 
-  /// view 创建,这个方法需要在 [starView] 之前被调用，目前 flutter route 中未有
-  /// [viewName] 界面名称
-  /// [duration] 创建耗时，纳秒
+  /// View creation, this method needs to be called before [starView], currently not available in flutter route
+  /// [viewName] Interface name
+  /// [duration] Creation time, nanoseconds
   Future<void> createView(String viewName, int duration) async {
     Map<String, dynamic> map = {};
     map["viewName"] = viewName;
@@ -123,17 +123,17 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumCreateView, map);
   }
 
-  /// view 结束
-  /// [property] 附加属性参数(可选)
+  /// View end
+  /// [property] Additional property parameters (optional)
   Future<void> stopView({Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
     map["property"] = property;
     await channel.invokeMethod(methodRumStopView, map);
   }
 
-  ///其它异常捕获与日志收集
-  ///[obj] 错误内容
-  ///[stack] 堆栈日志
+  /// Other exception capture and log collection
+  /// [obj] Error content
+  /// [stack] Stack log
   void addError(Object obj, StackTrace stack) {
     if (obj is FlutterErrorDetails) {
       return addFlutterError(obj);
@@ -141,18 +141,18 @@ class FTRUMManager {
     addCustomError(stack.toString(), obj.toString());
   }
 
-  /// Flutter 框架异常捕获
-  ///[error] 错误日志
+  /// Flutter framework exception capture
+  /// [error] Error log
   void addFlutterError(FlutterErrorDetails error) {
     addCustomError(error.stack.toString(), error.exceptionAsString());
   }
 
-  ///添加自定义错误
-  /// [stack] 堆栈日志
-  /// [message] 错误信息
-  /// [appState] 应用状态
-  /// [errorType] 自定义 errorType
-  /// [property] 附加属性参数(可选)
+  /// Add custom error
+  /// [stack] Stack log
+  /// [message] Error message
+  /// [appState] Application state
+  /// [errorType] Custom errorType
+  /// [property] Additional property parameters (optional)
   Future<void> addCustomError(String stack, String message,
       {Map<String, String>? property, String? errorType}) async {
     Map<String, dynamic> map = {};
@@ -164,9 +164,9 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumAddError, map);
   }
 
-  ///开始资源请求
-  /// [key] 唯一 id
-  /// [property] 附加属性参数(可选)
+  /// Start resource request
+  /// [key] Unique id
+  /// [property] Additional property parameters (optional)
   Future<void> startResource(String key,
       {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
@@ -175,9 +175,9 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumStartResource, map);
   }
 
-  ///结束资源请求
-  /// [key] 唯一 id
-  /// [property] 附加属性参数(可选)
+  /// End resource request
+  /// [key] Unique id
+  /// [property] Additional property parameters (optional)
   Future<void> stopResource(String key, {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
@@ -185,14 +185,14 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumStopResource, map);
   }
 
-  /// 发送资源数据指标
-  /// [key] 唯一 id
-  /// [url] 请求地址
-  /// [httpMethod] 请求方法
-  /// [requestHeader] 请求头参数
-  /// [responseHeader] 返回头参数
-  /// [responseBody] 返回内容
-  /// [resourceStatus] 返回状态码
+  /// Send resource data metrics
+  /// [key] Unique id
+  /// [url] Request address
+  /// [httpMethod] Request method
+  /// [requestHeader] Request header parameters
+  /// [responseHeader] Response header parameters
+  /// [responseBody] Response content
+  /// [resourceStatus] Response status code
   Future<void> addResource(
       {required String key,
       required String url,
@@ -215,30 +215,30 @@ class FTRUMManager {
   }
 }
 
-/// app 运行状态
+/// App running state
 enum AppState {
-  ///未知
+  /// Unknown
   unknown,
 
-  ///启动
+  /// Startup
   startup,
 
-  ///正在运行
+  /// Running
   run
 }
 
-/// 设置辅助监控信息，添加附加监控数据到 `RUM` Error 数据中
+/// Set auxiliary monitoring information, add additional monitoring data to RUM Error data
 enum ErrorMonitorType {
-  /// 所有数据
+  /// All data
   all,
 
-  /// 电池余量
+  /// Battery level
   battery,
 
-  /// 内存用量
+  /// Memory usage
   memory,
 
-  /// CPU 占有率
+  /// CPU usage
   cpu
 }
 
@@ -257,21 +257,21 @@ extension ErrorMonitorTypeExt on ErrorMonitorType {
   }
 }
 
-/// 在 View 周期中，添加监控数据
+/// Add monitoring data during View cycle
 enum DeviceMetricsMonitorType {
-  /// 所有数据
+  /// All data
   all,
 
-  /// 监控当前页的最高输出电流输出情况
+  /// Monitor current page's maximum current output
   battery,
 
-  /// 监控当前应用使用内存情况
+  /// Monitor current application memory usage
   memory,
 
-  /// 监控 CPU 跳动次数
+  /// Monitor CPU jump count
   cpu,
 
-  /// 监控屏幕帧率
+  /// Monitor screen frame rate
   fps
 }
 
@@ -293,24 +293,24 @@ extension DeviceMetricsMonitorTypeExt on DeviceMetricsMonitorType {
 }
 
 ///
-///  检测周期，单位毫秒 MS
+/// Detection cycle, unit milliseconds MS
 ///
 enum DetectFrequency {
-  /// 默认检测频率 500 ms 一次
+  /// Default detection frequency 500 ms once
   normal,
 
-  /// 高频采集，100 ms 一次
+  /// High frequency collection, 100 ms once
   frequent,
 
-  /// 低频率采集 1000 ms 一次
+  /// Low frequency collection 1000 ms once
   rare
 }
 
-/// RUM 丢弃方式
+/// RUM discard method
 enum FTRUMCacheDiscard {
-  ///丢弃新日志
+  /// Discard new logs
   discard,
 
-  /// 丢弃旧日志
+  /// Discard old logs
   discardOldest
 }

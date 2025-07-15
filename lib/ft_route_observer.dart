@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 
-///监控页面休眠和唤醒
+/// Monitor page sleep and wake
 @Deprecated(
     "Just remove. Same staff will be done in FTRouteObserver and FTDialogRouteFilterObserver")
 class FTLifeRecycleHandler {
@@ -11,10 +11,10 @@ class FTLifeRecycleHandler {
   void removeObserver() {}
 }
 
-/// 使用路由跳转时，监控页面生命周期，过滤 DialogRoute 与 PopupRoute 类型的组件
+/// When using route navigation, monitor page lifecycle, filter DialogRoute and PopupRoute type components
 class FTDialogRouteFilterObserver extends FTRouteObserver {
-  /// [filterOnlyNoSettingName] 仅过滤 [RouteSettings.name] 为 null 的数据
-  /// [filterPopRoute] 过滤 PopupRoute 类型的
+  /// [filterOnlyNoSettingName] Only filter data where [RouteSettings.name] is null
+  /// [filterPopRoute] Filter PopupRoute type
   FTDialogRouteFilterObserver({
     bool filterOnlyNoSettingName = false,
     bool filterPopRoute = true,
@@ -39,12 +39,12 @@ class FTDialogRouteFilterObserver extends FTRouteObserver {
 
 typedef RouteFilter = bool Function(Route? route, Route? previousRoute);
 
-///使用路由跳转时，监控页面生命周期
+/// When using route navigation, monitor page lifecycle
 class FTRouteObserver extends RouteObserver<PageRoute<dynamic>> {
   RouteFilter? _routeFilter;
 
   ///
-  /// [routeFilter] 设置过滤，需要过滤的返回 true，不需要过滤返回 false
+  /// [routeFilter] Set filter, return true for items to be filtered, return false for items not to be filtered
   ///
   FTRouteObserver({RouteFilter? routeFilter}) {
     this._routeFilter = routeFilter;
@@ -94,7 +94,7 @@ class FTLifeRecycleMonitor with WidgetsBindingObserver {
   static final FTLifeRecycleMonitor instance = FTLifeRecycleMonitor._internal();
   String _currentPageName = "";
 
-  // 私有构造函数
+  // Private constructor
   FTLifeRecycleMonitor._internal() {
     WidgetsBinding.instance.addObserver(this);
   }

@@ -9,11 +9,11 @@ class FTLogger {
 
   FTLogger._internal();
 
-  ///输出日志
-  ///[content] 日志内容
-  ///[status] 日志状态
-  ///[property] 附加属性参数(可选)
-  ///[isSilence]
+  /// Output log
+  /// [content] Log content
+  /// [status] Log status
+  /// [property] Additional property parameters (optional)
+  /// [isSilence]
   Future<void> logging(String content, FTLogStatus status,
       {Map<String, String>? property, bool? isSilence}) async {
     Map<String, dynamic> map = {};
@@ -24,14 +24,14 @@ class FTLogger {
     await channel.invokeMethod(methodLogging, map);
   }
 
-  /// 配置日志输出配置
-  /// [sampleRate] 采样率
-  /// [enableLinkRumData] 是否与 RUM 关联
-  /// [enableCustomLog] 是否开启自定义日志
-  /// [printCustomLogToConsole] 是否打印自定义到控制台
-  /// [logCacheDiscard] 日志丢弃策略
-  /// [logLevelFilters] 日志等级过滤
-  /// [globalContext] 自定义全局参数
+  /// Configure log output configuration
+  /// [sampleRate] Sampling rate
+  /// [enableLinkRumData] Whether to link with RUM
+  /// [enableCustomLog] Whether to enable custom logs
+  /// [printCustomLogToConsole] Whether to print custom logs to console
+  /// [logCacheDiscard] Log discard strategy
+  /// [logLevelFilters] Log level filters
+  /// [globalContext] Custom global parameters
   Future<void> logConfig(
       {double? sampleRate,
       bool? enableLinkRumData,
@@ -54,29 +54,29 @@ class FTLogger {
   }
 }
 
-/// 设置日志等级
+/// Set log level
 enum FTLogStatus {
-  ///提示
+  /// Info
   info,
 
-  ///警告
+  /// Warning
   warning,
 
-  ///错误
+  /// Error
   error,
 
-  ///严重
+  /// Critical
   critical,
 
-  ///恢复
+  /// OK
   ok,
 }
 
-/// 日志丢弃方式
+/// Log discard method
 enum FTLogCacheDiscard {
-  ///丢弃新日志
+  /// Discard new logs
   discard,
 
-  /// 丢弃旧日志
+  /// Discard old logs
   discardOldest
 }
