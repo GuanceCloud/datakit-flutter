@@ -21,6 +21,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     static let METHOD_LOGGING = "ftLogging"
 
     static let METHOD_RUM_CONFIG = "ftRumConfig"
+    static let METHOD_RUM_START_ACTION = "ftRumStartAction"
     static let METHOD_RUM_ADD_ACTION = "ftRumAddAction"
     static let METHOD_RUM_CREATE_VIEW = "ftRumCreateView"
     static let METHOD_RUM_START_VIEW = "ftRumStartView"
@@ -331,11 +332,17 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
 #endif
             }
             result(nil)
-        case SwiftAgentPlugin.METHOD_RUM_ADD_ACTION:
+        case SwiftAgentPlugin.METHOD_RUM_START_ACTION:
             let actionName = context["actionName"] as! String
             let actionType = context["actionType"] as! String
             let property = context["property"] as? Dictionary<String, Any> ?? nil
             FTExternalDataManager.shared().startAction(actionName, actionType: actionType,property: property)
+            result(nil)
+        case SwiftAgentPlugin.METHOD_RUM_ADD_ACTION:
+            let actionName = context["actionName"] as! String
+            let actionType = context["actionType"] as! String
+            let property = context["property"] as? Dictionary<String, Any> ?? nil
+            FTExternalDataManager.shared().addAction(actionName, actionType: actionType,property: property)
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_CREATE_VIEW:
             if let viewName = context["viewName"] as? String {

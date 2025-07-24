@@ -89,10 +89,30 @@ class FTRUMManager {
   }
 
   /// Add action
+  ///
+  /// The startAction method includes a duration calculation mechanism and attempts
+  /// to associate data with nearby Resource, LongTask, and Error events during that period.
+  /// It has a 100 ms frequency protection mechanism and is recommended for user interaction-type events.
+  /// If you need to call actions frequently, please use addAction instead. This method does not conflict
+  /// with startAction and does not associate with the current Resource, LongTask, or Error events.
+  ///
   /// [actionName] Action name
   /// [actionType] Action type
   /// [property] Additional property parameters (optional)
   Future<void> startAction(String actionName, String actionType,
+      {Map<String, String>? property}) async {
+    Map<String, dynamic> map = {};
+    map["actionName"] = actionName;
+    map["actionType"] = actionType;
+    map["property"] = property;
+    await channel.invokeMethod(methodRumAddAction, map);
+  }
+
+  /// Add action，this type of data cannot be associated with Error, Resource, LongTask data
+  /// [actionName] Action name
+  /// [actionType] Action type
+  /// [property] Additional property parameters (optional)
+  Future<void> addAction(String actionName, String actionType,
       {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
     map["actionName"] = actionName;

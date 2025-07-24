@@ -18,6 +18,7 @@ const methodLogConfig = "ftLogConfig";
 const methodLogging = "ftLogging";
 
 const methodRumConfig = "ftRumConfig";
+const methodRumStartAction = "ftRumStartAction";
 const methodRumAddAction = "ftRumAddAction";
 const methodRumStartView = "ftRumStartView";
 const methodRumCreateView = "ftRumCreateView";

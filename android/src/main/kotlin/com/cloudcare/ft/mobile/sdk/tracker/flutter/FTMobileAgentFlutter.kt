@@ -107,6 +107,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
         const val METHOD_LOGGING = "ftLogging"
 
         const val METHOD_RUM_CONFIG = "ftRumConfig"
+        const val METHOD_RUM_START_ACTION = "ftRumStartAction"
         const val METHOD_RUM_ADD_ACTION = "ftRumAddAction"
         const val METHOD_RUM_CREATE_VIEW = "ftRumCreateView"
         const val METHOD_RUM_START_VIEW = "ftRumStartView"
@@ -477,7 +478,18 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
             METHOD_RUM_ADD_ACTION -> {
                 val actionName: String? = call.argument<String>("actionName")
                 val actionType: String? = call.argument<String>("actionType")
-                FTRUMGlobalManager.get().startAction(actionName, actionType)
+                val mapProperty: Map<String, Any>? = call.argument("property")
+                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                FTRUMGlobalManager.get().addAction(actionName, actionType, property)
+                result.success(null)
+            }
+
+            METHOD_RUM_START_ACTION -> {
+                val actionName: String? = call.argument<String>("actionName")
+                val actionType: String? = call.argument<String>("actionType")
+                val mapProperty: Map<String, Any>? = call.argument("property")
+                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                FTRUMGlobalManager.get().startAction(actionName, actionType, property)
                 result.success(null)
             }
 

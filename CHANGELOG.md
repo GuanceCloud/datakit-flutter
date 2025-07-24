@@ -1,14 +1,21 @@
 > Related SDK update content
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md)
+> * 
+## 0.5.7-dev.2
+* Android: fixing the issue where the Property is lost when calling startAction.
+* Added addAction API to support high-frequency invocation scenarios, without associating
+ data with Resource, LongTask, or Error events.
+* Compatible with Android ft-native 1.1.2
+---
 
 ## 0.5.7-dev.1
-* Added FTMobileFlutter.sdkConfig(enableRemoteConfiguration,remoteConfigMiniUpdateInterval),
-  support enabling remote conditional configuration through enableRemoteConfiguration = true, and after enabling remote control,
-  set minimum update interval through remoteConfigMiniUpdateInterval
-* Added FTRUMManager.setConfig(enableTraceWebView,allowWebViewHost), support configuring through enableTraceWebView
+* Added `FTMobileFlutter.sdkConfig(enableRemoteConfiguration,remoteConfigMiniUpdateInterval)`,
+  support enabling remote conditional configuration through `enableRemoteConfiguration = true`, and after enabling remote control,
+  set minimum update interval through `remoteConfigMiniUpdateInterval`
+* Added `FTRUMManager.setConfig(enableTraceWebView,allowWebViewHost)`, support configuring through enableTraceWebView
   whether to enable WebView data collection through Android SDK, control host addresses that need to be filtered through allowWebViewHost
-* Compatible with iOS 1.5.17 version, compatible with Android 1.6.12
+* Compatible with iOS 1.5.17 version, compatible with Android ft-sdk 1.6.12
 ---
 ## 0.5.6+2
 * After FTMobileFlutter.sdkConfig(dataModifier), caused issues with null data not being collected
@@ -19,18 +26,18 @@
 * Added `FTRUMManager().setConfig(sessionOnErrorSampleRate)` to support error sampling, when not sampled by setSamplingRate,
   can sample RUM data from 1 minute before when errors occur
 * Added `FTMobileFlutter.sdkConfig(dataModifier, lineDataModifier)` to support data write replacement and data desensitization
-* Compatible with iOS 1.5.16 version, compatible with Android 1.6.11
+* Compatible with iOS 1.5.16 version, compatible with Android ft-sdk 1.6.11
 ---
 
 ## 0.5.5-pre.1
 * Added FTRUMManager().setConfig(sessionOnErrorSampleRate) to support error sampling, when not sampled by setSamplingRate,
   can sample RUM data from 1 minute before when errors occur
 * Added FTMobileFlutter.sdkConfig(dataModifier, lineDataModifier) to support data write replacement and data desensitization
-* Compatible with iOS 1.5.16 version, compatible with Android 1.6.11
+* Compatible with iOS 1.5.16 version, compatible with Android ft-sdk 1.6.11
 
 ---
 ## 0.5.4-pre.1
-* Compatible with iOS 1.5.14 version, compatible with Android 1.6.9
+* Compatible with iOS 1.5.14 version, compatible with Android ft-sdk 1.6.9
 * FTMobileFlutter.setConfig(enableDataIntegerCompatible) enabled by default
 
 ---

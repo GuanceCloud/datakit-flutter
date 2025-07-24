@@ -27,6 +27,13 @@ class _RUMPageState extends State<RUMPage> {
             },
           ),
           ListTile(
+            title: Text("Action Add"),
+            onTap: () {
+              FTRUMManager().addAction("Custom Action", "click",
+                  property: {"action_property": "ft_value"});
+            },
+          ),
+          ListTile(
             title: Text("View Start"),
             onTap: () {
               FTRUMManager()
