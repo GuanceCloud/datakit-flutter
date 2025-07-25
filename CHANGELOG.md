@@ -1,7 +1,10 @@
 > Related SDK update content
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md)
-> * 
+
+## 0.5.7-dev.3
+* Android: Handling Missing Classes When Integrating SDKs in Android Release Builds
+
 ## 0.5.7-dev.2
 * Android: fixing the issue where the Property is lost when calling startAction.
 * Added addAction API to support high-frequency invocation scenarios, without associating

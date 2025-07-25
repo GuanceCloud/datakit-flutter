@@ -176,7 +176,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
         const val KEY_LOG_CACHE_LIMIT_COUNT = "logCacheLimitCount"
     }
 
-    private var tester: Any? = null
+    private var tester: FTConfigCheck? = null
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun setChancelDebug(debug: Boolean) {
@@ -328,8 +328,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 //                LogUtils.d(LOG_TAG, Gson().toJson(sdkConfig))
                 if (tester != null) {
                     result.success(
-                        (tester as? FTConfigCheck)?.validateSDKConfig(
-                            (tester as? FTConfigCheck)?.flutterArgsConvert(
+                        tester?.validateSDKConfig(
+                            tester?.flutterArgsConvert(
                                 call
                             ), sdkConfig
                         )
@@ -462,8 +462,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 if (tester != null) {
                     result.success(
-                        (tester as? FTConfigCheck)?.validateRUMConfig(
-                            (tester as? FTConfigCheck)?.flutterArgsConvert(
+                        tester?.validateRUMConfig(
+                            tester?.flutterArgsConvert(
                                 call
                             ), rumConfig
                         )
@@ -674,8 +674,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
 
                 if (tester != null) {
                     result.success(
-                        (tester as? FTConfigCheck)?.validateLogConfig(
-                            (tester as? FTConfigCheck)?.flutterArgsConvert(
+                        tester?.validateLogConfig(
+                            tester?.flutterArgsConvert(
                                 call
                             ), logConfig
                         )
@@ -732,8 +732,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodCallHandler, ActivityAware {
                 FTSdk.initTraceWithConfig(traceConfig)
                 if (tester != null) {
                     result.success(
-                        (tester as? FTConfigCheck)?.validateTraceConfig(
-                            (tester as? FTConfigCheck)?.flutterArgsConvert(
+                        tester?.validateTraceConfig(
+                            tester?.flutterArgsConvert(
                                 call
                             ), traceConfig
                         )
