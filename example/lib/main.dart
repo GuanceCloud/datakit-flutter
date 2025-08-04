@@ -48,7 +48,7 @@ Future<void> sdkInit() async {
     // dataModifier: {"device_uuid":"xxx"},
     // lineDataModifier: {"view":{"view_name":"xxx"}},
     iOSGroupIdentifiers: [
-      "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo"
+      "group.com.ft.sdk.flutter.agentExample.TodayDemo"
     ],
   );
   await FTLogger().logConfig(
@@ -80,7 +80,7 @@ Future<void> sdkInit() async {
       errorMonitorType: ErrorMonitorType.all.value,
       deviceMetricsMonitorType: DeviceMetricsMonitorType.all.value);
   FTMobileFlutter.trackEventFromExtension(
-      "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo");
+      "group.com.ft.sdk.flutter.agentExample.TodayDemo");
 
   FlutterError.onError = FTRUMManager().addFlutterError;
 }
@@ -153,7 +153,7 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       // Extension sync to cache
       FTMobileFlutter.trackEventFromExtension(
-          "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo");
+          "group.com.ft.sdk.flutter.agentExample.TodayDemo");
     }
   }
 

@@ -56,7 +56,7 @@ struct TodayDemoEntryView : View {
 struct TodayDemo: Widget {
     let kind: String = "TodayDemo"
     init() {
-        let extensionConfig = FTExtensionConfig.init(groupIdentifier: "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo")
+        let extensionConfig = FTExtensionConfig.init(groupIdentifier: "group.com.ft.sdk.flutter.agentExample.TodayDemo")
         extensionConfig.enableTrackAppCrash = true
         extensionConfig.enableSDKDebugLog = true
         extensionConfig.enableTracerAutoTrace = true
