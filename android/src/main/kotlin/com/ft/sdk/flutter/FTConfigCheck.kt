@@ -1,4 +1,4 @@
-package com.cloudcare.ft.mobile.sdk.tracker.flutter
+package com.ft.sdk.flutter
 
 import com.ft.sdk.FTLoggerConfig
 import com.ft.sdk.FTRUMConfig
@@ -9,7 +9,8 @@ import com.ft.sdk.garble.bean.Status
 import com.ft.sdk.garble.utils.Constants
 import com.ft.sdk.garble.utils.LogUtils
 import io.flutter.plugin.common.MethodCall
-import java.util.*
+import java.util.Arrays
+import java.util.Objects
 
 class FTConfigCheck {
     companion object {
@@ -142,7 +143,8 @@ class FTConfigCheck {
                     FTMobileAgentFlutter.KEY_ALLOW_WEBVIEW_HOST -> {
                         if (value is List<*>) {
                             val list = value as List<String>
-                            val match = Arrays.equals(list.toTypedArray(), sdkConfig.allowWebViewHost)
+                            val match =
+                                Arrays.equals(list.toTypedArray(), sdkConfig.allowWebViewHost)
                             if (!match) {
                                 logNotMatch(key, value, sdkConfig.allowWebViewHost)
                                 return false

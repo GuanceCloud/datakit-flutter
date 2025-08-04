@@ -3,7 +3,7 @@ plugins {
     id "kotlin-android"
 }
 
-group 'com.cloudcare.ft.mobile.sdk.tracker.flutter'
+group 'com.ft.sdk.flutter'
 version '1.0-SNAPSHOT'
 
 rootProject.allprojects {
@@ -23,8 +23,7 @@ rootProject.allprojects {
 
 android {
     if (project.android.hasProperty("namespace")) {
-        namespace 'com.cloudcare.ft.mobile.sdk.tracker.flutter'
-
+        namespace 'com.ft.sdk.flutter'
     }
     compileSdk 34
 

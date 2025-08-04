@@ -1,10 +1,10 @@
 package com.ft.sdk.flutter.tests
 
-import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter
-import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_ALLOW_WEBVIEW_HOST
-import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_AUTO_SYNC
-import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_CLI_TOKEN
-import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_COMPRESS_INTAKE_REQUESTS
+import com.ft.sdk.flutter.FTMobileAgentFlutter
+import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_ALLOW_WEBVIEW_HOST
+import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_AUTO_SYNC
+import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_CLI_TOKEN
+import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_COMPRESS_INTAKE_REQUESTS
 import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_CUSTOM_SYNC_PAGE_SIZE
 import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_DATAKIT_URL
 import com.cloudcare.ft.mobile.sdk.tracker.flutter.FTMobileAgentFlutter.Companion.KEY_DATAWAY_URL

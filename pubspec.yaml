@@ -32,7 +32,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.cloudcare.ft.mobile.sdk.tracker.flutter
+        package: com.ft.sdk.flutter
         pluginClass: FTMobileAgentFlutter
       ios:
         pluginClass: FTMobileAgentFlutter
