@@ -12,8 +12,8 @@ rootProject.allprojects {
         mavenCentral()
 //        jcenter()
         maven {
-            url 'https://mvnrepo.jiagouyun.com/repository/maven-releases'
-//            url 'https://mvnrepo.jiagouyun.com/repository/maven-snapshots'
+            url 'https://mvnrepo.truewatch.com/repository/maven-releases'
+//            url 'https://mvnrepo.truewatch.com/repository/maven-snapshots'
         }
     }
 }
@@ -50,8 +50,8 @@ android {
 //def kotlin_coroutines_version = '1.5.2'
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0"
-    implementation 'com.cloudcare.ft.mobile.sdk.tracker.agent:ft-sdk:1.6.12'
-    implementation 'com.cloudcare.ft.mobile.sdk.tracker.agent:ft-native:1.1.2'
+    implementation 'com.truewatch.ft.mobile.sdk.tracker.agent:ft-sdk:1.6.12'
+    implementation 'com.truewatch.ft.mobile.sdk.tracker.agent:ft-native:1.1.2'
 
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'androidx.appcompat:appcompat:1.2.0'
