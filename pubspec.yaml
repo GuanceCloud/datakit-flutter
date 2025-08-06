@@ -1,8 +1,8 @@
 name: ft_mobile_agent_flutter
-description: Flutter plugin based on Guance Cloud iOS Android calls
+description: Flutter plugin based on TrueWatch iOS Android calls
 version: 0.5.7-dev.3
-homepage: https://www.guance.com/
-repository: https://github.com/DataFlux-cn/datakit-flutter
+homepage: https://www.truewatch.com/
+repository: https://github.com/TrueWatchTech/datakit-flutter
 
 environment:
   sdk: ">=2.16.1 <4.0.0"

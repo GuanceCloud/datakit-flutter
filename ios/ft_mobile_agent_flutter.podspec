@@ -5,9 +5,9 @@
 Pod::Spec.new do |s|
   s.name             = 'ft_mobile_agent_flutter'
   s.version          = '0.0.2'
-  s.summary          = 'Plugin based on Guance Cloud iOS Android'
+  s.summary          = 'Plugin based on TrueWatch iOS Android'
   s.description      = <<-DESC
-Plugin based on Guance Cloud iOS Android
+Plugin based on TrueWatch iOS Android
                        DESC
   s.homepage         = 'http://example.com'
   s.license          = { :file => '../LICENSE' }

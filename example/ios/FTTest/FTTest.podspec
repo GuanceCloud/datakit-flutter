@@ -5,13 +5,13 @@
 Pod::Spec.new do |s|
   s.name             = 'FTTest'
   s.version          = '0.0.1'
-  s.summary          = 'Test for plugin based on Guance Cloud iOS calls'
+  s.summary          = 'Test for plugin based on TrueWatch iOS calls'
   s.description      = <<-DESC
-Plugin based on Guance Cloud iOS Android calls
+Plugin based on TrueWatch iOS Android calls
                        DESC
   s.homepage         = 'http://example.com'
   s.license          = { :file => '../../../LICENSE' }
-  s.author           = { 'Shanghai Guance Information Technology Co.,Ltd' => 'zhangbo@guance.com' }
+  s.author           = { 'Copyright 2025 TRUEWATCH TECHNOLOGY INC PTE. LTD.' => 'brandonzhangdev@gmail.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'

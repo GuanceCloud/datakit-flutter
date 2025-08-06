@@ -12,7 +12,7 @@ import 'package:http/io_client.dart';
 const initRouteName = "/";
 const nextRouteName = "next_route";
 
-const requestUrl = "https://docs.guance.com/";
+const requestUrl = "https://docs.truewatch.com/";
 const fakeToken = "fakeToken";
 
 void main() {
