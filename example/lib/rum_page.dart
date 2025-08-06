@@ -57,7 +57,7 @@ class _RUMPageState extends State<RUMPage> {
             title: Text("Resource Error"),
             onTap: () async {
               FTRUMManager().startAction("Resource Error Click", "click");
-              httpClientGetHttp('https://console-api.guance.com/not/found/');
+              httpClientGetHttp('https://httpbin.org/status/404');
             },
           ),
           ListTile(
