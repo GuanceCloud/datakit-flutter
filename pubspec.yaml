@@ -1,5 +1,5 @@
 name: ft_mobile_agent_flutter
-description: 基于观测云 ios android 调用的 flutter plugin
+description: Flutter plugin based on Observability Cloud iOS Android calls
 version: 0.4.6-pre.1
 homepage: https://www.guance.com/
 repository: https://github.com/DataFlux-cn/datakit-flutter
@@ -32,7 +32,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.cloudcare.ft.mobile.sdk.tracker.flutter
+        package: com.ft.sdk.flutter
         pluginClass: FTMobileAgentFlutter
       ios:
         pluginClass: FTMobileAgentFlutter

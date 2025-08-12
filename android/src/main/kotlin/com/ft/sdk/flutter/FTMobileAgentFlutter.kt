@@ -1,11 +1,10 @@
-package com.cloudcare.ft.mobile.sdk.tracker.flutter
+package com.ft.sdk.flutter
 
 import android.app.Application
 import android.os.Handler
 import android.os.Looper
 import android.view.ViewGroup
 import com.ft.sdk.DetectFrequency
-import com.ft.sdk.EnvType
 import com.ft.sdk.FTLogger
 import com.ft.sdk.FTLoggerConfig
 import com.ft.sdk.FTRUMConfig

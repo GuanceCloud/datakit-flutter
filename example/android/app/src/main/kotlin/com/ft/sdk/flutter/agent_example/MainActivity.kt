@@ -1,4 +1,4 @@
-package com.cloudcare.ft.mobile.sdk.agent_example
+package com.ft.sdk.flutter.agent_example
 
 import io.flutter.embedding.android.FlutterActivity
 

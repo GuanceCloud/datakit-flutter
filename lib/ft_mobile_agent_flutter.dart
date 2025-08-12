@@ -11,17 +11,17 @@ export 'ft_rum.dart';
 export 'ft_tracing.dart';
 
 class FTMobileFlutter {
-  /// 配置
-  /// [serverUrl] datakit 访问 URL 地址，例子：http://10.0.0.1:9529，端口默认 9529。deprecated
-  /// [datakitUrl] datakit 访问 URL 地址，例子：http://10.0.0.1:9529，端口默认 9529。 datakit 与 dataway 配置二选一
-  /// [datawayUrl] dataway 访问 URL 地址，例子：http://10.0.0.1:9528，端口默认 9528，注意：安装 SDK 设备需能访问这地址.注意：datakit 和 dataway 配置两者二选一
-  /// [cliToken] dataway 认证 token，需要与 [dataw] 同时配置
-  /// [debug] 默认为 false，开启后方可打印 SDK 运行日志
-  /// [serviceName] 应用服务名
-  /// [envType] 默认为 EnvType.PROD，envType 与 env 二选一
-  /// [env] 默认为 prod, envType 与 env 二选一
-  /// [enableAccessAndroidID] 开启获取 Android ID，默认，为 true，设置为 false，则 device_uuid 字段数据将不进行采集,市场隐私审核相关查看这里
-  /// [globalContext] SDK 全局属性
+  /// Configuration
+  /// [serverUrl] datakit access URL address, example: http://10.0.0.1:9529, default port 9529. deprecated
+  /// [datakitUrl] datakit access URL address, example: http://10.0.0.1:9529, default port 9529. Choose one between datakit and dataway configuration
+  /// [datawayUrl] dataway access URL address, example: http://10.0.0.1:9528, default port 9528, Note: SDK installation device must be able to access this address. Note: Choose one between datakit and dataway configuration
+  /// [cliToken] dataway authentication token, needs to be configured together with [datawayUrl]
+  /// [debug] defaults to false, SDK runtime logs can be printed after enabling
+  /// [serviceName] application service name
+  /// [envType] defaults to EnvType.PROD, choose one between envType and env
+  /// [env] defaults to prod, choose one between envType and env
+  /// [enableAccessAndroidID] enable Android ID acquisition, default is true, set to false, then device_uuid field data will not be collected, market privacy review related see here
+  /// [globalContext] SDK global properties
   ///
   /// [iOSGroupIdentifiers]
   /// [dataSyncRetryCount]
@@ -77,12 +77,12 @@ class FTMobileFlutter {
     }
   }
 
-  ///绑定用户
+  /// Bind user
   ///
-  ///[userid] 用户 id
-  ///[userName] 用户名
-  ///[userEmail] 用户邮箱
-  ///[userExt] 扩展数据
+  /// [userid] user id
+  /// [userName] username
+  /// [userEmail] user email
+  /// [userExt] extended data
   static Future<void> bindRUMUserData(String userId,
       {String? userName, String? userEmail, Map<String, String>? ext}) async {
     Map<String, dynamic> map = {};
@@ -93,14 +93,14 @@ class FTMobileFlutter {
     return await channel.invokeMethod(methodBindUser, map);
   }
 
-  ///解绑用户
+  /// Unbind user
   static Future<void> unbindRUMUserData() async {
     return await channel.invokeMethod(methodUnbindUser);
   }
 
   ///
-  /// 是否开启使用 accessAndroidID，仅支持 Android
-  /// [enableAccessAndroidID] true 开启，false 不开启
+  /// Whether to enable accessAndroidID, only supports Android
+  /// [enableAccessAndroidID] true to enable, false to disable
   ///
   ///
   static Future<void> setEnableAccessAndroidID(
@@ -113,7 +113,7 @@ class FTMobileFlutter {
   }
 
   ///
-  /// 同步 ios extension 中的事件，仅支持 iOS
+  /// Synchronize events from iOS extension, only supports iOS
   /// [groupIdentifier] app groupId
   ///
   static Future<Map<String, dynamic>> trackEventFromExtension(
@@ -130,16 +130,16 @@ class FTMobileFlutter {
   }
 
   ///
-  /// 日志回调对象
+  /// Log callback object
   ///
-  ///[level]日志登记
-  ///[tag] 日志 tag
-  ///[message] 日志内容
+  /// [level] log level
+  /// [tag] log tag
+  /// [message] log content
   static void Function(String level, String tag, String message)?
       innerLogHandler;
 
-  ///设置内部日志接管对象
-  ///[handler] 回调对象
+  /// Set internal log takeover object
+  /// [handler] callback object
   static Future<void> registerInnerLogHandler(
       void Function(String level, String tag, String message) handler) async {
     if (!Platform.isAndroid) return null;
@@ -147,7 +147,7 @@ class FTMobileFlutter {
     return await channel.invokeMethod(methodSetInnerLogHandler);
   }
 
-  /// 立即同步数据
+  /// Immediately sync data
   static Future<void> flushSyncData() async {
     return await channel.invokeMethod(methodFlushSyncData);
   }
@@ -170,15 +170,15 @@ class FTMobileFlutter {
   }
 }
 
-///[prod] 生成
-///[gray] 灰度
-///[pre]  预发
-///[common]
-///[local] 本地
+/// [prod] production
+/// [gray] gray
+/// [pre] pre-release
+/// [common] common
+/// [local] local
 enum EnvType { prod, gray, pre, common, local }
 
 ///
-///[mini]   5 条
-///[medium] 10 条
-///[large]  50 条
+/// [mini] 5 items
+/// [medium] 10 items
+/// [large] 50 items
 enum SyncPageSize { mini, medium, large }

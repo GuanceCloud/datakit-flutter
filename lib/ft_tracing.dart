@@ -14,11 +14,11 @@ class FTTracer {
 
   FTTracer._internal();
 
-  ///配置 trace
-  ///[sampleRate]采样率
-  ///[traceType] 链路类型
-  ///[enableLinkRUMData] 是否与 RUM 数据关联
-  ///[enableNativeAutoTrace] 是否开启原生网络网络自动追踪 iOS NSURLSession ,Android OKhttp
+  ///Configure trace
+  ///[sampleRate] sampling rate
+  ///[traceType] trace type
+  ///[enableLinkRUMData] whether to associate with RUM data
+  ///[enableNativeAutoTrace] whether to enable native network auto-tracing iOS NSURLSession, Android OKhttp
   Future<void> setConfig(
       {double? sampleRate,
       TraceType? traceType,
@@ -34,9 +34,9 @@ class FTTracer {
     await channel.invokeMethod(methodTraceConfig, map);
   }
 
-  /// 获取 trace http 请求头数据
-  /// [key] 唯一 id
-  /// [url] 请求地址
+  /// Get trace http request header data
+  /// [key] unique id
+  /// [url] request address
   ///
   Future<Map<String, String>> getTraceHeader(String url, {String? key}) async {
     var map = Map<String, dynamic>();
@@ -51,7 +51,7 @@ class FTTracer {
   }
 }
 
-/// 使用 trace trace 类型
+/// Trace type for using trace
 enum TraceType {
   ddTrace,
   zipkinMultiHeader,

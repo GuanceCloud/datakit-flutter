@@ -1,253 +1,253 @@
 ## legacy 0.4.6-pre.1
-* Android 适配 ft-sdk:1.4.3, ft-native:1.1.0, ft-plugin:1.3.0
-* iOS 适配 1.4.11
+* Android adapts to ft-sdk:1.4.3, ft-native:1.1.0, ft-plugin:1.3.0
+* iOS adapts to 1.4.11
 
 ---
 ## legacy 0.4.5-pre.4
-* iOS 适配 1.4.9-beta.5，iOS webview 数据 time 精度问题
+* iOS adapts to 1.4.9-beta.5, iOS webview data time precision issue
 
 ---
 ## legacy 0.4.5-pre.3
-* iOS 适配 1.4.9-beta.4，处理 macOS 编译环境兼容问题
+* iOS adapts to 1.4.9-beta.4, handles macOS compilation environment compatibility issues
 
 ---
 ## legacy 0.4.5-pre.2
-* iOS 适配 1.4.9-beta.3
+* iOS adapts to 1.4.9-beta.3
 
 ---
 ## legacy 0.4.5-pre.1
-* Android 适配 1.4.1-beta01，iOS 适配 1.4.9-beta.1
-* 同 0.4.5-dev.1
+* Android adapts to 1.4.1-beta01, iOS adapts to 1.4.9-beta.1
+* Same as 0.4.5-dev.1
 
 ---
 
 ## 0.4.5-dev.1
-* 新增 dataway 上传方式
-* Error 数据新增 errorType 数据
-* 修复 iOS enableUserResource 关闭，获取 trace header 崩溃的问题
-* iOS 适配 1.4.9-alpha.5，Android 适配 1.4.1-alpha01
+* Added dataway upload method
+* Error data adds errorType data
+* Fixed iOS enableUserResource crash issue when getting trace header
+* iOS adapts to 1.4.9-alpha.5, Android adapts to 1.4.1-alpha01
 
 ---
 
 ## legacy 0.4.4-dev.2
-* Android 适配 ft-sdk:1.3.17-alpha05
+* Android adapts to ft-sdk:1.3.17-alpha05
 * iOS 1.4.8-alpha.3
 
 ---
 ## legacy 0.4.4-dev.1
-* 添加最大重试次数配置
-* 添加内部日志接管对象
+* Added maximum retry count configuration
+* Added internal log takeover object
 
 ---
 ## legacy 0.4.3-dev.3
 * Android ft-sdk:1.3.16-alpha02
-* iOS 适配 1.4.6-alpha.1
+* iOS adapts to 1.4.6-alpha.1
 
 ---
 ## legacy 0.4.1-dev.1
-* iOS 适配 1.4.3-alpha.1
-* Android 适配 ft-sdk:1.3.12-beta01，ft-native:1.0.0-beta01
+* iOS adapts to 1.4.3-alpha.1
+* Android adapts to ft-sdk:1.3.12-beta01, ft-native:1.0.0-beta01
 
 ---
 ## legacy 0.4.0-dev.2
-* SDK version 显示问题修复
+* SDK version display issue fix
 
 ---
 ## legacy 0.4.0-dev.1
-* 修正 ios
+* Fixed iOS
 * android ft-sdk:1.3.12-alpha01
 * ios sdk 1.4.1-alpha.3
 
 ---
 ## 0.3.0-dev.1
-* 新增 View Action Resource Log 添加扩展 property
-* 适配 Android agent_1.3.10-beta02 
-* 适配 iOS 1.4.1-alpha.2
+* Added View Action Resource Log extension property
+* Adapts to Android agent_1.3.10-beta02 
+* Adapts to iOS 1.4.1-alpha.2
 
 ---
 ## 0.2.8-dev.9
-* 适配 Android 1.3.10-beta01
+* Adapts to Android 1.3.10-beta01
 
 ---
 ## 0.2.8-dev.8
-* 适配 Android 1.3.10-alpha01
+* Adapts to Android 1.3.10-alpha01
 
 ---
 ## 0.2.8-dev.7
-* 优化 ErrorMonitorType DeviceMetricsMonitorType 配置方式
+* Optimized ErrorMonitorType DeviceMetricsMonitorType configuration method
 
 ---
 ## 0.2.8-dev.6
-* iOS 适配 1.3.9-alpha.14
+* iOS adapts to 1.3.9-alpha.14
 
 ---
 ## 0.2.8-dev.5
-* iOS 适配 1.3.9-alpha.13
-* 优化 route name 显示
+* iOS adapts to 1.3.9-alpha.13
+* Optimized route name display
 
 ---
 ## 0.2.8-dev.3
-* trackEventFromExtension 方法调整
+* trackEventFromExtension method adjustment
 
 ---
 ## 0.2.8-dev.2
-* 适配 iOS 1.3.9-alpha.11
+* Adapts to iOS 1.3.9-alpha.11
 
 ---
 ## 0.2.8-dev.1
-* 适配 iOS 1.3.9-alpha.10
-* 适配 Android ft-sdk:1.3.8-beta03
+* Adapts to iOS 1.3.9-alpha.10
+* Adapts to Android ft-sdk:1.3.8-beta03
 
 ---
 ## 0.2.7-dev.4
-* 适配 Android ft-sdk:1.3.8-beta02
+* Adapts to Android ft-sdk:1.3.8-beta02
 
 ---
 ## 0.2.7-dev.3
-* 修改 FTLifeRecycleHandler removeObserver 错误
+* Fixed FTLifeRecycleHandler removeObserver error
 
 ---
 ## 0.2.7-dev.2
-* 添加 RUM 页面自动监测唤醒和休眠的方式
+* Added RUM page automatic monitoring wake and sleep method
 
 ---
 ## 0.2.7-dev.1
-* FTRouteObserver 从示例添加至 SDK
+* FTRouteObserver added from example to SDK
 
 ---
 ## 0.2.6-dev.1
-* 添加 http autoTrack
-* RUM view 补充不设置 route name，获取到 view_name 的方式
+* Added http autoTrack
+* RUM view supplement method for getting view_name without setting route name
 
 ---
 ## 0.2.5-dev.4
-* iOS action 传参调整
+* iOS action parameter adjustment
 
 ---
 ## 0.2.5-dev.3
-* 优化 Android ID 获取规则，可以动态控制
+* Optimized Android ID acquisition rules, can be dynamically controlled
 
 ---
 ## 0.2.5-dev.2
-* 修正 iOS 监控类型参数不起作用的问题
+* Fixed iOS monitoring type parameter not working issue
 
 ---
 ## 0.2.5-dev.1
-* 添加用户信息设置
-* 添加页面监控指标上报
+* Added user information setting
+* Added page monitoring metrics reporting
 
 ---
 ## 0.2.4-dev.1
-* 添加 longtask 支持
+* Added longtask support
 
 ---
 ## 0.2.3-dev.10
-* 升级 Android ft-sdk:1.3.6-beta06
+* Upgraded Android ft-sdk:1.3.6-beta06
 
 ---
 ## 0.2.3-dev.8
-* 升级 Android ft-sdk:1.3.6-beta05
+* Upgraded Android ft-sdk:1.3.6-beta05
 
 ---
 ## 0.2.3-dev.7
-* 升级 Android ft-sdk:1.3.6-beta04
+* Upgraded Android ft-sdk:1.3.6-beta04
 
 ---
 ## 0.2.3-dev.6
-* 升级 Android ft-sdk:1.3.6-beta03
-* 升级 iOS 1.3.5-beta.4
+* Upgraded Android ft-sdk:1.3.6-beta03
+* Upgraded iOS 1.3.5-beta.4
 
 ---
 ## 0.2.3-dev.5
-* 调整  Android Native lib 版本 ft-sdk:1.3.6-beta02
+* Adjusted Android Native lib version ft-sdk:1.3.6-beta02
 
 ---
 ## 0.2.3-dev.4
-* 调整  Android Native lib 版本 ft-sdk:1.3.6-beta02 
+* Adjusted Android Native lib version ft-sdk:1.3.6-beta02 
 
 ---
 ## 0.2.3-dev.3
-* 调整  Android Native lib 版本 ft-native:1.0.0-alpha05
-* 设置 iOS Native SDK 1.3.5-beta.3
+* Adjusted Android Native lib version ft-native:1.0.0-alpha05
+* Set iOS Native SDK 1.3.5-beta.3
 ---
 ## 0.2.3-dev.2
-* 调整  Android miniSDK 为 21
-* 升级 iOS Native SDK 1.3.5-beta.2
+* Adjusted Android miniSDK to 21
+* Upgraded iOS Native SDK 1.3.5-beta.2
 
 ---
 ## 0.2.3-dev.1
-* iOS SDK 版本升级 1.3.5-beta.1
-* Android SDK 版本升级 1.3.6-beta01
+* iOS SDK version upgrade 1.3.5-beta.1
+* Android SDK version upgrade 1.3.6-beta01
 
 ---
 ## 0.2.2-dev.2
-* 调整 Android SDK
+* Adjusted Android SDK
 
 ---
 ## 0.2.2-dev.1
-* Android Native Bug 修复升级
+* Android Native Bug fix upgrade
 
 ---
 ## 0.2.1-dev.5
-* 调整 Android SDK
+* Adjusted Android SDK
 
 ---
 ## 0.2.1-dev.4
-* 调整 Android SDK
+* Adjusted Android SDK
 
 ---
 ## 0.2.1-dev.3
-* 调整 iOS SDK
+* Adjusted iOS SDK
 
 ---
 ## 0.2.1-dev.1
-* 适配新版本 Native SDK
+* Adapts to new version Native SDK
 
 ---
 ## 0.2.0-dev.5
-* 修复 Android 单 trace 数据不触发同步数据的问题
+* Fixed Android single trace data not triggering sync data issue
 
 ---
 ## 0.2.0-dev.4
-* 升级 iOS Android Native 支持库
+* Upgraded iOS Android Native support library
 
 ---
 ## 0.2.0-dev.3
-* 用户绑定方法方法名修改
-* resource  遗漏参数添加
+* User binding method name modification
+* resource missing parameter addition
 
 ---
 ## 0.2.0-dev.2
-* 修改 README LICENSE
+* Modified README LICENSE
 
 ---
 ## 0.2.0-dev.1
-* 添加 Trace RUM Log 调用接口
+* Added Trace RUM Log call interface
 
 ---
 ## 0.1.0-dev.1
-* 适配新 rum SDK
+* Adapts to new rum SDK
 * null safety
 
 ---
 ## 0.0.1-dev.5
-* 更新 Android iOS Dataflux SDK
+* Updated Android iOS Dataflux SDK
 
 ---
 ## 0.0.1-dev.4
-* 优化地理位置获取的方法
+* Optimized geolocation acquisition method
 
 ---
 ## 0.0.1-dev.3
-* 文档格式修改
+* Document format modification
 
 ---
 ## 0.0.1-dev.2
-* 修改文档
+* Modified documentation
 
 ---
 ## 0.0.1-dev.1
-* 用户自定义埋点
-* 流程图上报方法
-* 监控项目关联
+* User custom tracking
+* Flow chart reporting method
+* Monitoring project association
 

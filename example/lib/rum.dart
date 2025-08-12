@@ -15,14 +15,14 @@ class _RUMState extends State<RUM> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("RUM 数据采集"),
+        title: Text("RUM Data Collection"),
       ),
       body: Column(
         children: <Widget>[
           ListTile(
-            title: Text("Action 点击"),
+            title: Text("Action Click"),
             onTap: () {
-              FTRUMManager().startAction("[ListTile][Action 点击]", "click",property: {"action_property": "ft_value"});
+              FTRUMManager().startAction("[ListTile][Action Click]", "click",property: {"action_property": "ft_value"});
             },
           ),
           ListTile(

@@ -18,16 +18,16 @@ class FTRUMManager {
 
   FTRUMManager._internal();
 
-  /// 设置 RUM 追踪条件
-  /// [androidAppId] appId，监测中申请
-  /// [iOSAppId] appId，监测中申请
-  /// [sampleRate] 采样率
-  /// [enableNativeUserAction] 是否进行 Native Action 追踪，Button 点击事件，纯 flutter 应用建议关闭
-  /// [enableNativeUserView] 是否进行 Native View 自动追踪，纯 Flutter 应用建议关闭
-  /// [enableNativeUserResource] 是否进行 Native Resource 自动追踪，纯 Flutter 应用建议关闭
-  /// [errorMonitorType] 监控补充类型
-  /// [deviceMonitorType] 监控补充类型
-  /// [globalContext] 自定义全局参数
+  /// Set RUM tracking conditions
+  /// [androidAppId] appId, apply in monitoring
+  /// [iOSAppId] appId, apply in monitoring
+  /// [sampleRate] sampling rate
+  /// [enableNativeUserAction] whether to perform Native Action tracking, Button click events, pure flutter apps recommend to turn off
+  /// [enableNativeUserView] whether to perform Native View auto-tracking, pure Flutter apps recommend to turn off
+  /// [enableNativeUserResource] whether to perform Native Resource auto-tracking, pure Flutter apps recommend to turn off
+  /// [errorMonitorType] monitoring supplement type
+  /// [deviceMonitorType] monitoring supplement type
+  /// [globalContext] custom global parameters
   Future<void> setConfig(
       {String? androidAppId,
       String? iOSAppId,
@@ -60,10 +60,10 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumConfig, map);
   }
 
-  /// 执行 action
-  /// [actionName] action 名称
-  /// [actionType] action 类型
-  /// [property] 附加属性参数(可选)
+  /// Execute action
+  /// [actionName] action name
+  /// [actionType] action type
+  /// [property] additional property parameters (optional)
   Future<void> startAction(String actionName, String actionType,
       {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
@@ -73,10 +73,10 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumAddAction, map);
   }
 
-  /// view 开始
-  /// [viewName] 界面名称
-  /// [viewReferer] 前一个界面名称
-  /// [property] 附加属性参数(可选)
+  /// view start
+  /// [viewName] interface name
+  /// [viewReferer] previous interface name
+  /// [property] additional property parameters (optional)
   Future<void> starView(String viewName,
       {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
@@ -85,8 +85,8 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumStartView, map);
   }
 
-  /// view 创建,这个方法需要在 [starView] 之前被调用，目前 flutter route 中未有
-  /// [viewName]界面名称
+  /// view creation, this method needs to be called before [starView], currently not available in flutter route
+  /// [viewName] interface name
   /// [duration]
   Future<void> createView(String viewName, int duration) async {
     Map<String, dynamic> map = {};
@@ -95,17 +95,17 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumCreateView, map);
   }
 
-  /// view 结束
-  /// [property] 附加属性参数(可选)
+  /// view end
+  /// [property] additional property parameters (optional)
   Future<void> stopView({Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
     map["property"] = property;
     await channel.invokeMethod(methodRumStopView, map);
   }
 
-  ///其它异常捕获与日志收集
-  ///[obj] 错误内容
-  ///[stack] 堆栈日志
+  /// Other exception capture and log collection
+  /// [obj] error content
+  /// [stack] stack log
   void addError(Object obj, StackTrace stack) {
     if (obj is FlutterErrorDetails) {
       return addFlutterError(obj);
@@ -113,18 +113,18 @@ class FTRUMManager {
     addCustomError(stack.toString(), obj.toString());
   }
 
-  /// Flutter 框架异常捕获
-  ///[error] 错误日志
+  /// Flutter framework exception capture
+  /// [error] error log
   void addFlutterError(FlutterErrorDetails error) {
     addCustomError(error.stack.toString(), error.exceptionAsString());
   }
 
-  ///添加自定义错误
-  ///[stack] 堆栈日志
-  /// [message]错误信息
-  ///[appState] 应用状态
-  /// [errorType] 自定义 errorType
-  /// [property] 附加属性参数(可选)
+  /// Add custom error
+  /// [stack] stack log
+  /// [message] error message
+  /// [appState] application state
+  /// [errorType] custom errorType
+  /// [property] additional property parameters (optional)
   Future<void> addCustomError(String stack, String message,
       {Map<String, String>? property, String? errorType}) async {
     Map<String, dynamic> map = {};
@@ -136,9 +136,9 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumAddError, map);
   }
 
-  ///开始资源请求
-  ///[key] 唯一 id
-  /// [property] 附加属性参数(可选)
+  /// Start resource request
+  /// [key] unique id
+  /// [property] additional property parameters (optional)
   Future<void> startResource(String key,
       {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
@@ -147,9 +147,9 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumStartResource, map);
   }
 
-  ///结束资源请求
-  ///[key] 唯一 id
-  /// [property] 附加属性参数(可选)
+  /// End resource request
+  /// [key] unique id
+  /// [property] additional property parameters (optional)
   Future<void> stopResource(String key, {Map<String, String>? property}) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
@@ -157,14 +157,14 @@ class FTRUMManager {
     await channel.invokeMethod(methodRumStopResource, map);
   }
 
-  /// 发送资源数据指标
-  /// [key] 唯一 id
-  /// [url] 请求地址
-  /// [httpMethod] 请求方法
-  /// [requestHeader] 请求头参数
-  /// [responseHeader] 返回头参数
-  /// [responseBody] 返回内容
-  /// [resourceStatus] 返回状态码
+  /// Send resource data metrics
+  /// [key] unique id
+  /// [url] request address
+  /// [httpMethod] request method
+  /// [requestHeader] request header parameters
+  /// [responseHeader] response header parameters
+  /// [responseBody] response content
+  /// [resourceStatus] response status code
   Future<void> addResource(
       {required String key,
       required String url,
@@ -185,14 +185,14 @@ class FTRUMManager {
   }
 }
 
-/// app 运行状态
+/// App running state
 enum AppState {
-  unknown, //未知
-  startup, //启动
-  run //运行
+  unknown, // unknown
+  startup, // startup
+  run // running
 }
 
-/// 监控类型
+/// Monitoring type
 enum ErrorMonitorType { all, battery, memory, cpu }
 
 extension ErrorMonitorTypeExt on ErrorMonitorType {

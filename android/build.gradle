@@ -1,4 +1,4 @@
-group 'com.cloudcare.ft.mobile.sdk.tracker.flutter'
+group 'com.ft.sdk.flutter'
 version '1.0-SNAPSHOT'
 
 buildscript {

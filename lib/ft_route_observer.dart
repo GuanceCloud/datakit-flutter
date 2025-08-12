@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 
-///监控页面休眠和唤醒
+///Monitor page sleep and wake
 class FTLifeRecycleHandler with WidgetsBindingObserver {
   static final FTLifeRecycleHandler _singleton =
   FTLifeRecycleHandler._internal();
@@ -32,7 +32,7 @@ class FTLifeRecycleHandler with WidgetsBindingObserver {
   }
 }
 
-///使用路由跳转时，监控页面生命周期
+///When using route navigation, monitor page lifecycle
 class FTRouteObserver extends RouteObserver<PageRoute<dynamic>> {
   FTRouteObserver();
 

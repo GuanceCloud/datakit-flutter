@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 
 
-///将类名设置到 [RouteSettings] 中 name 中，用于 [FTRUMManager] starView 中
+/// Set class name to [RouteSettings] name for use in [FTRUMManager] starView
 class FTMaterialPageRoute<T> extends MaterialPageRoute<T> {
   FTMaterialPageRoute({
     required WidgetBuilder builder,
@@ -18,7 +18,7 @@ class FTMaterialPageRoute<T> extends MaterialPageRoute<T> {
             fullscreenDialog: fullscreenDialog);
 }
 
-///使用正则方式过滤出类名
+/// Use regex to filter out class name
 String? _getViewName(String name) {
   try {
     var regexString = r'\(BuildContext\) => (.*)';

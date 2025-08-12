@@ -21,7 +21,7 @@ void main() async {
     await sdkInit();
     runApp(MyApp());
   }, (Object error, StackTrace stack) {
-    //RUM Error： 记录 自动抓取 error 数据
+    // RUM Error: Automatically capture error data
     FTRUMManager().addError(error, stack);
   });
 
@@ -29,7 +29,7 @@ void main() async {
 }
 
 Future<void> sdkInit() async {
-  //初始化 SDK
+  // Initialize SDK
   await FTMobileFlutter.sdkConfig(
     datakitUrl: serverUrl,
     debug: true,
@@ -39,7 +39,7 @@ Future<void> sdkInit() async {
     // customSyncPageSize: 30,
     // syncSleepTime: 100,
     iOSGroupIdentifiers: [
-      "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo"
+      "group.com.ft.sdk.flutter.agentExample.TodayDemo"
     ],
   );
   await FTLogger().logConfig(
@@ -55,18 +55,18 @@ Future<void> sdkInit() async {
   await FTTracer().setConfig(
       enableLinkRUMData: true,
       traceType: TraceType.ddTrace,
-      enableAutoTrace: true); //  Trace 在 Http 请求 Trace Header
+      enableAutoTrace: true); //  Trace Header in Http request
   await FTRUMManager().setConfig(
       androidAppId: appAndroidId,
       iOSAppId: appIOSId,
       enableNativeAppUIBlock: true,
       enableNativeUserAction: true,
       enableUserResource: true,
-      // RUM Resource Http 数据抓取
+      // RUM Resource Http data capture
       errorMonitorType: ErrorMonitorType.all.value,
       deviceMetricsMonitorType: DeviceMetricsMonitorType.all.value);
   FTMobileFlutter.trackEventFromExtension(
-      "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo");
+      "group.com.ft.sdk.flutter.agentExample.TodayDemo");
 
   FlutterError.onError = FTRUMManager().addFlutterError;
 }
@@ -80,11 +80,11 @@ class MyApp extends StatelessWidget {
       ),
       home: HomeRoute(),
       navigatorObservers: [
-        //RUM View： 使用路由跳转时，监控页面生命周期
+        // RUM View: Monitor page lifecycle when using route navigation
         FTRouteObserver(),
       ],
       routes: <String, WidgetBuilder>{
-        //路由跳转
+        // Route navigation
         'logging': (BuildContext context) => Logging(),
         'rum': (BuildContext context) => RUM(),
         'tracing_custom': (BuildContext context) => CustomTracing(),
@@ -108,19 +108,19 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
     }
 
 
-    WidgetsBinding.instance?.addObserver(this); //添加观察者
+    WidgetsBinding.instance?.addObserver(this); // Add observer
 
-    //RUM View：休眠与唤醒事件
-    //添加应用休眠和唤醒监听
+    //RUM View: Sleep and wake events
+    //Add application sleep and wake monitoring
     FTLifeRecycleHandler().initObserver();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      // Extension 同步至缓存
+      // Extension sync to cache
       FTMobileFlutter.trackEventFromExtension(
-          "group.com.cloudcare.ft.mobile.sdk.agentExample.TodayDemo");
+          "group.com.ft.sdk.flutter.agentExample.TodayDemo");
     }
   }
 
@@ -129,9 +129,9 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
     // TODO: implement dispose
     super.dispose();
 
-    //RUM View：休眠与唤醒事件
+    //RUM View: Sleep and wake events
     FTLifeRecycleHandler().removeObserver();
-    WidgetsBinding.instance?.removeObserver(this); //添加观察者
+    WidgetsBinding.instance?.removeObserver(this); // Remove observer
   }
 
   @override
@@ -163,7 +163,7 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
 
   Widget _buildLazyInitWidget() {
     return ElevatedButton(
-      child: Text("延迟初始化 SDK"),
+      child: Text("Delayed SDK Initialization"),
       onPressed: () {
         sdkInit();
       },
@@ -172,7 +172,7 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
 
   Widget _buildFlushSyncDataWidget() {
     return ElevatedButton(
-      child: Text("手动同步数据"),
+      child: Text("Manual Data Sync"),
       onPressed: () {
         FTMobileFlutter.flushSyncData();
       },
@@ -181,9 +181,9 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
 
   Widget _buildBindUserWidget() {
     return ElevatedButton(
-      child: Text("绑定用户"),
+      child: Text("Bind User"),
       onPressed: () {
-        //RUM 用户数据绑定
+        //RUM user data binding
         FTMobileFlutter.bindRUMUserData("flutterUserId",
             userEmail: "flutter@email.com",
             userName: "flutterUser",
@@ -194,9 +194,9 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
 
   Widget _buildUnBindUserWidget() {
     return ElevatedButton(
-      child: Text("解绑用户"),
+      child: Text("Unbind User"),
       onPressed: () {
-        //RUM 用户数据解绑
+        //RUM user data unbinding
         FTMobileFlutter.unbindRUMUserData();
       },
     );
@@ -204,7 +204,7 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
 
   Widget _buildLoggingWidget() {
     return ElevatedButton(
-      child: Text("日志输出"),
+      child: Text("Log Output"),
       onPressed: () {
         Navigator.pushNamed(context, "logging");
       },
@@ -213,19 +213,18 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
 
   Widget _buildTracerCustomWidget() {
     return ElevatedButton(
-      child: Text("网络链路追踪(自定义)"),
+      child: Text("Network Tracing (Custom)"),
       onPressed: () async {
-
-        //判断是否全局设置
+        // Check if global setting exists
         bool hasSet = HttpOverrides.current != null;
         if (hasSet) {
-          //移除网络数据抓取
+          // Remove network data capture
           HttpOverrides.global = null;
         }
         await Navigator.pushNamed(context, "tracing_custom");
 
         if (hasSet) {
-          //恢复网络抓取
+          // Restore network capture
           HttpOverrides.global = FTHttpOverrides();
         }
       },
@@ -234,7 +233,7 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
 
   Widget _buildTracerAutoWidget() {
     return ElevatedButton(
-      child: Text("网络链路追踪(自动)"),
+      child: Text("Network Tracing (Auto)"),
       onPressed: () {
         Navigator.pushNamed(context, "tracing_auto");
       },
@@ -243,7 +242,7 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
 
   Widget _buildRUMWidget() {
     return ElevatedButton(
-      child: Text("RUM数据采集"),
+      child: Text("RUM Data Collection"),
       onPressed: () {
         Navigator.pushNamed(context, "rum");
       },
@@ -252,7 +251,7 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
 
   Widget _buildNoNavigatorObserversWidget() {
     return ElevatedButton(
-      child: Text("不设置 Route Name"),
+      child: Text("No Route Name Set"),
       onPressed: () {
         Navigator.of(context).push(
           FTMaterialPageRoute(builder: (context) => new NoRouteNamePage()),
@@ -267,21 +266,21 @@ class _HomeState extends State<HomeRoute> with WidgetsBindingObserver {
         barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("警告"),
-            content: Text("你拒绝了\n$tip 权限，拒绝后将无法使用"),
+            title: Text("Warning"),
+            content: Text("You have denied\n$tip permission, which will make the feature unavailable."),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                   requestPermission(permissions);
                 },
-                child: Text("重新请求"),
+                child: Text("Request Again"),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text("拒绝"),
+                child: Text("Deny"),
               )
             ],
           );

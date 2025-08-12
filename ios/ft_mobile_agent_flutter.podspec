@@ -5,9 +5,9 @@
 Pod::Spec.new do |s|
   s.name             = 'ft_mobile_agent_flutter'
   s.version          = '0.0.2'
-  s.summary          = '基于观测云 ios android 调用的 plugin'
+  s.summary          = 'Plugin based on Observability Cloud iOS Android calls'
   s.description      = <<-DESC
-基于观测云 ios android 调用的 plugin
+Plugin based on Observability Cloud iOS Android calls
                        DESC
   s.homepage         = 'http://example.com'
   s.license          = { :file => '../LICENSE' }

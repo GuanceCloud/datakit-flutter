@@ -6,14 +6,14 @@ import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 import 'package:http/io_client.dart';
 
 const String requestUrl =
-    "http://testing-ft2x-api.cloudcare.cn/api/v1/account/permissions";
+    "https://httpbin.org/status/404";
 
 class CustomTracing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("网络链路追踪(手动)"),
+        title: Text("Network Link Tracing (Manual)"),
       ),
       body: Column(
         children: <Widget>[
@@ -55,7 +55,7 @@ class AutoTracing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("网络链路追踪(自动)")),
+      appBar: AppBar(title: Text("Network Link Tracing (Auto)")),
       body: Column(
         children: <Widget>[
           ListTile(
