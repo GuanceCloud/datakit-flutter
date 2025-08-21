@@ -43,5 +43,6 @@ echo "$IOS_DESTINATION"
 xcodebuild test -workspace Runner.xcworkspace \
 -scheme FTPluginTests \
 -only-testing FTPluginTests \
--destination "$IOS_DESTINATION" 
+-parallel-testing-enabled NO \
+-destination "$IOS_DESTINATION"
 
