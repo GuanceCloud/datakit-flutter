@@ -16,7 +16,6 @@ import com.ft.sdk.FTSDKConfig
 import com.ft.sdk.FTSdk
 import com.ft.sdk.FTTraceConfig
 import com.ft.sdk.FTTraceManager
-import com.ft.sdk.InnerClassProxy
 import com.ft.sdk.LineDataModifier
 import com.ft.sdk.LogCacheDiscard
 import com.ft.sdk.RUMCacheDiscard
@@ -144,7 +143,6 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
         const val KEY_REMOTE_CONFIG_MINI_UPDATE_INTERVAL = "remoteConfigMiniUpdateInterval"
         const val KEY_ENABLE_TRACE_WEBVIEW = "enableTraceWebView"
         const val KEY_ALLOW_WEBVIEW_HOST = "allowWebViewHost"
-        const val KEY_PKG_INFO = "pkgInfo"
 
         const val KEY_SAMPLE_RATE = "sampleRate"
         const val KEY_TRACE_TYPE = "traceType"
@@ -223,7 +221,6 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 val remoteConfigMiniUpdateInterval: Number? = call.argument<Number>(
                     KEY_REMOTE_CONFIG_MINI_UPDATE_INTERVAL
                 )
-                val pkgInfo: String? = call.argument<String?>(KEY_PKG_INFO)
 
                 val sdkConfig =
                     if (datakitUrl != null) FTSDKConfig.builder(datakitUrl) else FTSDKConfig.builder(
@@ -319,9 +316,6 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                     sdkConfig.setRemoteConfigMiniUpdateInterval(remoteConfigMiniUpdateInterval.toInt())
                 }
 
-                if (pkgInfo != null) {
-                    InnerClassProxy.addPkgInfo(sdkConfig, "flutter", pkgInfo)
-                }
                 FTSdk.install(sdkConfig)
 //                LogUtils.d(LOG_TAG, Gson().toJson(sdkConfig))
                 if (tester != null) {

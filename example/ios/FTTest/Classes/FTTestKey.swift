@@ -28,7 +28,6 @@ enum Constants {
         internal static let groupIdentifiers = "groupIdentifiers"
         internal static let enableLimitWithDbSize = "enableLimitWithDbSize"
         internal static let dbCacheLimit = "dbCacheLimit"
-        internal static let pkgInfo = "pkgInfo"
         internal static let globalContext = "globalContext"
         internal static let enableRemoteConfiguration = "enableRemoteConfiguration"
         internal static let remoteConfigMiniUpdateInterval = "remoteConfigMiniUpdateInterval"

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:collection';
 
 import 'package:ft_mobile_agent_flutter/version.dart';
 
@@ -11,6 +12,27 @@ export 'ft_rum.dart';
 export 'ft_tracing.dart';
 
 class FTMobileFlutter {
+  /// Thread-safe global properties dictionary that will be automatically merged
+  /// with properties passed to RUM and Logger methods
+  static final Map<String, String> _globalProperties = <String, String>{
+    'sdk_bridge_info': '{"flutter":"$packageVersion"}',
+  };
+  
+  /// Thread-safe access to global properties
+  static Map<String, String> get globalProperties => Map.unmodifiable(_globalProperties);
+  
+  /// Append bridge context properties that will be automatically merged with all RUM and Logger calls
+  /// [properties] Map of key-value pairs to be added as bridge context properties
+  static void appendBridgeContext(Map<String, String> properties) {
+    _globalProperties.addAll(properties);
+  }
+  
+  /// Get a copy of current bridge context properties
+  /// Returns an unmodifiable copy of the bridge context properties map
+  static Map<String, String> getBridgeContext() {
+    return Map.unmodifiable(_globalProperties);
+  }
+
   /// Configuration
   /// [serverUrl] datakit access URL address, example: http://10.0.0.1:9529, default port 9529. deprecated
   /// [datakitUrl] datakit access URL address, example: http://10.0.0.1:9529, default port 9529. Choose between datakit and dataway configuration

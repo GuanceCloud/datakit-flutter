@@ -139,11 +139,6 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             if let remoteConfigMiniUpdateInterval = context["remoteConfigMiniUpdateInterval"] as? Int{
                 config.remoteConfigMiniUpdateInterval = Int32(remoteConfigMiniUpdateInterval)
             }
-
-            if let pkgInfo = context["pkgInfo"] as? String {
-                config.addPkgInfo("flutter", value: pkgInfo)
-            }
-
             FTMobileAgent.start(withConfigOptions: config)
 #if FT_SDK_TESTING
             result(test("validateBase:",context,config))

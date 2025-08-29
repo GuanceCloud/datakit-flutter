@@ -82,6 +82,8 @@ Future<void> sdkInit() async {
   FTMobileFlutter.trackEventFromExtension(
       "group.com.ft.sdk.flutter.agentExample.TodayDemo");
 
+  FTMobileFlutter.appendBridgeContext({"wgt_id":"widget_id"});
+
   FlutterError.onError = FTRUMManager().addFlutterError;
 }
 // Initialization for native hybrid projects in Flutter

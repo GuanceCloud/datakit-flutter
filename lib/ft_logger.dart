@@ -1,4 +1,5 @@
 import 'const.dart';
+import 'ft_mobile_agent_flutter.dart';
 
 class FTLogger {
   static final FTLogger _singleton = FTLogger._internal();
@@ -16,11 +17,12 @@ class FTLogger {
   /// [isSilence]
   Future<void> logging(String content, FTLogStatus status,
       {Map<String, String>? property, bool? isSilence}) async {
+    Map<String, String> mergedProperties = _mergeWithGlobalProperties(property);
     Map<String, dynamic> map = {};
     map["content"] = content;
     map["status"] = status.index;
     map["isSilence"] = isSilence;
-    map["property"] = property;
+    map["property"] = mergedProperties;
     await channel.invokeMethod(methodLogging, map);
   }
 
@@ -51,6 +53,17 @@ class FTLogger {
     map["printCustomLogToConsole"] = printCustomLogToConsole;
     map["globalContext"] = globalContext;
     await channel.invokeMethod(methodLogConfig, map);
+  }
+
+  /// Helper method to merge global properties with local properties
+  /// [localProperties] Local properties passed to the method
+  /// Returns merged properties map with global properties included
+  Map<String, String> _mergeWithGlobalProperties(Map<String, String>? localProperties) {
+    Map<String, String> merged = Map<String, String>.from(FTMobileFlutter.globalProperties);
+    if (localProperties != null) {
+      merged.addAll(localProperties);
+    }
+    return merged;
   }
 }
 

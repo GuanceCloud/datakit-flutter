@@ -93,7 +93,6 @@ extension FTMobileConfig:ConfigValidator {
         return [Constants.Base.dataModifier,
                 Constants.Base.lineDataModifier,
                 Constants.Base.syncPageSize,
-                Constants.Base.pkgInfo,
                 Constants.Base.cliToken,
                 Constants.Base.datawayUrl]
     }
@@ -101,8 +100,6 @@ extension FTMobileConfig:ConfigValidator {
         switch key{
         case Constants.Base.dataModifier,Constants.Base.lineDataModifier:
             return true
-        case Constants.Base.pkgInfo:
-            return value as! String == self.pkgInfo()["flutter"] as! String
         case Constants.Base.syncPageSize:
             if let customSyncPageSize = context[Constants.Base.customSyncPageSize] as? Int {
                 return self.syncPageSize == customSyncPageSize
@@ -351,7 +348,6 @@ extension NSNumber {
             Constants.Base.dbCacheLimit:Int.self,
             Constants.Base.dataModifier:[String:Any].self,
             Constants.Base.lineDataModifier:[String:Any].self,
-            Constants.Base.pkgInfo:String.self,
             Constants.Base.globalContext:Dictionary<String, String>.self,
         ]
         return NSNumber(booleanLiteral:validateAll(context, rules: rules, type: "SDK",config:config))
