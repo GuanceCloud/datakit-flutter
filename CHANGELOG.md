@@ -1,6 +1,9 @@
 > Related SDK update content
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md)
+## 0.5.7-pre.2
+* Added bridgeContext feature.
+---
 ## 0.5.7-pre.1
 * Compatible with Android ft-sdk 1.6.14，iOS 1.5.18
 ---
