@@ -4,6 +4,7 @@ import 'dart:collection';
 import 'package:ft_mobile_agent_flutter/version.dart';
 
 import 'const.dart';
+import 'ft_http_override_config.dart';
 
 export 'ft_http_client.dart';
 export 'ft_logger.dart';
@@ -48,6 +49,7 @@ class FTMobileFlutter {
   /// [lineDataModifier] Data modifier, modify single data {"measurement":measurement,"data":{key:value}}, after setting SDK will replace original value with set value based on key
   /// [iOSGroupIdentifiers]
   /// [dataSyncRetryCount] Android only
+  /// [customHttpOverrides] Custom HttpOverrides object, used when enabling HTTP tracing
   ///
   static Future<void> sdkConfig(
       {@Deprecated('using datakitUrl instead') String? serverUrl,
@@ -61,6 +63,7 @@ class FTMobileFlutter {
       bool? enableAccessAndroidID,
       int? dataSyncRetryCount,
       bool? autoSync,
+      HttpOverrides? customHttpOverrides,
       SyncPageSize? syncPageSize,
       int? customSyncPageSize,
       int? syncSleepTime,
@@ -112,6 +115,9 @@ class FTMobileFlutter {
     map["enableRemoteConfiguration"] = enableRemoteConfiguration;
     map["remoteConfigMiniUpdateInterval"] = remoteConfigMiniUpdateInterval;
     map["pkgInfo"] = packageVersion;
+
+    // set custom HttpOverrides for HTTP tracing if provided
+    FTHttpOverrideConfig.global.customHttpOverrides = customHttpOverrides;
     await channel.invokeMethod(methodConfig, map);
     if (Platform.isAndroid) {
       _configChannel();
@@ -220,6 +226,17 @@ class FTMobileFlutter {
   /// Clear cache
   static Future<void> clearAllData() async {
     return await channel.invokeMethod(methodAppendLogGlobalContext);
+  }
+
+  /// ShutDown SDK
+  static Future<void> shutDown() async{
+    return await channel.invokeMethod(methodShutDown);
+  }
+
+  /// Set custom HttpOverrides
+  /// [httpOverrides] Custom HttpOverrides object, if null, will use default FTHttpOverrides()
+  static void setCustomHttpOverrides(HttpOverrides? httpOverrides) {
+    FTHttpOverrideConfig.global.customHttpOverrides = httpOverrides;
   }
 
   static _configChannel() {

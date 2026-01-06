@@ -16,6 +16,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     static let METHOD_APPEND_LOG_GLOBAL_CONTEXT = "ftAppendLogGlobalContext"
     
     static let METHOD_CLEAR_ALL_DATA = "ftClearAllData"
+    static let METHOD_SHUT_DOWN = "ftShutDown"
 
     static let METHOD_LOG_CONFIG = "ftLogConfig"
     static let METHOD_LOGGING = "ftLogging"
@@ -183,6 +184,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             result(nil)
         case SwiftAgentPlugin.METHOD_CLEAR_ALL_DATA:
             FTMobileAgent.clearAllData()
+            result(nil)
+        case SwiftAgentPlugin.METHOD_SHUT_DOWN:
+            FTMobileAgent.shutDown()
             result(nil)
         case SwiftAgentPlugin.METHOD_LOG_CONFIG:
 

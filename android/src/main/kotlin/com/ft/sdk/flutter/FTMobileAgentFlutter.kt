@@ -99,6 +99,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
         const val METHOD_APPEND_RUM_GLOBAL_CONTEXT = "ftAppendRUMGlobalContext"
         const val METHOD_APPEND_LOG_GLOBAL_CONTEXT = "ftAppendLogGlobalContext"
         const val METHOD_CLEAR_ALL_DATA = "ftClearAllData"
+        const val METHOD_SHUT_DOWN = "ftShutDown"
 
         const val METHOD_LOG_CONFIG = "ftLogConfig"
         const val METHOD_LOGGING = "ftLogging"
@@ -839,6 +840,11 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
 
             METHOD_CLEAR_ALL_DATA -> {
                 FTSdk.clearAllData()
+                result.success(null)
+            }
+
+            METHOD_SHUT_DOWN -> {
+                FTSdk.shutDown()
                 result.success(null)
             }
 

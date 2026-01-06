@@ -9,6 +9,8 @@ class FTHttpOverrideConfig {
 
   bool _traceHeader = false;
   bool _traceResource = false;
+  HttpOverrides? _customHttpOverrides;
+
 
   bool get traceHeader => _traceHeader;
 
@@ -34,8 +36,16 @@ class FTHttpOverrideConfig {
 
   bool Function(String url)? isInTakeUrl;
 
+  HttpOverrides? get customHttpOverrides => _customHttpOverrides;
+
+  set customHttpOverrides(HttpOverrides? value) {
+    _customHttpOverrides = value;
+  }
+
   void _setFTOverrides() {
-    if (HttpOverrides.current is! FTHttpOverrides) {
+    if (_customHttpOverrides != null) {
+      HttpOverrides.global = _customHttpOverrides!;
+    } else if (HttpOverrides.current is! FTHttpOverrides) {
       HttpOverrides.global = FTHttpOverrides();
     }
   }

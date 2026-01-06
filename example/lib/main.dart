@@ -50,6 +50,7 @@ Future<void> sdkInit() async {
     iOSGroupIdentifiers: [
       "group.com.ft.sdk.flutter.agentExample.TodayDemo"
     ],
+    //customHttpOverrides: CustomHttpOverrides()
   );
   await FTLogger().logConfig(
     enableCustomLog: true,
