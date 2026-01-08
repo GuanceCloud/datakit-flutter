@@ -21,6 +21,7 @@ class FTRUMManager {
   /// Set RUM tracking conditions
   /// [androidAppId] app_id, apply through application monitoring console
   /// [iOSAppId] app_id, apply through application monitoring console
+  /// [windowsAppId] app_id for Flutter/Desktop platforms (Windows), apply through application monitoring console
   /// [sampleRate] Sampling rate, range [0,1], 0 means no collection, 1 means full collection, default value is 1. Scope is all View, Action, LongTask, Error data under the same session_id
   /// [sessionOnErrorSampleRate] Set error sampling rate, when session is not sampled by setSamplingRate, if error occurs during session, data from 1 minute before error can be collected, range [0,1], 0 means no collection, 1 means full collection, default value is 0. Scope is all View, Action, LongTask, Error data under the same session_id
   /// [enableNativeUserAction] Whether to perform Native Action tracking, Button click events, pure flutter applications recommend turning off
@@ -40,6 +41,7 @@ class FTRUMManager {
   Future<void> setConfig(
       {String? androidAppId,
       String? iOSAppId,
+      String? windowsAppId,
       double? sampleRate,
       double? sessionOnErrorSampleRate,
       bool enableUserResource = false,
@@ -65,6 +67,8 @@ class FTRUMManager {
       map["rumAppId"] = androidAppId;
     } else if (Platform.isIOS) {
       map["rumAppId"] = iOSAppId;
+    } else if(Platform.isWindows){
+      map["rumAppId"] = windowsAppId;
     }
     map["sampleRate"] = sampleRate;
     map["sessionOnErrorSampleRate"] = sessionOnErrorSampleRate;

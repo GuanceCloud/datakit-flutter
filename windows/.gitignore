@@ -1,0 +1,28 @@
+# Build outputs
+build/
+*.dll
+*.lib
+*.exp
+*.pdb
+
+# Visual Studio files
+.vs/
+*.vcxproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+*.cmake
+
+# Temporary files
+*.tmp
+ft_sdk_config_flutter.json
+
+
+vcpkg.json
+

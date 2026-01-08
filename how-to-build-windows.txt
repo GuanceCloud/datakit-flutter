@@ -1,0 +1,27 @@
+Windows build steps (Flutter app)
+
+Prereqs
+- Flutter SDK
+- Visual Studio 2022 (Desktop C++)
+- vcpkg installed with required packages
+
+Common setup
+1) From repo root:
+flutter clean
+flutter pub get
+2) Set APP_DIR to your Flutter app folder (this repo uses "example")
+
+Debug:
+1) In APP_DIR run: flutter build windows --debug
+
+Release:
+1) In APP_DIR run: flutter build windows --release
+
+Notes
+- If you change CMake options or ft-sdk CMakeLists.txt, run `flutter clean` or re-run the `cmake -S ...` configure step to regenerate build files.
+- ft-sdk-cpp source is downloaded automatically during CMake configure.
+  To change the URL, pass -DFTSDK_CPP_SDK_URL=<zip_url> to the CMake configure command.
+  To use a local checkout anywhere, set FTSDK_CPP_SDK_DIR to that path (env var or CMake option).
+  Example (PowerShell): $env:FTSDK_CPP_SDK_DIR="D:\\path\\to\\ft-sdk-cpp"
+  If you place the source at windows/ft-sdk-cpp, it will be used automatically.
+- If config/.env is missing, pass values via --dart-define or --dart-define-from-file.

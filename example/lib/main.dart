@@ -14,9 +14,17 @@ import 'package:permission_handler/permission_handler.dart';
 import 'ft_get_view_name.dart';
 import 'logging_page.dart';
 
-const serverUrl = String.fromEnvironment("SERVER_URL");
+// The following lines use String.fromEnvironment to read configuration values at compile time.
+// This allows you to inject environment variables (e.g., via --dart-define) when building the app.
+// At runtime, if not provided, these will default to an empty string.
+// Example: flutter run --dart-define=DATAKIt_URL=https://your.datakit.url
+
+const datakitUrl = String.fromEnvironment("DATAKIt_URL");
+const datawayUrl = String.fromEnvironment("DATAWAY_URL");
+const clientToken = String.fromEnvironment("CLIENT_TOKEN");
 const appAndroidId = String.fromEnvironment("ANDROID_APP_ID");
 const appIOSId = String.fromEnvironment("IOS_APP_ID");
+const appWindowsId = String.fromEnvironment("WIN_APP_ID");
 const webViewViewUrl = String.fromEnvironment("WEB_VIEW_URL");
 
 void main() async {
@@ -35,7 +43,7 @@ void main() async {
 Future<void> sdkInit() async {
   // Initialize SDK
   await FTMobileFlutter.sdkConfig(
-    datakitUrl: serverUrl,
+    datakitUrl: datakitUrl,
     debug: true,
     serviceName: "flutter_agent",
     // dataSyncRetryCount: 0,
@@ -68,6 +76,7 @@ Future<void> sdkInit() async {
   await FTRUMManager().setConfig(
       androidAppId: appAndroidId,
       iOSAppId: appIOSId,
+      windowsAppId: appWindowsId,
       enableNativeAppUIBlock: true,
       enableNativeUserAction: true,
       enableUserResource: true,

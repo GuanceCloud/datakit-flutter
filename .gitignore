@@ -3,8 +3,14 @@
 
 .packages
 .pub/
+.doc/
+.log/
+.idea/
+*.md
+*.sh
 
 build/
 coverage/
+example/config/
 
 **/.symlinks/
