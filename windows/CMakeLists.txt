@@ -89,7 +89,7 @@ find_path(STDUUID_INCLUDE_DIRS "uuid.h" PATH_SUFFIXES stduuid)
 
 set(FTSDK_CPP_SDK_VERSION "1.0.0")
 
-set(FTSDK_CPP_SDK_URL "http://127.0.0.1:8000/ft-sdk-cpp-${FTSDK_CPP_SDK_VERSION}.zip"
+set(FTSDK_CPP_SDK_URL "https://codeload.github.com/GuanceCloud/datakit-cpp/zip/refs/heads/feature_flutter_windows"
   CACHE STRING "ft-sdk-cpp source ZIP URL")
 set(FTSDK_CPP_SDK_DIR "" CACHE PATH "Optional local ft-sdk-cpp source directory")
 option(FTSDK_USE_VCPKG_THIRD_PARTY "Bundle runtime DLLs from vcpkg targets" ON)

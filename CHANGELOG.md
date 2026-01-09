@@ -1,6 +1,11 @@
 > Related SDK update content
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md)
+## 0.5.7-pre.3
+* Windows: switch ft-sdk-cpp download source to GitHub zip.
+* Example: update pubspec.lock dependencies and SDK constraints.
+* Example: ignore/remove generated Windows/iOS build files.
+---
 ## 0.5.7-pre.2
 * Added bridgeContext feature.
 ---
@@ -444,4 +449,5 @@
 * User custom event
 * Flow chart reporting method
 * Monitoring project association
+
 

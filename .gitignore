@@ -12,5 +12,7 @@
 build/
 coverage/
 example/config/
+example/ios/Flutter/ephemeral/
+example/windows/flutter/
 
 **/.symlinks/
