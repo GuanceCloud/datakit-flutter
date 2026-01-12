@@ -217,6 +217,8 @@ if(MSVC)
     /wd4275  # non-dll interface class used as base for dll interface class
     /wd4251  # dll interface needed for STL member
     /wd4005  # macro redefinition
+    /wd4458  # declaration hides class member
+    /wd4189  # local variable initialized but not referenced
   )
 endif()
 
@@ -301,4 +303,5 @@ set(ft_mobile_agent_flutter_bundled_libraries
   ${ft_mobile_agent_flutter_bundled_libraries}
   PARENT_SCOPE
 )
+
 
