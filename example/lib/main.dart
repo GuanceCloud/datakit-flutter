@@ -193,7 +193,8 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
                 _buildPopRouteWidget(),
                 _buildImagePicker(),
                 _buildGlobalContext(),
-                _buildCleanAllData()
+                _buildCleanAllData(),
+                _buildShutDownWidget()
               ],
             ),
           ),
@@ -378,6 +379,15 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
           FTMobileFlutter.clearAllData();
         },
         child: Text("Clear Cache"));
+  }
+
+  Widget _buildShutDownWidget() {
+    return ElevatedButton(
+        onPressed: () async {
+          // Shut down SDK
+          await FTMobileFlutter.shutDown();
+        },
+        child: Text("Shut Down"));
   }
 
   void _showPermissionTip(String tip, List<Permission> permissions) {

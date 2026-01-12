@@ -1,6 +1,10 @@
 > Related SDK update content
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md)
+## 0.5.7-dev.5
+* Compatible with Android ft-sdk 1.6.16， iOS 1.5.19
+* Fix the issue where the error stack is misaligned when calling AddError.
+
 ## 0.5.7-dev.4
 * Added Added `FTMobileFlutter.sdkConfig(customHttpOverrides)` to customize HTTP overrides, 
   resolving conflicts with the SDK’s automatic instrumentation.
