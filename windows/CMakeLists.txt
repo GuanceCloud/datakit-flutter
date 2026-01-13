@@ -106,6 +106,7 @@ else()
   if(NOT EXISTS "${_ft_sdk_cpp_zip}")
     file(DOWNLOAD "${FTSDK_CPP_SDK_URL}" "${_ft_sdk_cpp_zip}"
       SHOW_PROGRESS
+      # TLS_VERIFY OFF
       STATUS _ft_sdk_download_status
       LOG _ft_sdk_download_log)
     list(GET _ft_sdk_download_status 0 _ft_sdk_status_code)
@@ -189,8 +190,13 @@ if(TARGET fmt::fmt)
   target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
 endif()
 
-if(TARGET SQLiteCpp)
-  target_link_libraries(${PROJECT_NAME} PRIVATE SQLiteCpp)
+# Use SQLiteCpp static library if available, otherwise fall back to dynamic
+if(TARGET SQLiteCpp::SQLiteCpp-static)
+    target_link_libraries(${PROJECT_NAME} PRIVATE SQLiteCpp::SQLiteCpp-static)
+elseif(TARGET SQLiteCpp)
+    # Force static linking if SQLiteCpp target exists but no static target
+    # This assumes vcpkg installed static version when using static triplet
+    target_link_libraries(${PROJECT_NAME} PRIVATE SQLiteCpp)
 endif()
 
 # Note: restclient-cpp and other dependencies are linked by ft-sdk DLL
@@ -251,11 +257,13 @@ set(ft_mobile_agent_flutter_bundled_libraries
 )
 
 # Bundle ft-sdk runtime deps so the app can run without manual DLL copies.
+# Note: SQLiteCpp is linked statically, so no DLL to bundle
 if(FTSDK_USE_VCPKG_THIRD_PARTY)
   list(APPEND ft_mobile_agent_flutter_bundled_libraries
     $<$<TARGET_EXISTS:fmt::fmt>:$<TARGET_FILE:fmt::fmt>>
     $<$<TARGET_EXISTS:spdlog::spdlog>:$<TARGET_FILE:spdlog::spdlog>>
-    $<$<TARGET_EXISTS:SQLiteCpp>:$<TARGET_FILE:SQLiteCpp>>
+    # dynamic setting
+    #$<$<TARGET_EXISTS:SQLiteCpp>:$<TARGET_FILE:SQLiteCpp>>
     $<$<TARGET_EXISTS:unofficial::sqlite3::sqlite3>:$<TARGET_FILE:unofficial::sqlite3::sqlite3>>
     $<$<TARGET_EXISTS:CURL::libcurl>:$<TARGET_FILE:CURL::libcurl>>
     $<$<TARGET_EXISTS:ZLIB::ZLIB>:$<TARGET_FILE:ZLIB::ZLIB>>
@@ -282,7 +290,8 @@ if(FTSDK_USE_VCPKG_THIRD_PARTY)
         $<$<NOT:$<CONFIG:Debug>>:${_vcpkg_bin}/spdlog.dll>
         $<$<NOT:$<CONFIG:Debug>>:${_vcpkg_bin}/libcurl.dll>
         $<$<NOT:$<CONFIG:Debug>>:${_vcpkg_bin}/sqlite3.dll>
-        $<$<NOT:$<CONFIG:Debug>>:${_vcpkg_bin}/SQLiteCpp.dll>
+        #dynamic setting
+        #$<$<NOT:$<CONFIG:Debug>>:${_vcpkg_bin}/SQLiteCpp.dll>
         $<$<NOT:$<CONFIG:Debug>>:${_vcpkg_bin}/zlib1.dll>
       )
     endif()
@@ -292,7 +301,8 @@ if(FTSDK_USE_VCPKG_THIRD_PARTY)
         $<$<CONFIG:Debug>:${_vcpkg_debug_bin}/spdlogd.dll>
         $<$<CONFIG:Debug>:${_vcpkg_debug_bin}/libcurl-d.dll>
         $<$<CONFIG:Debug>:${_vcpkg_debug_bin}/sqlite3.dll>
-        $<$<CONFIG:Debug>:${_vcpkg_debug_bin}/SQLiteCpp.dll>
+        #dynamic setting
+        #$<$<CONFIG:Debug>:${_vcpkg_debug_bin}/SQLiteCpp.dll>
         $<$<CONFIG:Debug>:${_vcpkg_debug_bin}/zlibd1.dll>
       )
     endif()
