@@ -190,11 +190,7 @@ if(TARGET fmt::fmt)
   target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
 endif()
 
-# Use SQLiteCpp static library if available, otherwise fall back to dynamic
-if(TARGET SQLiteCpp::SQLiteCpp-static)
-    target_link_libraries(${PROJECT_NAME} PRIVATE SQLiteCpp::SQLiteCpp-static)
-elseif(TARGET SQLiteCpp)
-    # Force static linking if SQLiteCpp target exists but no static target
+if(TARGET SQLiteCpp)
     # This assumes vcpkg installed static version when using static triplet
     target_link_libraries(${PROJECT_NAME} PRIVATE SQLiteCpp)
 endif()
