@@ -10,6 +10,7 @@
 *.sh
 
 build/
+config/
 coverage/
 example/config/
 example/ios/Flutter/ephemeral/

@@ -15,9 +15,9 @@
 namespace ft_mobile_agent_flutter {
 
 // static
-void FtMobileAgentFlutterPlugin::RegisterWithRegistrar(
+void FTMobileAgentFlutter::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows *registrar) {
-  auto plugin = std::make_unique<FtMobileAgentFlutterPlugin>();
+  auto plugin = std::make_unique<FTMobileAgentFlutter>();
   
   // Create method channel
   auto channel =
@@ -36,11 +36,11 @@ void FtMobileAgentFlutterPlugin::RegisterWithRegistrar(
   registrar->AddPlugin(std::move(plugin));
 }
 
-FtMobileAgentFlutterPlugin::FtMobileAgentFlutterPlugin() {}
+FTMobileAgentFlutter::FTMobileAgentFlutter() {}
 
-FtMobileAgentFlutterPlugin::~FtMobileAgentFlutterPlugin() {}
+FTMobileAgentFlutter::~FTMobileAgentFlutter() {}
 
-void FtMobileAgentFlutterPlugin::HandleMethodCall(
+void FTMobileAgentFlutter::HandleMethodCall(
     const flutter::MethodCall<flutter::EncodableValue> &method_call,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
   // Delegate to method channel handler
@@ -51,9 +51,9 @@ void FtMobileAgentFlutterPlugin::HandleMethodCall(
 
 // Export the registration function with C linkage
 extern "C" {
-FLUTTER_PLUGIN_EXPORT void FtMobileAgentFlutterPluginRegisterWithRegistrar(
+FLUTTER_PLUGIN_EXPORT void FTMobileAgentFlutterRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar) {
-  ft_mobile_agent_flutter::FtMobileAgentFlutterPlugin::RegisterWithRegistrar(
+  ft_mobile_agent_flutter::FTMobileAgentFlutter::RegisterWithRegistrar(
       flutter::PluginRegistrarManager::GetInstance()
           ->GetRegistrar<flutter::PluginRegistrarWindows>(registrar));
 }

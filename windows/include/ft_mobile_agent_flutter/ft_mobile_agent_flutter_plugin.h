@@ -13,7 +13,7 @@
 extern "C" {
 #endif
 
-FLUTTER_PLUGIN_EXPORT void FtMobileAgentFlutterPluginRegisterWithRegistrar(
+FLUTTER_PLUGIN_EXPORT void FTMobileAgentFlutterRegisterWithRegistrar(
     FlutterDesktopPluginRegistrarRef registrar);
 
 #if defined(__cplusplus)
