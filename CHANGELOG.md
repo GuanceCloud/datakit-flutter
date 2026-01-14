@@ -1,10 +1,10 @@
 > Related SDK update content
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md)
-## 0.5.7-pre.3
-* Windows: switch ft-sdk-cpp download source to GitHub zip.
-* Example: update pubspec.lock dependencies and SDK constraints.
-* Example: ignore/remove generated Windows/iOS build files.
+## 0.5.8-dev.1
+* Flutter Windows Support
+* Use the C++ SDK as a bridge for Windows-specific features
+* Integrate via vcpkg and GitHub source code
 ---
 ## 0.5.7-pre.2
 * Added bridgeContext feature.
