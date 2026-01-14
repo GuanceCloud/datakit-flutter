@@ -253,13 +253,14 @@ set(ft_mobile_agent_flutter_bundled_libraries
 )
 
 # Bundle ft-sdk runtime deps so the app can run without manual DLL copies.
-# Note: SQLiteCpp is linked statically, so no DLL to bundle
+# Check if SQLiteCpp is a shared library (DLL) and bundle it if so
 if(FTSDK_USE_VCPKG_THIRD_PARTY)
   list(APPEND ft_mobile_agent_flutter_bundled_libraries
     $<$<TARGET_EXISTS:fmt::fmt>:$<TARGET_FILE:fmt::fmt>>
     $<$<TARGET_EXISTS:spdlog::spdlog>:$<TARGET_FILE:spdlog::spdlog>>
-    # dynamic setting
-    #$<$<TARGET_EXISTS:SQLiteCpp>:$<TARGET_FILE:SQLiteCpp>>
+    # SQLiteCpp may be dynamic (DLL) or static depending on vcpkg triplet
+    # Only bundle if it's a shared library (DLL)
+    $<$<AND:$<TARGET_EXISTS:SQLiteCpp>,$<STREQUAL:$<TARGET_PROPERTY:SQLiteCpp,TYPE>,SHARED_LIBRARY>>:$<TARGET_FILE:SQLiteCpp>>
     $<$<TARGET_EXISTS:unofficial::sqlite3::sqlite3>:$<TARGET_FILE:unofficial::sqlite3::sqlite3>>
     $<$<TARGET_EXISTS:CURL::libcurl>:$<TARGET_FILE:CURL::libcurl>>
     $<$<TARGET_EXISTS:ZLIB::ZLIB>:$<TARGET_FILE:ZLIB::ZLIB>>
@@ -281,24 +282,32 @@ if(FTSDK_USE_VCPKG_THIRD_PARTY)
     set(_vcpkg_bin "${VCPKG_INSTALLED_DIR}/${_vcpkg_triplet}/bin")
     set(_vcpkg_debug_bin "${VCPKG_INSTALLED_DIR}/${_vcpkg_triplet}/debug/bin")
     if(EXISTS "${_vcpkg_bin}")
+      # Check if SQLiteCpp.dll exists in vcpkg bin directory
+      if(EXISTS "${_vcpkg_bin}/SQLiteCpp.dll")
+        list(APPEND ft_mobile_agent_flutter_bundled_libraries
+          $<$<NOT:$<CONFIG:Debug>>:${_vcpkg_bin}/SQLiteCpp.dll>
+        )
+      endif()
       list(APPEND ft_mobile_agent_flutter_bundled_libraries
         $<$<NOT:$<CONFIG:Debug>>:${_vcpkg_bin}/fmt.dll>
         $<$<NOT:$<CONFIG:Debug>>:${_vcpkg_bin}/spdlog.dll>
         $<$<NOT:$<CONFIG:Debug>>:${_vcpkg_bin}/libcurl.dll>
         $<$<NOT:$<CONFIG:Debug>>:${_vcpkg_bin}/sqlite3.dll>
-        #dynamic setting
-        #$<$<NOT:$<CONFIG:Debug>>:${_vcpkg_bin}/SQLiteCpp.dll>
         $<$<NOT:$<CONFIG:Debug>>:${_vcpkg_bin}/zlib1.dll>
       )
     endif()
     if(EXISTS "${_vcpkg_debug_bin}")
+      # Check if SQLiteCpp.dll exists in vcpkg debug bin directory
+      if(EXISTS "${_vcpkg_debug_bin}/SQLiteCpp.dll")
+        list(APPEND ft_mobile_agent_flutter_bundled_libraries
+          $<$<CONFIG:Debug>:${_vcpkg_debug_bin}/SQLiteCpp.dll>
+        )
+      endif()
       list(APPEND ft_mobile_agent_flutter_bundled_libraries
         $<$<CONFIG:Debug>:${_vcpkg_debug_bin}/fmtd.dll>
         $<$<CONFIG:Debug>:${_vcpkg_debug_bin}/spdlogd.dll>
         $<$<CONFIG:Debug>:${_vcpkg_debug_bin}/libcurl-d.dll>
         $<$<CONFIG:Debug>:${_vcpkg_debug_bin}/sqlite3.dll>
-        #dynamic setting
-        #$<$<CONFIG:Debug>:${_vcpkg_debug_bin}/SQLiteCpp.dll>
         $<$<CONFIG:Debug>:${_vcpkg_debug_bin}/zlibd1.dll>
       )
     endif()
