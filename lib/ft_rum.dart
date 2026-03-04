@@ -101,13 +101,14 @@ class FTRUMManager {
   /// [actionType] Action type
   /// [property] Additional property parameters (optional)
   Future<void> startAction(String actionName, String actionType,
-      {Map<String, String>? property}) async {
-    Map<String, String> mergedProperties = _mergeWithGlobalProperties(property);
+      {Map<String, Object?>? property}) async {
+    Map<String, Object?> mergedProperties =
+        _mergeWithGlobalProperties(property);
     Map<String, dynamic> map = {};
     map["actionName"] = actionName;
     map["actionType"] = actionType;
     map["property"] = mergedProperties;
-    await channel.invokeMethod(methodRumAddAction, map);
+    await channel.invokeMethod(methodRumStartAction, map);
   }
 
   /// Add action，this type of data cannot be associated with Error, Resource, LongTask data
@@ -115,8 +116,9 @@ class FTRUMManager {
   /// [actionType] Action type
   /// [property] Additional property parameters (optional)
   Future<void> addAction(String actionName, String actionType,
-      {Map<String, String>? property}) async {
-    Map<String, String> mergedProperties = _mergeWithGlobalProperties(property);
+      {Map<String, Object?>? property}) async {
+    Map<String, Object?> mergedProperties =
+        _mergeWithGlobalProperties(property);
     Map<String, dynamic> map = {};
     map["actionName"] = actionName;
     map["actionType"] = actionType;
@@ -129,8 +131,9 @@ class FTRUMManager {
   /// [viewReferer] Previous interface name
   /// [property] Additional property parameters (optional)
   Future<void> starView(String viewName,
-      {Map<String, String>? property}) async {
-    Map<String, String> mergedProperties = _mergeWithGlobalProperties(property);
+      {Map<String, Object?>? property}) async {
+    Map<String, Object?> mergedProperties =
+        _mergeWithGlobalProperties(property);
     Map<String, dynamic> map = {};
     map["viewName"] = viewName;
     map["property"] = mergedProperties;
@@ -149,8 +152,9 @@ class FTRUMManager {
 
   /// View end
   /// [property] Additional property parameters (optional)
-  Future<void> stopView({Map<String, String>? property}) async {
-    Map<String, String> mergedProperties = _mergeWithGlobalProperties(property);
+  Future<void> stopView({Map<String, Object?>? property}) async {
+    Map<String, Object?> mergedProperties =
+        _mergeWithGlobalProperties(property);
     Map<String, dynamic> map = {};
     map["property"] = mergedProperties;
     await channel.invokeMethod(methodRumStopView, map);
@@ -179,8 +183,9 @@ class FTRUMManager {
   /// [errorType] Custom errorType
   /// [property] Additional property parameters (optional)
   Future<void> addCustomError(String stack, String message,
-      {Map<String, String>? property, String? errorType}) async {
-    Map<String, String> mergedProperties = _mergeWithGlobalProperties(property);
+      {Map<String, Object>? property, String? errorType}) async {
+    Map<String, Object?> mergedProperties =
+        _mergeWithGlobalProperties(property);
     Map<String, dynamic> map = {};
     map["stack"] = stack;
     map["message"] = message;
@@ -194,8 +199,9 @@ class FTRUMManager {
   /// [key] Unique id
   /// [property] Additional property parameters (optional)
   Future<void> startResource(String key,
-      {Map<String, String>? property}) async {
-    Map<String, String> mergedProperties = _mergeWithGlobalProperties(property);
+      {Map<String, Object?>? property}) async {
+    Map<String, Object?> mergedProperties =
+        _mergeWithGlobalProperties(property);
     Map<String, dynamic> map = {};
     map["key"] = key;
     map["property"] = mergedProperties;
@@ -205,8 +211,10 @@ class FTRUMManager {
   /// End resource request
   /// [key] Unique id
   /// [property] Additional property parameters (optional)
-  Future<void> stopResource(String key, {Map<String, String>? property}) async {
-    Map<String, String> mergedProperties = _mergeWithGlobalProperties(property);
+  Future<void> stopResource(String key,
+      {Map<String, Object?>? property}) async {
+    Map<String, Object?> mergedProperties =
+        _mergeWithGlobalProperties(property);
     Map<String, dynamic> map = {};
     map["key"] = key;
     map["property"] = mergedProperties;
@@ -225,8 +233,8 @@ class FTRUMManager {
       {required String key,
       required String url,
       required String httpMethod,
-      required Map<String, dynamic> requestHeader,
-      Map<String, dynamic>? responseHeader,
+      required Map<String, Object?> requestHeader,
+      Map<String, Object?>? responseHeader,
       String? responseBody = "",
       int? resourceStatus,
       int? resourceSize}) async {
@@ -245,8 +253,10 @@ class FTRUMManager {
   /// Helper method to merge global properties with local properties
   /// [localProperties] Local properties passed to the method
   /// Returns merged properties map with global properties included
-  Map<String, String> _mergeWithGlobalProperties(Map<String, String>? localProperties) {
-    Map<String, String> merged = Map<String, String>.from(FTMobileFlutter.globalProperties);
+  Map<String, Object?> _mergeWithGlobalProperties(
+      Map<String, Object?>? localProperties) {
+    Map<String, Object?> merged =
+        Map<String, Object?>.from(FTMobileFlutter.globalProperties);
     if (localProperties != null) {
       merged.addAll(localProperties);
     }

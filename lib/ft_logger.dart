@@ -16,8 +16,9 @@ class FTLogger {
   /// [property] Additional property parameters (optional)
   /// [isSilence]
   Future<void> logging(String content, FTLogStatus status,
-      {Map<String, String>? property, bool? isSilence}) async {
-    Map<String, String> mergedProperties = _mergeWithGlobalProperties(property);
+      {Map<String, Object?>? property, bool? isSilence}) async {
+    Map<String, Object?> mergedProperties =
+        _mergeWithGlobalProperties(property);
     Map<String, dynamic> map = {};
     map["content"] = content;
     map["status"] = status.index;
@@ -58,8 +59,10 @@ class FTLogger {
   /// Helper method to merge global properties with local properties
   /// [localProperties] Local properties passed to the method
   /// Returns merged properties map with global properties included
-  Map<String, String> _mergeWithGlobalProperties(Map<String, String>? localProperties) {
-    Map<String, String> merged = Map<String, String>.from(FTMobileFlutter.globalProperties);
+  Map<String, Object?> _mergeWithGlobalProperties(
+      Map<String, Object?>? localProperties) {
+    Map<String, Object?> merged =
+        Map<String, Object?>.from(FTMobileFlutter.globalProperties);
     if (localProperties != null) {
       merged.addAll(localProperties);
     }

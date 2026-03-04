@@ -15,22 +15,23 @@ export 'ft_tracing.dart';
 class FTMobileFlutter {
   /// Thread-safe global properties dictionary that will be automatically merged
   /// with properties passed to RUM and Logger methods
-  static final Map<String, String> _globalProperties = <String, String>{
+  static final Map<String, Object?> _globalProperties = <String, Object?>{
     'sdk_bridge_info': '{"flutter":"$packageVersion"}',
   };
-  
+
   /// Thread-safe access to global properties
-  static Map<String, String> get globalProperties => Map.unmodifiable(_globalProperties);
-  
+  static Map<String, Object?> get globalProperties =>
+      Map.unmodifiable(_globalProperties);
+
   /// Append bridge context properties that will be automatically merged with all RUM and Logger calls
   /// [properties] Map of key-value pairs to be added as bridge context properties
-  static void appendBridgeContext(Map<String, String> properties) {
+  static void appendBridgeContext(Map<String, Object?> properties) {
     _globalProperties.addAll(properties);
   }
-  
+
   /// Get a copy of current bridge context properties
   /// Returns an unmodifiable copy of the bridge context properties map
-  static Map<String, String> getBridgeContext() {
+  static Map<String, Object?> getBridgeContext() {
     return Map.unmodifiable(_globalProperties);
   }
 
@@ -210,14 +211,14 @@ class FTMobileFlutter {
   /// Dynamically set RUM global tags
   static Future<void> appendRUMGlobalContext(
       Map<String, String> globalContext) async {
-    Map<String, dynamic> map = {};
+    Map<String, Object> map = {};
     map["globalContext"] = globalContext;
     return await channel.invokeMethod(methodAppendRUMGlobalContext, map);
   }
 
   /// Dynamically set log global tags
   static Future<void> appendLogGlobalContext(
-      Map<String, dynamic> globalContext) async {
+      Map<String, Object> globalContext) async {
     Map<String, dynamic> map = {};
     map["globalContext"] = globalContext;
     return await channel.invokeMethod(methodAppendLogGlobalContext, map);
@@ -229,7 +230,7 @@ class FTMobileFlutter {
   }
 
   /// ShutDown SDK
-  static Future<void> shutDown() async{
+  static Future<void> shutDown() async {
     return await channel.invokeMethod(methodShutDown);
   }
 

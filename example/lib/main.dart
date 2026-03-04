@@ -14,7 +14,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'ft_get_view_name.dart';
 import 'logging_page.dart';
 
-const serverUrl = String.fromEnvironment("SERVER_URL");
+const serverUrl = String.fromEnvironment("DATAKIT_URL");
 const appAndroidId = String.fromEnvironment("ANDROID_APP_ID");
 const appIOSId = String.fromEnvironment("IOS_APP_ID");
 const webViewViewUrl = String.fromEnvironment("WEB_VIEW_URL");

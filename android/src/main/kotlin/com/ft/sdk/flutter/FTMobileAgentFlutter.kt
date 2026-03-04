@@ -471,8 +471,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
             METHOD_RUM_ADD_ACTION -> {
                 val actionName: String? = call.argument<String>("actionName")
                 val actionType: String? = call.argument<String>("actionType")
-                val mapProperty: Map<String, Any>? = call.argument("property")
-                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                val mapProperty: Map<String, Any?>? = call.argument("property")
+                val property: HashMap<String, Any?>? = mapProperty?.let { HashMap(mapProperty) }
                 FTRUMGlobalManager.get().addAction(actionName, actionType, property)
                 result.success(null)
             }
@@ -480,8 +480,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
             METHOD_RUM_START_ACTION -> {
                 val actionName: String? = call.argument<String>("actionName")
                 val actionType: String? = call.argument<String>("actionType")
-                val mapProperty: Map<String, Any>? = call.argument("property")
-                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                val mapProperty: Map<String, Any?>? = call.argument("property")
+                val property: HashMap<String, Any?>? = mapProperty?.let { HashMap(mapProperty) }
                 FTRUMGlobalManager.get().startAction(actionName, actionType, property)
                 result.success(null)
             }
@@ -495,15 +495,15 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
 
             METHOD_RUM_START_VIEW -> {
                 val viewName: String? = call.argument<String>("viewName")
-                val mapProperty: Map<String, Any>? = call.argument("property")
-                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                val mapProperty: Map<String, Any?>? = call.argument("property")
+                val property: HashMap<String, Any?>? = mapProperty?.let { HashMap(mapProperty) }
                 FTRUMGlobalManager.get().startView(viewName, property)
                 result.success(null)
             }
 
             METHOD_RUM_STOP_VIEW -> {
-                val mapProperty: Map<String, Any>? = call.argument("property")
-                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                val mapProperty: Map<String, Any?>? = call.argument("property")
+                val property: HashMap<String, Any?>? = mapProperty?.let { HashMap(mapProperty) }
                 FTRUMGlobalManager.get().stopView(property)
                 result.success(null)
             }
@@ -513,8 +513,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 val message: String? = call.argument<String>("message")
                 val state: Int? = call.argument<Int>("appState")
                 var errorType: String? = call.argument<String>("errorType")
-                val mapProperty: Map<String, Any>? = call.argument("property")
-                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                val mapProperty: Map<String, Any?>? = call.argument("property")
+                val property: HashMap<String, Any?>? = mapProperty?.let { HashMap(mapProperty) }
 
                 val appState: AppState = AppState.values()[state ?: AppState.UNKNOWN.ordinal]
                 if (errorType.isNullOrEmpty()) {
@@ -527,16 +527,16 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
 
             METHOD_RUM_START_RESOURCE -> {
                 val key: String? = call.argument<String>("key")
-                val mapProperty: Map<String, Any>? = call.argument("property")
-                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                val mapProperty: Map<String, Any?>? = call.argument("property")
+                val property: HashMap<String, Any?>? = mapProperty?.let { HashMap(mapProperty) }
                 FTRUMGlobalManager.get().startResource(key, property)
                 result.success(null)
             }
 
             METHOD_RUM_STOP_RESOURCE -> {
                 val key: String? = call.argument<String>("key")
-                val mapProperty: Map<String, Any>? = call.argument("property")
-                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                val mapProperty: Map<String, Any?>? = call.argument("property")
+                val property: HashMap<String, Any?>? = mapProperty?.let { HashMap(mapProperty) }
                 FTRUMGlobalManager.get().stopResource(key, property)
                 result.success(null)
 
@@ -545,10 +545,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
             METHOD_RUM_ADD_RESOURCE -> {
                 val key: String? = call.argument<String>("key")
                 val method: String? = call.argument<String>("resourceMethod")
-                val requestHeader: Map<String, Any>? =
-                    call.argument<Map<String, Any>>("requestHeader")
-                val responseHeader: Map<String, Any>? =
-                    call.argument<Map<String, Any>>("responseHeader")
+                val requestHeader: Map<String, Any?>? =
+                    call.argument<Map<String, Any?>>("requestHeader")
+                val responseHeader: Map<String, Any?>? =
+                    call.argument<Map<String, Any?>>("responseHeader")
                 val responseBody: String? = call.argument<String>("responseBody")
 //                val responseConnection: String? = call.argument<String>("responseConnection")
 //                val responseContentType: String? = call.argument<String>("responseContentType")
@@ -685,8 +685,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 val status: Status =
                     Status.values()[call.argument<Int>("status") ?: Status.INFO.ordinal]
                 val isSilence: Boolean? = call.argument<Boolean>("isSilence")
-                val mapProperty: Map<String, Any>? = call.argument("property")
-                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                val mapProperty: Map<String, Any?>? = call.argument("property")
+                val property: HashMap<String, Any?>? = mapProperty?.let { HashMap(mapProperty) }
 
                 if (isSilence != null) {
                     FTLogger.getInstance().logBackground(content, status, property, isSilence)
@@ -854,7 +854,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
         }
     }
 
-    private fun getHashMap(header: Map<String, Any>): HashMap<String, List<String>> {
+    private fun getHashMap(header: Map<String, Any?>): HashMap<String, List<String>> {
         val hashMap = hashMapOf<String, List<String>>()
         header.forEach { it ->
             if (it.value is String) {
