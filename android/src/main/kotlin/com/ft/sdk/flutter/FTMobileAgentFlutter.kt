@@ -606,6 +606,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
 //                netStatusBean.responseEndTime = responseEndTime!!
 //                netStatusBean.sslStartTime = sslStartTime!!
 //                netStatusBean.sslEndTime = sslEndTime!!
+                // Intentionally avoid mergeBridgeContext here to preserve the existing stopResource payload contract.
                 FTRUMGlobalManager.get().addResource(key, params, netStatusBean)
                 result.success(null)
             }
