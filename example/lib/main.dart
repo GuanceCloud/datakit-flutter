@@ -353,8 +353,7 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
         onPressed: () async {
           final ImagePicker picker = ImagePicker();
           FTRUMManager().startAction("Image Picker", "image_pick");
-          final XFile? files =
-              await picker.pickImage(source: ImageSource.gallery);
+          await picker.pickImage(source: ImageSource.gallery);
         },
         child: Text("Image Picker"));
   }

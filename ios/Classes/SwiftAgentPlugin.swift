@@ -27,6 +27,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     static let METHOD_RUM_START_VIEW = "ftRumStartView"
     static let METHOD_RUM_STOP_VIEW = "ftRumStopView"
     static let METHOD_RUM_ADD_ERROR = "ftRumAddError"
+    static let METHOD_RUM_ADD_LONG_TASK = "ftRumAddLongTask"
     static let METHOD_RUM_START_RESOURCE = "ftRumStartResource"
     static let METHOD_RUM_ADD_RESOURCE = "ftRumAddResource"
     static let METHOD_RUM_STOP_RESOURCE = "ftRumStopResource"
@@ -371,6 +372,12 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             }
             
             FTExternalDataManager.shared().addError(withType: errorType, message: message, stack: stack,property: property)
+            result(nil)
+        case SwiftAgentPlugin.METHOD_RUM_ADD_LONG_TASK:
+            let stack = context["stack"] as? String ?? ""
+            let duration = context["duration"] as? NSNumber ?? 0
+            let property = context["property"] as? Dictionary<String, Any> ?? nil
+            FTExternalDataManager.shared().addLongTask(withStack: stack, duration: duration, property: property)
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_START_RESOURCE:
             let key = context["key"] as! String

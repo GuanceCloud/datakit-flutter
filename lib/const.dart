@@ -24,6 +24,7 @@ const methodRumStartView = "ftRumStartView";
 const methodRumCreateView = "ftRumCreateView";
 const methodRumStopView = "ftRumStopView";
 const methodRumAddError = "ftRumAddError";
+const methodRumAddLongTask = "ftRumAddLongTask";
 const methodRumStartResource = "ftRumStartResource";
 const methodRumStopResource = "ftRumStopResource";
 const methodRumAddResource = "ftRumAddResource";

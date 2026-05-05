@@ -111,6 +111,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
         const val METHOD_RUM_START_VIEW = "ftRumStartView"
         const val METHOD_RUM_STOP_VIEW = "ftRumStopView"
         const val METHOD_RUM_ADD_ERROR = "ftRumAddError"
+        const val METHOD_RUM_ADD_LONG_TASK = "ftRumAddLongTask"
         const val METHOD_RUM_START_RESOURCE = "ftRumStartResource"
         const val METHOD_RUM_STOP_RESOURCE = "ftRumStopResource"
         const val METHOD_RUM_ADD_RESOURCE = "ftRumAddResource"
@@ -528,6 +529,17 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 FTRUMGlobalManager.get().addError(stack, message, errorType, appState, property)
                 result.success(null)
 
+            }
+
+            METHOD_RUM_ADD_LONG_TASK -> {
+                val stack: String = call.argument<String>("stack") ?: ""
+                val duration: Number? = call.argument<Number>("duration")
+                val mapProperty: Map<String, Any>? = call.argument("property")
+                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                if (duration != null) {
+                    FTRUMGlobalManager.get().addLongTask(stack, duration.toLong(), property)
+                }
+                result.success(null)
             }
 
             METHOD_RUM_START_RESOURCE -> {
