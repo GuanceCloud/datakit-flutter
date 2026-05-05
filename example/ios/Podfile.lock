@@ -1,0 +1,103 @@
+PODS:
+  - Flutter (1.0.0)
+  - ft_mobile_agent_flutter (0.0.2):
+    - Flutter
+    - FTMobileSDK/FTMobileAgent (= 1.6.3)
+    - FTMobileSDK/FTSessionReplay (= 1.6.3)
+  - FTMobileSDK (1.6.3):
+    - FTMobileSDK/FTMobileAgent (= 1.6.3)
+  - FTMobileSDK/Extension (1.6.3):
+    - FTMobileSDK/FTSDKCore/FTRUM
+    - FTMobileSDK/FTSDKCore/Logger
+    - FTMobileSDK/FTSDKCore/URLSessionAutoInstrumentation
+  - FTMobileSDK/FTMobileAgent (1.6.3):
+    - FTMobileSDK/FTSDKCore
+  - FTMobileSDK/FTSDKCore (1.6.3):
+    - FTMobileSDK/FTSDKCore/BaseUtils (= 1.6.3)
+    - FTMobileSDK/FTSDKCore/DataManager (= 1.6.3)
+    - FTMobileSDK/FTSDKCore/FTRUM (= 1.6.3)
+    - FTMobileSDK/FTSDKCore/FTWKWebView (= 1.6.3)
+    - FTMobileSDK/FTSDKCore/Logger (= 1.6.3)
+    - FTMobileSDK/FTSDKCore/Protocol (= 1.6.3)
+    - FTMobileSDK/FTSDKCore/RemoteConfig (= 1.6.3)
+    - FTMobileSDK/FTSDKCore/URLSessionAutoInstrumentation (= 1.6.3)
+  - FTMobileSDK/FTSDKCore/BaseUtils (1.6.3):
+    - FTMobileSDK/FTSDKCore/BaseUtils/Base (= 1.6.3)
+    - FTMobileSDK/FTSDKCore/BaseUtils/Swizzle (= 1.6.3)
+    - FTMobileSDK/FTSDKCore/BaseUtils/Thread (= 1.6.3)
+  - FTMobileSDK/FTSDKCore/BaseUtils/Base (1.6.3):
+    - FTMobileSDK/FTSDKCore/BaseUtils/Thread
+  - FTMobileSDK/FTSDKCore/BaseUtils/Swizzle (1.6.3):
+    - FTMobileSDK/FTSDKCore/BaseUtils/Base
+  - FTMobileSDK/FTSDKCore/BaseUtils/Thread (1.6.3)
+  - FTMobileSDK/FTSDKCore/DataManager (1.6.3):
+    - FTMobileSDK/FTSDKCore/BaseUtils/Base
+    - FTMobileSDK/FTSDKCore/BaseUtils/Thread
+    - FTMobileSDK/FTSDKCore/Protocol
+  - FTMobileSDK/FTSDKCore/FTRUM (1.6.3):
+    - FTMobileSDK/FTSDKCore/BaseUtils/Base
+    - FTMobileSDK/FTSDKCore/Protocol
+  - FTMobileSDK/FTSDKCore/FTWKWebView (1.6.3):
+    - FTMobileSDK/FTSDKCore/BaseUtils/Swizzle
+    - FTMobileSDK/FTSDKCore/Protocol
+  - FTMobileSDK/FTSDKCore/Logger (1.6.3):
+    - FTMobileSDK/FTSDKCore/BaseUtils/Base
+    - FTMobileSDK/FTSDKCore/Protocol
+  - FTMobileSDK/FTSDKCore/Protocol (1.6.3)
+  - FTMobileSDK/FTSDKCore/RemoteConfig (1.6.3):
+    - FTMobileSDK/FTSDKCore/DataManager
+  - FTMobileSDK/FTSDKCore/URLSessionAutoInstrumentation (1.6.3):
+    - FTMobileSDK/FTSDKCore/BaseUtils/Swizzle
+    - FTMobileSDK/FTSDKCore/Protocol
+  - FTMobileSDK/FTSessionReplay (1.6.3):
+    - FTMobileSDK/FTSDKCore
+  - FTTest (0.0.1):
+    - Flutter
+    - FTMobileSDK
+  - image_picker_ios (0.0.1):
+    - Flutter
+  - permission_handler_apple (9.3.0):
+    - Flutter
+  - webview_flutter_wkwebview (0.0.1):
+    - Flutter
+    - FlutterMacOS
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - ft_mobile_agent_flutter (from `.symlinks/plugins/ft_mobile_agent_flutter/ios`)
+  - FTMobileSDK/Extension
+  - FTTest (from `FTTest`)
+  - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/darwin`)
+
+SPEC REPOS:
+  trunk:
+    - FTMobileSDK
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  ft_mobile_agent_flutter:
+    :path: ".symlinks/plugins/ft_mobile_agent_flutter/ios"
+  FTTest:
+    :path: FTTest
+  image_picker_ios:
+    :path: ".symlinks/plugins/image_picker_ios/ios"
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
+  webview_flutter_wkwebview:
+    :path: ".symlinks/plugins/webview_flutter_wkwebview/darwin"
+
+SPEC CHECKSUMS:
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  ft_mobile_agent_flutter: edcb3b5ac96d050dfc24cc1c6ffef5c06ee8f4be
+  FTMobileSDK: ba9f4852bc238737aec122cfdbd1b17238e3c178
+  FTTest: 6cfeca2a0e34156e8400b74dd3a06e6748f0c3d1
+  image_picker_ios: 7fe1ff8e34c1790d6fff70a32484959f563a928a
+  permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
+  webview_flutter_wkwebview: 1821ceac936eba6f7984d89a9f3bcb4dea99ebb2
+
+PODFILE CHECKSUM: 2ba3162117104b69efacfbe93df2690cdf3d2325
+
+COCOAPODS: 1.16.2

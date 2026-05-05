@@ -41,14 +41,21 @@ void main() {
     methodRumStartResource,
     methodRumStopResource,
     methodRumAddResource,
+    methodSessionReplayConfig,
     methodTraceConfig,
     methodGetTraceGetHeader,
   ];
   Map<String, bool> callResult = {};
+  Map<String, dynamic>? lastMethodArguments;
 
   setUp(() async {
+    lastMethodArguments = null;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+      if (methodCall.arguments is Map) {
+        lastMethodArguments = Map<String, dynamic>.from(
+            methodCall.arguments as Map<dynamic, dynamic>);
+      }
       switch (methodCall.method) {
         case methodConfig:
         case methodSetDatakitUrl:
@@ -68,6 +75,7 @@ void main() {
         case methodRumStartResource:
         case methodRumStopResource:
         case methodRumAddResource:
+        case methodSessionReplayConfig:
         case methodTraceConfig:
         case methodGetTraceGetHeader:
           callResult[methodCall.method] = true;
@@ -118,12 +126,42 @@ void main() {
         requestHeader: {},
         metrics: const FTRUMResourceMetrics(duration: 10));
 
+    await FTSessionReplayManager().setConfig(FTSessionReplayConfig(
+      sampleRate: 1.0,
+      sessionReplayOnErrorSampleRate: 0.0,
+      touchPrivacy: FTTouchPrivacyLevel.show,
+      textAndInputPrivacy: FTTextAndInputPrivacyLevel.maskSensitiveInputs,
+      imagePrivacy: FTImagePrivacyLevel.maskNone,
+      enableLinkRUMKeys: const ["wgt_id"],
+    ));
+
     await FTTracer().setConfig();
     await FTTracer().getTraceHeader(requestUrl, key: "key");
 
     for (final element in list) {
       expect(callResult[element], true);
     }
+  });
+
+  test('Session Replay config payload', () async {
+    await FTSessionReplayManager().setConfig(FTSessionReplayConfig(
+      sampleRate: 0.75,
+      sessionReplayOnErrorSampleRate: 0.25,
+      touchPrivacy: FTTouchPrivacyLevel.hide,
+      textAndInputPrivacy: FTTextAndInputPrivacyLevel.maskAllInputs,
+      imagePrivacy: FTImagePrivacyLevel.maskAll,
+      enableLinkRUMKeys: const ['session_id', 'view_id'],
+    ));
+
+    expect(callResult[methodSessionReplayConfig], true);
+    expect(lastMethodArguments, <String, dynamic>{
+      'sampleRate': 0.75,
+      'sessionReplayOnErrorSampleRate': 0.25,
+      'touchPrivacy': FTTouchPrivacyLevel.hide.index,
+      'textAndInputPrivacy': FTTextAndInputPrivacyLevel.maskAllInputs.index,
+      'imagePrivacy': FTImagePrivacyLevel.maskAll.index,
+      'enableLinkRUMKeys': const ['session_id', 'view_id'],
+    });
   });
 
   test("Http Request Test", () async {

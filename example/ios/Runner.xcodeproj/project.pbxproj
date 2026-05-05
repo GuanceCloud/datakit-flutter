@@ -395,7 +395,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-FTPluginTests/Pods-FTPluginTests-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/FTMobileSDK-b0fa6c5c/FTSDKPrivacyInfo.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FTMobileSDK-9be88658/FTSDKPrivacyInfo.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/image_picker_ios/image_picker_ios_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/permission_handler_apple/permission_handler_apple_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview_privacy.bundle",
@@ -419,7 +419,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/FTMobileSDK-b0fa6c5c/FTSDKPrivacyInfo.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FTMobileSDK-9be88658/FTSDKPrivacyInfo.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/image_picker_ios/image_picker_ios_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/permission_handler_apple/permission_handler_apple_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview_privacy.bundle",

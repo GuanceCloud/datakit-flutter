@@ -1,5 +1,6 @@
 package com.ft.sdk.flutter
 
+import android.app.Activity
 import android.app.Application
 import android.os.Handler
 import android.os.Looper
@@ -22,6 +23,11 @@ import com.ft.sdk.LogCacheDiscard
 import com.ft.sdk.RUMCacheDiscard
 import com.ft.sdk.SyncPageSize
 import com.ft.sdk.TraceType
+import com.ft.sdk.sessionreplay.FTSessionReplayConfig
+import com.ft.sdk.sessionreplay.ImagePrivacy
+import com.ft.sdk.sessionreplay.SessionReplayInternalCallback
+import com.ft.sdk.sessionreplay.TextAndInputPrivacy
+import com.ft.sdk.sessionreplay.TouchPrivacy
 import com.ft.sdk.garble.bean.AppState
 import com.ft.sdk.garble.bean.ErrorType
 import com.ft.sdk.garble.bean.NetStatusBean
@@ -47,6 +53,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
     private lateinit var channel: MethodChannel
 
     private lateinit var application: Application
+    private var activity: Activity? = null
     private var viewGroup: ViewGroup? = null
 
     private var handler: Handler? = null
@@ -64,8 +71,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         try {
-            val activity = binding.activity
-            val temp = activity.window.decorView.rootView
+            activity = binding.activity
+            val temp = activity?.window?.decorView?.rootView
             if (temp is ViewGroup) {
                 viewGroup = temp
             }
@@ -75,12 +82,17 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
     }
 
     override fun onDetachedFromActivity() {
+        activity = null
+        viewGroup = null
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+        onAttachedToActivity(binding)
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
+        activity = null
+        viewGroup = null
     }
 
     // This static function is optional and equivalent to onAttachedToEngine. It supports the old
@@ -126,6 +138,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
         const val METHOD_RUM_START_RESOURCE = "ftRumStartResource"
         const val METHOD_RUM_STOP_RESOURCE = "ftRumStopResource"
         const val METHOD_RUM_ADD_RESOURCE = "ftRumAddResource"
+        const val METHOD_SESSION_REPLAY_CONFIG = "ftSessionReplayConfig"
 
         const val METHOD_TRACE_CONFIG = "ftTraceConfig"
         const val METHOD_GET_TRACE_HEADER = "ftTraceGetHeader"
@@ -179,6 +192,11 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
         const val KEY_RUM_CACHE_DISCARD = "rumCacheDiscard"
         const val KEY_RUM_CACHE_LIMIT_COUNT = "rumCacheLimitCount"
         const val KEY_ENABLE_RESOURCE_HOST_IP = "enableResourceHostIP"
+        const val KEY_SESSION_REPLAY_ON_ERROR_SAMPLE_RATE = "sessionReplayOnErrorSampleRate"
+        const val KEY_TOUCH_PRIVACY = "touchPrivacy"
+        const val KEY_TEXT_AND_INPUT_PRIVACY = "textAndInputPrivacy"
+        const val KEY_IMAGE_PRIVACY = "imagePrivacy"
+        const val KEY_ENABLE_LINK_RUM_KEYS = "enableLinkRUMKeys"
 
         const val KEY_LOG_TYPE = "logType"
         const val KEY_ENABLE_CUSTOM_LOG = "enableCustomLog"
@@ -671,6 +689,65 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
 //                netStatusBean.sslEndTime = sslEndTime!!
                 // Intentionally avoid mergeBridgeContext here to preserve the existing stopResource payload contract.
                 FTRUMGlobalManager.get().addResource(key, params, netStatusBean)
+                result.success(null)
+            }
+
+            METHOD_SESSION_REPLAY_CONFIG -> {
+                val sessionReplayConfig = FTSessionReplayConfig()
+                val sampleRate: Number? = call.argument<Number>(KEY_SAMPLE_RATE)
+                val sessionReplayOnErrorSampleRate: Number? =
+                    call.argument<Number>(KEY_SESSION_REPLAY_ON_ERROR_SAMPLE_RATE)
+                val touchPrivacy: Number? = call.argument<Number>(KEY_TOUCH_PRIVACY)
+                val textAndInputPrivacy: Number? = call.argument<Number>(KEY_TEXT_AND_INPUT_PRIVACY)
+                val imagePrivacy: Number? = call.argument<Number>(KEY_IMAGE_PRIVACY)
+                val enableLinkRUMKeys: List<String>? = call.argument(KEY_ENABLE_LINK_RUM_KEYS)
+
+                if (sampleRate != null) {
+                    sessionReplayConfig.setSampleRate(sampleRate.toFloat())
+                }
+                if (sessionReplayOnErrorSampleRate != null) {
+                    sessionReplayConfig.setSessionReplayOnErrorSampleRate(
+                        sessionReplayOnErrorSampleRate.toFloat()
+                    )
+                }
+                if (touchPrivacy != null) {
+                    val value = TouchPrivacy.values().getOrNull(touchPrivacy.toInt())
+                    if (value == null) {
+                        result.error("INVALID_ARGUMENT", "Invalid touchPrivacy: $touchPrivacy", null)
+                        return
+                    }
+                    sessionReplayConfig.setTouchPrivacy(value)
+                }
+                if (textAndInputPrivacy != null) {
+                    val value = TextAndInputPrivacy.values().getOrNull(textAndInputPrivacy.toInt())
+                    if (value == null) {
+                        result.error(
+                            "INVALID_ARGUMENT",
+                            "Invalid textAndInputPrivacy: $textAndInputPrivacy",
+                            null
+                        )
+                        return
+                    }
+                    sessionReplayConfig.setTextAndInputPrivacy(value)
+                }
+                if (imagePrivacy != null) {
+                    val value = ImagePrivacy.values().getOrNull(imagePrivacy.toInt())
+                    if (value == null) {
+                        result.error("INVALID_ARGUMENT", "Invalid imagePrivacy: $imagePrivacy", null)
+                        return
+                    }
+                    sessionReplayConfig.setImagePrivacy(value)
+                }
+                if (enableLinkRUMKeys != null) {
+                    sessionReplayConfig.enableLinkRUMKeys(enableLinkRUMKeys.toTypedArray())
+                }
+                sessionReplayConfig.setInternalCallback(object : SessionReplayInternalCallback {
+                    override fun getCurrentActivity(): Activity? {
+                        return activity
+                    }
+                })
+
+                FTSdk.initSessionReplayConfig(sessionReplayConfig)
                 result.success(null)
             }
 

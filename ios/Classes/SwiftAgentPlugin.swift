@@ -42,6 +42,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     static let METHOD_RUM_START_RESOURCE = "ftRumStartResource"
     static let METHOD_RUM_ADD_RESOURCE = "ftRumAddResource"
     static let METHOD_RUM_STOP_RESOURCE = "ftRumStopResource"
+    static let METHOD_SESSION_REPLAY_CONFIG = "ftSessionReplayConfig"
 
     static let METHOD_TRACE_CONFIG = "ftTraceConfig"
     static let METHOD_GET_TRACE_HEADER = "ftTraceGetHeader"
@@ -470,6 +471,37 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             let key = context["key"] as! String
             let property = context["property"] as? Dictionary<String, Any> ?? nil
             FTExternalDataManager.shared().stopResource(withKey: key,property: property)
+            result(nil)
+        case SwiftAgentPlugin.METHOD_SESSION_REPLAY_CONFIG:
+            let sessionReplayConfig = FTSessionReplayConfig()
+            if let sampleRate = context["sampleRate"] as? NSNumber {
+                sessionReplayConfig.sampleRate = Int32(sampleRate.doubleValue * 100)
+            }
+            if let sessionReplayOnErrorSampleRate = context["sessionReplayOnErrorSampleRate"] as? NSNumber {
+                sessionReplayConfig.sessionReplayOnErrorSampleRate = Int32(sessionReplayOnErrorSampleRate.doubleValue * 100)
+            }
+            if let touchPrivacy = context["touchPrivacy"] as? NSNumber,
+               let mappedTouchPrivacy = FTTouchPrivacyLevel(rawValue: touchPrivacy.uintValue) {
+                sessionReplayConfig.touchPrivacy = mappedTouchPrivacy
+            }
+            if let textAndInputPrivacy = context["textAndInputPrivacy"] as? NSNumber,
+               let mappedTextAndInputPrivacy = FTTextAndInputPrivacyLevel(rawValue: textAndInputPrivacy.uintValue) {
+                sessionReplayConfig.textAndInputPrivacy = mappedTextAndInputPrivacy
+            }
+            if let imagePrivacy = context["imagePrivacy"] as? NSNumber {
+                switch imagePrivacy.intValue {
+                case 0:
+                    sessionReplayConfig.imagePrivacy = .maskNone
+                case 1:
+                    sessionReplayConfig.imagePrivacy = .maskNonBundledOnly
+                default:
+                    sessionReplayConfig.imagePrivacy = .maskAll
+                }
+            }
+            if let enableLinkRUMKeys = context["enableLinkRUMKeys"] as? [String] {
+                sessionReplayConfig.enableLinkRUMKeys = enableLinkRUMKeys
+            }
+            FTRumSessionReplay.shared().start(with: sessionReplayConfig)
             result(nil)
         default:
             result(FlutterMethodNotImplemented)

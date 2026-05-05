@@ -9,6 +9,7 @@ export 'ft_http_client.dart';
 export 'ft_logger.dart';
 export 'ft_route_observer.dart';
 export 'ft_rum.dart';
+export 'ft_session_replay.dart';
 export 'ft_tracing.dart';
 
 typedef FTRemoteConfigListener = void Function(FTRemoteConfigResult result);

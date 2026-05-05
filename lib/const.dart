@@ -35,6 +35,7 @@ const methodRumAddError = "ftRumAddError";
 const methodRumStartResource = "ftRumStartResource";
 const methodRumStopResource = "ftRumStopResource";
 const methodRumAddResource = "ftRumAddResource";
+const methodSessionReplayConfig = "ftSessionReplayConfig";
 
 const methodTraceConfig = "ftTraceConfig";
 const methodTrace = "ftTrace";
