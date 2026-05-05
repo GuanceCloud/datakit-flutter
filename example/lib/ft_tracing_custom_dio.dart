@@ -13,7 +13,8 @@ class FTInterceptor extends Interceptor {
   FTInterceptor({this.isInTakeUrl});
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+  void onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
     // Skip request if the external handler decides so
     if (isInTakeUrl != null && !isInTakeUrl!(options.uri.toString())) {
       handler.next(options);
@@ -22,7 +23,7 @@ class FTInterceptor extends Interceptor {
 
     String key = Uuid().v4();
     final traceHeaders =
-    await FTTracer().getTraceHeader(options.uri.toString(), key: key);
+        await FTTracer().getTraceHeader(options.uri.toString(), key: key);
     traceHeaders[_dioKey] = key;
     options.headers.addAll(traceHeaders);
     FTRUMManager().startResource(key);
@@ -32,7 +33,8 @@ class FTInterceptor extends Interceptor {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     // Skip response processing if the external handler decides so
-    if (isInTakeUrl != null && !isInTakeUrl!(response.requestOptions.uri.toString())) {
+    if (isInTakeUrl != null &&
+        !isInTakeUrl!(response.requestOptions.uri.toString())) {
       handler.next(response);
       return;
     }
@@ -56,7 +58,8 @@ class FTInterceptor extends Interceptor {
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) {
     // Skip error processing if the external handler decides so
-    if (isInTakeUrl != null && !isInTakeUrl!(err.requestOptions.uri.toString())) {
+    if (isInTakeUrl != null &&
+        !isInTakeUrl!(err.requestOptions.uri.toString())) {
       handler.next(err);
       return;
     }

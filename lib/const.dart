@@ -4,6 +4,12 @@ const MethodChannel channel = const MethodChannel('ft_mobile_agent_flutter');
 
 const methodConfig = "ftConfig";
 const methodFlushSyncData = "ftFlushSyncData";
+const methodSetDatakitUrl = "ftSetDatakitUrl";
+const methodSetDatawayUrl = "ftSetDatawayUrl";
+const methodUpdateRemoteConfig = "ftUpdateRemoteConfig";
+const methodUpdateRemoteConfigWithMiniUpdateInterval =
+    "ftUpdateRemoteConfigWithMiniUpdateInterval";
+const methodRemoteConfigCallback = "ftRemoteConfigCallback";
 
 const methodBindUser = "ftBindUser";
 const methodUnbindUser = "ftUnBindUser";
@@ -17,6 +23,7 @@ const methodShutDown = "ftShutDown";
 
 const methodLogConfig = "ftLogConfig";
 const methodLogging = "ftLogging";
+const methodLoggingWithStatusString = "ftLoggingWithStatusString";
 
 const methodRumConfig = "ftRumConfig";
 const methodRumStartAction = "ftRumStartAction";

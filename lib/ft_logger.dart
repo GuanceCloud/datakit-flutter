@@ -27,6 +27,18 @@ class FTLogger {
     await channel.invokeMethod(methodLogging, map);
   }
 
+  /// Output log with a custom string status.
+  Future<void> loggingWithStatusString(String content, String status,
+      {Map<String, Object?>? property}) async {
+    Map<String, Object?> mergedProperties =
+        _mergeWithGlobalProperties(property);
+    Map<String, dynamic> map = {};
+    map["content"] = content;
+    map["status"] = status;
+    map["property"] = mergedProperties;
+    await channel.invokeMethod(methodLoggingWithStatusString, map);
+  }
+
   /// Configure log output configuration
   /// [sampleRate] Sampling rate
   /// [enableLinkRumData] Whether to link with RUM

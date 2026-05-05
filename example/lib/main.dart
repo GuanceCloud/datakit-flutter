@@ -47,9 +47,7 @@ Future<void> sdkInit() async {
     enableLimitWithDbSize: true,
     // dataModifier: {"device_uuid":"xxx"},
     // lineDataModifier: {"view":{"view_name":"xxx"}},
-    iOSGroupIdentifiers: [
-      "group.com.ft.sdk.flutter.agentExample.TodayDemo"
-    ],
+    iOSGroupIdentifiers: ["group.com.ft.sdk.flutter.agentExample.TodayDemo"],
     //customHttpOverrides: CustomHttpOverrides()
   );
   await FTLogger().logConfig(
@@ -83,10 +81,11 @@ Future<void> sdkInit() async {
   FTMobileFlutter.trackEventFromExtension(
       "group.com.ft.sdk.flutter.agentExample.TodayDemo");
 
-  FTMobileFlutter.appendBridgeContext({"wgt_id":"widget_id"});
+  FTMobileFlutter.appendBridgeContext({"wgt_id": "widget_id"});
 
   FlutterError.onError = FTRUMManager().addFlutterError;
 }
+
 // Initialization for native hybrid projects in Flutter
 Future<void> sdkNativeMixInit() async {
   FTHttpOverrideConfig.global.traceHeader = true;
@@ -141,8 +140,7 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     if (Platform.isAndroid) {
-      requestPermission(
-          [Permission.phone]);
+      requestPermission([Permission.phone]);
     }
     // else if (Platform.isIOS) {
     //   requestPermission([Permission.camera, Permission.photos]);
@@ -357,8 +355,7 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
         onPressed: () async {
           final ImagePicker picker = ImagePicker();
           FTRUMManager().startAction("Image Picker", "image_pick");
-          final XFile? files =
-              await picker.pickImage(source: ImageSource.gallery);
+          await picker.pickImage(source: ImageSource.gallery);
         },
         child: Text("Image Picker"));
   }
@@ -397,7 +394,8 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text("Warning"),
-            content: Text("You have denied\n$tip permission, which will make the feature unavailable."),
+            content: Text(
+                "You have denied\n$tip permission, which will make the feature unavailable."),
             actions: <Widget>[
               TextButton(
                 onPressed: () {

@@ -21,6 +21,7 @@ class CustomClientHttpOverrides extends HttpOverrides {
     return FTHttpClient(super.createHttpClient(context));
   }
 }
+
 /// Http Proxy
 class HttpProxy extends FTHttpOverrides {
   String host;
@@ -35,6 +36,7 @@ class HttpProxy extends FTHttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
     var client = super.createHttpClient(context);
+
     /// Ignore SSL certificate verification
     client.badCertificateCallback =
         (X509Certificate cert, String host, int port) {

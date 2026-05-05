@@ -11,6 +11,7 @@ import com.ft.sdk.DetectFrequency
 import com.ft.sdk.FTLogger
 import com.ft.sdk.FTLoggerConfig
 import com.ft.sdk.FTRUMConfig
+import com.ft.sdk.FTRemoteConfigManager
 import com.ft.sdk.FTRUMGlobalManager
 import com.ft.sdk.FTSDKConfig
 import com.ft.sdk.FTSdk
@@ -24,6 +25,7 @@ import com.ft.sdk.TraceType
 import com.ft.sdk.garble.bean.AppState
 import com.ft.sdk.garble.bean.ErrorType
 import com.ft.sdk.garble.bean.NetStatusBean
+import com.ft.sdk.garble.bean.RemoteConfigBean
 import com.ft.sdk.garble.bean.ResourceParams
 import com.ft.sdk.garble.bean.Status
 import com.ft.sdk.garble.bean.UserData
@@ -34,6 +36,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import org.json.JSONObject
 
 /** AgentPlugin */
 class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware {
@@ -47,6 +50,9 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
     private var viewGroup: ViewGroup? = null
 
     private var handler: Handler? = null
+    private var remoteConfigurationEnabled = false
+    private var remoteConfigMiniUpdateInterval = 12 * 60 * 60
+    private var remoteConfigOverrideRules: List<Map<String, Any?>>? = null
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "ft_mobile_agent_flutter")
@@ -90,6 +96,11 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
         const val LOG_TAG = "${Constants.LOG_TAG_PREFIX}FTMobileAgentFlutter"
         const val METHOD_CONFIG = "ftConfig"
         const val METHOD_FLUSH_SYNC_DATA = "ftFlushSyncData"
+        const val METHOD_SET_DATAKIT_URL = "ftSetDatakitUrl"
+        const val METHOD_SET_DATAWAY_URL = "ftSetDatawayUrl"
+        const val METHOD_UPDATE_REMOTE_CONFIG = "ftUpdateRemoteConfig"
+        const val METHOD_UPDATE_REMOTE_CONFIG_WITH_MINI_UPDATE_INTERVAL = "ftUpdateRemoteConfigWithMiniUpdateInterval"
+        const val METHOD_REMOTE_CONFIG_CALLBACK = "ftRemoteConfigCallback"
 
         const val METHOD_BIND_USER = "ftBindUser"
         const val METHOD_UNBIND_USER = "ftUnBindUser"
@@ -103,6 +114,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
 
         const val METHOD_LOG_CONFIG = "ftLogConfig"
         const val METHOD_LOGGING = "ftLogging"
+        const val METHOD_LOGGING_WITH_STATUS_STRING = "ftLoggingWithStatusString"
 
         const val METHOD_RUM_CONFIG = "ftRumConfig"
         const val METHOD_RUM_START_ACTION = "ftRumStartAction"
@@ -142,6 +154,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
         const val KEY_LINE_DATA_MODIFIER = "lineDataModifier"
         const val KEY_ENABLE_REMOTE_CONFIGURATION = "enableRemoteConfiguration"
         const val KEY_REMOTE_CONFIG_MINI_UPDATE_INTERVAL = "remoteConfigMiniUpdateInterval"
+        const val KEY_REMOTE_CONFIG_OVERRIDE_RULES = "remoteConfigOverrideRules"
         const val KEY_ENABLE_TRACE_WEBVIEW = "enableTraceWebView"
         const val KEY_ALLOW_WEBVIEW_HOST = "allowWebViewHost"
 
@@ -165,6 +178,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
         const val KEY_DETECT_FREQUENCY = "detectFrequency"
         const val KEY_RUM_CACHE_DISCARD = "rumCacheDiscard"
         const val KEY_RUM_CACHE_LIMIT_COUNT = "rumCacheLimitCount"
+        const val KEY_ENABLE_RESOURCE_HOST_IP = "enableResourceHostIP"
 
         const val KEY_LOG_TYPE = "logType"
         const val KEY_ENABLE_CUSTOM_LOG = "enableCustomLog"
@@ -222,6 +236,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 val remoteConfigMiniUpdateInterval: Number? = call.argument<Number>(
                     KEY_REMOTE_CONFIG_MINI_UPDATE_INTERVAL
                 )
+                remoteConfigOverrideRules = call.argument(KEY_REMOTE_CONFIG_OVERRIDE_RULES)
 
                 val sdkConfig =
                     if (datakitUrl != null) FTSDKConfig.builder(datakitUrl) else FTSDKConfig.builder(
@@ -312,9 +327,25 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 if (enableRemoteConfiguration != null) {
                     sdkConfig.setRemoteConfiguration(enableRemoteConfiguration)
                 }
+                remoteConfigurationEnabled = sdkConfig.isRemoteConfiguration
 
                 if (remoteConfigMiniUpdateInterval != null) {
                     sdkConfig.setRemoteConfigMiniUpdateInterval(remoteConfigMiniUpdateInterval.toInt())
+                    this.remoteConfigMiniUpdateInterval = remoteConfigMiniUpdateInterval.toInt()
+                } else {
+                    this.remoteConfigMiniUpdateInterval = sdkConfig.remoteConfigMiniUpdateInterval
+                }
+
+                if (remoteConfigurationEnabled) {
+                    sdkConfig.setRemoteConfigurationCallBack(object : FTRemoteConfigManager.FetchResult() {
+                        override fun onConfigSuccessFetched(configBean: RemoteConfigBean, jsonConfig: String): RemoteConfigBean? {
+                            return applyRemoteConfigOverrideRules(configBean, jsonConfig, remoteConfigOverrideRules).first
+                        }
+
+                        override fun onResult(success: Boolean) {
+                            emitRemoteConfigResult(createRemoteConfigResult("auto", success, null, null, null, null))
+                        }
+                    })
                 }
 
                 FTSdk.install(sdkConfig)
@@ -335,6 +366,33 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
             METHOD_FLUSH_SYNC_DATA -> {
                 FTSdk.flushSyncData()
                 result.success(null)
+            }
+
+            METHOD_SET_DATAKIT_URL -> {
+                val datakitUrl: String? = call.argument<String>(KEY_DATAKIT_URL)
+                if (!datakitUrl.isNullOrEmpty()) {
+                    FTSdk.setDatakitUrl(datakitUrl)
+                }
+                result.success(null)
+            }
+
+            METHOD_SET_DATAWAY_URL -> {
+                val datawayUrl: String? = call.argument<String>(KEY_DATAWAY_URL)
+                val cliToken: String? = call.argument<String>(KEY_CLI_TOKEN)
+                if (!datawayUrl.isNullOrEmpty() && !cliToken.isNullOrEmpty()) {
+                    FTSdk.setDatawayUrl(datawayUrl, cliToken)
+                }
+                result.success(null)
+            }
+
+            METHOD_UPDATE_REMOTE_CONFIG -> {
+                updateRemoteConfig(remoteConfigMiniUpdateInterval, remoteConfigOverrideRules, result)
+            }
+
+            METHOD_UPDATE_REMOTE_CONFIG_WITH_MINI_UPDATE_INTERVAL -> {
+                val interval: Number? = call.argument<Number>("interval")
+                val rules: List<Map<String, Any?>>? = call.argument(KEY_REMOTE_CONFIG_OVERRIDE_RULES)
+                updateRemoteConfig(interval?.toInt() ?: remoteConfigMiniUpdateInterval, rules ?: remoteConfigOverrideRules, result)
             }
 
             METHOD_RUM_CONFIG -> {
@@ -370,6 +428,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 val allowWebViewHost: List<String>? = call.argument<List<String>>(
                     KEY_ALLOW_WEBVIEW_HOST
                 )
+                val enableResourceHostIP: Boolean? = call.argument<Boolean>(KEY_ENABLE_RESOURCE_HOST_IP)
 
 
                 val rumConfig = FTRUMConfig().setRumAppId(rumAppId)
@@ -449,6 +508,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 if (allowWebViewHost != null) {
                     val arr: Array<String?> = allowWebViewHost.toTypedArray()
                     rumConfig.setAllowWebViewHost(arr)
+                }
+
+                if (enableResourceHostIP != null) {
+                    rumConfig.setEnableResourceHostIP(enableResourceHostIP)
                 }
 
                 FTSdk.initRUMWithConfig(rumConfig)
@@ -697,6 +760,15 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 result.success(null)
             }
 
+            METHOD_LOGGING_WITH_STATUS_STRING -> {
+                val content: String = call.argument<String>("content") ?: ""
+                val status: String = call.argument<String>("status") ?: ""
+                val mapProperty: Map<String, Any?>? = call.argument("property")
+                val property: HashMap<String, Any?>? = mapProperty?.let { HashMap(mapProperty) }
+                FTLogger.getInstance().logBackground(content, status, property)
+                result.success(null)
+            }
+
             METHOD_TRACE_CONFIG -> {
                 val sampleRate: Double? = call.argument<Double>(KEY_SAMPLE_RATE)
                 val traceType = call.argument<Int>(KEY_TRACE_TYPE)
@@ -853,6 +925,130 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 result.notImplemented()
             }
         }
+    }
+
+    private fun updateRemoteConfig(interval: Int, rules: List<Map<String, Any?>>?, result: MethodChannel.Result) {
+        if (!remoteConfigurationEnabled) {
+            result.success(createRemoteConfigResult("manual", false, null, null, "remote_configuration_disabled", "Remote configuration is not enabled"))
+            return
+        }
+
+        var rawJson: String? = null
+        var appliedRuleIds: List<String>? = null
+        FTSdk.updateRemoteConfig(interval, object : FTRemoteConfigManager.FetchResult() {
+            override fun onConfigSuccessFetched(configBean: RemoteConfigBean, jsonConfig: String): RemoteConfigBean? {
+                val overrideResult = applyRemoteConfigOverrideRules(configBean, jsonConfig, rules)
+                rawJson = overrideResult.first.toJsonString()
+                appliedRuleIds = overrideResult.second
+                return overrideResult.first
+            }
+
+            override fun onResult(success: Boolean) {
+                result.success(createRemoteConfigResult("manual", success, rawJson, appliedRuleIds, null, null))
+            }
+        })
+    }
+
+    private fun emitRemoteConfigResult(payload: Map<String, Any?>) {
+        handler?.post {
+            channel.invokeMethod(METHOD_REMOTE_CONFIG_CALLBACK, payload)
+        }
+    }
+
+    private fun createRemoteConfigResult(
+        triggerType: String,
+        success: Boolean,
+        rawJson: String?,
+        appliedRuleIds: List<String>?,
+        errorCode: String?,
+        errorMessage: String?
+    ): Map<String, Any?> {
+        val payload = hashMapOf<String, Any?>(
+            "triggerType" to triggerType,
+            "success" to success,
+            "platform" to "android",
+            "timestamp" to System.currentTimeMillis()
+        )
+        if (rawJson != null) payload["rawJson"] = rawJson
+        if (!appliedRuleIds.isNullOrEmpty()) payload["appliedOverrideRuleIds"] = appliedRuleIds
+        if (errorCode != null) payload["errorCode"] = errorCode
+        if (errorMessage != null) payload["errorMessage"] = errorMessage
+        return payload
+    }
+
+    private fun applyRemoteConfigOverrideRules(
+        configBean: RemoteConfigBean,
+        jsonConfig: String?,
+        rules: List<Map<String, Any?>>?
+    ): Pair<RemoteConfigBean, List<String>> {
+        if (jsonConfig.isNullOrEmpty() || rules.isNullOrEmpty()) {
+            return Pair(configBean, emptyList())
+        }
+        val appliedIds = mutableListOf<String>()
+        val jsonObject = try {
+            JSONObject(jsonConfig)
+        } catch (e: Exception) {
+            return Pair(configBean, emptyList())
+        }
+
+        rules.forEach { rule ->
+            val enabled = rule["enabled"] as? Boolean ?: true
+            if (!enabled) return@forEach
+            val match = rule["match"] as? Map<*, *> ?: return@forEach
+            val customKeys = match["customKeys"] as? Map<*, *> ?: return@forEach
+            if (!matchesCustomKeys(jsonObject, customKeys)) return@forEach
+            val override = rule["override"] as? Map<*, *> ?: return@forEach
+            applyRemoteConfigOverride(configBean, override)
+            (rule["id"] as? String)?.let { appliedIds.add(it) }
+        }
+        return Pair(configBean, appliedIds)
+    }
+
+    private fun matchesCustomKeys(jsonObject: JSONObject, customKeys: Map<*, *>): Boolean {
+        customKeys.forEach { (key, expected) ->
+            val keyString = key?.toString() ?: return false
+            if (!jsonObject.has(keyString)) return false
+            val actual = jsonObject.opt(keyString)?.toString() ?: return false
+            if (expected is Map<*, *>) {
+                val contains = expected["contains"]?.toString() ?: return false
+                if (!actual.contains(contains)) return false
+            } else if (actual != expected?.toString()) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun applyRemoteConfigOverride(configBean: RemoteConfigBean, override: Map<*, *>) {
+        (override["env"] as? String)?.let { configBean.setEnv(it) }
+        (override["serviceName"] as? String)?.let { configBean.setServiceName(it) }
+        (override["autoSync"] as? Boolean)?.let { configBean.setAutoSync(it) }
+        (override["compressIntakeRequests"] as? Boolean)?.let { configBean.setCompressIntakeRequests(it) }
+        (override["syncPageSize"] as? Number)?.let { configBean.setSyncPageSize(it.toInt()) }
+        (override["syncSleepTime"] as? Number)?.let { configBean.setSyncSleepTime(it.toInt()) }
+        (override["rumSampleRate"] as? Number)?.let { configBean.setRumSampleRate(it.toFloat()) }
+        (override["rumSessionOnErrorSampleRate"] as? Number)?.let { configBean.setRumSessionOnErrorSampleRate(it.toFloat()) }
+        (override["rumEnableTraceUserAction"] as? Boolean)?.let { configBean.setRumEnableTraceUserAction(it) }
+        (override["rumEnableTraceUserView"] as? Boolean)?.let { configBean.setRumEnableTraceUserView(it) }
+        (override["rumEnableTraceUserResource"] as? Boolean)?.let { configBean.setRumEnableTraceUserResource(it) }
+        (override["rumEnableResourceHostIP"] as? Boolean)?.let { configBean.setRumEnableResourceHostIP(it) }
+        (override["rumEnableTrackAppUIBlock"] as? Boolean)?.let { configBean.setRumEnableTrackAppUIBlock(it) }
+        (override["rumBlockDurationMs"] as? Number)?.let { configBean.setRumBlockDurationMs(it.toLong()) }
+        (override["rumEnableTrackAppCrash"] as? Boolean)?.let { configBean.setRumEnableTrackAppCrash(it) }
+        (override["rumEnableTrackAppANR"] as? Boolean)?.let { configBean.setRumEnableTrackAppANR(it) }
+        (override["rumEnableTraceWebView"] as? Boolean)?.let { configBean.setRumEnableTraceWebView(it) }
+        (override["rumAllowWebViewHost"] as? List<*>)?.let { list ->
+            configBean.setRumAllowWebViewHost(list.map { it.toString() }.toTypedArray())
+        }
+        (override["traceSampleRate"] as? Number)?.let { configBean.setTraceSampleRate(it.toFloat()) }
+        (override["traceEnableAutoTrace"] as? Boolean)?.let { configBean.setTraceEnableAutoTrace(it) }
+        (override["traceType"] as? String)?.let { configBean.setTraceType(it) }
+        (override["logSampleRate"] as? Number)?.let { configBean.setLogSampleRate(it.toFloat()) }
+        (override["logLevelFilters"] as? List<*>)?.let { list ->
+            configBean.setLogLevelFilters(list.map { it.toString() }.toTypedArray())
+        }
+        (override["logEnableCustomLog"] as? Boolean)?.let { configBean.setLogEnableCustomLog(it) }
+        (override["logEnableConsoleLog"] as? Boolean)?.let { configBean.setLogEnableConsoleLog(it) }
     }
 
     private fun getHashMap(header: Map<String, Any?>): HashMap<String, List<String>> {

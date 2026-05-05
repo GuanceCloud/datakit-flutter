@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 
 class LoggingPage extends StatefulWidget {
-
   @override
   _LoggingPageState createState() => _LoggingPageState();
 }
@@ -18,31 +17,32 @@ class _LoggingPageState extends State<LoggingPage> {
         children: <Widget>[
           ListTile(
             title: Text("Log Status: info"),
-            onTap: (){
-              FTLogger().logging("info log content", FTLogStatus.info,property: {"logger_property": "ft_value"});
+            onTap: () {
+              FTLogger().logging("info log content", FTLogStatus.info,
+                  property: {"logger_property": "ft_value"});
             },
           ),
           ListTile(
             title: Text("Log Status: warning"),
-            onTap: (){
+            onTap: () {
               FTLogger().logging("warning log content", FTLogStatus.warning);
             },
           ),
           ListTile(
             title: Text("Log Status: error"),
-            onTap: (){
+            onTap: () {
               FTLogger().logging("error log content", FTLogStatus.error);
             },
           ),
           ListTile(
             title: Text("Log Status: critical"),
-            onTap: (){
+            onTap: () {
               FTLogger().logging("critical log content", FTLogStatus.critical);
             },
           ),
           ListTile(
             title: Text("Log Status: ok"),
-            onTap: (){
+            onTap: () {
               FTLogger().logging("ok log content", FTLogStatus.ok);
             },
           )

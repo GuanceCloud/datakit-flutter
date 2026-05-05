@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:collection';
 
 import 'package:ft_mobile_agent_flutter/version.dart';
 
@@ -11,6 +10,57 @@ export 'ft_logger.dart';
 export 'ft_route_observer.dart';
 export 'ft_rum.dart';
 export 'ft_tracing.dart';
+
+typedef FTRemoteConfigListener = void Function(FTRemoteConfigResult result);
+
+class FTRemoteConfigResult {
+  FTRemoteConfigResult({
+    required this.triggerType,
+    required this.success,
+    required this.platform,
+    required this.timestamp,
+    this.rawJson,
+    this.errorCode,
+    this.errorMessage,
+    this.appliedOverrideRuleIds,
+  });
+
+  final String triggerType;
+  final bool success;
+  final String platform;
+  final int timestamp;
+  final String? rawJson;
+  final Object? errorCode;
+  final String? errorMessage;
+  final List<String>? appliedOverrideRuleIds;
+
+  factory FTRemoteConfigResult.fromMap(Map<dynamic, dynamic> map) {
+    final ids = map['appliedOverrideRuleIds'];
+    return FTRemoteConfigResult(
+      triggerType: map['triggerType']?.toString() ?? '',
+      success: map['success'] == true,
+      platform: map['platform']?.toString() ?? '',
+      timestamp: (map['timestamp'] as num?)?.toInt() ?? 0,
+      rawJson: map['rawJson']?.toString(),
+      errorCode: map['errorCode'],
+      errorMessage: map['errorMessage']?.toString(),
+      appliedOverrideRuleIds:
+          ids is List ? ids.map((e) => e.toString()).toList() : null,
+    );
+  }
+
+  Map<String, dynamic> toMap() => <String, dynamic>{
+        'triggerType': triggerType,
+        'success': success,
+        'platform': platform,
+        'timestamp': timestamp,
+        if (rawJson != null) 'rawJson': rawJson,
+        if (errorCode != null) 'errorCode': errorCode,
+        if (errorMessage != null) 'errorMessage': errorMessage,
+        if (appliedOverrideRuleIds != null)
+          'appliedOverrideRuleIds': appliedOverrideRuleIds,
+      };
+}
 
 class FTMobileFlutter {
   /// Thread-safe global properties dictionary that will be automatically merged
@@ -78,6 +128,7 @@ class FTMobileFlutter {
       Map<String, Map<String, Object>>? lineDataModifier,
       bool? enableRemoteConfiguration,
       int? remoteConfigMiniUpdateInterval,
+      List<Map<String, Object?>>? remoteConfigOverrideRules,
       List<String>? iOSGroupIdentifiers}) async {
     Map<String, dynamic> map = {};
     map["datakitUrl"] = serverUrl;
@@ -115,6 +166,7 @@ class FTMobileFlutter {
     map["lineDataModifier"] = lineDataModifier;
     map["enableRemoteConfiguration"] = enableRemoteConfiguration;
     map["remoteConfigMiniUpdateInterval"] = remoteConfigMiniUpdateInterval;
+    map["remoteConfigOverrideRules"] = remoteConfigOverrideRules;
     map["pkgInfo"] = packageVersion;
 
     // set custom HttpOverrides for HTTP tracing if provided
@@ -123,6 +175,50 @@ class FTMobileFlutter {
     if (Platform.isAndroid) {
       _configChannel();
     }
+  }
+
+  /// Dynamically set the Datakit upload URL after SDK initialization.
+  static Future<void> setDatakitURL(String datakitUrl) async {
+    return await channel.invokeMethod(
+        methodSetDatakitUrl, <String, dynamic>{'datakitUrl': datakitUrl});
+  }
+
+  /// Dynamically set the Dataway upload URL and client token after SDK initialization.
+  static Future<void> setDatawayURL(String datawayUrl, String cliToken) async {
+    return await channel.invokeMethod(methodSetDatawayUrl,
+        <String, dynamic>{'datawayUrl': datawayUrl, 'cliToken': cliToken});
+  }
+
+  /// Update remote configuration with the SDK configured minimum interval.
+  static Future<FTRemoteConfigResult> updateRemoteConfig() async {
+    final Map<dynamic, dynamic> data =
+        await channel.invokeMethod(methodUpdateRemoteConfig);
+    return FTRemoteConfigResult.fromMap(data);
+  }
+
+  /// Update remote configuration with a custom minimum interval.
+  static Future<FTRemoteConfigResult> updateRemoteConfigWithMiniUpdateInterval(
+      int interval,
+      {List<Map<String, Object?>>? remoteConfigOverrideRules}) async {
+    final Map<dynamic, dynamic> data = await channel.invokeMethod(
+        methodUpdateRemoteConfigWithMiniUpdateInterval, <String, dynamic>{
+      'interval': interval,
+      'remoteConfigOverrideRules': remoteConfigOverrideRules,
+    });
+    return FTRemoteConfigResult.fromMap(data);
+  }
+
+  static final List<FTRemoteConfigListener> _remoteConfigListeners =
+      <FTRemoteConfigListener>[];
+
+  /// Listen for automatic remote configuration updates triggered by native SDK.
+  static void addRemoteConfigListener(FTRemoteConfigListener listener) {
+    _remoteConfigListeners.add(listener);
+    _configChannel();
+  }
+
+  static void removeRemoteConfigListener(FTRemoteConfigListener listener) {
+    _remoteConfigListeners.remove(listener);
   }
 
   /// Bind user
@@ -192,6 +288,7 @@ class FTMobileFlutter {
       void Function(String level, String tag, String message) handler) async {
     if (!Platform.isAndroid) return null;
     FTMobileFlutter.innerLogHandler = handler;
+    _configChannel();
     return await channel.invokeMethod(methodSetInnerLogHandler);
   }
 
@@ -226,7 +323,7 @@ class FTMobileFlutter {
 
   /// Clear cache
   static Future<void> clearAllData() async {
-    return await channel.invokeMethod(methodAppendLogGlobalContext);
+    return await channel.invokeMethod(methodClearAllData);
   }
 
   /// ShutDown SDK
@@ -250,6 +347,15 @@ class FTMobileFlutter {
           String tag = args["tag"] ?? "";
           String message = args["message"] ?? "";
           FTMobileFlutter.innerLogHandler?.call(level, tag, message);
+          break;
+        case methodRemoteConfigCallback:
+          if (args is Map) {
+            final result = FTRemoteConfigResult.fromMap(args);
+            for (final listener
+                in List<FTRemoteConfigListener>.from(_remoteConfigListeners)) {
+              listener(result);
+            }
+          }
           break;
         default:
           print('no method handler for method ${call.method}');

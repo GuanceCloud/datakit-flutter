@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 
-
 /// Set class name to [RouteSettings] name for use in [FTRUMManager] starView
 class FTMaterialPageRoute<T> extends MaterialPageRoute<T> {
   FTMaterialPageRoute({
