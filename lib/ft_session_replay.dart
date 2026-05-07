@@ -1,4 +1,12 @@
 import 'const.dart';
+import 'src/ft_session_replay.dart';
+
+export 'src/ft_session_replay.dart' show FTSessionReplay;
+export 'src/widgets.dart' show SessionReplayCapture, SessionReplayPrivacy;
+
+typedef TouchPrivacyLevel = FTTouchPrivacyLevel;
+typedef TextAndInputPrivacyLevel = FTTextAndInputPrivacyLevel;
+typedef ImagePrivacyLevel = FTImagePrivacyLevel;
 
 class FTSessionReplayConfig {
   FTSessionReplayConfig({
@@ -75,5 +83,6 @@ class FTSessionReplayManager {
 
   Future<void> setConfig(FTSessionReplayConfig config) async {
     await channel.invokeMethod(methodSessionReplayConfig, config.toMap());
+    await FTSessionReplay.init(config);
   }
 }

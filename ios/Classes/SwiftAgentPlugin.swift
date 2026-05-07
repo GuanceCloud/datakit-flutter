@@ -43,6 +43,13 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     static let METHOD_RUM_ADD_RESOURCE = "ftRumAddResource"
     static let METHOD_RUM_STOP_RESOURCE = "ftRumStopResource"
     static let METHOD_SESSION_REPLAY_CONFIG = "ftSessionReplayConfig"
+    static let METHOD_SESSION_REPLAY_GET_RUM_CONTEXT = "ftSessionReplayGetRumContext"
+    static let METHOD_SESSION_REPLAY_SET_HAS_REPLAY = "ftSessionReplaySetHasReplay"
+    static let METHOD_SESSION_REPLAY_SET_RECORD_COUNT = "ftSessionReplaySetRecordCount"
+    static let METHOD_SESSION_REPLAY_WRITE_SEGMENT = "ftSessionReplayWriteSegment"
+    static let METHOD_SESSION_REPLAY_TELEMETRY_DEBUG = "ftSessionReplayTelemetryDebug"
+    static let METHOD_SESSION_REPLAY_TELEMETRY_ERROR = "ftSessionReplayTelemetryError"
+    static let METHOD_SESSION_REPLAY_SAVE_IMAGE_RESOURCE = "ftSessionReplaySaveImageResource"
 
     static let METHOD_TRACE_CONFIG = "ftTraceConfig"
     static let METHOD_GET_TRACE_HEADER = "ftTraceGetHeader"
@@ -277,6 +284,46 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 FTFlutterLogBridge.log(content, status: status, property: property)
             }
             result(nil)
+
+        case SwiftAgentPlugin.METHOD_SESSION_REPLAY_GET_RUM_CONTEXT:
+            result(performSessionReplaySelector("currentFlutterRUMContext"))
+        case SwiftAgentPlugin.METHOD_SESSION_REPLAY_SET_HAS_REPLAY:
+            let hasReplay = context["hasReplay"] as? Bool ?? true
+            _ = performSessionReplaySelector("setFlutterHasReplayNumber:", NSNumber(value: hasReplay))
+            result(nil)
+        case SwiftAgentPlugin.METHOD_SESSION_REPLAY_SET_RECORD_COUNT:
+            if let viewId = context["viewId"] as? String,
+               let count = context["count"] as? NSNumber {
+                _ = performSessionReplaySelector("setFlutterRecordCountForViewID:countNumber:", viewId as NSString, count)
+            }
+            result(nil)
+        case SwiftAgentPlugin.METHOD_SESSION_REPLAY_WRITE_SEGMENT:
+            if let viewId = context["viewId"] as? String,
+               let segment = context["segment"] as? String {
+                _ = performSessionReplaySelector("writeFlutterSegment:viewID:", segment as NSString, viewId as NSString)
+            }
+            result(nil)
+        case SwiftAgentPlugin.METHOD_SESSION_REPLAY_TELEMETRY_DEBUG:
+            if let message = context["message"] as? String {
+                FTMobileAgent.sharedInstance().logging(message, status: .statusInfo)
+            }
+            result(nil)
+        case SwiftAgentPlugin.METHOD_SESSION_REPLAY_TELEMETRY_ERROR:
+            if let message = context["message"] as? String {
+                FTMobileAgent.sharedInstance().logging(message, status: .statusError)
+            }
+            result(nil)
+        case SwiftAgentPlugin.METHOD_SESSION_REPLAY_SAVE_IMAGE_RESOURCE:
+            let typedData = context["bytes"] as? FlutterStandardTypedData
+            let data = typedData?.data ?? (context["bytes"] as? Data)
+            let width = (context["width"] as? NSNumber) ?? (context["width"] as? Int).map { NSNumber(value: $0) }
+            let height = (context["height"] as? NSNumber) ?? (context["height"] as? Int).map { NSNumber(value: $0) }
+            if let data = data, let width = width, let height = height {
+                let info: NSDictionary = ["bytes": data, "width": width, "height": height]
+                result(performSessionReplaySelector("saveFlutterImageResourceWithInfo:", info))
+            } else {
+                result(nil)
+            }
         case SwiftAgentPlugin.METHOD_TRACE_CONFIG:
             let traceConfig = FTTraceConfig()
             if let sampleRate = context["sampleRate"] as? NSNumber {
@@ -506,6 +553,14 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         default:
             result(FlutterMethodNotImplemented)
         }
+    }
+
+
+    private func performSessionReplaySelector(_ selectorName: String, _ object: AnyObject? = nil, _ object2: AnyObject? = nil) -> Any? {
+        let replay = FTRumSessionReplay.shared()
+        let selector = NSSelectorFromString(selectorName)
+        guard replay.responds(to: selector) else { return nil }
+        return replay.perform(selector, with: object, with: object2)?.takeUnretainedValue()
     }
 
     private func updateRemoteConfig(interval: Int, rules: [[String: Any]]?, result: @escaping FlutterResult) {

@@ -212,6 +212,7 @@ void main() {
   });
 
   tearDown(() {
+    FTSessionReplay.resetForTesting();
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (null));
   });

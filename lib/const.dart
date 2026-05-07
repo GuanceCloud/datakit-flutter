@@ -36,6 +36,13 @@ const methodRumStartResource = "ftRumStartResource";
 const methodRumStopResource = "ftRumStopResource";
 const methodRumAddResource = "ftRumAddResource";
 const methodSessionReplayConfig = "ftSessionReplayConfig";
+const methodSessionReplayGetRumContext = "ftSessionReplayGetRumContext";
+const methodSessionReplaySetHasReplay = "ftSessionReplaySetHasReplay";
+const methodSessionReplaySetRecordCount = "ftSessionReplaySetRecordCount";
+const methodSessionReplayWriteSegment = "ftSessionReplayWriteSegment";
+const methodSessionReplayTelemetryDebug = "ftSessionReplayTelemetryDebug";
+const methodSessionReplayTelemetryError = "ftSessionReplayTelemetryError";
+const methodSessionReplaySaveImageResource = "ftSessionReplaySaveImageResource";
 
 const methodTraceConfig = "ftTraceConfig";
 const methodTrace = "ftTrace";
