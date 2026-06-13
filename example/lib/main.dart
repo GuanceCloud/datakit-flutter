@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:agent_example/rum_page.dart';
+import 'package:agent_example/session_replay_page.dart';
 import 'package:agent_example/tracing_page.dart';
 import 'package:agent_example/view_without_route_name_page.dart';
 import 'package:agent_example/webview_page.dart';
@@ -23,7 +24,10 @@ void main() async {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
     await sdkInit();
-    runApp(MyApp());
+    runApp(SessionReplayCapture(
+      key: const ValueKey("session-replay-root"),
+      child: MyApp(),
+    ));
   }, (Object error, StackTrace stack) {
     // RUM Error: Automatically capture error data
     FTRUMManager().addError(error, stack);
@@ -78,6 +82,14 @@ Future<void> sdkInit() async {
       enableTrackNativeCrash: true,
       errorMonitorType: ErrorMonitorType.all.value,
       deviceMetricsMonitorType: DeviceMetricsMonitorType.all.value);
+  await FTSessionReplayManager().setConfig(FTSessionReplayConfig(
+    sampleRate: 1.0,
+    sessionReplayOnErrorSampleRate: 0.0,
+    touchPrivacy: FTTouchPrivacyLevel.show,
+    textAndInputPrivacy: FTTextAndInputPrivacyLevel.maskSensitiveInputs,
+    imagePrivacy: FTImagePrivacyLevel.maskNone,
+    enableLinkRUMKeys: const ["wgt_id"],
+  ));
   FTMobileFlutter.trackEventFromExtension(
       "group.com.ft.sdk.flutter.agentExample.TodayDemo");
 
@@ -122,6 +134,7 @@ class MyApp extends StatelessWidget {
         // Route navigation
         'logging': (BuildContext context) => LoggingPage(),
         'rum': (BuildContext context) => RUMPage(),
+        'session_replay': (BuildContext context) => SessionReplayPage(),
         'tracing_custom': (BuildContext context) => CustomTracingPage(),
         'tracing_auto': (BuildContext context) => AutoTracingPage(),
         'webview': (BuildContext context) => WebViewPage(url: webViewViewUrl),
@@ -183,6 +196,7 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
                 _buildTracerCustomWidget(),
                 _buildTracerAutoWidget(),
                 _buildRUMWidget(),
+                _buildSessionReplayWidget(),
                 _buildNoNavigatorObserversWidget(),
                 _buildConfigRouteSettingWidget(),
                 _buildLazyInitWidget(),
@@ -283,6 +297,15 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
       child: Text("RUM Data Collection"),
       onPressed: () {
         Navigator.pushNamed(context, "rum");
+      },
+    );
+  }
+
+  Widget _buildSessionReplayWidget() {
+    return ElevatedButton(
+      child: Text("Session Replay"),
+      onPressed: () {
+        Navigator.pushNamed(context, "session_replay");
       },
     );
   }
