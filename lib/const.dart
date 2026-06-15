@@ -43,6 +43,10 @@ const methodSessionReplayWriteSegment = "ftSessionReplayWriteSegment";
 const methodSessionReplayTelemetryDebug = "ftSessionReplayTelemetryDebug";
 const methodSessionReplayTelemetryError = "ftSessionReplayTelemetryError";
 const methodSessionReplaySaveImageResource = "ftSessionReplaySaveImageResource";
+const MethodChannel sessionReplayStateChannel =
+    const MethodChannel('ft_mobile_agent_flutter/session_replay');
+const methodSessionReplaySampleStateChanged =
+    "ftSessionReplaySampleStateChanged";
 
 const methodTraceConfig = "ftTraceConfig";
 const methodTrace = "ftTrace";

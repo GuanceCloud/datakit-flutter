@@ -18,9 +18,24 @@ import 'diff.dart';
 /// including creating diffs for non full records. When complete, the processor sends
 /// the records to the native method channel so they can be serialized and sent to intake.
 class ProcessorWorker {
+  @visibleForTesting
+  static const fullSnapshotInterval = Duration(seconds: 20);
+
   ViewTreeSnapshot? _lastSnapshot;
   List<SRWireframe>? _lastWireframes;
+  DateTime? _lastFullSnapshotAt;
+  bool _sampledForErrorReplay = false;
   final Map<String, int> _recordCountByViewId = {};
+
+  void reset() {
+    _lastSnapshot = null;
+    _lastWireframes = null;
+    _lastFullSnapshotAt = null;
+  }
+
+  void setSampledForErrorReplay(bool sampledForErrorReplay) {
+    _sampledForErrorReplay = sampledForErrorReplay;
+  }
 
   Future<void> processSnapshot(CaptureResult snapshot) async {
     final viewSnapshot = snapshot.viewTreeSnapshot;
@@ -32,10 +47,15 @@ class ProcessorWorker {
 
     final timestamp = viewSnapshot.date.toUtc().millisecondsSinceEpoch;
 
-    if (viewSnapshot.context.applicationId !=
+    final isNewView = viewSnapshot.context.applicationId !=
             _lastSnapshot?.context.applicationId ||
         viewSnapshot.context.sessionId != _lastSnapshot?.context.sessionId ||
-        viewSnapshot.context.viewId != _lastSnapshot?.context.viewId) {
+        viewSnapshot.context.viewId != _lastSnapshot?.context.viewId;
+    final isTimeForFullSnapshot =
+        _isTimeForFullSnapshot(viewSnapshot.date, isNewView);
+    final fullSnapshotRequired = isNewView || isTimeForFullSnapshot;
+
+    if (fullSnapshotRequired) {
       // Generate full snapshot
       records.add(
         SRMetaRecord(
@@ -82,6 +102,9 @@ class ProcessorWorker {
         applicationID: viewSnapshot.context.applicationId,
         sessionID: viewSnapshot.context.sessionId,
         viewID: viewId,
+        globalContext: viewSnapshot.context.globalContext.isEmpty
+            ? null
+            : viewSnapshot.context.globalContext,
       );
 
       var totalRecordCount = _recordCountByViewId[viewId] ?? 0;
@@ -111,6 +134,21 @@ class ProcessorWorker {
 
     _lastSnapshot = viewSnapshot;
     _lastWireframes = wireframes;
+  }
+
+  bool _isTimeForFullSnapshot(DateTime snapshotTime, bool isNewView) {
+    if (!_sampledForErrorReplay) {
+      return false;
+    }
+    if (isNewView || _lastFullSnapshotAt == null) {
+      _lastFullSnapshotAt = snapshotTime;
+      return true;
+    }
+    if (snapshotTime.difference(_lastFullSnapshotAt!) >= fullSnapshotInterval) {
+      _lastFullSnapshotAt = snapshotTime;
+      return true;
+    }
+    return false;
   }
 
   @visibleForTesting

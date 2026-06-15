@@ -19,6 +19,14 @@ class SessionReplayProcessor with WidgetsBindingObserver {
     WidgetsBinding.instance.removeObserver(this);
   }
 
+  void reset() {
+    _worker.reset();
+  }
+
+  void setSampledForErrorReplay(bool sampledForErrorReplay) {
+    _worker.setSampledForErrorReplay(sampledForErrorReplay);
+  }
+
   void process(CaptureResult captureResult) {
     if (_isProcessing) return;
     _isProcessing = true;

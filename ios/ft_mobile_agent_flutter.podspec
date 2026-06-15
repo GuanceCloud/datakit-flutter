@@ -15,8 +15,8 @@ Plugin based on Guance Cloud iOS Android
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.dependency 'FTMobileSDK/FTMobileAgent', "1.6.3"
-  s.dependency 'FTMobileSDK/FTSessionReplay', "1.6.3"
+  s.dependency 'FTMobileSDK', "1.6.5"
+  s.dependency 'FTMobileSDK/FTSessionReplay', "1.6.5"
   s.ios.deployment_target = '12.0'
 
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }

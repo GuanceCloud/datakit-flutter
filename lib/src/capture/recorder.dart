@@ -288,11 +288,6 @@ class SessionReplayRecorder {
 
   void onContextChanged(RUMContext context) {
     _currentContext = context;
-
-    final viewId = context.viewId;
-    if (viewId != null) {
-      FTSessionReplayPlatform.instance.setHasReplay(viewId, true);
-    }
   }
 
   void _populateElementRecorderMap(List<ElementRecorder> recorders) {

@@ -22,7 +22,7 @@ class FTSessionReplayLogger {
     }
   }
 
-  void sendToDatadog(String message, StackTrace? stackTrace, String? kind) {
+  void sendTelemetry(String message, StackTrace? stackTrace, String? kind) {
     if (kDebugMode) {
       debugPrint('[FT SessionReplay] telemetry: $message');
       if (stackTrace != null) debugPrint(stackTrace.toString());
@@ -39,7 +39,7 @@ Future<T> wrapAsync<T>(
   try {
     return await operation();
   } catch (e, st) {
-    logger.sendToDatadog(
+    logger.sendTelemetry(
       'Session Replay operation $operationName failed: $e',
       st,
       e.runtimeType.toString(),

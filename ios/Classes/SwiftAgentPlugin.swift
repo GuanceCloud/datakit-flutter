@@ -5,9 +5,11 @@ import FTMobileSDK
 public class SwiftAgentPlugin: NSObject, FlutterPlugin {
 
     private var channel: FlutterMethodChannel?
+    private var sessionReplayStateChannel: FlutterMethodChannel?
     private var remoteConfigurationEnabled = false
     private var remoteConfigMiniUpdateInterval = 12 * 60 * 60
     private var remoteConfigOverrideRules: [[String: Any]]?
+    private let sessionReplayBridge: FTSessionReplayBridge = FTDefaultSessionReplayBridge()
 
     static let METHOD_CONFIG = "ftConfig"
     static let METHOD_FLUSH_SYNC_DATA = "ftFlushSyncData"
@@ -50,6 +52,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     static let METHOD_SESSION_REPLAY_TELEMETRY_DEBUG = "ftSessionReplayTelemetryDebug"
     static let METHOD_SESSION_REPLAY_TELEMETRY_ERROR = "ftSessionReplayTelemetryError"
     static let METHOD_SESSION_REPLAY_SAVE_IMAGE_RESOURCE = "ftSessionReplaySaveImageResource"
+    static let METHOD_SESSION_REPLAY_SAMPLE_STATE_CHANGED = "ftSessionReplaySampleStateChanged"
 
     static let METHOD_TRACE_CONFIG = "ftTraceConfig"
     static let METHOD_GET_TRACE_HEADER = "ftTraceGetHeader"
@@ -57,8 +60,16 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "ft_mobile_agent_flutter", binaryMessenger: registrar.messenger())
+        let sessionReplayStateChannel = FlutterMethodChannel(name: "ft_mobile_agent_flutter/session_replay", binaryMessenger: registrar.messenger())
         let instance = SwiftAgentPlugin()
         instance.channel = channel
+        instance.sessionReplayStateChannel = sessionReplayStateChannel
+        instance.sessionReplayBridge.setSampleStateChangedHandler { [weak instance] context in
+            instance?.sessionReplayStateChannel?.invokeMethod(
+                SwiftAgentPlugin.METHOD_SESSION_REPLAY_SAMPLE_STATE_CHANGED,
+                arguments: context
+            )
+        }
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
 
@@ -174,9 +185,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             FTMobileAgent.start(withConfigOptions: config)
 #if FT_SDK_TESTING
             result(test("validateBase:",context,config))
-            return
-#endif
+#else
             result(nil)
+#endif
         case SwiftAgentPlugin.METHOD_FLUSH_SYNC_DATA:
             FTMobileAgent.sharedInstance().flushSyncData()
             result(nil)
@@ -268,9 +279,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             FTMobileAgent.sharedInstance().startLogger(withConfigOptions: logConfig)
 #if FT_SDK_TESTING
             result(test("validateLog:",context,logConfig))
-            return
-#endif
+#else
             result(nil)
+#endif
         case SwiftAgentPlugin.METHOD_LOGGING:
             if let content = context["content"] as? String {
                 let status = context["status"] as? NSNumber ?? NSNumber(value: 0)
@@ -281,49 +292,29 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         case SwiftAgentPlugin.METHOD_LOGGING_WITH_STATUS_STRING:
             if let content = context["content"] as? String, let status = context["status"] as? String {
                 let property = context["property"] as? Dictionary<String, Any> ?? nil
-                FTFlutterLogBridge.log(content, status: status, property: property)
+                FTLogger.shared().log(content, status: status, property: property)
             }
             result(nil)
 
         case SwiftAgentPlugin.METHOD_SESSION_REPLAY_GET_RUM_CONTEXT:
-            result(performSessionReplaySelector("currentFlutterRUMContext"))
+            result(sessionReplayBridge.currentRUMContext())
         case SwiftAgentPlugin.METHOD_SESSION_REPLAY_SET_HAS_REPLAY:
-            let hasReplay = context["hasReplay"] as? Bool ?? true
-            _ = performSessionReplaySelector("setFlutterHasReplayNumber:", NSNumber(value: hasReplay))
+            sessionReplayBridge.setHasReplay(context)
             result(nil)
         case SwiftAgentPlugin.METHOD_SESSION_REPLAY_SET_RECORD_COUNT:
-            if let viewId = context["viewId"] as? String,
-               let count = context["count"] as? NSNumber {
-                _ = performSessionReplaySelector("setFlutterRecordCountForViewID:countNumber:", viewId as NSString, count)
-            }
+            sessionReplayBridge.setRecordCount(context)
             result(nil)
         case SwiftAgentPlugin.METHOD_SESSION_REPLAY_WRITE_SEGMENT:
-            if let viewId = context["viewId"] as? String,
-               let segment = context["segment"] as? String {
-                _ = performSessionReplaySelector("writeFlutterSegment:viewID:", segment as NSString, viewId as NSString)
-            }
+            sessionReplayBridge.writeSegment(context)
             result(nil)
         case SwiftAgentPlugin.METHOD_SESSION_REPLAY_TELEMETRY_DEBUG:
-            if let message = context["message"] as? String {
-                FTMobileAgent.sharedInstance().logging(message, status: .statusInfo)
-            }
+            sessionReplayBridge.telemetryDebug(context)
             result(nil)
         case SwiftAgentPlugin.METHOD_SESSION_REPLAY_TELEMETRY_ERROR:
-            if let message = context["message"] as? String {
-                FTMobileAgent.sharedInstance().logging(message, status: .statusError)
-            }
+            sessionReplayBridge.telemetryError(context)
             result(nil)
         case SwiftAgentPlugin.METHOD_SESSION_REPLAY_SAVE_IMAGE_RESOURCE:
-            let typedData = context["bytes"] as? FlutterStandardTypedData
-            let data = typedData?.data ?? (context["bytes"] as? Data)
-            let width = (context["width"] as? NSNumber) ?? (context["width"] as? Int).map { NSNumber(value: $0) }
-            let height = (context["height"] as? NSNumber) ?? (context["height"] as? Int).map { NSNumber(value: $0) }
-            if let data = data, let width = width, let height = height {
-                let info: NSDictionary = ["bytes": data, "width": width, "height": height]
-                result(performSessionReplaySelector("saveFlutterImageResourceWithInfo:", info))
-            } else {
-                result(nil)
-            }
+            result(sessionReplayBridge.saveImageResource(context))
         case SwiftAgentPlugin.METHOD_TRACE_CONFIG:
             let traceConfig = FTTraceConfig()
             if let sampleRate = context["sampleRate"] as? NSNumber {
@@ -341,9 +332,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             FTMobileAgent.sharedInstance().startTrace(withConfigOptions: traceConfig)
 #if FT_SDK_TESTING
             result(test("validateTrace:",context,traceConfig))
-            return
-#endif
+#else
             result(nil)
+#endif
         case SwiftAgentPlugin.METHOD_GET_TRACE_HEADER:
             let urlStr = context["url"] as! String
             let key = context["key"] as? String
@@ -426,8 +417,10 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 FTMobileAgent.sharedInstance().startRum(withConfigOptions: rumConfig)
 #if FT_SDK_TESTING
                 result(test("validateRUM:",context,rumConfig))
-                return
+#else
+                result(nil)
 #endif
+                return
             }
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_START_ACTION:
@@ -520,48 +513,13 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             FTExternalDataManager.shared().stopResource(withKey: key,property: property)
             result(nil)
         case SwiftAgentPlugin.METHOD_SESSION_REPLAY_CONFIG:
-            let sessionReplayConfig = FTSessionReplayConfig()
-            if let sampleRate = context["sampleRate"] as? NSNumber {
-                sessionReplayConfig.sampleRate = Int32(sampleRate.doubleValue * 100)
-            }
-            if let sessionReplayOnErrorSampleRate = context["sessionReplayOnErrorSampleRate"] as? NSNumber {
-                sessionReplayConfig.sessionReplayOnErrorSampleRate = Int32(sessionReplayOnErrorSampleRate.doubleValue * 100)
-            }
-            if let touchPrivacy = context["touchPrivacy"] as? NSNumber,
-               let mappedTouchPrivacy = FTTouchPrivacyLevel(rawValue: touchPrivacy.uintValue) {
-                sessionReplayConfig.touchPrivacy = mappedTouchPrivacy
-            }
-            if let textAndInputPrivacy = context["textAndInputPrivacy"] as? NSNumber,
-               let mappedTextAndInputPrivacy = FTTextAndInputPrivacyLevel(rawValue: textAndInputPrivacy.uintValue) {
-                sessionReplayConfig.textAndInputPrivacy = mappedTextAndInputPrivacy
-            }
-            if let imagePrivacy = context["imagePrivacy"] as? NSNumber {
-                switch imagePrivacy.intValue {
-                case 0:
-                    sessionReplayConfig.imagePrivacy = .maskNone
-                case 1:
-                    sessionReplayConfig.imagePrivacy = .maskNonBundledOnly
-                default:
-                    sessionReplayConfig.imagePrivacy = .maskAll
-                }
-            }
-            if let enableLinkRUMKeys = context["enableLinkRUMKeys"] as? [String] {
-                sessionReplayConfig.enableLinkRUMKeys = enableLinkRUMKeys
-            }
-            FTRumSessionReplay.shared().start(with: sessionReplayConfig)
+            sessionReplayBridge.config(context)
             result(nil)
         default:
             result(FlutterMethodNotImplemented)
         }
     }
 
-
-    private func performSessionReplaySelector(_ selectorName: String, _ object: AnyObject? = nil, _ object2: AnyObject? = nil) -> Any? {
-        let replay = FTRumSessionReplay.shared()
-        let selector = NSSelectorFromString(selectorName)
-        guard replay.responds(to: selector) else { return nil }
-        return replay.perform(selector, with: object, with: object2)?.takeUnretainedValue()
-    }
 
     private func updateRemoteConfig(interval: Int, rules: [[String: Any]]?, result: @escaping FlutterResult) {
         if !remoteConfigurationEnabled {

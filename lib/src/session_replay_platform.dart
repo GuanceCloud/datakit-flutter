@@ -4,6 +4,16 @@ import 'package:flutter/foundation.dart';
 import '../const.dart';
 import 'rum_context.dart';
 
+class FTSessionReplaySampleState {
+  final bool sampled;
+  final bool sampledForErrorReplay;
+
+  const FTSessionReplaySampleState({
+    required this.sampled,
+    required this.sampledForErrorReplay,
+  });
+}
+
 class FTSessionReplayPlatform {
   static FTSessionReplayPlatform instance = FTMethodChannelSessionReplayPlatform();
 
@@ -15,6 +25,14 @@ class FTSessionReplayPlatform {
   ) async => true;
 
   FutureOr<RUMContext?> getCurrentContext() => null;
+
+  bool get sessionReplaySampled => true;
+
+  bool get sessionReplaySampledForErrorReplay => false;
+
+  void setSampleStateChangedHandler(
+    void Function(FTSessionReplaySampleState state)? handler,
+  ) {}
 
   FutureOr<void> setHasReplay(String viewId, bool hasReplay) {}
 
@@ -38,6 +56,57 @@ class FTSessionReplayPlatform {
 
 class FTMethodChannelSessionReplayPlatform extends FTSessionReplayPlatform {
   final Map<int, String> _resourceIds = <int, String>{};
+  bool _sessionReplaySampled = true;
+  bool _sessionReplaySampledForErrorReplay = false;
+  bool _sampleStateChannelConfigured = false;
+  void Function(FTSessionReplaySampleState state)? _sampleStateChangedHandler;
+
+  @override
+  bool get sessionReplaySampled => _sessionReplaySampled;
+
+  @override
+  bool get sessionReplaySampledForErrorReplay =>
+      _sessionReplaySampledForErrorReplay;
+
+  @override
+  void setSampleStateChangedHandler(
+    void Function(FTSessionReplaySampleState state)? handler,
+  ) {
+    _sampleStateChangedHandler = handler;
+    _ensureSampleStateChannel();
+  }
+
+  void _ensureSampleStateChannel() {
+    if (_sampleStateChannelConfigured) return;
+    _sampleStateChannelConfigured = true;
+    sessionReplayStateChannel.setMethodCallHandler((call) async {
+      if (call.method != methodSessionReplaySampleStateChanged) {
+        return;
+      }
+      final arguments = call.arguments;
+      final sampled = arguments is Map
+          ? (_boolValue(arguments['sampled']) ?? false)
+          : false;
+      final sampledForErrorReplay = arguments is Map
+          ? (_boolValue(arguments['sampledForErrorReplay']) ?? false)
+          : false;
+      _sessionReplaySampled = sampled;
+      _sessionReplaySampledForErrorReplay = sampledForErrorReplay;
+      _sampleStateChangedHandler?.call(FTSessionReplaySampleState(
+        sampled: sampled,
+        sampledForErrorReplay: sampledForErrorReplay,
+      ));
+    });
+  }
+
+  @override
+  Future<bool> enable(
+    Map<String, dynamic> configuration,
+    void Function(RUMContext) onContextChanged,
+  ) async {
+    await channel.invokeMethod(methodSessionReplayConfig, configuration);
+    return true;
+  }
 
   @override
   Future<RUMContext?> getCurrentContext() async {
@@ -153,5 +222,16 @@ class FTMethodChannelSessionReplayPlatform extends FTSessionReplayPlatform {
   String? _stringValue(Object? value) {
     final string = value?.toString();
     return string == null || string.isEmpty ? null : string;
+  }
+
+  bool? _boolValue(Object? value) {
+    if (value is bool) return value;
+    if (value is num) return value != 0;
+    if (value is String) {
+      final normalized = value.toLowerCase();
+      if (normalized == 'true') return true;
+      if (normalized == 'false') return false;
+    }
+    return null;
   }
 }

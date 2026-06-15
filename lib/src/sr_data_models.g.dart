@@ -634,6 +634,7 @@ SREnrichedRecord _$SREnrichedRecordFromJson(Map<String, dynamic> json) =>
       applicationID: json['applicationID'] as String,
       sessionID: json['sessionID'] as String,
       viewID: json['viewID'] as String,
+      globalContext: json['globalContext'] as Map<String, dynamic>?,
     );
 
 Map<String, dynamic> _$SREnrichedRecordToJson(SREnrichedRecord instance) =>
@@ -642,4 +643,6 @@ Map<String, dynamic> _$SREnrichedRecordToJson(SREnrichedRecord instance) =>
       'applicationID': instance.applicationID,
       'sessionID': instance.sessionID,
       'viewID': instance.viewID,
+      if (instance.globalContext != null)
+        'globalContext': instance.globalContext,
     };

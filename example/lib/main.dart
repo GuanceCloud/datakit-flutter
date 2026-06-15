@@ -12,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'ft_get_view_name.dart';
+import 'image_page.dart';
 import 'logging_page.dart';
 
 const serverUrl = String.fromEnvironment("DATAKIT_URL");
@@ -78,6 +79,14 @@ Future<void> sdkInit() async {
       enableTrackNativeCrash: true,
       errorMonitorType: ErrorMonitorType.all.value,
       deviceMetricsMonitorType: DeviceMetricsMonitorType.all.value);
+  await FTSessionReplayManager().setConfig(FTSessionReplayConfig(
+    sampleRate: 1.0,
+    sessionReplayOnErrorSampleRate: 0.0,
+    touchPrivacy: TouchPrivacyLevel.show,
+    textAndInputPrivacy: TextAndInputPrivacyLevel.maskSensitiveInputs,
+    imagePrivacy: ImagePrivacyLevel.maskNone,
+    enableLinkRUMKeys: ["wgt_id", "rum_key"],
+  ));
   FTMobileFlutter.trackEventFromExtension(
       "group.com.ft.sdk.flutter.agentExample.TodayDemo");
 
@@ -100,6 +109,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      builder: (BuildContext context, Widget? child) {
+        return SessionReplayCapture(
+          key: const ValueKey<String>("session-replay-root"),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
       home: HomePage(),
       navigatorObservers: [
         // RUM View: Monitor page lifecycle when using route navigation
@@ -125,6 +140,7 @@ class MyApp extends StatelessWidget {
         'tracing_custom': (BuildContext context) => CustomTracingPage(),
         'tracing_auto': (BuildContext context) => AutoTracingPage(),
         'webview': (BuildContext context) => WebViewPage(url: webViewViewUrl),
+        'images': (BuildContext context) => ImagePage(),
       },
     );
   }
@@ -190,6 +206,7 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
                 _buildDialogWidget(),
                 _buildPopRouteWidget(),
                 _buildImagePicker(),
+                _buildImageDisplayWidget(),
                 _buildGlobalContext(),
                 _buildCleanAllData(),
                 _buildShutDownWidget()
@@ -358,6 +375,15 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
           await picker.pickImage(source: ImageSource.gallery);
         },
         child: Text("Image Picker"));
+  }
+
+  Widget _buildImageDisplayWidget() {
+    return ElevatedButton(
+      child: Text("Image Display"),
+      onPressed: () {
+        Navigator.pushNamed(context, "images");
+      },
+    );
   }
 
   Widget _buildGlobalContext() {

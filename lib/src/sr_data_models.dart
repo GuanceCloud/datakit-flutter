@@ -900,12 +900,15 @@ class SREnrichedRecord {
   final String applicationID;
   final String sessionID;
   final String viewID;
+  @JsonKey(includeIfNull: false)
+  final Map<String, Object?>? globalContext;
 
   SREnrichedRecord({
     required this.records,
     required this.applicationID,
     required this.sessionID,
     required this.viewID,
+    this.globalContext,
   });
 
   factory SREnrichedRecord.fromJson(Map<String, dynamic> json) =>

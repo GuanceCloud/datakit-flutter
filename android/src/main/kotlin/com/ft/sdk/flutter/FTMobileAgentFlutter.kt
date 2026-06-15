@@ -24,7 +24,9 @@ import com.ft.sdk.RUMCacheDiscard
 import com.ft.sdk.SessionReplayManager
 import com.ft.sdk.SyncPageSize
 import com.ft.sdk.TraceType
+import com.ft.sdk.flutter.sessionreplay.FlutterSessionReplaySampleStateBridge
 import com.ft.sdk.sessionreplay.FTSessionReplayConfig
+import com.ft.sdk.sessionreplay.FTSessionReplayFlutterBridgeConfig
 import com.ft.sdk.sessionreplay.ImagePrivacy
 import com.ft.sdk.sessionreplay.SessionReplayInternalCallback
 import com.ft.sdk.sessionreplay.TextAndInputPrivacy
@@ -52,6 +54,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
     /// when the Flutter Engine is detached from the Activity
     private lateinit var channel: MethodChannel
+    private var sessionReplaySampleStateBridge: FlutterSessionReplaySampleStateBridge? = null
 
     private lateinit var application: Application
     private var activity: Activity? = null
@@ -64,9 +67,15 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "ft_mobile_agent_flutter")
+        val mainHandler = Handler(Looper.getMainLooper())
+        sessionReplaySampleStateBridge = FlutterSessionReplaySampleStateBridge(
+            flutterPluginBinding.binaryMessenger,
+            mainHandler,
+            LOG_TAG
+        )
         channel.setMethodCallHandler(this)
         application = flutterPluginBinding.applicationContext as Application
-        handler = Handler(Looper.getMainLooper())
+        handler = mainHandler
 //        setChancelDebug(true)
     }
 
@@ -754,8 +763,24 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                         return activity
                     }
                 })
+                if (!FTSessionReplayFlutterBridgeConfig.markExternalRecorderMode(sessionReplayConfig)) {
+                    LogUtils.w(
+                        LOG_TAG,
+                        "[FlutterSRBridge] external recorder mode is unavailable. " +
+                            "Please upgrade ft-session-replay to a compatible version."
+                    )
+                    sessionReplaySampleStateBridge?.notify(
+                        sampled = false,
+                        sampledForErrorReplay = false,
+                        force = true
+                    )
+                    result.success(null)
+                    return
+                }
 
                 FTSdk.initSessionReplayConfig(sessionReplayConfig)
+                sessionReplaySampleStateBridge?.register()
+                sessionReplaySampleStateBridge?.notifyCurrentState()
                 result.success(null)
             }
 
@@ -1233,6 +1258,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
 
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        sessionReplaySampleStateBridge?.dispose()
+        sessionReplaySampleStateBridge = null
         channel.setMethodCallHandler(null)
     }
 }

@@ -18,7 +18,6 @@ class FTTestUtils {
             Constants.Base.cliToken: "token",
             Constants.Base.env: "test",
             Constants.Base.serviceName: "testService",
-            Constants.Base.pkgInfo: "0.0.1",
             // Boolean type
             Constants.Base.debug: NSNumber(value: true),
             Constants.Base.autoSync: NSNumber(value: false),

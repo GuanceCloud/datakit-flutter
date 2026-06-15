@@ -1,4 +1,5 @@
-import 'const.dart';
+import 'package:meta/meta.dart';
+
 import 'src/ft_session_replay.dart';
 
 export 'src/ft_session_replay.dart' show FTSessionReplay;
@@ -21,10 +22,10 @@ class FTSessionReplayConfig {
             (sessionReplayOnErrorSampleRate >= 0 &&
                 sessionReplayOnErrorSampleRate <= 1));
 
-  /// Sampling rate in range [0, 1]. Defaults to the native SDK default.
+  /// Sampling rate in range [0, 1]. Defaults to 1.0.
   final double? sampleRate;
 
-  /// Error-session replay sampling rate in range [0, 1].
+  /// Error-session replay sampling rate in range [0, 1]. Defaults to 0.0.
   final double? sessionReplayOnErrorSampleRate;
 
   final FTTouchPrivacyLevel touchPrivacy;
@@ -81,8 +82,19 @@ class FTSessionReplayManager {
 
   FTSessionReplayManager._internal();
 
+  bool _configured = false;
+
   Future<void> setConfig(FTSessionReplayConfig config) async {
-    await channel.invokeMethod(methodSessionReplayConfig, config.toMap());
+    if (_configured) {
+      return;
+    }
+    _configured = true;
     await FTSessionReplay.init(config);
+  }
+
+  @visibleForTesting
+  void resetForTesting() {
+    _configured = false;
+    resetSessionReplay();
   }
 }
