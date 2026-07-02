@@ -12,8 +12,8 @@ rootProject.allprojects {
         mavenCentral()
 //        jcenter()
         maven {
-            url 'https://mvnrepo.jiagouyun.com/repository/maven-releases'
-//            url 'https://mvnrepo.jiagouyun.com/repository/maven-snapshots'
+            url 'https://mvnrepo.guance.com/repository/maven-releases'
+//            url 'https://mvnrepo.guance.com/repository/maven-snapshots'
         }
     }
 }
