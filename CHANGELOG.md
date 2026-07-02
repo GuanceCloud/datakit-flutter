@@ -420,7 +420,7 @@
 
 ---
 ## 0.0.1-dev.5
-* Updated Android iOS Dataflux SDK
+* Updated Android iOS TrueWatch SDK
 
 ---
 ## 0.0.1-dev.4
