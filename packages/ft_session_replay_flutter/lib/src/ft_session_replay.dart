@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
-import '../ft_session_replay.dart';
+import '../ft_session_replay_flutter.dart';
 import 'capture/recorder.dart';
 import 'processor/processor.dart';
 import 'rum_context.dart';
@@ -15,6 +16,7 @@ import 'session_replay_platform.dart';
 void resetSessionReplay() {
   FTSessionReplay._instance?._stop();
   FTSessionReplay._instance = null;
+  FTSessionReplay._instanceNotifier.value = null;
 }
 
 class FTSessionReplay {
@@ -22,7 +24,13 @@ class FTSessionReplay {
   static const errorTolerance = 10;
 
   static FTSessionReplay? _instance;
+  static final ValueNotifier<FTSessionReplay?> _instanceNotifier =
+      ValueNotifier<FTSessionReplay?>(null);
   static FTSessionReplay? get instance => _instance;
+
+  @internal
+  static ValueListenable<FTSessionReplay?> get instanceListenable =>
+      _instanceNotifier;
 
   @visibleForTesting
   static void resetForTesting() {
@@ -51,6 +59,7 @@ class FTSessionReplay {
     _instance?._stop();
     final replay = FTSessionReplay._(configuration, logger);
     _instance = replay;
+    _instanceNotifier.value = replay;
     await replay._start();
     return replay;
   }

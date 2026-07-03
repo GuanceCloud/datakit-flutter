@@ -1,0 +1,11 @@
+AGENTS.md
+.dart_tool/
+.packages
+.pub/
+build/
+coverage/
+docs/
+example/
+example/analysis_options.yaml
+example/config/
+example/test/

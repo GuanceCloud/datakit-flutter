@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
+import 'package:ft_session_replay_flutter/ft_session_replay_flutter.dart';
 
 class ImagePage extends StatefulWidget {
   const ImagePage({Key? key}) : super(key: key);

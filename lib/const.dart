@@ -35,18 +35,6 @@ const methodRumAddError = "ftRumAddError";
 const methodRumStartResource = "ftRumStartResource";
 const methodRumStopResource = "ftRumStopResource";
 const methodRumAddResource = "ftRumAddResource";
-const methodSessionReplayConfig = "ftSessionReplayConfig";
-const methodSessionReplayGetRumContext = "ftSessionReplayGetRumContext";
-const methodSessionReplaySetHasReplay = "ftSessionReplaySetHasReplay";
-const methodSessionReplaySetRecordCount = "ftSessionReplaySetRecordCount";
-const methodSessionReplayWriteSegment = "ftSessionReplayWriteSegment";
-const methodSessionReplayTelemetryDebug = "ftSessionReplayTelemetryDebug";
-const methodSessionReplayTelemetryError = "ftSessionReplayTelemetryError";
-const methodSessionReplaySaveImageResource = "ftSessionReplaySaveImageResource";
-const MethodChannel sessionReplayStateChannel =
-    const MethodChannel('ft_mobile_agent_flutter/session_replay');
-const methodSessionReplaySampleStateChanged =
-    "ftSessionReplaySampleStateChanged";
 
 const methodTraceConfig = "ftTraceConfig";
 const methodTrace = "ftTrace";

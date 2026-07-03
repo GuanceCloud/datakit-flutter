@@ -7,7 +7,7 @@ import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
 
-import '../../../ft_session_replay.dart';
+import '../../../ft_session_replay_flutter.dart';
 import '../../session_replay_platform.dart';
 import '../../sr_data_models.dart';
 import '../capture_node.dart';

@@ -21,16 +21,8 @@ import com.ft.sdk.FTTraceManager
 import com.ft.sdk.LineDataModifier
 import com.ft.sdk.LogCacheDiscard
 import com.ft.sdk.RUMCacheDiscard
-import com.ft.sdk.SessionReplayManager
 import com.ft.sdk.SyncPageSize
 import com.ft.sdk.TraceType
-import com.ft.sdk.flutter.sessionreplay.FlutterSessionReplaySampleStateBridge
-import com.ft.sdk.sessionreplay.FTSessionReplayConfig
-import com.ft.sdk.sessionreplay.FTSessionReplayFlutterBridgeConfig
-import com.ft.sdk.sessionreplay.ImagePrivacy
-import com.ft.sdk.sessionreplay.SessionReplayInternalCallback
-import com.ft.sdk.sessionreplay.TextAndInputPrivacy
-import com.ft.sdk.sessionreplay.TouchPrivacy
 import com.ft.sdk.garble.bean.AppState
 import com.ft.sdk.garble.bean.ErrorType
 import com.ft.sdk.garble.bean.NetStatusBean
@@ -54,7 +46,6 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
     /// when the Flutter Engine is detached from the Activity
     private lateinit var channel: MethodChannel
-    private var sessionReplaySampleStateBridge: FlutterSessionReplaySampleStateBridge? = null
 
     private lateinit var application: Application
     private var activity: Activity? = null
@@ -68,11 +59,6 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "ft_mobile_agent_flutter")
         val mainHandler = Handler(Looper.getMainLooper())
-        sessionReplaySampleStateBridge = FlutterSessionReplaySampleStateBridge(
-            flutterPluginBinding.binaryMessenger,
-            mainHandler,
-            LOG_TAG
-        )
         channel.setMethodCallHandler(this)
         application = flutterPluginBinding.applicationContext as Application
         handler = mainHandler
@@ -148,14 +134,6 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
         const val METHOD_RUM_START_RESOURCE = "ftRumStartResource"
         const val METHOD_RUM_STOP_RESOURCE = "ftRumStopResource"
         const val METHOD_RUM_ADD_RESOURCE = "ftRumAddResource"
-        const val METHOD_SESSION_REPLAY_CONFIG = "ftSessionReplayConfig"
-        const val METHOD_SESSION_REPLAY_GET_RUM_CONTEXT = "ftSessionReplayGetRumContext"
-        const val METHOD_SESSION_REPLAY_SET_HAS_REPLAY = "ftSessionReplaySetHasReplay"
-        const val METHOD_SESSION_REPLAY_SET_RECORD_COUNT = "ftSessionReplaySetRecordCount"
-        const val METHOD_SESSION_REPLAY_WRITE_SEGMENT = "ftSessionReplayWriteSegment"
-        const val METHOD_SESSION_REPLAY_TELEMETRY_DEBUG = "ftSessionReplayTelemetryDebug"
-        const val METHOD_SESSION_REPLAY_TELEMETRY_ERROR = "ftSessionReplayTelemetryError"
-        const val METHOD_SESSION_REPLAY_SAVE_IMAGE_RESOURCE = "ftSessionReplaySaveImageResource"
 
         const val METHOD_TRACE_CONFIG = "ftTraceConfig"
         const val METHOD_GET_TRACE_HEADER = "ftTraceGetHeader"
@@ -209,11 +187,6 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
         const val KEY_RUM_CACHE_DISCARD = "rumCacheDiscard"
         const val KEY_RUM_CACHE_LIMIT_COUNT = "rumCacheLimitCount"
         const val KEY_ENABLE_RESOURCE_HOST_IP = "enableResourceHostIP"
-        const val KEY_SESSION_REPLAY_ON_ERROR_SAMPLE_RATE = "sessionReplayOnErrorSampleRate"
-        const val KEY_TOUCH_PRIVACY = "touchPrivacy"
-        const val KEY_TEXT_AND_INPUT_PRIVACY = "textAndInputPrivacy"
-        const val KEY_IMAGE_PRIVACY = "imagePrivacy"
-        const val KEY_ENABLE_LINK_RUM_KEYS = "enableLinkRUMKeys"
 
         const val KEY_LOG_TYPE = "logType"
         const val KEY_ENABLE_CUSTOM_LOG = "enableCustomLog"
@@ -709,148 +682,6 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 result.success(null)
             }
 
-            METHOD_SESSION_REPLAY_CONFIG -> {
-                val sessionReplayConfig = FTSessionReplayConfig()
-                val sampleRate: Number? = call.argument<Number>(KEY_SAMPLE_RATE)
-                val sessionReplayOnErrorSampleRate: Number? =
-                    call.argument<Number>(KEY_SESSION_REPLAY_ON_ERROR_SAMPLE_RATE)
-                val touchPrivacy: Number? = call.argument<Number>(KEY_TOUCH_PRIVACY)
-                val textAndInputPrivacy: Number? = call.argument<Number>(KEY_TEXT_AND_INPUT_PRIVACY)
-                val imagePrivacy: Number? = call.argument<Number>(KEY_IMAGE_PRIVACY)
-                val enableLinkRUMKeys: List<String>? = call.argument(KEY_ENABLE_LINK_RUM_KEYS)
-
-                if (sampleRate != null) {
-                    sessionReplayConfig.setSampleRate(sampleRate.toFloat())
-                }
-                if (sessionReplayOnErrorSampleRate != null) {
-                    sessionReplayConfig.setSessionReplayOnErrorSampleRate(
-                        sessionReplayOnErrorSampleRate.toFloat()
-                    )
-                }
-                if (touchPrivacy != null) {
-                    val value = TouchPrivacy.values().getOrNull(touchPrivacy.toInt())
-                    if (value == null) {
-                        result.error("INVALID_ARGUMENT", "Invalid touchPrivacy: $touchPrivacy", null)
-                        return
-                    }
-                    sessionReplayConfig.setTouchPrivacy(value)
-                }
-                if (textAndInputPrivacy != null) {
-                    val value = TextAndInputPrivacy.values().getOrNull(textAndInputPrivacy.toInt())
-                    if (value == null) {
-                        result.error(
-                            "INVALID_ARGUMENT",
-                            "Invalid textAndInputPrivacy: $textAndInputPrivacy",
-                            null
-                        )
-                        return
-                    }
-                    sessionReplayConfig.setTextAndInputPrivacy(value)
-                }
-                if (imagePrivacy != null) {
-                    val value = ImagePrivacy.values().getOrNull(imagePrivacy.toInt())
-                    if (value == null) {
-                        result.error("INVALID_ARGUMENT", "Invalid imagePrivacy: $imagePrivacy", null)
-                        return
-                    }
-                    sessionReplayConfig.setImagePrivacy(value)
-                }
-                if (enableLinkRUMKeys != null) {
-                    sessionReplayConfig.enableLinkRUMKeys(enableLinkRUMKeys.toTypedArray())
-                }
-                sessionReplayConfig.setInternalCallback(object : SessionReplayInternalCallback {
-                    override fun getCurrentActivity(): Activity? {
-                        return activity
-                    }
-                })
-                if (!FTSessionReplayFlutterBridgeConfig.markExternalRecorderMode(sessionReplayConfig)) {
-                    LogUtils.w(
-                        LOG_TAG,
-                        "[FlutterSRBridge] external recorder mode is unavailable. " +
-                            "Please upgrade ft-session-replay to a compatible version."
-                    )
-                    sessionReplaySampleStateBridge?.notify(
-                        sampled = false,
-                        sampledForErrorReplay = false,
-                        force = true
-                    )
-                    result.success(null)
-                    return
-                }
-
-                FTSdk.initSessionReplayConfig(sessionReplayConfig)
-                sessionReplaySampleStateBridge?.register()
-                sessionReplaySampleStateBridge?.notifyCurrentState()
-                result.success(null)
-            }
-
-
-            METHOD_SESSION_REPLAY_GET_RUM_CONTEXT -> {
-                result.success(invokeSessionReplayManager("getCurrentFlutterRumContext"))
-            }
-
-            METHOD_SESSION_REPLAY_SET_HAS_REPLAY -> {
-                val viewId: String? = call.argument("viewId")
-                val hasReplay: Boolean = call.argument<Boolean>("hasReplay") ?: true
-                if (viewId != null) {
-                    invokeSessionReplayManager("setFlutterHasReplay", arrayOf(String::class.java, Boolean::class.javaPrimitiveType!!), viewId, hasReplay)
-                }
-                result.success(null)
-            }
-
-            METHOD_SESSION_REPLAY_SET_RECORD_COUNT -> {
-                val viewId: String? = call.argument("viewId")
-                val count: Number? = call.argument("count")
-                if (viewId != null && count != null) {
-                    invokeSessionReplayManager("setFlutterRecordCount", arrayOf(String::class.java, Long::class.javaPrimitiveType!!), viewId, count.toLong())
-                }
-                result.success(null)
-            }
-
-            METHOD_SESSION_REPLAY_WRITE_SEGMENT -> {
-                val viewId: String? = call.argument("viewId")
-                val segment: String? = call.argument("segment")
-                if (viewId != null && segment != null) {
-                    invokeSessionReplayManager("writeFlutterSegment", arrayOf(String::class.java, String::class.java), segment, viewId)
-                }
-                result.success(null)
-            }
-
-            METHOD_SESSION_REPLAY_TELEMETRY_DEBUG -> {
-                val message: String? = call.argument("message")
-                if (message != null) {
-                    LogUtils.d(LOG_TAG, message)
-                }
-                result.success(null)
-            }
-
-            METHOD_SESSION_REPLAY_TELEMETRY_ERROR -> {
-                val message: String? = call.argument("message")
-                val stack: String? = call.argument("stack")
-                if (message != null) {
-                    LogUtils.e(LOG_TAG, message + if (stack != null) "\n$stack" else "")
-                }
-                result.success(null)
-            }
-
-            METHOD_SESSION_REPLAY_SAVE_IMAGE_RESOURCE -> {
-                val bytes: ByteArray? = call.argument("bytes")
-                val width: Int? = call.argument("width")
-                val height: Int? = call.argument("height")
-                val resourceId = if (bytes != null && width != null && height != null) {
-                    invokeSessionReplayManager(
-                        "saveFlutterImageResource",
-                        arrayOf(ByteArray::class.java, Int::class.javaPrimitiveType!!, Int::class.javaPrimitiveType!!),
-                        bytes,
-                        width,
-                        height
-                    )
-                } else {
-                    null
-                }
-                result.success(resourceId)
-            }
-
             METHOD_LOG_CONFIG -> {
                 val sampleRate: Double? = call.argument<Double>(KEY_SAMPLE_RATE)
                 val logTypeArr: List<Int>? = call.argument<List<Int>>(KEY_LOG_TYPE)
@@ -1104,22 +935,6 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
         }
     }
 
-
-    private fun invokeSessionReplayManager(
-        methodName: String,
-        parameterTypes: Array<Class<*>> = emptyArray(),
-        vararg args: Any?
-    ): Any? {
-        return try {
-            val manager = SessionReplayManager.get()
-            val method = manager.javaClass.getMethod(methodName, *parameterTypes)
-            method.invoke(manager, *args)
-        } catch (e: Throwable) {
-            LogUtils.w(LOG_TAG, "Session Replay native bridge method unavailable: $methodName")
-            null
-        }
-    }
-
     private fun updateRemoteConfig(interval: Int, rules: List<Map<String, Any?>>?, result: MethodChannel.Result) {
         if (!remoteConfigurationEnabled) {
             result.success(createRemoteConfigResult("manual", false, null, null, "remote_configuration_disabled", "Remote configuration is not enabled"))
@@ -1258,8 +1073,6 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
 
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        sessionReplaySampleStateBridge?.dispose()
-        sessionReplaySampleStateBridge = null
         channel.setMethodCallHandler(null)
     }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:agent_example/ft_custom_http_override.dart';
 import 'package:agent_example/rum_page.dart';
 import 'package:agent_example/session_replay_page.dart';
 import 'package:agent_example/tracing_page.dart';
@@ -9,6 +10,7 @@ import 'package:agent_example/webview_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 import 'package:ft_mobile_agent_flutter/ft_http_override_config.dart';
+import 'package:ft_session_replay_flutter/ft_session_replay_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 

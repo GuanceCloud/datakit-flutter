@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../ft_session_replay.dart';
+import '../../../ft_session_replay_flutter.dart';
 import '../../extensions.dart';
 import '../capture_node.dart';
 import '../recorder.dart';

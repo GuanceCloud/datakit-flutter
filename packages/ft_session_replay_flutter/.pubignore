@@ -1,13 +1,5 @@
-.DS_Store
 .dart_tool/
-
 .packages
 .pub/
-
 build/
 coverage/
-
-**/.symlinks/
-
-/docs/
-AGENTS.md

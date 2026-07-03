@@ -6,7 +6,7 @@ import 'package:flutter/widgets.dart';
 
 import '../../sr_data_models.dart';
 import '../recorder.dart';
-import '../../../ft_session_replay.dart';
+import '../../../ft_session_replay_flutter.dart';
 
 extension SRTextAlignment on TextAlign {
   SRHorizontalAlignment getSrHorizontalAlignment(TextDirection? textDirection) {

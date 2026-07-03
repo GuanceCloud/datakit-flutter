@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 
-import '../const.dart';
+import 'const.dart';
 import 'rum_context.dart';
 
 class FTSessionReplaySampleState {
@@ -128,7 +128,7 @@ class FTMethodChannelSessionReplayPlatform extends FTSessionReplayPlatform {
     }
 
     final globalContext = <String, Object?>{};
-    final rawGlobalContext = data['globalContext'];
+    final rawGlobalContext = data['globalContext'] ?? data['bindInfo'];
     if (rawGlobalContext is Map) {
       rawGlobalContext.forEach((key, value) {
         if (key != null) globalContext[key.toString()] = value;

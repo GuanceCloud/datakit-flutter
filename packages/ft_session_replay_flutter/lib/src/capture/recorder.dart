@@ -8,7 +8,7 @@ import '../session_replay_internal.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../../ft_session_replay.dart';
+import '../../ft_session_replay_flutter.dart';
 import '../session_replay_platform.dart';
 import '../rum_context.dart';
 import '../widgets.dart';

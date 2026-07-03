@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
+import 'package:ft_session_replay_flutter/ft_session_replay_flutter.dart';
 
 class SessionReplayPage extends StatefulWidget {
   @override

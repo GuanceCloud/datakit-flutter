@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import ft_mobile_agent_flutter
+@testable import ft_session_replay_flutter
 @testable import FTMobileSDK
 
 final class FTSessionReplayBridgeTests: XCTestCase {

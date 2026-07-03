@@ -13,6 +13,7 @@ import '../capture/view_tree_snapshot.dart';
 import '../session_replay_platform.dart';
 import '../sr_data_models.dart';
 import 'diff.dart';
+import 'icon_text_transform.dart';
 
 /// An internal class that does all of the work for processing a ViewSnapshot into SRRecords,
 /// including creating diffs for non full records. When complete, the processor sends
@@ -26,6 +27,7 @@ class ProcessorWorker {
   DateTime? _lastFullSnapshotAt;
   bool _sampledForErrorReplay = false;
   final Map<String, int> _recordCountByViewId = {};
+  final IconTextTransform _iconTextTransform = IconTextTransform();
 
   void reset() {
     _lastSnapshot = null;
@@ -155,7 +157,12 @@ class ProcessorWorker {
   List<SRWireframe> generateWireframes(CaptureResult result) {
     return result.viewTreeSnapshot.nodes
         .expand((element) => element.buildWireframes())
-        .toList();
+        .map((wireframe) {
+      if (wireframe is SRTextWireframe) {
+        return _iconTextTransform.apply(wireframe);
+      }
+      return wireframe;
+    }).toList();
   }
 
   SRRecord _createIncrementalPointerRecord(PointerCapture pointer) {

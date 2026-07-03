@@ -1,14 +1,16 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ft_mobile_agent_flutter/src/capture/capture_node.dart';
-import 'package:ft_mobile_agent_flutter/src/capture/recorder.dart';
-import 'package:ft_mobile_agent_flutter/src/capture/view_tree_snapshot.dart';
-import 'package:ft_mobile_agent_flutter/src/processor/processor_worker.dart';
-import 'package:ft_mobile_agent_flutter/src/rum_context.dart';
-import 'package:ft_mobile_agent_flutter/src/session_replay_platform.dart';
-import 'package:ft_mobile_agent_flutter/src/sr_data_models.dart';
+import 'package:ft_session_replay_flutter/src/capture/capture_node.dart';
+import 'package:ft_session_replay_flutter/src/capture/element_recorders/common_nodes.dart';
+import 'package:ft_session_replay_flutter/src/capture/recorder.dart';
+import 'package:ft_session_replay_flutter/src/capture/view_tree_snapshot.dart';
+import 'package:ft_session_replay_flutter/src/processor/processor_worker.dart';
+import 'package:ft_session_replay_flutter/src/rum_context.dart';
+import 'package:ft_session_replay_flutter/src/session_replay_platform.dart';
+import 'package:ft_session_replay_flutter/src/sr_data_models.dart';
 
 void main() {
   late FTSessionReplayPlatform previousPlatform;
@@ -104,10 +106,79 @@ void main() {
       'rum_key': 'rum-value',
     });
   });
+
+  test(
+      'generateWireframes maps Material icon text to font-independent fallback',
+      () {
+    final worker = ProcessorWorker();
+    final result = _captureWithNodes(
+      DateTime.utc(2026, 1, 1),
+      <CaptureNode>[
+        TextElementCaptureNode(
+          const CapturedViewAttributes(
+            paintBounds: Rect.fromLTWH(0, 0, 24, 24),
+            scaleX: 1,
+            scaleY: 1,
+          ),
+          wireframeId: 1,
+          text: String.fromCharCode(Icons.arrow_back.codePoint),
+          color: '#000000ff',
+          family: 'MaterialIcons',
+          size: 24,
+          alignment: SRHorizontalAlignment.left,
+        ),
+        TextElementCaptureNode(
+          const CapturedViewAttributes(
+            paintBounds: Rect.fromLTWH(24, 0, 24, 24),
+            scaleX: 1,
+            scaleY: 1,
+          ),
+          wireframeId: 2,
+          text: String.fromCharCode(Icons.arrow_back_ios_new_rounded.codePoint),
+          color: '#000000ff',
+          family: 'MaterialIcons',
+          size: 24,
+          alignment: SRHorizontalAlignment.left,
+        ),
+      ],
+    );
+
+    final wireframes =
+        worker.generateWireframes(result).cast<SRTextWireframe>();
+
+    expect(wireframes, hasLength(2));
+    expect(wireframes[0].text, String.fromCharCode(0x2190));
+    expect(wireframes[0].textStyle.family, isEmpty);
+    expect(wireframes[1].text, String.fromCharCode(0x2039));
+    expect(wireframes[1].textStyle.family, isEmpty);
+  });
 }
 
 CaptureResult _captureAt(
   DateTime date, {
+  Map<String, Object?> globalContext = const <String, Object?>{},
+}) {
+  return _captureWithNodes(
+    date,
+    const <CaptureNode>[
+      PlaceholderNode(
+        CapturedViewAttributes(
+          paintBounds: Rect.fromLTWH(0, 0, 10, 10),
+          scaleX: 1,
+          scaleY: 1,
+        ),
+        wireframeId: 1,
+        caption: 'box',
+        minWidth: 0,
+      ),
+    ],
+    globalContext: globalContext,
+  );
+}
+
+CaptureResult _captureWithNodes(
+  DateTime date,
+  List<CaptureNode> nodes, {
   Map<String, Object?> globalContext = const <String, Object?>{},
 }) {
   return CaptureResult(
@@ -120,18 +191,7 @@ CaptureResult _captureAt(
         globalContext: globalContext,
       ),
       viewportSize: const Size(100, 100),
-      nodes: const <CaptureNode>[
-        PlaceholderNode(
-          CapturedViewAttributes(
-            paintBounds: Rect.fromLTWH(0, 0, 10, 10),
-            scaleX: 1,
-            scaleY: 1,
-          ),
-          wireframeId: 1,
-          caption: 'box',
-          minWidth: 0,
-        ),
-      ],
+      nodes: nodes,
     ),
     null,
   );

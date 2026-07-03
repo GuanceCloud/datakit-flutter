@@ -5,11 +5,9 @@ import FTMobileSDK
 public class SwiftAgentPlugin: NSObject, FlutterPlugin {
 
     private var channel: FlutterMethodChannel?
-    private var sessionReplayStateChannel: FlutterMethodChannel?
     private var remoteConfigurationEnabled = false
     private var remoteConfigMiniUpdateInterval = 12 * 60 * 60
     private var remoteConfigOverrideRules: [[String: Any]]?
-    private let sessionReplayBridge: FTSessionReplayBridge = FTDefaultSessionReplayBridge()
 
     static let METHOD_CONFIG = "ftConfig"
     static let METHOD_FLUSH_SYNC_DATA = "ftFlushSyncData"
@@ -44,15 +42,6 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     static let METHOD_RUM_START_RESOURCE = "ftRumStartResource"
     static let METHOD_RUM_ADD_RESOURCE = "ftRumAddResource"
     static let METHOD_RUM_STOP_RESOURCE = "ftRumStopResource"
-    static let METHOD_SESSION_REPLAY_CONFIG = "ftSessionReplayConfig"
-    static let METHOD_SESSION_REPLAY_GET_RUM_CONTEXT = "ftSessionReplayGetRumContext"
-    static let METHOD_SESSION_REPLAY_SET_HAS_REPLAY = "ftSessionReplaySetHasReplay"
-    static let METHOD_SESSION_REPLAY_SET_RECORD_COUNT = "ftSessionReplaySetRecordCount"
-    static let METHOD_SESSION_REPLAY_WRITE_SEGMENT = "ftSessionReplayWriteSegment"
-    static let METHOD_SESSION_REPLAY_TELEMETRY_DEBUG = "ftSessionReplayTelemetryDebug"
-    static let METHOD_SESSION_REPLAY_TELEMETRY_ERROR = "ftSessionReplayTelemetryError"
-    static let METHOD_SESSION_REPLAY_SAVE_IMAGE_RESOURCE = "ftSessionReplaySaveImageResource"
-    static let METHOD_SESSION_REPLAY_SAMPLE_STATE_CHANGED = "ftSessionReplaySampleStateChanged"
 
     static let METHOD_TRACE_CONFIG = "ftTraceConfig"
     static let METHOD_GET_TRACE_HEADER = "ftTraceGetHeader"
@@ -60,16 +49,8 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "ft_mobile_agent_flutter", binaryMessenger: registrar.messenger())
-        let sessionReplayStateChannel = FlutterMethodChannel(name: "ft_mobile_agent_flutter/session_replay", binaryMessenger: registrar.messenger())
         let instance = SwiftAgentPlugin()
         instance.channel = channel
-        instance.sessionReplayStateChannel = sessionReplayStateChannel
-        instance.sessionReplayBridge.setSampleStateChangedHandler { [weak instance] context in
-            instance?.sessionReplayStateChannel?.invokeMethod(
-                SwiftAgentPlugin.METHOD_SESSION_REPLAY_SAMPLE_STATE_CHANGED,
-                arguments: context
-            )
-        }
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
 
@@ -296,25 +277,6 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             }
             result(nil)
 
-        case SwiftAgentPlugin.METHOD_SESSION_REPLAY_GET_RUM_CONTEXT:
-            result(sessionReplayBridge.currentRUMContext())
-        case SwiftAgentPlugin.METHOD_SESSION_REPLAY_SET_HAS_REPLAY:
-            sessionReplayBridge.setHasReplay(context)
-            result(nil)
-        case SwiftAgentPlugin.METHOD_SESSION_REPLAY_SET_RECORD_COUNT:
-            sessionReplayBridge.setRecordCount(context)
-            result(nil)
-        case SwiftAgentPlugin.METHOD_SESSION_REPLAY_WRITE_SEGMENT:
-            sessionReplayBridge.writeSegment(context)
-            result(nil)
-        case SwiftAgentPlugin.METHOD_SESSION_REPLAY_TELEMETRY_DEBUG:
-            sessionReplayBridge.telemetryDebug(context)
-            result(nil)
-        case SwiftAgentPlugin.METHOD_SESSION_REPLAY_TELEMETRY_ERROR:
-            sessionReplayBridge.telemetryError(context)
-            result(nil)
-        case SwiftAgentPlugin.METHOD_SESSION_REPLAY_SAVE_IMAGE_RESOURCE:
-            result(sessionReplayBridge.saveImageResource(context))
         case SwiftAgentPlugin.METHOD_TRACE_CONFIG:
             let traceConfig = FTTraceConfig()
             if let sampleRate = context["sampleRate"] as? NSNumber {
@@ -511,9 +473,6 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             let key = context["key"] as! String
             let property = context["property"] as? Dictionary<String, Any> ?? nil
             FTExternalDataManager.shared().stopResource(withKey: key,property: property)
-            result(nil)
-        case SwiftAgentPlugin.METHOD_SESSION_REPLAY_CONFIG:
-            sessionReplayBridge.config(context)
             result(nil)
         default:
             result(FlutterMethodNotImplemented)

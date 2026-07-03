@@ -161,7 +161,7 @@ internal class FlutterSessionReplaySampleStateBridge(
 
     private companion object {
         const val METHOD_SESSION_REPLAY_SAMPLE_STATE_CHANGED = "ftSessionReplaySampleStateChanged"
-        const val SESSION_REPLAY_STATE_CHANNEL = "ft_mobile_agent_flutter/session_replay"
+        const val SESSION_REPLAY_STATE_CHANNEL = "ft_session_replay_flutter/session_replay"
         const val FEATURE_FLUTTER_SESSION_REPLAY = "flutter-session-replay"
         const val FEATURE_SESSION_REPLAY = "session-replay"
         const val KEY_SESSION_REPLAY_IS_ENABLED = "session_replay_is_enabled"
