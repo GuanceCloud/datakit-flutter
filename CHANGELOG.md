@@ -1,7 +1,7 @@
 > Related SDK update content
 > * [Android](https://github.com/GuanceCloud/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md)
-## 0.5.7-pre.4
+## 0.5.7-dev.5
 * Compatible with Android ft-sdk 1.7.3, ft-native 1.1.3, iOS FTMobileSDK 1.6.5.
 * Fix the issue where the error stack is misaligned when calling AddError.
 * Split Flutter Session Replay into the new `ft_session_replay_flutter` package. `ft_mobile_agent_flutter` no longer exports Session Replay APIs or native Session Replay dependencies.
