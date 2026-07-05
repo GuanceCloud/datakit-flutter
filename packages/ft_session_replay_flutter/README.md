@@ -1,5 +1,7 @@
 # ft_session_replay_flutter
 
+![](https://img.shields.io/badge/dynamic/json?label=pub.dev&color=orange&query=$.version&uri=https://static.guance.com/ft-sdk-package/badge/flutter/replay/version.json)
+
 Flutter Session Replay plugin for Guance mobile SDK.
 
 Use this package together with `ft_mobile_agent_flutter`. Initialize the base SDK
