@@ -38,6 +38,7 @@ void main() {
     methodRumStartView,
     methodRumStopView,
     methodRumAddError,
+    methodRumAddLongTask,
     methodRumStartResource,
     methodRumStopResource,
     methodRumAddResource,
@@ -45,10 +46,13 @@ void main() {
     methodGetTraceGetHeader,
   ];
   Map<String, bool> callResult = {};
+  List<MethodCall> calls = [];
 
   setUp(() async {
+    calls.clear();
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+      calls.add(methodCall);
       switch (methodCall.method) {
         case methodConfig:
         case methodSetDatakitUrl:
@@ -65,6 +69,7 @@ void main() {
         case methodRumStartView:
         case methodRumStopView:
         case methodRumAddError:
+        case methodRumAddLongTask:
         case methodRumStartResource:
         case methodRumStopResource:
         case methodRumAddResource:
@@ -109,6 +114,7 @@ void main() {
     await FTRUMManager().starView("viewName");
     await FTRUMManager().stopView();
     await FTRUMManager().addCustomError("stack", "message");
+    await FTRUMManager().addLongTask("stack", 1000000);
     await FTRUMManager().startResource("key");
     await FTRUMManager().stopResource("key");
     await FTRUMManager().addResource(
@@ -138,6 +144,16 @@ void main() {
     expect(callResult[methodRumStartResource], true);
     expect(callResult[methodRumStopResource], true);
     expect(callResult[methodRumAddResource], true);
+  });
+
+  test('reportLongTask sends duration in nanoseconds', () async {
+    await FTRUMManager().reportLongTask(123);
+
+    final call = calls.singleWhere(
+      (call) => call.method == methodRumAddLongTask,
+    );
+    expect(call.arguments['stack'], 'dart_long_task');
+    expect(call.arguments['duration'], 123000000);
   });
 
   test("LifeCycle Test", () {

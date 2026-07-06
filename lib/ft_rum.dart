@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:ft_mobile_agent_flutter/ft_http_override_config.dart';
+import 'package:ft_mobile_agent_flutter/ft_rum_long_task_observer.dart';
 
 import 'const.dart';
 import 'ft_mobile_agent_flutter.dart';
@@ -11,6 +12,7 @@ import 'ft_mobile_agent_flutter.dart';
 class FTRUMManager {
   static final FTRUMManager _singleton = FTRUMManager._internal();
   AppState appState = AppState.run;
+  FTRUMLongTaskObserver? _longTaskObserver;
 
   factory FTRUMManager() {
     return _singleton;
@@ -29,6 +31,8 @@ class FTRUMManager {
   /// [enableNativeUserResource] Whether to perform Native Resource automatic tracking, pure Flutter applications recommend turning off
   /// [enableNativeAppUIBlock] Whether to perform Native Freeze automatic tracking
   /// [uiBlockDurationMS] Whether to set time range for Freeze uiBlockDurationMS
+  /// [enableLongTask] Whether to detect Flutter main-isolate long tasks.
+  /// [dartLongTaskThreshold] Dart long task threshold in seconds, default is 0.1.
   /// [enableTrackNativeAppANR] Whether to enable Native ANR monitoring
   /// [enableTrackNativeCrash] Whether to enable Android Java Crash and C/C++ crash monitoring
   /// [errorMonitorType] Monitoring supplement type
@@ -49,6 +53,8 @@ class FTRUMManager {
       bool? enableNativeUserResource,
       bool? enableNativeAppUIBlock,
       int? nativeUiBlockDurationMS,
+      bool enableLongTask = false,
+      double dartLongTaskThreshold = 0.1,
       bool? enableTrackNativeAppANR,
       bool? enableTrackNativeCrash,
       int? errorMonitorType,
@@ -91,6 +97,40 @@ class FTRUMManager {
     FTHttpOverrideConfig.global.traceResource = enableUserResource;
     FTHttpOverrideConfig.global.isInTakeUrl = isInTakeUrl;
     await channel.invokeMethod(methodRumConfig, map);
+    _updateLongTaskDetection(enableLongTask, dartLongTaskThreshold);
+  }
+
+  void _updateLongTaskDetection(
+      bool enableLongTask, double dartLongTaskThreshold) {
+    _longTaskObserver?.dispose();
+    _longTaskObserver = null;
+    if (enableLongTask) {
+      _longTaskObserver =
+          FTRUMLongTaskObserver(longTaskThreshold: dartLongTaskThreshold);
+      _longTaskObserver?.init();
+    }
+  }
+
+  /// Report a Dart long task.
+  ///
+  /// [durationMS] is converted to nanoseconds before being sent to native SDKs.
+  Future<void> reportLongTask(int durationMS,
+      {String stack = "dart_long_task", Map<String, String>? property}) async {
+    await addLongTask(stack, durationMS * 1000000, property: property);
+  }
+
+  /// Add long task.
+  ///
+  /// [stack] Stack or task name.
+  /// [duration] Duration in nanoseconds.
+  /// [property] Additional property parameters (optional).
+  Future<void> addLongTask(String stack, int duration,
+      {Map<String, String>? property}) async {
+    Map<String, dynamic> map = {};
+    map["stack"] = stack;
+    map["duration"] = duration;
+    map["property"] = property;
+    await channel.invokeMethod(methodRumAddLongTask, map);
   }
 
   /// Add action

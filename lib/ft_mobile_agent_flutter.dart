@@ -7,6 +7,7 @@ import 'ft_http_override_config.dart';
 
 export 'ft_http_client.dart';
 export 'ft_logger.dart';
+export 'ft_rum_long_task_observer.dart';
 export 'ft_route_observer.dart';
 export 'ft_rum.dart';
 export 'ft_tracing.dart';
