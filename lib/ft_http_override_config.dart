@@ -3,14 +3,14 @@ import 'dart:io';
 import 'package:ft_mobile_agent_flutter/ft_http_client.dart';
 
 class FTHttpOverrideConfig {
-  static final FTHttpOverrideConfig _singleton = FTHttpOverrideConfig._internal();
+  static final FTHttpOverrideConfig _singleton =
+      FTHttpOverrideConfig._internal();
 
   FTHttpOverrideConfig._internal();
 
   bool _traceHeader = false;
   bool _traceResource = false;
   HttpOverrides? _customHttpOverrides;
-
 
   bool get traceHeader => _traceHeader;
 

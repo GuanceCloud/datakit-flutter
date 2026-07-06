@@ -8,6 +8,19 @@
 	<string>Used to collect and upload Bluetooth-related information for monitoring</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Used to collect and upload Bluetooth-related information for monitoring</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>testing-openway.dataflux.cn</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>

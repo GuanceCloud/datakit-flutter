@@ -59,7 +59,9 @@ class FTRUMManager {
       FTRUMCacheDiscard? rumCacheDiscard,
       bool Function(String url)? isInTakeUrl,
       bool? enableTraceWebView,
-      List<String>? allowWebViewHost}) async {
+      List<String>? allowWebViewHost,
+      bool? enableResourceHostIP,
+      IOSCrashMonitoringType? iosCrashMonitoringType}) async {
     Map<String, dynamic> map = {};
     if (Platform.isAndroid) {
       map["rumAppId"] = androidAppId;
@@ -84,6 +86,8 @@ class FTRUMManager {
     map["rumCacheDiscard"] = rumCacheDiscard?.index;
     map["enableTraceWebView"] = enableTraceWebView;
     map["allowWebViewHost"] = allowWebViewHost;
+    map["enableResourceHostIP"] = enableResourceHostIP;
+    map["iosCrashMonitoringType"] = iosCrashMonitoringType?.value;
     FTHttpOverrideConfig.global.traceResource = enableUserResource;
     FTHttpOverrideConfig.global.isInTakeUrl = isInTakeUrl;
     await channel.invokeMethod(methodRumConfig, map);
@@ -237,7 +241,8 @@ class FTRUMManager {
       Map<String, Object?>? responseHeader,
       String? responseBody = "",
       int? resourceStatus,
-      int? resourceSize}) async {
+      int? resourceSize,
+      FTRUMResourceMetrics? metrics}) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
     map["url"] = url;
@@ -247,6 +252,7 @@ class FTRUMManager {
     map["responseBody"] = responseBody;
     map["resourceStatus"] = resourceStatus;
     map["resourceSize"] = resourceSize;
+    map["metrics"] = metrics?.toMap();
     await channel.invokeMethod(methodRumAddResource, map);
   }
 
@@ -262,6 +268,36 @@ class FTRUMManager {
     }
     return merged;
   }
+}
+
+class FTRUMResourceMetrics {
+  const FTRUMResourceMetrics({
+    this.duration,
+    this.resourceDns,
+    this.resourceTcp,
+    this.resourceSsl,
+    this.resourceTtfb,
+    this.resourceTrans,
+    this.resourceFirstByte,
+  });
+
+  final num? duration;
+  final num? resourceDns;
+  final num? resourceTcp;
+  final num? resourceSsl;
+  final num? resourceTtfb;
+  final num? resourceTrans;
+  final num? resourceFirstByte;
+
+  Map<String, Object?> toMap() => <String, Object?>{
+        'duration': duration,
+        'resource_dns': resourceDns,
+        'resource_tcp': resourceTcp,
+        'resource_ssl': resourceSsl,
+        'resource_ttfb': resourceTtfb,
+        'resource_trans': resourceTrans,
+        'resource_first_byte': resourceFirstByte,
+      };
 }
 
 /// App running state
@@ -362,4 +398,39 @@ enum FTRUMCacheDiscard {
 
   /// Discard old logs
   discardOldest
+}
+
+/// iOS crash monitoring type.
+enum IOSCrashMonitoringType {
+  machException,
+  signal,
+  cppException,
+  nsException,
+  system,
+  applicationState,
+  all,
+  highCompatibility
+}
+
+extension IOSCrashMonitoringTypeExt on IOSCrashMonitoringType {
+  int get value {
+    switch (this) {
+      case IOSCrashMonitoringType.machException:
+        return 0x01;
+      case IOSCrashMonitoringType.signal:
+        return 0x02;
+      case IOSCrashMonitoringType.cppException:
+        return 0x04;
+      case IOSCrashMonitoringType.nsException:
+        return 0x08;
+      case IOSCrashMonitoringType.system:
+        return 0x40;
+      case IOSCrashMonitoringType.applicationState:
+        return 0x80;
+      case IOSCrashMonitoringType.all:
+        return 0x01 | 0x02 | 0x04 | 0x08 | 0x40 | 0x80;
+      case IOSCrashMonitoringType.highCompatibility:
+        return (0x01 | 0x02 | 0x04 | 0x08 | 0x40 | 0x80) & ~0x01;
+    }
+  }
 }

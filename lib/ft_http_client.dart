@@ -19,10 +19,10 @@ extension _RequestMethodExt on _RequestMethod {
 }
 
 class FTHttpOverrides extends HttpOverrides {
-
   @override
   HttpClient createHttpClient(SecurityContext? context) {
-    if (FTHttpOverrideConfig.global.traceHeader || FTHttpOverrideConfig.global.traceResource) {
+    if (FTHttpOverrideConfig.global.traceHeader ||
+        FTHttpOverrideConfig.global.traceResource) {
       return FTHttpClient(super.createHttpClient(context));
     }
     return super.createHttpClient(context);
@@ -47,7 +47,8 @@ class FTHttpClient implements HttpClient {
     HttpClientRequest request;
     String urlString = url.toString();
 
-    bool isUrlInTake = FTHttpOverrideConfig.global.isInTakeUrl?.call(urlString) ?? false;
+    bool isUrlInTake =
+        FTHttpOverrideConfig.global.isInTakeUrl?.call(urlString) ?? false;
 
     try {
       if (!isUrlInTake && FTHttpOverrideConfig.global.traceResource) {

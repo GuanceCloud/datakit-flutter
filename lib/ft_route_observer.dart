@@ -5,7 +5,6 @@ import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 @Deprecated(
     "Just remove. Same staff will be done in FTRouteObserver and FTDialogRouteFilterObserver")
 class FTLifeRecycleHandler {
-
   void initObserver() {}
 
   void removeObserver() {}
@@ -69,7 +68,6 @@ class FTRouteObserver extends RouteObserver<PageRoute<dynamic>> {
       FTLifeRecycleMonitor.instance._currentPageName = name;
     }
   }
-
 
   @override
   void didPush(Route route, Route? previousRoute) {

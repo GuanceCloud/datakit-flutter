@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 import 'package:http/io_client.dart';
 
-const String requestUrl = String.fromEnvironment("WEB_VIEW_URL")+"/api/user";
-
+const String requestUrl = String.fromEnvironment("WEB_VIEW_URL") + "/api/user";
 
 class CustomTracingPage extends StatelessWidget {
   @override

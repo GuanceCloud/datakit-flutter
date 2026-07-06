@@ -1,17 +1,21 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:agent_example/ft_custom_http_override.dart';
 import 'package:agent_example/rum_page.dart';
+import 'package:agent_example/session_replay_page.dart';
 import 'package:agent_example/tracing_page.dart';
 import 'package:agent_example/view_without_route_name_page.dart';
 import 'package:agent_example/webview_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 import 'package:ft_mobile_agent_flutter/ft_http_override_config.dart';
+import 'package:ft_session_replay_flutter/ft_session_replay_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'ft_get_view_name.dart';
+import 'image_page.dart';
 import 'logging_page.dart';
 
 const serverUrl = String.fromEnvironment("DATAKIT_URL");
@@ -23,7 +27,10 @@ void main() async {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
     await sdkInit();
-    runApp(MyApp());
+    runApp(SessionReplayCapture(
+      key: const ValueKey("session-replay-root"),
+      child: MyApp(),
+    ));
   }, (Object error, StackTrace stack) {
     // RUM Error: Automatically capture error data
     FTRUMManager().addError(error, stack);
@@ -47,9 +54,7 @@ Future<void> sdkInit() async {
     enableLimitWithDbSize: true,
     // dataModifier: {"device_uuid":"xxx"},
     // lineDataModifier: {"view":{"view_name":"xxx"}},
-    iOSGroupIdentifiers: [
-      "group.com.ft.sdk.flutter.agentExample.TodayDemo"
-    ],
+    iOSGroupIdentifiers: ["group.com.ft.sdk.flutter.agentExample.TodayDemo"],
     //customHttpOverrides: CustomHttpOverrides()
   );
   await FTLogger().logConfig(
@@ -80,13 +85,22 @@ Future<void> sdkInit() async {
       enableTrackNativeCrash: true,
       errorMonitorType: ErrorMonitorType.all.value,
       deviceMetricsMonitorType: DeviceMetricsMonitorType.all.value);
+  await FTSessionReplayManager().setConfig(FTSessionReplayConfig(
+    sampleRate: 1.0,
+    sessionReplayOnErrorSampleRate: 0.0,
+    touchPrivacy: FTTouchPrivacyLevel.show,
+    textAndInputPrivacy: FTTextAndInputPrivacyLevel.maskSensitiveInputs,
+    imagePrivacy: FTImagePrivacyLevel.maskNone,
+    enableLinkRUMKeys: const ["wgt_id"],
+  ));
   FTMobileFlutter.trackEventFromExtension(
       "group.com.ft.sdk.flutter.agentExample.TodayDemo");
 
-  FTMobileFlutter.appendBridgeContext({"wgt_id":"widget_id"});
+  FTMobileFlutter.appendBridgeContext({"wgt_id": "widget_id"});
 
   FlutterError.onError = FTRUMManager().addFlutterError;
 }
+
 // Initialization for native hybrid projects in Flutter
 Future<void> sdkNativeMixInit() async {
   FTHttpOverrideConfig.global.traceHeader = true;
@@ -101,6 +115,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      builder: (BuildContext context, Widget? child) {
+        return SessionReplayCapture(
+          key: const ValueKey<String>("session-replay-root"),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
       home: HomePage(),
       navigatorObservers: [
         // RUM View: Monitor page lifecycle when using route navigation
@@ -123,9 +143,11 @@ class MyApp extends StatelessWidget {
         // Route navigation
         'logging': (BuildContext context) => LoggingPage(),
         'rum': (BuildContext context) => RUMPage(),
+        'session_replay': (BuildContext context) => SessionReplayPage(),
         'tracing_custom': (BuildContext context) => CustomTracingPage(),
         'tracing_auto': (BuildContext context) => AutoTracingPage(),
         'webview': (BuildContext context) => WebViewPage(url: webViewViewUrl),
+        'images': (BuildContext context) => ImagePage(),
       },
     );
   }
@@ -141,8 +163,7 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     if (Platform.isAndroid) {
-      requestPermission(
-          [Permission.phone]);
+      requestPermission([Permission.phone]);
     }
     // else if (Platform.isIOS) {
     //   requestPermission([Permission.camera, Permission.photos]);
@@ -185,6 +206,7 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
                 _buildTracerCustomWidget(),
                 _buildTracerAutoWidget(),
                 _buildRUMWidget(),
+                _buildSessionReplayWidget(),
                 _buildNoNavigatorObserversWidget(),
                 _buildConfigRouteSettingWidget(),
                 _buildLazyInitWidget(),
@@ -192,6 +214,7 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
                 _buildDialogWidget(),
                 _buildPopRouteWidget(),
                 _buildImagePicker(),
+                _buildImageDisplayWidget(),
                 _buildGlobalContext(),
                 _buildCleanAllData(),
                 _buildShutDownWidget()
@@ -289,6 +312,15 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
     );
   }
 
+  Widget _buildSessionReplayWidget() {
+    return ElevatedButton(
+      child: Text("Session Replay"),
+      onPressed: () {
+        Navigator.pushNamed(context, "session_replay");
+      },
+    );
+  }
+
   Widget _buildNoNavigatorObserversWidget() {
     return ElevatedButton(
       child: Text("No Route Name Set"),
@@ -357,10 +389,18 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
         onPressed: () async {
           final ImagePicker picker = ImagePicker();
           FTRUMManager().startAction("Image Picker", "image_pick");
-          final XFile? files =
-              await picker.pickImage(source: ImageSource.gallery);
+          await picker.pickImage(source: ImageSource.gallery);
         },
         child: Text("Image Picker"));
+  }
+
+  Widget _buildImageDisplayWidget() {
+    return ElevatedButton(
+      child: Text("Image Display"),
+      onPressed: () {
+        Navigator.pushNamed(context, "images");
+      },
+    );
   }
 
   Widget _buildGlobalContext() {
@@ -397,7 +437,8 @@ class _HomeState extends State<HomePage> with WidgetsBindingObserver {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text("Warning"),
-            content: Text("You have denied\n$tip permission, which will make the feature unavailable."),
+            content: Text(
+                "You have denied\n$tip permission, which will make the feature unavailable."),
             actions: <Widget>[
               TextButton(
                 onPressed: () {

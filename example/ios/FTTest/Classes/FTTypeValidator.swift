@@ -267,14 +267,14 @@ extension NSNumber {
                 result[key] = "Type (\(expectedType)) is \(validate)"
             }
         }
+        let res = config.configurationIsCorrect(context)
         if #available(iOS 14.0, *) {
-            let res = config.configurationIsCorrect(context)
             let str = res.count==0 ? "successful!":"failed with parameter:\(res)."
             let verificationStr = result.count>0 ? "----\nParameter type verification result :\n \(result)\n":""
             let unsetStr = empty.count == 0 ? "" : "----\n Unset parameters :\n \(empty)"
             logger.info("[TEST] \(type) Config \(str)\n\(verificationStr)\(unsetStr)")
-            return res.count == 0
         }
+        return res.count == 0
     }
     
     @objc static func validateRUM(_ param:[String: Any])->NSNumber{

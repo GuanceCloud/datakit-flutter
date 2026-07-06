@@ -63,9 +63,10 @@ class _RUMPageState extends State<RUMPage> {
           ListTile(
             title: Text("Add Error"),
             onTap: () async {
-              FTRUMManager().addCustomError("error stack", "error message",
-                  property: {"error_property": "ft_value"},
-                  // errorType: "custom_error_type"
+              FTRUMManager().addCustomError(
+                "error stack", "error message",
+                property: {"error_property": "ft_value"},
+                // errorType: "custom_error_type"
               );
             },
           ),
@@ -79,7 +80,6 @@ class _RUMPageState extends State<RUMPage> {
             title: Text("WebView"),
             onTap: () async {
               Navigator.pushNamed(context, "webview");
-
             },
           )
         ],

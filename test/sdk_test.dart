@@ -22,11 +22,17 @@ void main() {
 
   const List<String> list = [
     methodConfig,
+    methodSetDatakitUrl,
+    methodSetDatawayUrl,
+    methodUpdateRemoteConfig,
+    methodUpdateRemoteConfigWithMiniUpdateInterval,
     methodBindUser,
     methodUnbindUser,
     methodLogConfig,
     methodLogging,
+    methodLoggingWithStatusString,
     methodRumConfig,
+    methodRumStartAction,
     methodRumAddAction,
     methodRumCreateView,
     methodRumStartView,
@@ -45,11 +51,15 @@ void main() {
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
       switch (methodCall.method) {
         case methodConfig:
+        case methodSetDatakitUrl:
+        case methodSetDatawayUrl:
         case methodBindUser:
         case methodUnbindUser:
         case methodLogConfig:
         case methodLogging:
+        case methodLoggingWithStatusString:
         case methodRumConfig:
+        case methodRumStartAction:
         case methodRumAddAction:
         case methodRumCreateView:
         case methodRumStartView:
@@ -62,6 +72,15 @@ void main() {
         case methodGetTraceGetHeader:
           callResult[methodCall.method] = true;
           return null;
+        case methodUpdateRemoteConfig:
+        case methodUpdateRemoteConfigWithMiniUpdateInterval:
+          callResult[methodCall.method] = true;
+          return <String, dynamic>{
+            'triggerType': 'manual',
+            'success': true,
+            'platform': 'android',
+            'timestamp': 1,
+          };
         default:
           return null;
       }
@@ -72,14 +91,20 @@ void main() {
     await FTMobileFlutter.sdkConfig(datakitUrl: requestUrl);
     await FTMobileFlutter.sdkConfig(
         datawayUrl: requestUrl, cliToken: fakeToken);
+    await FTMobileFlutter.setDatakitURL(requestUrl);
+    await FTMobileFlutter.setDatawayURL(requestUrl, fakeToken);
+    await FTMobileFlutter.updateRemoteConfig();
+    await FTMobileFlutter.updateRemoteConfigWithMiniUpdateInterval(0);
     await FTMobileFlutter.bindRUMUserData("userid");
     await FTMobileFlutter.unbindRUMUserData();
 
     await FTLogger().logConfig();
     await FTLogger().logging("content", FTLogStatus.info);
+    await FTLogger().loggingWithStatusString("content", "custom");
 
     await FTRUMManager().setConfig();
     await FTRUMManager().startAction("click action", "click");
+    await FTRUMManager().addAction("click action", "click");
     await FTRUMManager().createView("viewName", 1000);
     await FTRUMManager().starView("viewName");
     await FTRUMManager().stopView();
@@ -87,14 +112,18 @@ void main() {
     await FTRUMManager().startResource("key");
     await FTRUMManager().stopResource("key");
     await FTRUMManager().addResource(
-        key: "key", url: requestUrl, httpMethod: "post", requestHeader: {});
+        key: "key",
+        url: requestUrl,
+        httpMethod: "post",
+        requestHeader: {},
+        metrics: const FTRUMResourceMetrics(duration: 10));
 
     await FTTracer().setConfig();
     await FTTracer().getTraceHeader(requestUrl, key: "key");
 
-    list.forEach((element) async {
+    for (final element in list) {
       expect(callResult[element], true);
-    });
+    }
   });
 
   test("Http Request Test", () async {
@@ -141,7 +170,7 @@ void main() {
 
   testWidgets("Action Test", (widgetTester) async {
     await _buildActionTestWidget(widgetTester);
-    expect(callResult[methodRumAddAction], true);
+    expect(callResult[methodRumStartAction], true);
   });
 
   tearDown(() {

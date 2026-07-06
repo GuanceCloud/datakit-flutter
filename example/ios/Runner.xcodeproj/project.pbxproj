@@ -10,6 +10,7 @@
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		1711823D2E052E4E0036C3A5 /* FTPluginTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171182352E052E4E0036C3A5 /* FTPluginTest.swift */; };
 		171182732E0A52B70036C3A5 /* FTTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 171182722E0A52B70036C3A5 /* FTTestUtils.swift */; };
+		C0D3A0012E2870000036C3A5 /* FTSessionReplayBridgeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D3A0022E2870000036C3A5 /* FTSessionReplayBridgeTests.swift */; };
 		177D279D2E0AA6BD003A0BBC /* TestDebug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 177D279C2E0AA6BD003A0BBC /* TestDebug.xcconfig */; };
 		17E0793F2922473A0014A420 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17E0793E2922473A0014A420 /* WidgetKit.framework */; };
 		17E079412922473A0014A420 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17E079402922473A0014A420 /* SwiftUI.framework */; };
@@ -75,6 +76,7 @@
 		171182232E052E3E0036C3A5 /* FTPluginTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FTPluginTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		171182352E052E4E0036C3A5 /* FTPluginTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FTPluginTest.swift; sourceTree = "<group>"; };
 		171182722E0A52B70036C3A5 /* FTTestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FTTestUtils.swift; sourceTree = "<group>"; };
+		C0D3A0022E2870000036C3A5 /* FTSessionReplayBridgeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FTSessionReplayBridgeTests.swift; sourceTree = "<group>"; };
 		177D279C2E0AA6BD003A0BBC /* TestDebug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = TestDebug.xcconfig; sourceTree = "<group>"; };
 		17E0793D2922473A0014A420 /* TodayDemoExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TodayDemoExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		17E0793E2922473A0014A420 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -144,6 +146,7 @@
 			children = (
 				177D279C2E0AA6BD003A0BBC /* TestDebug.xcconfig */,
 				171182352E052E4E0036C3A5 /* FTPluginTest.swift */,
+				C0D3A0022E2870000036C3A5 /* FTSessionReplayBridgeTests.swift */,
 				171182722E0A52B70036C3A5 /* FTTestUtils.swift */,
 			);
 			path = FTPluginTests;
@@ -395,7 +398,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-FTPluginTests/Pods-FTPluginTests-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/FTMobileSDK-b0fa6c5c/FTSDKPrivacyInfo.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FTMobileSDK-9be88658/FTSDKPrivacyInfo.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/image_picker_ios/image_picker_ios_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/permission_handler_apple/permission_handler_apple_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview_privacy.bundle",
@@ -419,7 +422,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/FTMobileSDK-b0fa6c5c/FTSDKPrivacyInfo.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FTMobileSDK-9be88658/FTSDKPrivacyInfo.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/image_picker_ios/image_picker_ios_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/permission_handler_apple/permission_handler_apple_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/webview_flutter_wkwebview/webview_flutter_wkwebview_privacy.bundle",
@@ -541,6 +544,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1711823D2E052E4E0036C3A5 /* FTPluginTest.swift in Sources */,
+				C0D3A0012E2870000036C3A5 /* FTSessionReplayBridgeTests.swift in Sources */,
 				171182732E0A52B70036C3A5 /* FTTestUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
