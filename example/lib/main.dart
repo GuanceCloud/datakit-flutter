@@ -75,6 +75,8 @@ Future<void> sdkInit() async {
       androidAppId: appAndroidId,
       iOSAppId: appIOSId,
       enableNativeAppUIBlock: true,
+      enableLongTask: true,
+      dartLongTaskThreshold: 0.1,
       enableNativeUserAction: true,
       enableUserResource: true,
       // RUM Resource Http data capture

@@ -11,6 +11,9 @@ class RUMPage extends StatefulWidget {
 }
 
 class _RUMPageState extends State<RUMPage> {
+  static const Duration _manualLongTaskDuration = Duration(milliseconds: 250);
+  static const Duration _autoLongTaskDuration = Duration(milliseconds: 350);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,6 +80,31 @@ class _RUMPageState extends State<RUMPage> {
             },
           ),
           ListTile(
+            title: Text("LongTask Manual Report"),
+            onTap: () async {
+              await FTRUMManager().reportLongTask(
+                _manualLongTaskDuration.inMilliseconds,
+                stack: "flutter_manual_long_task",
+                property: {"long_task_source": "manual_report"},
+              );
+              _showSnackBar(
+                  "Manual long task reported: ${_manualLongTaskDuration.inMilliseconds} ms");
+            },
+          ),
+          ListTile(
+            title: Text("LongTask Auto Detect"),
+            onTap: () async {
+              await FTRUMManager().startAction(
+                "LongTask Auto Detect",
+                "click",
+                property: {"long_task_source": "auto_detect"},
+              );
+              _blockMainIsolate(_autoLongTaskDuration);
+              _showSnackBar(
+                  "Main isolate blocked for ${_autoLongTaskDuration.inMilliseconds} ms");
+            },
+          ),
+          ListTile(
             title: Text("WebView"),
             onTap: () async {
               Navigator.pushNamed(context, "webview");
@@ -125,5 +153,16 @@ class _RUMPageState extends State<RUMPage> {
         responseBody: responseBody,
       );
     }
+  }
+
+  void _blockMainIsolate(Duration duration) {
+    final stopwatch = Stopwatch()..start();
+    while (stopwatch.elapsed < duration) {}
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 }
