@@ -43,6 +43,8 @@ class FTConfigCheck {
             FTMobileAgentFlutter.KEY_DB_CACHE_DISCARD to sdkConfig.dbCacheDiscard.ordinal,
             FTMobileAgentFlutter.KEY_LINE_DATA_MODIFIER to sdkConfig.lineDataModifier,
             FTMobileAgentFlutter.KEY_DATA_MODIFIER to sdkConfig.dataModifier,
+            FTMobileAgentFlutter.KEY_ENABLE_DATA_FILTER to sdkConfig.isEnableDataFilter,
+            FTMobileAgentFlutter.KEY_DATA_FILTERS to sdkConfig.dataFilters.mapValues { it.value.toList() },
             FTMobileAgentFlutter.KEY_ENABLE_REMOTE_CONFIGURATION to sdkConfig.isRemoteConfiguration,
             FTMobileAgentFlutter.KEY_REMOTE_CONFIG_MINI_UPDATE_INTERVAL to sdkConfig.remoteConfigMiniUpdateInterval
         )

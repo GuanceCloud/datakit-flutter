@@ -161,6 +161,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
         const val KEY_DB_CACHE_DISCARD = "dbCacheDiscard"
         const val KEY_DATA_MODIFIER = "dataModifier"
         const val KEY_LINE_DATA_MODIFIER = "lineDataModifier"
+        const val KEY_ENABLE_DATA_FILTER = "enableDataFilter"
+        const val KEY_DATA_FILTERS = "dataFilters"
         const val KEY_ENABLE_REMOTE_CONFIGURATION = "enableRemoteConfiguration"
         const val KEY_REMOTE_CONFIG_MINI_UPDATE_INTERVAL = "remoteConfigMiniUpdateInterval"
         const val KEY_REMOTE_CONFIG_OVERRIDE_RULES = "remoteConfigOverrideRules"
@@ -239,6 +241,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 val dataModifier: Map<String, Any>? = call.argument(KEY_DATA_MODIFIER)
                 val lineDataModifier: Map<String, Map<String, Any>>? =
                     call.argument(KEY_LINE_DATA_MODIFIER)
+                val enableDataFilter: Boolean? = call.argument<Boolean>(KEY_ENABLE_DATA_FILTER)
+                val dataFilters: Map<String, List<String>>? = call.argument(KEY_DATA_FILTERS)
                 val enableRemoteConfiguration: Boolean? = call.argument<Boolean>(
                     KEY_ENABLE_REMOTE_CONFIGURATION
                 )
@@ -331,6 +335,18 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                             }
                         }
                     })
+                }
+
+                if (enableDataFilter != null) {
+                    sdkConfig.setEnableDataFilter(enableDataFilter)
+                }
+
+                if (dataFilters != null) {
+                    val filters = HashMap<String, Array<String>>()
+                    dataFilters.forEach { (category, rules) ->
+                        filters[category] = rules.toTypedArray()
+                    }
+                    sdkConfig.setDataFilters(filters)
                 }
 
                 if (enableRemoteConfiguration != null) {

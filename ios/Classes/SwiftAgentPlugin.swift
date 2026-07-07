@@ -145,6 +145,14 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                     }
                 }
             }
+
+            if let enableDataFilter = context["enableDataFilter"] as? Bool {
+                config.enableDataFilter = enableDataFilter
+            }
+
+            if let dataFilters = context["dataFilters"] as? [String: [String]] {
+                config.dataFilters = dataFilters
+            }
             
             if let enableRemoteConfiguration = context["enableRemoteConfiguration"] as? Bool{
                 config.remoteConfiguration = enableRemoteConfiguration

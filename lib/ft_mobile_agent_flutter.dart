@@ -99,6 +99,8 @@ class FTMobileFlutter {
   /// [globalContext] SDK global attributes
   /// [dataModifier] Data modifier, modify individual fields {key:value}, after setting SDK will replace original value with set value based on key
   /// [lineDataModifier] Data modifier, modify single data {"measurement":measurement,"data":{key:value}}, after setting SDK will replace original value with set value based on key
+  /// [enableDataFilter] Whether to enable SDK-side DataKit-compatible data filtering. Default is enabled by native SDKs.
+  /// [dataFilters] Local DataKit-compatible filter rules grouped by category, currently supports `logging` and `rum`.
   /// [iOSGroupIdentifiers]
   /// [dataSyncRetryCount] Android only
   /// [customHttpOverrides] Custom HttpOverrides object, used when enabling HTTP tracing
@@ -127,6 +129,8 @@ class FTMobileFlutter {
       Map<String, String>? globalContext,
       Map<String, Object>? dataModifier,
       Map<String, Map<String, Object>>? lineDataModifier,
+      bool? enableDataFilter,
+      Map<String, List<String>>? dataFilters,
       bool? enableRemoteConfiguration,
       int? remoteConfigMiniUpdateInterval,
       List<Map<String, Object?>>? remoteConfigOverrideRules,
@@ -165,6 +169,8 @@ class FTMobileFlutter {
     }
     map["dataModifier"] = dataModifier;
     map["lineDataModifier"] = lineDataModifier;
+    map["enableDataFilter"] = enableDataFilter;
+    map["dataFilters"] = dataFilters;
     map["enableRemoteConfiguration"] = enableRemoteConfiguration;
     map["remoteConfigMiniUpdateInterval"] = remoteConfigMiniUpdateInterval;
     map["remoteConfigOverrideRules"] = remoteConfigOverrideRules;

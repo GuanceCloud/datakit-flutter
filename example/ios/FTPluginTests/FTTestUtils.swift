@@ -37,6 +37,11 @@ class FTTestUtils {
             // Dictionary type
             Constants.Base.dataModifier: ["device_uuid": "xxx"],
             Constants.Base.lineDataModifier: ["view_url": "xxx"],
+            Constants.Base.enableDataFilter: NSNumber(value: true),
+            Constants.Base.dataFilters: [
+                "logging": ["{ source in ['custom_log'] and message in ['drop'] }"],
+                "rum": ["{ source in ['view'] and view_name in ['drop'] }"]
+            ],
             Constants.Base.globalContext: ["test_key": "test_value"],
             Constants.Base.enableRemoteConfiguration: NSNumber(value: true),
             Constants.Base.remoteConfigMiniUpdateInterval: NSNumber(value: 200)

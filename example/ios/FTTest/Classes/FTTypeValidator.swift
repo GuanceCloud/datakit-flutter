@@ -60,6 +60,8 @@ extension ConfigValidator{
             return stringA == stringB
         }else if let arrayA = a as? NSArray, let arrayB = b as? NSArray {
             return arrayA == arrayB
+        }else if let dictA = a as? NSDictionary, let dictB = b as? NSDictionary {
+            return dictA == dictB
         }else if let dictA = a as? Dictionary<String,String>, let dictB = b as? Dictionary<String,String> {
             return dictA == dictB
         }
@@ -253,6 +255,8 @@ extension NSNumber {
                 (value as? NSNumber)?.isStoredAsInt == true
             case is Dictionary<String, String>.Type:
                 validate = value is [String: String]
+            case is Dictionary<String, [String]>.Type:
+                validate = value is [String: [String]]
             case is [String:Any].Type:
                 validate = value is [String: Any]
             case is [Any].Type:
@@ -348,6 +352,8 @@ extension NSNumber {
             Constants.Base.dbCacheLimit:Int.self,
             Constants.Base.dataModifier:[String:Any].self,
             Constants.Base.lineDataModifier:[String:Any].self,
+            Constants.Base.enableDataFilter:Bool.self,
+            Constants.Base.dataFilters:Dictionary<String, [String]>.self,
             Constants.Base.globalContext:Dictionary<String, String>.self,
         ]
         return NSNumber(booleanLiteral:validateAll(context, rules: rules, type: "SDK",config:config))

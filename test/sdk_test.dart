@@ -132,6 +132,29 @@ void main() {
     }
   });
 
+  test('sdkConfig passes DataFilter options', () async {
+    final dataFilters = <String, List<String>>{
+      'logging': <String>[
+        "{ source in ['custom_log'] and message in ['drop'] }",
+      ],
+      'rum': <String>[
+        "{ source in ['view'] and view_name in ['drop'] }",
+      ],
+    };
+
+    await FTMobileFlutter.sdkConfig(
+      datakitUrl: requestUrl,
+      enableDataFilter: false,
+      dataFilters: dataFilters,
+    );
+
+    final call = calls.singleWhere(
+      (call) => call.method == methodConfig,
+    );
+    expect(call.arguments['enableDataFilter'], false);
+    expect(call.arguments['dataFilters'], dataFilters);
+  });
+
   test("Http Request Test", () async {
     await FTTracer().setConfig(enableAutoTrace: true);
     var httpClient = IOClient();

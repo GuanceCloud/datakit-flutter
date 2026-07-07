@@ -25,6 +25,8 @@ enum Constants {
         internal static let dbCacheDiscard = "dbCacheDiscard"
         internal static let dataModifier = "dataModifier"
         internal static let lineDataModifier = "lineDataModifier"
+        internal static let enableDataFilter = "enableDataFilter"
+        internal static let dataFilters = "dataFilters"
         internal static let groupIdentifiers = "groupIdentifiers"
         internal static let enableLimitWithDbSize = "enableLimitWithDbSize"
         internal static let dbCacheLimit = "dbCacheLimit"
@@ -72,7 +74,6 @@ enum Constants {
 
     
 }
-
 
 
 
