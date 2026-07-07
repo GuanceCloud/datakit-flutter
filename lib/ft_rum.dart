@@ -7,7 +7,7 @@ import 'package:ft_mobile_agent_flutter/ft_http_override_config.dart';
 import 'package:ft_mobile_agent_flutter/ft_rum_long_task_observer.dart';
 
 import 'const.dart';
-import 'ft_mobile_agent_flutter.dart';
+import 'ft_mobile_agent_flutter.dart' show FTMobileFlutter;
 
 class FTRUMManager {
   static final FTRUMManager _singleton = FTRUMManager._internal();
@@ -109,14 +109,6 @@ class FTRUMManager {
           FTRUMLongTaskObserver(longTaskThreshold: dartLongTaskThreshold);
       _longTaskObserver?.init();
     }
-  }
-
-  /// Report a Dart long task.
-  ///
-  /// [durationMS] is converted to nanoseconds before being sent to native SDKs.
-  Future<void> reportLongTask(int durationMS,
-      {String stack = "dart_long_task", Map<String, String>? property}) async {
-    await addLongTask(stack, durationMS * 1000000, property: property);
   }
 
   /// Add long task.

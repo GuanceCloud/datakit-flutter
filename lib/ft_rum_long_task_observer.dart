@@ -6,6 +6,9 @@ import 'package:ft_mobile_agent_flutter/ft_rum.dart';
 T? _ambiguate<T>(T? value) => value;
 
 class FTRUMLongTaskObserver with WidgetsBindingObserver {
+  static const _longTaskStack = "flutter_main_isolate_long_task";
+  static const _nanosecondsPerMillisecond = 1000000;
+
   /// The amount of elapsed time that is considered a long task, in seconds.
   final double longTaskThreshold;
   final FTRUMManager rumInstance;
@@ -73,7 +76,10 @@ class FTRUMLongTaskObserver with WidgetsBindingObserver {
       final check = DateTime.now().millisecondsSinceEpoch;
       final taskLength = check - lastCheck;
       if (_detectingLongTasks && taskLength > millisecondThreshold) {
-        await rumInstance.reportLongTask(taskLength);
+        await rumInstance.addLongTask(
+          _longTaskStack,
+          taskLength * _nanosecondsPerMillisecond,
+        );
       }
       lastCheck = check;
     }

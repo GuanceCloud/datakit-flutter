@@ -146,13 +146,13 @@ void main() {
     expect(callResult[methodRumAddResource], true);
   });
 
-  test('reportLongTask sends duration in nanoseconds', () async {
-    await FTRUMManager().reportLongTask(123);
+  test('addLongTask passes duration in nanoseconds', () async {
+    await FTRUMManager().addLongTask("flutter_manual_long_task", 123000000);
 
     final call = calls.singleWhere(
       (call) => call.method == methodRumAddLongTask,
     );
-    expect(call.arguments['stack'], 'dart_long_task');
+    expect(call.arguments['stack'], 'flutter_manual_long_task');
     expect(call.arguments['duration'], 123000000);
   });
 

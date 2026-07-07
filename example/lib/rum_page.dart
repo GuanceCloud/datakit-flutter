@@ -11,6 +11,7 @@ class RUMPage extends StatefulWidget {
 }
 
 class _RUMPageState extends State<RUMPage> {
+  static const int _nanosecondsPerMillisecond = 1000000;
   static const Duration _manualLongTaskDuration = Duration(milliseconds: 250);
   static const Duration _autoLongTaskDuration = Duration(milliseconds: 350);
 
@@ -82,9 +83,10 @@ class _RUMPageState extends State<RUMPage> {
           ListTile(
             title: Text("LongTask Manual Report"),
             onTap: () async {
-              await FTRUMManager().reportLongTask(
-                _manualLongTaskDuration.inMilliseconds,
-                stack: "flutter_manual_long_task",
+              await FTRUMManager().addLongTask(
+                "flutter_manual_long_task",
+                _manualLongTaskDuration.inMilliseconds *
+                    _nanosecondsPerMillisecond,
                 property: {"long_task_source": "manual_report"},
               );
               _showSnackBar(
