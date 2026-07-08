@@ -18,9 +18,20 @@ import 'ft_get_view_name.dart';
 import 'image_page.dart';
 import 'logging_page.dart';
 
+// Pass demo-only runtime values with --dart-define when running the example.
+// Upload mode:
+// - DataKit: DATAKIT_URL
+// - DataWay: DATAWAY_URL + CLIENT_TOKEN
+// If both upload URLs are supplied, this example uses DataKit.
 const serverUrl = String.fromEnvironment("DATAKIT_URL");
+const datawayUrl = String.fromEnvironment("DATAWAY_URL");
+const clientToken = String.fromEnvironment("CLIENT_TOKEN");
+
+// RUM app ids come from the Guance console and are platform-specific.
 const appAndroidId = String.fromEnvironment("ANDROID_APP_ID");
 const appIOSId = String.fromEnvironment("IOS_APP_ID");
+
+// Used only by the WebView and network tracing demos.
 const webViewViewUrl = String.fromEnvironment("WEB_VIEW_URL");
 
 void main() async {
@@ -40,9 +51,12 @@ void main() async {
 }
 
 Future<void> sdkInit() async {
+  final useDataway = serverUrl.isEmpty && datawayUrl.isNotEmpty;
   // Initialize SDK
   await FTMobileFlutter.sdkConfig(
-    datakitUrl: serverUrl,
+    datakitUrl: serverUrl.isNotEmpty ? serverUrl : null,
+    datawayUrl: useDataway ? datawayUrl : null,
+    cliToken: useDataway ? clientToken : null,
     debug: true,
     serviceName: "flutter_agent",
     // dataSyncRetryCount: 0,
@@ -54,6 +68,7 @@ Future<void> sdkInit() async {
     enableLimitWithDbSize: true,
     // dataModifier: {"device_uuid":"xxx"},
     // lineDataModifier: {"view":{"view_name":"xxx"}},
+    // App Group is only needed for the TodayDemoExtension cache sync demo.
     iOSGroupIdentifiers: ["group.com.ft.sdk.flutter.agentExample.TodayDemo"],
     //customHttpOverrides: CustomHttpOverrides()
   );

@@ -2,6 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<!-- Demo-only App Group for extension cache sync. -->
 	<key>com.apple.security.application-groups</key>
 	<array>
 		<string>group.com.ft.sdk.flutter.agentExample.TodayDemo</string>
