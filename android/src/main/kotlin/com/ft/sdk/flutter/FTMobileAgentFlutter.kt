@@ -702,6 +702,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 val resourceStatus: Int? = call.argument<Int>("resourceStatus")
                 val resourceSize: Number? = call.argument<Number>("resourceSize")
                 val url: String? = call.argument<String>("url")
+                val metrics: Map<String, Any?>? =
+                    call.argument<Map<String, Any?>>("metrics")
 //                val fetchStartTime: Long? = call.argument<Long>("fetchStartTime")
 //                val tcpStartTime: Long? = call.argument<Long>("tcpStartTime")
 //                val tcpEndTime: Long? = call.argument<Long>("tcpEndTime")
@@ -727,6 +729,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
 
                 if (resourceSize != null) {
                     params.responseContentLength = resourceSize.toLong()
+                    netStatusBean.responseBodySize = resourceSize.toLong()
                 }
 
                 val responseContentType =
@@ -742,6 +745,21 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 params.responseContentType = responseContentType ?: ""
                 params.responseContentEncoding = responseContentEncoding ?: ""
                 params.url = url ?: ""
+                val resourceHttpProtocol = metrics?.get("resourceHttpProtocol")?.toString()
+                if (!resourceHttpProtocol.isNullOrEmpty()) {
+                    params.resourceProtocol = resourceHttpProtocol
+                }
+                val requestSize = metrics?.get("requestSize") as? Number
+                if (requestSize != null) {
+                    val requestHeaderSize = requestHeader?.let { getHeadersByteSize(it) } ?: 0L
+                    netStatusBean.requestBodySize =
+                        maxOf(0L, requestSize.toLong() - requestHeaderSize)
+                }
+                val connectionReuse =
+                    parseBoolean(metrics?.get("connectionReuse") ?: metrics?.get("reusedConnection"))
+                if (connectionReuse != null) {
+                    netStatusBean.connectionReuse = connectionReuse
+                }
 //                netStatusBean.fetchStartTime = fetchStartTime!!
 //                netStatusBean.tcpStartTime = tcpStartTime!!
 //                netStatusBean.tcpEndTime = tcpEndTime!!
@@ -1143,6 +1161,33 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
             }
         }
         return hashMap
+    }
+
+    private fun getHeadersByteSize(header: Map<String, Any?>): Long {
+        if (header.isEmpty()) return 0
+
+        var size = 0L
+        header.forEach { entry ->
+            val value = when (val item = entry.value) {
+                is List<*> -> item.joinToString(", ") { it.toString() }
+                null -> ""
+                else -> item.toString()
+            }
+            size += entry.key.length.toLong()
+            size += 2
+            size += value.length.toLong()
+            size += 2
+        }
+        return size
+    }
+
+    private fun parseBoolean(value: Any?): Boolean? {
+        return when (value) {
+            is Boolean -> value
+            is Number -> value.toInt() != 0
+            is String -> value.equals("true", ignoreCase = true)
+            else -> null
+        }
     }
 
 

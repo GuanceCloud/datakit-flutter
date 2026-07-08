@@ -268,6 +268,7 @@ class FTRUMManager {
   /// [responseHeader] Response header parameters
   /// [responseBody] Response content
   /// [resourceStatus] Response status code
+  /// [resourceType] Resource type, such as native, image, media, font, css, js
   Future<void> addResource(
       {required String key,
       required String url,
@@ -277,6 +278,7 @@ class FTRUMManager {
       String? responseBody = "",
       int? resourceStatus,
       int? resourceSize,
+      String? resourceType,
       FTRUMResourceMetrics? metrics}) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
@@ -287,6 +289,7 @@ class FTRUMManager {
     map["responseBody"] = responseBody;
     map["resourceStatus"] = resourceStatus;
     map["resourceSize"] = resourceSize;
+    map["resourceType"] = resourceType;
     map["metrics"] = metrics?.toMap();
     await channel.invokeMethod(methodRumAddResource, map);
   }
@@ -314,6 +317,9 @@ class FTRUMResourceMetrics {
     this.resourceTtfb,
     this.resourceTrans,
     this.resourceFirstByte,
+    this.requestSize,
+    this.resourceHttpProtocol,
+    this.reusedConnection,
   });
 
   final num? duration;
@@ -323,6 +329,9 @@ class FTRUMResourceMetrics {
   final num? resourceTtfb;
   final num? resourceTrans;
   final num? resourceFirstByte;
+  final num? requestSize;
+  final String? resourceHttpProtocol;
+  final bool? reusedConnection;
 
   Map<String, Object?> toMap() => <String, Object?>{
         'duration': duration,
@@ -332,6 +341,10 @@ class FTRUMResourceMetrics {
         'resource_ttfb': resourceTtfb,
         'resource_trans': resourceTrans,
         'resource_first_byte': resourceFirstByte,
+        'requestSize': requestSize,
+        'resourceHttpProtocol': resourceHttpProtocol,
+        'reusedConnection': reusedConnection,
+        'connectionReuse': reusedConnection,
       };
 }
 

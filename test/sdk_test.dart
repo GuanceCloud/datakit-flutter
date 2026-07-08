@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ft_mobile_agent_flutter/const.dart';
+import 'package:ft_mobile_agent_flutter/ft_http_override_config.dart';
 import 'package:ft_mobile_agent_flutter/ft_mobile_agent_flutter.dart';
 import 'package:http/io_client.dart';
 
@@ -189,6 +192,69 @@ void main() {
     );
     expect(call.arguments['enableUserView'], true);
     expect(call.arguments['enableNativeSwiftUIUserView'], true);
+  });
+
+  test('addResource passes resource metadata options', () async {
+    await FTRUMManager().addResource(
+      key: 'resource-key',
+      url: requestUrl,
+      httpMethod: 'GET',
+      requestHeader: {'content-length': '12'},
+      responseHeader: {'content-type': 'application/javascript'},
+      resourceStatus: 200,
+      resourceSize: 345,
+      resourceType: 'js',
+      metrics: const FTRUMResourceMetrics(
+        requestSize: 123,
+        resourceHttpProtocol: 'http/1.1',
+        reusedConnection: true,
+      ),
+    );
+
+    final call = calls.singleWhere(
+      (call) => call.method == methodRumAddResource,
+    );
+    expect(call.arguments['resourceType'], 'js');
+    expect(call.arguments['resourceSize'], 345);
+    expect(call.arguments['metrics']['requestSize'], 123);
+    expect(call.arguments['metrics']['resourceHttpProtocol'], 'http/1.1');
+    expect(call.arguments['metrics']['reusedConnection'], true);
+    expect(call.arguments['metrics']['connectionReuse'], true);
+  });
+
+  test('Http auto resource collection passes metadata options', () async {
+    const responseBody = 'console.log(1);';
+    final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+    addTearDown(() async {
+      await server.close(force: true);
+      FTHttpOverrideConfig.global.traceResource = false;
+    });
+    server.listen((request) async {
+      request.response.headers.contentType =
+          ContentType('application', 'javascript');
+      request.response.contentLength = responseBody.length;
+      request.response.write(responseBody);
+      await request.response.close();
+    });
+
+    await FTRUMManager().setConfig(enableUserResource: true);
+    final httpClient = IOClient();
+    addTearDown(httpClient.close);
+
+    final response = await httpClient.get(
+      Uri.parse('http://127.0.0.1:${server.port}/script.js'),
+    );
+    expect(response.statusCode, 200);
+
+    final call = calls.lastWhere(
+      (call) => call.method == methodRumAddResource,
+    );
+    expect(call.arguments['resourceType'], 'js');
+    expect(call.arguments['resourceSize'], responseBody.length);
+    expect(call.arguments['metrics']['requestSize'], greaterThan(0));
+    expect(call.arguments['metrics']['resourceHttpProtocol'], 'http/1.1');
+    expect(call.arguments['metrics']['reusedConnection'], false);
+    expect(call.arguments['metrics']['connectionReuse'], false);
   });
 
   test("Http Request Test", () async {

@@ -460,6 +460,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 content.url = url
                 content.httpMethod = resourceMethod
                 content.requestHeader = requestHeader
+                if let resourceType = context["resourceType"] as? String {
+                    content.resourceType = resourceType
+                }
                 if let responseHeader = context["responseHeader"] as? Dictionary<String, Any> {
                     content.responseHeader = responseHeader
                 }
@@ -479,6 +482,13 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                     if let ttfb = metricsContext["resource_ttfb"] as? NSNumber { metrics?.resource_ttfb = ttfb }
                     if let trans = metricsContext["resource_trans"] as? NSNumber { metrics?.resource_trans = trans }
                     if let firstByte = metricsContext["resource_first_byte"] as? NSNumber { metrics?.resource_first_byte = firstByte }
+                    if let requestSize = metricsContext["requestSize"] as? NSNumber { metrics?.requestSize = requestSize }
+                    if let resourceHttpProtocol = metricsContext["resourceHttpProtocol"] as? String { metrics?.resourceHttpProtocol = resourceHttpProtocol }
+                    if let reusedConnection = metricsContext["reusedConnection"] as? Bool {
+                        metrics?.reusedConnection = reusedConnection
+                    } else if let connectionReuse = metricsContext["connectionReuse"] as? Bool {
+                        metrics?.reusedConnection = connectionReuse
+                    }
                 }
                 if let resourceSize = context["resourceSize"] as? NSNumber {
                     if metrics == nil { metrics = FTResourceMetricsModel.init() }

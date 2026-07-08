@@ -18,6 +18,105 @@ extension _RequestMethodExt on _RequestMethod {
   }
 }
 
+typedef _ConnectionReuseTracker = bool Function(
+    Uri uri, bool persistentConnection);
+
+int _headersByteSize(Map<String, Object?>? headers) {
+  if (headers == null || headers.isEmpty) {
+    return 0;
+  }
+
+  var size = 2; // Final CRLF after the header block.
+  headers.forEach((name, value) {
+    final headerValue = value is Iterable
+        ? value.map((item) => item.toString()).join(',')
+        : value?.toString() ?? '';
+    size += utf8.encode(name).length;
+    size += 2; // ": "
+    size += utf8.encode(headerValue).length;
+    size += 2; // CRLF
+  });
+  return size;
+}
+
+String _connectionKey(Uri uri) {
+  final scheme = uri.scheme.toLowerCase();
+  final defaultPort = scheme == 'https'
+      ? 443
+      : scheme == 'http'
+          ? 80
+          : 0;
+  final port = uri.hasPort ? uri.port : defaultPort;
+  return '$scheme://${uri.host.toLowerCase()}:$port';
+}
+
+String? _resourceHttpProtocol(String url) {
+  final scheme = Uri.tryParse(url)?.scheme.toLowerCase();
+  if (scheme == 'http' || scheme == 'https') {
+    return 'http/1.1';
+  }
+  return null;
+}
+
+String _resourceTypeForHttp(String method, Map<String, String>? headers) {
+  final upperMethod = method.toUpperCase();
+  if (upperMethod == 'POST' ||
+      upperMethod == 'PUT' ||
+      upperMethod == 'DELETE') {
+    return 'native';
+  }
+
+  final contentType = _headerValue(headers, HttpHeaders.contentTypeHeader)
+      ?.split(';')
+      .first
+      .trim()
+      .toLowerCase();
+  if (contentType == null || contentType.isEmpty) {
+    return 'native';
+  }
+  if (contentType.startsWith('image/')) {
+    return 'image';
+  }
+  if (contentType.startsWith('video/') || contentType.startsWith('audio/')) {
+    return 'media';
+  }
+  if (contentType.startsWith('font/')) {
+    return 'font';
+  }
+  if (contentType == 'text/css') {
+    return 'css';
+  }
+  if (contentType == 'text/javascript' ||
+      contentType == 'text/ecmascript' ||
+      contentType == 'application/javascript' ||
+      contentType == 'application/ecmascript' ||
+      contentType == 'application/x-javascript') {
+    return 'js';
+  }
+  return 'native';
+}
+
+String? _headerValue(Map<String, String>? headers, String name) {
+  if (headers == null || headers.isEmpty) {
+    return null;
+  }
+  final lowerName = name.toLowerCase();
+  for (final entry in headers.entries) {
+    if (entry.key.toLowerCase() == lowerName) {
+      return entry.value;
+    }
+  }
+  return null;
+}
+
+Map<String, String> _collectHeaders(HttpHeaders headers) {
+  final map = <String, String>{};
+  headers.forEach((name, values) {
+    map[name] = values.join(',');
+  });
+  return map;
+}
+
 class FTHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
@@ -32,8 +131,19 @@ class FTHttpOverrides extends HttpOverrides {
 class FTHttpClient implements HttpClient {
   final Uuid _uuid = const Uuid();
   final HttpClient _httpClient;
+  final Set<String> _seenConnectionKeys = <String>{};
 
   FTHttpClient(this._httpClient);
+
+  bool _markConnectionReuse(Uri uri, bool persistentConnection) {
+    if (!persistentConnection) {
+      return false;
+    }
+    final key = _connectionKey(uri);
+    final reused = _seenConnectionKeys.contains(key);
+    _seenConnectionKeys.add(key);
+    return reused;
+  }
 
   @override
   Future<HttpClientRequest> open(
@@ -70,15 +180,16 @@ class FTHttpClient implements HttpClient {
           FTRUMManager().addResource(
               key: uniqueKey,
               url: urlString,
-              httpMethod: "",
+              httpMethod: method,
               requestHeader: {},
-              responseBody: e.toString());
+              responseBody: e.toString(),
+              resourceType: _resourceTypeForHttp(method, null));
         } catch (innerE) {}
       }
       rethrow;
     }
 
-    request = _GCHttpRequest(request, uniqueKey, url.toString());
+    request = _GCHttpRequest(request, uniqueKey, url, _markConnectionReuse);
 
     return request;
   }
@@ -162,7 +273,8 @@ class FTHttpClient implements HttpClient {
 
   @override
   Future<HttpClientRequest> delete(String host, int port, String path) {
-    return _httpClient.delete(host, port, path);
+    return _openUrl(_RequestMethod.delete.value,
+        Uri(scheme: 'http', host: host, port: port, path: path));
   }
 
   @override
@@ -174,7 +286,8 @@ class FTHttpClient implements HttpClient {
 
   @override
   Future<HttpClientRequest> get(String host, int port, String path) {
-    return _httpClient.get(host, port, path);
+    return _openUrl(_RequestMethod.get.value,
+        Uri(scheme: 'http', host: host, port: port, path: path));
   }
 
   @override
@@ -183,7 +296,8 @@ class FTHttpClient implements HttpClient {
 
   @override
   Future<HttpClientRequest> head(String host, int port, String path) {
-    return _httpClient.head(host, port, path);
+    return _openUrl(_RequestMethod.head.value,
+        Uri(scheme: 'http', host: host, port: port, path: path));
   }
 
   @override
@@ -196,7 +310,8 @@ class FTHttpClient implements HttpClient {
 
   @override
   Future<HttpClientRequest> patch(String host, int port, String path) {
-    return _httpClient.patch(host, port, path);
+    return _openUrl(_RequestMethod.patch.value,
+        Uri(scheme: 'http', host: host, port: port, path: path));
   }
 
   @override
@@ -205,7 +320,8 @@ class FTHttpClient implements HttpClient {
 
   @override
   Future<HttpClientRequest> post(String host, int port, String path) {
-    return _httpClient.post(host, port, path);
+    return _openUrl(_RequestMethod.post.value,
+        Uri(scheme: 'http', host: host, port: port, path: path));
   }
 
   @override
@@ -214,7 +330,8 @@ class FTHttpClient implements HttpClient {
 
   @override
   Future<HttpClientRequest> put(String host, int port, String path) {
-    return _httpClient.put(host, port, path);
+    return _openUrl(_RequestMethod.put.value,
+        Uri(scheme: 'http', host: host, port: port, path: path));
   }
 
   @override
@@ -225,20 +342,28 @@ class FTHttpClient implements HttpClient {
 class _GCHttpRequest implements HttpClientRequest {
   final HttpClientRequest _request;
   final String? _uniqueKey;
-  final String _url;
+  final Uri _url;
+  final _ConnectionReuseTracker _connectionReuseTracker;
+  int _requestBodyBytes = 0;
+  bool? _connectionReusedCache;
 
-  _GCHttpRequest(this._request, this._uniqueKey, this._url);
+  _GCHttpRequest(
+      this._request, this._uniqueKey, this._url, this._connectionReuseTracker);
 
   @override
   Future<HttpClientResponse> get done {
     final innerFuture = _request.done;
     return innerFuture.then((value) {
-      var requestHeaders = Map<String, String>();
-      _request.headers.forEach((name, values) {
-        requestHeaders[name] =
-            values.toString().replaceAll(RegExp(r"[\[\]]"), "");
-      });
-      return _FTHttpResponse(value, _uniqueKey, _url, method, requestHeaders);
+      final requestHeaders = _collectHeaders(_request.headers);
+      return _FTHttpResponse(
+        value,
+        _uniqueKey,
+        _url.toString(),
+        method,
+        requestHeaders,
+        _requestSize(requestHeaders),
+        _connectionReused(),
+      );
     }, onError: (e, st) {
       _onStreamError(e, st);
       throw e;
@@ -248,12 +373,16 @@ class _GCHttpRequest implements HttpClientRequest {
   @override
   Future<HttpClientResponse> close() {
     return _request.close().then((value) {
-      var requestHeaders = Map<String, String>();
-      _request.headers.forEach((name, values) {
-        requestHeaders[name] =
-            values.toString().replaceAll(RegExp(r"[\[\]]"), "");
-      });
-      return _FTHttpResponse(value, _uniqueKey, _url, method, requestHeaders);
+      final requestHeaders = _collectHeaders(_request.headers);
+      return _FTHttpResponse(
+        value,
+        _uniqueKey,
+        _url.toString(),
+        method,
+        requestHeaders,
+        _requestSize(requestHeaders),
+        _connectionReused(),
+      );
     }, onError: (e, st) async {
       _onStreamError(e, st);
       throw e;
@@ -263,15 +392,41 @@ class _GCHttpRequest implements HttpClientRequest {
   void _onStreamError(Object e, StackTrace? st) {
     try {
       if (_uniqueKey != null) {
+        final requestHeaders = _collectHeaders(_request.headers);
         FTRUMManager().stopResource(_uniqueKey!);
         FTRUMManager().addResource(
             key: _uniqueKey!,
-            url: _url,
-            httpMethod: "",
-            requestHeader: {},
-            responseBody: e.toString());
+            url: _url.toString(),
+            httpMethod: method,
+            requestHeader: requestHeaders,
+            responseBody: e.toString(),
+            resourceType: _resourceTypeForHttp(method, null),
+            metrics: FTRUMResourceMetrics(
+              requestSize: _requestSize(requestHeaders),
+              reusedConnection: _connectionReused(),
+            ));
       }
     } catch (e) {}
+  }
+
+  int _requestSize(Map<String, String> requestHeaders) {
+    final bodySize = _requestBodyBytes > 0
+        ? _requestBodyBytes
+        : _request.contentLength > 0
+            ? _request.contentLength
+            : 0;
+    return _headersByteSize(requestHeaders) + bodySize;
+  }
+
+  bool _connectionReused() {
+    return _connectionReusedCache ??=
+        _connectionReuseTracker(_url, _request.persistentConnection);
+  }
+
+  void _addRequestBodyBytes(int bytes) {
+    if (bytes > 0) {
+      _requestBodyBytes += bytes;
+    }
   }
 
   @override
@@ -315,14 +470,22 @@ class _GCHttpRequest implements HttpClientRequest {
       _request.abort(exception, stackTrace);
 
   @override
-  void add(List<int> data) => _request.add(data);
+  void add(List<int> data) {
+    _addRequestBodyBytes(data.length);
+    _request.add(data);
+  }
 
   @override
   void addError(Object error, [StackTrace? stackTrace]) =>
       _request.addError(error, stackTrace);
 
   @override
-  Future addStream(Stream<List<int>> stream) => _request.addStream(stream);
+  Future addStream(Stream<List<int>> stream) {
+    return _request.addStream(stream.map((event) {
+      _addRequestBodyBytes(event.length);
+      return event;
+    }));
+  }
 
   @override
   HttpConnectionInfo? get connectionInfo => _request.connectionInfo;
@@ -343,17 +506,28 @@ class _GCHttpRequest implements HttpClientRequest {
   Uri get uri => _request.uri;
 
   @override
-  void write(Object? object) => _request.write(object);
+  void write(Object? object) {
+    _addRequestBodyBytes(encoding.encode(object.toString()).length);
+    _request.write(object);
+  }
 
   @override
-  void writeAll(Iterable objects, [String separator = '']) =>
-      _request.writeAll(objects, separator);
+  void writeAll(Iterable objects, [String separator = '']) {
+    _addRequestBodyBytes(encoding.encode(objects.join(separator)).length);
+    _request.writeAll(objects, separator);
+  }
 
   @override
-  void writeCharCode(int charCode) => _request.writeCharCode(charCode);
+  void writeCharCode(int charCode) {
+    _addRequestBodyBytes(encoding.encode(String.fromCharCode(charCode)).length);
+    _request.writeCharCode(charCode);
+  }
 
   @override
-  void writeln([Object? object = '']) => _request.writeln(object);
+  void writeln([Object? object = '']) {
+    _addRequestBodyBytes(encoding.encode('${object.toString()}\n').length);
+    _request.writeln(object);
+  }
 }
 
 class _FTHttpResponse extends Stream<List<int>> implements HttpClientResponse {
@@ -363,9 +537,11 @@ class _FTHttpResponse extends Stream<List<int>> implements HttpClientResponse {
   String url;
   String method;
   Map<String, String> requestHeaders;
+  int requestSize;
+  bool connectionReused;
 
   _FTHttpResponse(this.response, this.uniqueKey, this.url, this.method,
-      this.requestHeaders);
+      this.requestHeaders, this.requestSize, this.connectionReused);
 
   @override
   StreamSubscription<List<int>> listen(void Function(List<int> event)? onData,
@@ -419,6 +595,13 @@ class _FTHttpResponse extends Stream<List<int>> implements HttpClientResponse {
     try {
       if (uniqueKey != null) {
         final statusCode = response.statusCode;
+        final responseHeaders = _collectHeaders(response.headers);
+        final resourceType = _resourceTypeForHttp(method, responseHeaders);
+        final metrics = FTRUMResourceMetrics(
+          requestSize: requestSize,
+          resourceHttpProtocol: _resourceHttpProtocol(url),
+          reusedConnection: connectionReused && response.persistentConnection,
+        );
         FTRUMManager().stopResource(uniqueKey!);
         if (_lastError != null) {
           FTRUMManager().addResource(
@@ -426,22 +609,24 @@ class _FTHttpResponse extends Stream<List<int>> implements HttpClientResponse {
               url: url,
               requestHeader: requestHeaders,
               httpMethod: method,
-              responseBody: _lastError.toString());
+              responseHeader: responseHeaders,
+              resourceStatus: statusCode,
+              resourceSize: contentLength,
+              responseBody: _lastError.toString(),
+              resourceType: resourceType,
+              metrics: metrics);
         } else {
-          var map = Map<String, String>();
-          response.headers.forEach((name, values) {
-            map[name] = values.toString().replaceAll(RegExp(r"[\[\]]"), "");
-          });
-
           FTRUMManager().addResource(
             key: uniqueKey!,
             url: url,
             requestHeader: requestHeaders,
             httpMethod: method,
-            responseHeader: map,
+            responseHeader: responseHeaders,
             resourceStatus: statusCode,
             resourceSize: contentLength,
             responseBody: body ?? "",
+            resourceType: resourceType,
+            metrics: metrics,
           );
         }
       }
