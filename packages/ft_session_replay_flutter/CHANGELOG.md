@@ -1,7 +1,9 @@
 # ft_session_replay_flutter
 
 ## 0.1.0-pre.1
-* same as 0.1.0-dev.1
+* Added `FTSessionReplayConfig(enableSwiftUI)` to enable iOS native SwiftUI Session Replay recording.
+* Android bridge uses `ft-session-replay:0.1.6-beta01` with `ft-sdk:1.7.3`
+  so Flutter external recorder mode and segment writing APIs are available.
 
 ---
 ## 0.1.0-dev.1

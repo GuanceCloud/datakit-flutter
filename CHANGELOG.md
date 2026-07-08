@@ -4,7 +4,12 @@
 > * [iOS ](https://github.com/GuanceCloud/datakit-ios/blob/develop/CHANGELOG.md)
 
 ## 0.5.7-pre.4
-* same as 0.5.7-dev.5
+* Added `FTMobileFlutter.sdkConfig(enableDataFilter, dataFilters)` to configure SDK-side DataKit-compatible filtering rules for `logging` and `rum` data.
+* Added Android cache and FileStore configuration options: `enableLimitWithCacheSize`, `cacheLimit`, `cacheDiscard`, `enableFileDataStore`, `needTransformOldCache`, and `fileDataStoreShadow`.
+* Added `FTRUMManager().setConfig(enableNativeSwiftUIUserView)` for iOS native SwiftUI View automatic tracking.
+* Added Flutter LongTask support. `FTRUMManager().setConfig(enableLongTask, dartLongTaskThreshold)` detects main-isolate long tasks, and `FTRUMManager().addLongTask(stack, duration)` reports manual LongTask data.
+* Enhanced RUM Resource reporting with `resourceType` and metrics fields `requestSize`, `resourceHttpProtocol`, `reusedConnection`, and `connectionReuse`.
+* Updated Android Maven repository URLs to `mvnrepo.guance.com`.
 ---
 ## 0.5.7-dev.5
 * Compatible with Android ft-sdk 1.7.3, ft-native 1.1.3, iOS FTMobileSDK 1.6.5.
