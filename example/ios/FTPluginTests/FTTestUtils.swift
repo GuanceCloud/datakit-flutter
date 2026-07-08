@@ -75,6 +75,7 @@ class FTTestUtils {
             Constants.RUM.sessionOnErrorSampleRate: NSNumber(value: 1),
             Constants.RUM.enableUserAction: NSNumber(value: true),
             Constants.RUM.enableUserView: NSNumber(value: true),
+            Constants.RUM.enableNativeSwiftUIUserView: NSNumber(value: true),
             Constants.RUM.enableUserResource: NSNumber(value: true),
             Constants.RUM.enableTrackNativeAppANR: NSNumber(value: true),
             Constants.RUM.enableTrackNativeCrash: NSNumber(value: true),

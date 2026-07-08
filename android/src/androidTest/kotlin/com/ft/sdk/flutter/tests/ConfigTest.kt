@@ -3,6 +3,8 @@ package com.ft.sdk.flutter.tests
 import com.ft.sdk.flutter.FTMobileAgentFlutter
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_ALLOW_WEBVIEW_HOST
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_AUTO_SYNC
+import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_CACHE_DISCARD
+import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_CACHE_LIMIT
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_CLI_TOKEN
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_COMPRESS_INTAKE_REQUESTS
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_CUSTOM_SYNC_PAGE_SIZE
@@ -19,6 +21,8 @@ import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_ENABLE_APP_UI_BLOCK
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_ENABLE_CUSTOM_LOG
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_ENABLE_DATA_FILTER
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_ENABLE_DATA_INTEGER_COMPATIBLE
+import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_ENABLE_FILE_DATA_STORE
+import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_ENABLE_LIMIT_WITH_CACHE_SIZE
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_ENABLE_LIMIT_WITH_DB_SIZE
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_ENABLE_LINK_RUM_DATA
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_ENABLE_NATIVE_AUTO_TRACE
@@ -32,12 +36,14 @@ import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_ENABLE_USER_VIEW
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_ENABLE_USER_VIEW_IN_FRAGMENT
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_ENV_TYPE
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_ERROR_MONITOR_TYPE
+import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_FILE_DATA_STORE_SHADOW
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_GLOBAL_CONTEXT
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_LINE_DATA_MODIFIER
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_LOG_CACHE_DISCARD
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_LOG_CACHE_LIMIT_COUNT
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_LOG_TYPE
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_NATIVE_UI_BLOCK_DURATION_MS
+import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_NEED_TRANSFORM_OLD_CACHE
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_PRINT_CUSTOM_LOG_TO_CONSOLE
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_REMOTE_CONFIG_MINI_UPDATE_INTERVAL
 import com.ft.sdk.flutter.FTMobileAgentFlutter.Companion.KEY_RUM_APP_ID
@@ -77,6 +83,12 @@ open class ConfigTest {
             KEY_DB_CACHE_DISCARD to 1,
             KEY_ENABLE_LIMIT_WITH_DB_SIZE to true,
             KEY_DB_CACHE_LIMIT to 60 * 1024 * 1024,
+            KEY_ENABLE_LIMIT_WITH_CACHE_SIZE to true,
+            KEY_CACHE_LIMIT to 60 * 1024 * 1024,
+            KEY_CACHE_DISCARD to 1,
+            KEY_ENABLE_FILE_DATA_STORE to true,
+            KEY_NEED_TRANSFORM_OLD_CACHE to true,
+            KEY_FILE_DATA_STORE_SHADOW to false,
             KEY_DATA_MODIFIER to mapOf("device_uuid" to "xxx"),
             KEY_LINE_DATA_MODIFIER to mapOf("view_url" to "xxx"),
             KEY_ENABLE_DATA_FILTER to true,

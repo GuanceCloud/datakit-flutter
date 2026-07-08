@@ -57,6 +57,7 @@ void main() {
       textAndInputPrivacy: FTTextAndInputPrivacyLevel.maskAllInputs,
       imagePrivacy: FTImagePrivacyLevel.maskAll,
       enableLinkRUMKeys: const ['session_id', 'view_id'],
+      enableSwiftUI: true,
     ));
 
     expect(callResult[methodSessionReplayConfig], true);
@@ -67,6 +68,7 @@ void main() {
       'textAndInputPrivacy': FTTextAndInputPrivacyLevel.maskAllInputs.index,
       'imagePrivacy': FTImagePrivacyLevel.maskAll.index,
       'enableLinkRUMKeys': const ['session_id', 'view_id'],
+      'enableSwiftUI': true,
     });
   });
 
@@ -84,6 +86,7 @@ void main() {
       'textAndInputPrivacy': FTTextAndInputPrivacyLevel.maskAll.index,
       'imagePrivacy': FTImagePrivacyLevel.maskAll.index,
       'enableLinkRUMKeys': null,
+      'enableSwiftUI': false,
     });
   });
 
@@ -102,6 +105,7 @@ void main() {
       'textAndInputPrivacy': FTTextAndInputPrivacyLevel.maskAll.index,
       'imagePrivacy': FTImagePrivacyLevel.maskAll.index,
       'enableLinkRUMKeys': null,
+      'enableSwiftUI': false,
     });
     expect(FTSessionReplay.instance, isNotNull);
   });
@@ -121,6 +125,7 @@ void main() {
       'textAndInputPrivacy': FTTextAndInputPrivacyLevel.maskAll.index,
       'imagePrivacy': FTImagePrivacyLevel.maskAll.index,
       'enableLinkRUMKeys': null,
+      'enableSwiftUI': false,
     });
     expect(FTSessionReplay.instance, isNotNull);
   });

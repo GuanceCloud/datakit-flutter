@@ -7,6 +7,14 @@
 #import <FTMobileSDK/FTMessageReceiver.h>
 #import <FTMobileSDK/FTModuleManager.h>
 
+#if __has_include(<FTMobileSDK/FTRumSessionReplay.h>) && __has_include(<FTMobileSDK/FTSessionReplayConfig.h>)
+#import <FTMobileSDK/FTRumSessionReplay.h>
+#import <FTMobileSDK/FTSessionReplayConfig.h>
+#define FT_FLUTTER_SR_NATIVE_SWIFTUI_AVAILABLE 1
+#else
+#define FT_FLUTTER_SR_NATIVE_SWIFTUI_AVAILABLE 0
+#endif
+
 #if __has_include(<FTMobileSDK/FTRemoteConfigManager.h>) && __has_include(<FTMobileSDK/FTRemoteConfigModel.h>)
 #import <FTMobileSDK/FTRemoteConfigManager.h>
 #import <FTMobileSDK/FTRemoteConfigModel.h>
@@ -101,6 +109,7 @@
 @property (nonatomic, copy) FTSessionReplaySampleStateChangedHandler sampleStateChangedHandler;
 @property (nonatomic, assign) BOOL configured;
 @property (atomic, copy) NSArray<NSString *> *enableLinkRUMKeys;
+@property (nonatomic, assign) BOOL nativeSwiftUISessionReplayStarted;
 #if FT_FLUTTER_SR_WRITER_AVAILABLE
 @property (nonatomic, strong) FTCoreDirectory *coreDirectory;
 @property (nonatomic, strong) FTPerformancePreset *performancePreset;
@@ -126,6 +135,7 @@
         _sampleStateEvaluated = NO;
         _hasReplayRequested = NO;
         _configured = NO;
+        _nativeSwiftUISessionReplayStarted = NO;
         _enableLinkRUMKeys = @[];
 #if FT_FLUTTER_SR_WRITER_AVAILABLE
         _performancePreset = [[FTPerformancePreset alloc] init];
@@ -150,6 +160,10 @@
         self.sessionReplayOnErrorSampleRate = (int)(sessionReplayOnErrorSampleRate.doubleValue * 100);
     }
     self.enableLinkRUMKeys = [self stringArrayFromValue:context[@"enableLinkRUMKeys"]];
+    NSNumber *enableSwiftUI = [self numberForKey:@"enableSwiftUI" inContext:context];
+    if (enableSwiftUI.boolValue) {
+        [self startNativeSwiftUISessionReplayWithContext:context];
+    }
     [self mergeRemoteSessionReplaySampleRates];
 #if FT_FLUTTER_SR_WRITER_AVAILABLE
     [self ensureNativeSessionReplayFeatures];
@@ -168,6 +182,55 @@
                     self.sampleRate,
                     self.sessionReplayOnErrorSampleRate);
 }
+
+- (void)startNativeSwiftUISessionReplayWithContext:(NSDictionary<NSString *, id> *)context {
+#if FT_FLUTTER_SR_NATIVE_SWIFTUI_AVAILABLE
+    if (self.nativeSwiftUISessionReplayStarted) {
+        return;
+    }
+
+    FTSessionReplayConfig *config = [[FTSessionReplayConfig alloc] init];
+    config.sampleRate = self.sampleRate;
+    config.sessionReplayOnErrorSampleRate = self.sessionReplayOnErrorSampleRate;
+    config.enableSwiftUI = YES;
+    config.enableLinkRUMKeys = self.enableLinkRUMKeys;
+
+    NSNumber *touchPrivacy = [self numberForKey:@"touchPrivacy" inContext:context];
+    if (touchPrivacy) {
+        config.touchPrivacy = (FTTouchPrivacyLevel)touchPrivacy.unsignedIntegerValue;
+    }
+
+    NSNumber *textAndInputPrivacy = [self numberForKey:@"textAndInputPrivacy" inContext:context];
+    if (textAndInputPrivacy) {
+        config.textAndInputPrivacy = (FTTextAndInputPrivacyLevel)textAndInputPrivacy.unsignedIntegerValue;
+    }
+
+    NSNumber *imagePrivacy = [self numberForKey:@"imagePrivacy" inContext:context];
+    if (imagePrivacy) {
+        config.imagePrivacy = [self nativeImagePrivacyForFlutterValue:imagePrivacy.integerValue];
+    }
+
+    [[FTRumSessionReplay sharedInstance] startWithSessionReplayConfig:config];
+    self.nativeSwiftUISessionReplayStarted = YES;
+#else
+    FTInnerLogWarning(@"[Flutter Session Replay] Native SwiftUI Session Replay is unavailable. Please upgrade FTMobileSDK/FTSessionReplay.");
+#endif
+}
+
+#if FT_FLUTTER_SR_NATIVE_SWIFTUI_AVAILABLE
+- (FTImagePrivacyLevel)nativeImagePrivacyForFlutterValue:(NSInteger)value {
+    switch (value) {
+        case 0:
+            return FTImagePrivacyLevelMaskNone;
+        case 1:
+            return FTImagePrivacyLevelMaskNonBundledOnly;
+        case 2:
+            return FTImagePrivacyLevelMaskAll;
+        default:
+            return FTImagePrivacyLevelMaskAll;
+    }
+}
+#endif
 
 - (nullable NSDictionary<NSString *, id> *)currentRUMContext {
     NSDictionary *currentContext = [self currentContextSnapshot];

@@ -155,6 +155,42 @@ void main() {
     expect(call.arguments['dataFilters'], dataFilters);
   });
 
+  test('sdkConfig passes Android CacheSize and FileStore options', () async {
+    await FTMobileFlutter.sdkConfig(
+      datakitUrl: requestUrl,
+      enableLimitWithCacheSize: true,
+      cacheLimit: 60 * 1024 * 1024,
+      cacheDiscard: FTCacheDiscard.discardOldest,
+      enableFileDataStore: true,
+      needTransformOldCache: true,
+      fileDataStoreShadow: false,
+    );
+
+    final call = calls.singleWhere(
+      (call) => call.method == methodConfig,
+    );
+    expect(call.arguments['enableLimitWithCacheSize'], true);
+    expect(call.arguments['cacheLimit'], 60 * 1024 * 1024);
+    expect(call.arguments['cacheDiscard'], FTCacheDiscard.discardOldest.index);
+    expect(call.arguments['enableFileDataStore'], true);
+    expect(call.arguments['needTransformOldCache'], true);
+    expect(call.arguments['fileDataStoreShadow'], false);
+  });
+
+  test('rumConfig passes iOS native SwiftUI view option', () async {
+    await FTRUMManager().setConfig(
+      iOSAppId: 'ios-app-id',
+      enableNativeUserView: true,
+      enableNativeSwiftUIUserView: true,
+    );
+
+    final call = calls.singleWhere(
+      (call) => call.method == methodRumConfig,
+    );
+    expect(call.arguments['enableUserView'], true);
+    expect(call.arguments['enableNativeSwiftUIUserView'], true);
+  });
+
   test("Http Request Test", () async {
     await FTTracer().setConfig(enableAutoTrace: true);
     var httpClient = IOClient();

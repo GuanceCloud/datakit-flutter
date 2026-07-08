@@ -333,6 +333,10 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 if let enableUserView = context["enableUserView"] as? Bool {
                     rumConfig.enableTraceUserView = enableUserView
                 }
+                if let enableNativeSwiftUIUserView = context["enableNativeSwiftUIUserView"] as? Bool,
+                   enableNativeSwiftUIUserView {
+                    rumConfig.swiftUIViewTrackingHandler = FTDefaultSwiftUIViewTrackingHandler()
+                }
                 if let enableUserResource = context["enableUserResource"] as? Bool {
                     rumConfig.enableTraceUserResource = enableUserResource
                 }

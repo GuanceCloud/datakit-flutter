@@ -17,6 +17,7 @@ class FTSessionReplayConfig {
     this.textAndInputPrivacy = FTTextAndInputPrivacyLevel.maskAll,
     this.imagePrivacy = FTImagePrivacyLevel.maskAll,
     this.enableLinkRUMKeys,
+    this.enableSwiftUI = false,
   })  : assert(sampleRate == null || (sampleRate >= 0 && sampleRate <= 1)),
         assert(sessionReplayOnErrorSampleRate == null ||
             (sessionReplayOnErrorSampleRate >= 0 &&
@@ -35,6 +36,9 @@ class FTSessionReplayConfig {
   /// Additional RUM keys attached to replay records.
   final List<String>? enableLinkRUMKeys;
 
+  /// iOS only. Enable native SwiftUI recording in Session Replay.
+  final bool enableSwiftUI;
+
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'sampleRate': sampleRate,
@@ -43,6 +47,7 @@ class FTSessionReplayConfig {
       'textAndInputPrivacy': textAndInputPrivacy.index,
       'imagePrivacy': imagePrivacy.index,
       'enableLinkRUMKeys': enableLinkRUMKeys,
+      'enableSwiftUI': enableSwiftUI,
     };
   }
 }

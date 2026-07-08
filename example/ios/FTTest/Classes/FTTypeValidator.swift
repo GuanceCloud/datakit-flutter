@@ -160,6 +160,9 @@ extension FTRumConfig:ConfigValidator{
     @objc var enableUserView:Bool{
         return enableTraceUserView
     }
+    @objc var enableNativeSwiftUIUserView:Bool{
+        return swiftUIViewTrackingHandler != nil
+    }
     @objc var detectFrequency:Int{
         return Int(monitorFrequency.rawValue)
     }
@@ -290,6 +293,7 @@ extension NSNumber {
             Constants.RUM.sessionOnErrorSampleRate:Double.self,
             Constants.RUM.enableUserAction:Bool.self,
             Constants.RUM.enableUserView:Bool.self,
+            Constants.RUM.enableNativeSwiftUIUserView:Bool.self,
             Constants.RUM.enableUserResource:Bool.self,
             Constants.RUM.enableTrackNativeAppANR:Bool.self,
             Constants.RUM.enableTrackNativeCrash:Bool.self,

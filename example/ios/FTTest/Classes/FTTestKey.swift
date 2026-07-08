@@ -40,6 +40,7 @@ enum Constants {
         internal static let sessionOnErrorSampleRate = "sessionOnErrorSampleRate"
         internal static let enableUserAction = "enableUserAction"
         internal static let enableUserView = "enableUserView"
+        internal static let enableNativeSwiftUIUserView = "enableNativeSwiftUIUserView"
         internal static let enableUserViewInFragment = "enableUserViewInFragment"
         internal static let enableUserResource = "enableUserResource"
         internal static let enableTrackNativeAppANR = "enableTrackNativeAppANR"
@@ -74,7 +75,6 @@ enum Constants {
 
     
 }
-
 
 
 

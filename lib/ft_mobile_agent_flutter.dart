@@ -99,6 +99,12 @@ class FTMobileFlutter {
   /// [globalContext] SDK global attributes
   /// [dataModifier] Data modifier, modify individual fields {key:value}, after setting SDK will replace original value with set value based on key
   /// [lineDataModifier] Data modifier, modify single data {"measurement":measurement,"data":{key:value}}, after setting SDK will replace original value with set value based on key
+  /// [enableLimitWithCacheSize] Android only. Enable total cache size limit. Prefer this over [enableLimitWithDbSize].
+  /// [cacheLimit] Android only. Total cache size limit in bytes. Prefer this over [dbCacheLimit].
+  /// [cacheDiscard] Android only. Cache discard strategy. Prefer this over [dbCacheDiscard].
+  /// [enableFileDataStore] Android only. Enable file-backed cache storage.
+  /// [needTransformOldCache] Android only. Migrate old SQLite cache data when enabling FileStore.
+  /// [fileDataStoreShadow] Android only. Mirror SQLite cache writes to FileStore while keeping SQLite as read path.
   /// [enableDataFilter] Whether to enable SDK-side DataKit-compatible data filtering. Default is enabled by native SDKs.
   /// [dataFilters] Local DataKit-compatible filter rules grouped by category, currently supports `logging` and `rum`.
   /// [iOSGroupIdentifiers]
@@ -125,6 +131,12 @@ class FTMobileFlutter {
       bool? enableLimitWithDbSize,
       int? dbCacheLimit,
       FTDBCacheDiscard? dbCacheDiscard,
+      bool? enableLimitWithCacheSize,
+      int? cacheLimit,
+      FTCacheDiscard? cacheDiscard,
+      bool? enableFileDataStore,
+      bool? needTransformOldCache,
+      bool? fileDataStoreShadow,
       bool? enableDataIntegerCompatible,
       Map<String, String>? globalContext,
       Map<String, Object>? dataModifier,
@@ -163,6 +175,12 @@ class FTMobileFlutter {
     map["enableLimitWithDbSize"] = enableLimitWithDbSize;
     map["dbCacheLimit"] = dbCacheLimit;
     map["dbCacheDiscard"] = dbCacheDiscard?.index;
+    map["enableLimitWithCacheSize"] = enableLimitWithCacheSize;
+    map["cacheLimit"] = cacheLimit;
+    map["cacheDiscard"] = cacheDiscard?.index;
+    map["enableFileDataStore"] = enableFileDataStore;
+    map["needTransformOldCache"] = needTransformOldCache;
+    map["fileDataStoreShadow"] = fileDataStoreShadow;
     if (Platform.isAndroid) {
       map["dataSyncRetryCount"] = dataSyncRetryCount;
       map["enableAccessAndroidID"] = enableAccessAndroidID;
@@ -383,6 +401,15 @@ enum EnvType { prod, gray, pre, common, local }
 /// [medium] 10 items
 /// [large] 50 items
 enum SyncPageSize { mini, medium, large }
+
+/// Cache discard method.
+enum FTCacheDiscard {
+  /// Discard new data.
+  discard,
+
+  /// Discard oldest cached data.
+  discardOldest
+}
 
 /// DB discard method
 enum FTDBCacheDiscard {

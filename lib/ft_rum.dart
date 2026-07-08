@@ -27,6 +27,7 @@ class FTRUMManager {
   /// [sessionOnErrorSampleRate] Set error sampling rate, when session is not sampled by setSamplingRate, if error occurs during session, data from 1 minute before error can be collected, range [0,1], 0 means no collection, 1 means full collection, default value is 0. Scope is all View, Action, LongTask, Error data under the same session_id
   /// [enableNativeUserAction] Whether to perform Native Action tracking, Button click events, pure flutter applications recommend turning off
   /// [enableNativeUserView] Whether to perform Native View automatic tracking, pure Flutter applications recommend turning off
+  /// [enableNativeSwiftUIUserView] iOS only. Enable native SwiftUI automatic View tracking. Requires [enableNativeUserView].
   /// [enableNativeUserViewInFragment] Whether to automatically track Native Fragment type page data, default is false. Android only
   /// [enableNativeUserResource] Whether to perform Native Resource automatic tracking, pure Flutter applications recommend turning off
   /// [enableNativeAppUIBlock] Whether to perform Native Freeze automatic tracking
@@ -49,6 +50,7 @@ class FTRUMManager {
       bool enableUserResource = false,
       bool? enableNativeUserAction,
       bool? enableNativeUserView,
+      bool? enableNativeSwiftUIUserView,
       bool? enableNativeUserViewInFragment,
       bool? enableNativeUserResource,
       bool? enableNativeAppUIBlock,
@@ -78,6 +80,7 @@ class FTRUMManager {
     map["sessionOnErrorSampleRate"] = sessionOnErrorSampleRate;
     map["enableUserAction"] = enableNativeUserAction;
     map["enableUserView"] = enableNativeUserView;
+    map["enableNativeSwiftUIUserView"] = enableNativeSwiftUIUserView;
     map["enableUserViewInFragment"] = enableNativeUserViewInFragment;
     map["enableUserResource"] = enableNativeUserResource;
     map["enableAppUIBlock"] = enableNativeAppUIBlock;

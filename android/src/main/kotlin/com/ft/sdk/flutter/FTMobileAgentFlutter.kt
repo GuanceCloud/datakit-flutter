@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
+import com.ft.sdk.CacheDiscard
 import com.ft.sdk.DBCacheDiscard
 import com.ft.sdk.DataModifier
 import com.ft.sdk.DetectFrequency
@@ -159,6 +160,12 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
         const val KEY_ENABLE_LIMIT_WITH_DB_SIZE = "enableLimitWithDbSize"
         const val KEY_DB_CACHE_LIMIT = "dbCacheLimit"
         const val KEY_DB_CACHE_DISCARD = "dbCacheDiscard"
+        const val KEY_ENABLE_LIMIT_WITH_CACHE_SIZE = "enableLimitWithCacheSize"
+        const val KEY_CACHE_LIMIT = "cacheLimit"
+        const val KEY_CACHE_DISCARD = "cacheDiscard"
+        const val KEY_ENABLE_FILE_DATA_STORE = "enableFileDataStore"
+        const val KEY_NEED_TRANSFORM_OLD_CACHE = "needTransformOldCache"
+        const val KEY_FILE_DATA_STORE_SHADOW = "fileDataStoreShadow"
         const val KEY_DATA_MODIFIER = "dataModifier"
         const val KEY_LINE_DATA_MODIFIER = "lineDataModifier"
         const val KEY_ENABLE_DATA_FILTER = "enableDataFilter"
@@ -237,6 +244,19 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 val dbCacheDiscard: DBCacheDiscard =
                     DBCacheDiscard.values()[call.argument<Number>(KEY_DB_CACHE_DISCARD)?.toInt()
                         ?: DBCacheDiscard.DISCARD.ordinal]
+                val enableLimitWithCacheSize: Boolean? =
+                    call.argument<Boolean>(KEY_ENABLE_LIMIT_WITH_CACHE_SIZE)
+                val cacheLimit: Number? = call.argument<Number>(KEY_CACHE_LIMIT)
+                val cacheDiscard: CacheDiscard? =
+                    call.argument<Number>(KEY_CACHE_DISCARD)?.let {
+                        CacheDiscard.values()[it.toInt()]
+                    }
+                val enableFileDataStore: Boolean? =
+                    call.argument<Boolean>(KEY_ENABLE_FILE_DATA_STORE)
+                val needTransformOldCache: Boolean? =
+                    call.argument<Boolean>(KEY_NEED_TRANSFORM_OLD_CACHE)
+                val fileDataStoreShadow: Boolean? =
+                    call.argument<Boolean>(KEY_FILE_DATA_STORE_SHADOW)
 
                 val dataModifier: Map<String, Any>? = call.argument(KEY_DATA_MODIFIER)
                 val lineDataModifier: Map<String, Map<String, Any>>? =
@@ -307,13 +327,39 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                     }
                 }
 
-                if (enableLimitWithDbSize != null) {
+                if (enableLimitWithDbSize == true) {
                     if (dbCacheLimit != null) {
                         sdkConfig.enableLimitWithDbSize(dbCacheLimit.toLong())
                     } else {
                         sdkConfig.enableLimitWithDbSize()
                     }
                 }
+
+                if (enableLimitWithCacheSize == true) {
+                    val sizeLimit = cacheLimit ?: dbCacheLimit
+                    if (sizeLimit != null) {
+                        sdkConfig.enableLimitWithCacheSize(sizeLimit.toLong())
+                    } else {
+                        sdkConfig.enableLimitWithCacheSize()
+                    }
+                }
+
+                if (cacheDiscard != null) {
+                    sdkConfig.setCacheDiscard(cacheDiscard)
+                }
+
+                if (enableFileDataStore != null) {
+                    sdkConfig.setUseFileDataStore(enableFileDataStore)
+                }
+
+                if (needTransformOldCache != null) {
+                    sdkConfig.setNeedTransformOldCache(needTransformOldCache)
+                }
+
+                if (fileDataStoreShadow != null) {
+                    sdkConfig.setFileDataStoreShadow(fileDataStoreShadow)
+                }
+
                 if (dataModifier != null) {
                     sdkConfig.setDataModifier(object : DataModifier {
                         override fun modify(key: String, value: Any?): Any? {
