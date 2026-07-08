@@ -257,6 +257,42 @@ void main() {
     expect(call.arguments['metrics']['connectionReuse'], false);
   });
 
+  test('Http auto resource collection marks reused connection', () async {
+    const responseBody = 'reused connection';
+    final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+    addTearDown(() async {
+      await server.close(force: true);
+      FTHttpOverrideConfig.global.traceResource = false;
+    });
+    server.listen((request) async {
+      request.response.headers.contentType = ContentType.text;
+      request.response.contentLength = responseBody.length;
+      request.response.write(responseBody);
+      await request.response.close();
+    });
+
+    await FTRUMManager().setConfig(enableUserResource: true);
+    final httpClient = IOClient(HttpClient()..maxConnectionsPerHost = 1);
+    addTearDown(httpClient.close);
+
+    final uri = Uri.parse('http://127.0.0.1:${server.port}/reused');
+    final firstResponse = await httpClient.get(uri);
+    final secondResponse = await httpClient.get(uri);
+
+    expect(firstResponse.statusCode, 200);
+    expect(secondResponse.statusCode, 200);
+
+    final addResourceCalls = calls
+        .where((call) => call.method == methodRumAddResource)
+        .toList(growable: false);
+    expect(addResourceCalls, hasLength(2));
+    expect(
+        addResourceCalls.first.arguments['metrics']['reusedConnection'], false);
+    expect(
+        addResourceCalls.last.arguments['metrics']['reusedConnection'], true);
+    expect(addResourceCalls.last.arguments['metrics']['connectionReuse'], true);
+  });
+
   test("Http Request Test", () async {
     await FTTracer().setConfig(enableAutoTrace: true);
     var httpClient = IOClient();

@@ -149,7 +149,7 @@ packages:
       path: "../packages/ft_session_replay_flutter"
       relative: true
     source: path
-    version: "0.1.0-dev.1"
+    version: "0.1.0-pre.1"
   http:
     dependency: "direct main"
     description:
