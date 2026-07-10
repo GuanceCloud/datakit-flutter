@@ -1,10 +1,54 @@
-> Related SDK update content
+# ft_mobile_agent_flutter
+>  Related SDK update content
 > * [Android](https://github.com/TrueWatchTech/datakit-android/blob/dev/ft-sdk/CHANGELOG.md) 
 > * [iOS ](https://github.com/TrueWatchTech/datakit-ios/blob/develop/CHANGELOG.md)
 
+## 0.5.7
+* Compatible with Android ft-sdk 1.7.3, ft-native 1.1.3, iOS FTMobileSDK 1.6.5.
+* Added support for Flutter Session Replay through `ft_session_replay_flutter`.
+* Added `FTMobileFlutter.sdkConfig(enableDataFilter, dataFilters)` to configure SDK-side DataKit-compatible filtering rules for `logging` and `rum` data.
+* Added remote configuration APIs, including `FTMobileFlutter.sdkConfig(enableRemoteConfiguration, remoteConfigMiniUpdateInterval, remoteConfigOverrideRules)`, `FTMobileFlutter.updateRemoteConfig()`, and `FTMobileFlutter.updateRemoteConfigWithMiniUpdateInterval(...)`.
+* Added Android cache and FileStore configuration options: `enableLimitWithCacheSize`, `cacheLimit`, `cacheDiscard`, `enableFileDataStore`, `needTransformOldCache`, and `fileDataStoreShadow`.
+* Added `FTRUMManager().setConfig(enableTraceWebView, allowWebViewHost)` for WebView tracing configuration.
+* Added `FTRUMManager().setConfig(enableNativeSwiftUIUserView)` for iOS native SwiftUI View automatic tracking.
+* Added Flutter LongTask support. `FTRUMManager().setConfig(enableLongTask, dartLongTaskThreshold)` detects main-isolate long tasks, and `FTRUMManager().addLongTask(stack, duration)` reports manual LongTask data.
+* Added `FTRUMManager().addAction(actionName, actionType)` for high-frequency Action reporting without association to Resource, LongTask, or Error events.
+* Added `FTMobileFlutter.sdkConfig(customHttpOverrides)` to customize HTTP overrides.
+* Added `FTMobileFlutter.shutDown()`.
+* Enhanced RUM Resource reporting with `resourceType` and metrics fields `requestSize`, `resourceHttpProtocol`, `reusedConnection`, and `connectionReuse`.
+* Fixed AddError stack misalignment and Android `startAction` property loss.
+
+---
+## 0.5.7-pre.4
+* Added `FTMobileFlutter.sdkConfig(enableDataFilter, dataFilters)` to configure SDK-side DataKit-compatible filtering rules for `logging` and `rum` data.
+* Added Android cache and FileStore configuration options: `enableLimitWithCacheSize`, `cacheLimit`, `cacheDiscard`, `enableFileDataStore`, `needTransformOldCache`, and `fileDataStoreShadow`.
+* Added `FTRUMManager().setConfig(enableNativeSwiftUIUserView)` for iOS native SwiftUI View automatic tracking.
+* Added Flutter LongTask support. `FTRUMManager().setConfig(enableLongTask, dartLongTaskThreshold)` detects main-isolate long tasks, and `FTRUMManager().addLongTask(stack, duration)` reports manual LongTask data.
+* Enhanced RUM Resource reporting with `resourceType` and metrics fields `requestSize`, `resourceHttpProtocol`, `reusedConnection`, and `connectionReuse`.
+* Updated Android Maven repository URLs to `mvnrepo.guance.com`.
+---
+## 0.5.7-dev.5
+* Compatible with Android ft-sdk 1.7.3, ft-native 1.1.3, iOS FTMobileSDK 1.6.5.
+* Fix the issue where the error stack is misaligned when calling AddError.
+* Split Flutter Session Replay into the new `ft_session_replay_flutter` package. `ft_mobile_agent_flutter` no longer exports Session Replay APIs or native Session Replay dependencies.
+---
+## 0.5.7-dev.4
+* Added  `FTMobileFlutter.sdkConfig(customHttpOverrides)` to customize HTTP overrides, 
+  resolving conflicts with the SDK’s automatic instrumentation.
+* Added `FTMobileFlutter.shutDown()` method handlers in Android and iOS native code
+---
+## 0.5.7-pre.3
+* Compatible with Android ft-sdk 1.6.15
+---
+## 0.5.7-pre.2
+* Added bridgeContext feature.
+---
+## 0.5.7-pre.1
+* Compatible with Android ft-sdk 1.6.14，iOS 1.5.18
+---
 ## 0.5.7-dev.3
 * Android: Handling Missing Classes When Integrating SDKs in Android Release Builds
-
+---
 ## 0.5.7-dev.2
 * Android: fixing the issue where the Property is lost when calling startAction.
 * Added addAction API to support high-frequency invocation scenarios, without associating
@@ -439,4 +483,3 @@
 * User custom event
 * Flow chart reporting method
 * Monitoring project association
-

@@ -4,12 +4,15 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:ft_mobile_agent_flutter/ft_http_override_config.dart';
+import 'package:ft_mobile_agent_flutter/ft_rum_long_task_observer.dart';
 
 import 'const.dart';
+import 'ft_mobile_agent_flutter.dart' show FTMobileFlutter;
 
 class FTRUMManager {
   static final FTRUMManager _singleton = FTRUMManager._internal();
   AppState appState = AppState.run;
+  FTRUMLongTaskObserver? _longTaskObserver;
 
   factory FTRUMManager() {
     return _singleton;
@@ -24,10 +27,13 @@ class FTRUMManager {
   /// [sessionOnErrorSampleRate] Set error sampling rate, when session is not sampled by setSamplingRate, if error occurs during session, data from 1 minute before error can be collected, range [0,1], 0 means no collection, 1 means full collection, default value is 0. Scope is all View, Action, LongTask, Error data under the same session_id
   /// [enableNativeUserAction] Whether to perform Native Action tracking, Button click events, pure flutter applications recommend turning off
   /// [enableNativeUserView] Whether to perform Native View automatic tracking, pure Flutter applications recommend turning off
+  /// [enableNativeSwiftUIUserView] iOS only. Enable native SwiftUI automatic View tracking. Requires [enableNativeUserView].
   /// [enableNativeUserViewInFragment] Whether to automatically track Native Fragment type page data, default is false. Android only
   /// [enableNativeUserResource] Whether to perform Native Resource automatic tracking, pure Flutter applications recommend turning off
   /// [enableNativeAppUIBlock] Whether to perform Native Freeze automatic tracking
   /// [uiBlockDurationMS] Whether to set time range for Freeze uiBlockDurationMS
+  /// [enableLongTask] Whether to detect Flutter main-isolate long tasks.
+  /// [dartLongTaskThreshold] Dart long task threshold in seconds, default is 0.1.
   /// [enableTrackNativeAppANR] Whether to enable Native ANR monitoring
   /// [enableTrackNativeCrash] Whether to enable Android Java Crash and C/C++ crash monitoring
   /// [errorMonitorType] Monitoring supplement type
@@ -44,10 +50,13 @@ class FTRUMManager {
       bool enableUserResource = false,
       bool? enableNativeUserAction,
       bool? enableNativeUserView,
+      bool? enableNativeSwiftUIUserView,
       bool? enableNativeUserViewInFragment,
       bool? enableNativeUserResource,
       bool? enableNativeAppUIBlock,
       int? nativeUiBlockDurationMS,
+      bool enableLongTask = false,
+      double dartLongTaskThreshold = 0.1,
       bool? enableTrackNativeAppANR,
       bool? enableTrackNativeCrash,
       int? errorMonitorType,
@@ -58,7 +67,9 @@ class FTRUMManager {
       FTRUMCacheDiscard? rumCacheDiscard,
       bool Function(String url)? isInTakeUrl,
       bool? enableTraceWebView,
-      List<String>? allowWebViewHost}) async {
+      List<String>? allowWebViewHost,
+      bool? enableResourceHostIP,
+      IOSCrashMonitoringType? iosCrashMonitoringType}) async {
     Map<String, dynamic> map = {};
     if (Platform.isAndroid) {
       map["rumAppId"] = androidAppId;
@@ -69,6 +80,7 @@ class FTRUMManager {
     map["sessionOnErrorSampleRate"] = sessionOnErrorSampleRate;
     map["enableUserAction"] = enableNativeUserAction;
     map["enableUserView"] = enableNativeUserView;
+    map["enableNativeSwiftUIUserView"] = enableNativeSwiftUIUserView;
     map["enableUserViewInFragment"] = enableNativeUserViewInFragment;
     map["enableUserResource"] = enableNativeUserResource;
     map["enableAppUIBlock"] = enableNativeAppUIBlock;
@@ -83,9 +95,37 @@ class FTRUMManager {
     map["rumCacheDiscard"] = rumCacheDiscard?.index;
     map["enableTraceWebView"] = enableTraceWebView;
     map["allowWebViewHost"] = allowWebViewHost;
+    map["enableResourceHostIP"] = enableResourceHostIP;
+    map["iosCrashMonitoringType"] = iosCrashMonitoringType?.value;
     FTHttpOverrideConfig.global.traceResource = enableUserResource;
     FTHttpOverrideConfig.global.isInTakeUrl = isInTakeUrl;
     await channel.invokeMethod(methodRumConfig, map);
+    _updateLongTaskDetection(enableLongTask, dartLongTaskThreshold);
+  }
+
+  void _updateLongTaskDetection(
+      bool enableLongTask, double dartLongTaskThreshold) {
+    _longTaskObserver?.dispose();
+    _longTaskObserver = null;
+    if (enableLongTask) {
+      _longTaskObserver =
+          FTRUMLongTaskObserver(longTaskThreshold: dartLongTaskThreshold);
+      _longTaskObserver?.init();
+    }
+  }
+
+  /// Add long task.
+  ///
+  /// [stack] Stack or task name.
+  /// [duration] Duration in nanoseconds.
+  /// [property] Additional property parameters (optional).
+  Future<void> addLongTask(String stack, int duration,
+      {Map<String, String>? property}) async {
+    Map<String, dynamic> map = {};
+    map["stack"] = stack;
+    map["duration"] = duration;
+    map["property"] = property;
+    await channel.invokeMethod(methodRumAddLongTask, map);
   }
 
   /// Add action
@@ -100,12 +140,14 @@ class FTRUMManager {
   /// [actionType] Action type
   /// [property] Additional property parameters (optional)
   Future<void> startAction(String actionName, String actionType,
-      {Map<String, String>? property}) async {
+      {Map<String, Object?>? property}) async {
+    Map<String, Object?> mergedProperties =
+        _mergeWithGlobalProperties(property);
     Map<String, dynamic> map = {};
     map["actionName"] = actionName;
     map["actionType"] = actionType;
-    map["property"] = property;
-    await channel.invokeMethod(methodRumAddAction, map);
+    map["property"] = mergedProperties;
+    await channel.invokeMethod(methodRumStartAction, map);
   }
 
   /// Add action，this type of data cannot be associated with Error, Resource, LongTask data
@@ -113,11 +155,13 @@ class FTRUMManager {
   /// [actionType] Action type
   /// [property] Additional property parameters (optional)
   Future<void> addAction(String actionName, String actionType,
-      {Map<String, String>? property}) async {
+      {Map<String, Object?>? property}) async {
+    Map<String, Object?> mergedProperties =
+        _mergeWithGlobalProperties(property);
     Map<String, dynamic> map = {};
     map["actionName"] = actionName;
     map["actionType"] = actionType;
-    map["property"] = property;
+    map["property"] = mergedProperties;
     await channel.invokeMethod(methodRumAddAction, map);
   }
 
@@ -126,10 +170,12 @@ class FTRUMManager {
   /// [viewReferer] Previous interface name
   /// [property] Additional property parameters (optional)
   Future<void> starView(String viewName,
-      {Map<String, String>? property}) async {
+      {Map<String, Object?>? property}) async {
+    Map<String, Object?> mergedProperties =
+        _mergeWithGlobalProperties(property);
     Map<String, dynamic> map = {};
     map["viewName"] = viewName;
-    map["property"] = property;
+    map["property"] = mergedProperties;
     await channel.invokeMethod(methodRumStartView, map);
   }
 
@@ -145,9 +191,11 @@ class FTRUMManager {
 
   /// View end
   /// [property] Additional property parameters (optional)
-  Future<void> stopView({Map<String, String>? property}) async {
+  Future<void> stopView({Map<String, Object?>? property}) async {
+    Map<String, Object?> mergedProperties =
+        _mergeWithGlobalProperties(property);
     Map<String, dynamic> map = {};
-    map["property"] = property;
+    map["property"] = mergedProperties;
     await channel.invokeMethod(methodRumStopView, map);
   }
 
@@ -174,13 +222,15 @@ class FTRUMManager {
   /// [errorType] Custom errorType
   /// [property] Additional property parameters (optional)
   Future<void> addCustomError(String stack, String message,
-      {Map<String, String>? property, String? errorType}) async {
+      {Map<String, Object>? property, String? errorType}) async {
+    Map<String, Object?> mergedProperties =
+        _mergeWithGlobalProperties(property);
     Map<String, dynamic> map = {};
     map["stack"] = stack;
     map["message"] = message;
     map["appState"] = appState.index;
     map["errorType"] = errorType;
-    map["property"] = property;
+    map["property"] = mergedProperties;
     await channel.invokeMethod(methodRumAddError, map);
   }
 
@@ -188,20 +238,25 @@ class FTRUMManager {
   /// [key] Unique id
   /// [property] Additional property parameters (optional)
   Future<void> startResource(String key,
-      {Map<String, String>? property}) async {
+      {Map<String, Object?>? property}) async {
+    Map<String, Object?> mergedProperties =
+        _mergeWithGlobalProperties(property);
     Map<String, dynamic> map = {};
     map["key"] = key;
-    map["property"] = property;
+    map["property"] = mergedProperties;
     await channel.invokeMethod(methodRumStartResource, map);
   }
 
   /// End resource request
   /// [key] Unique id
   /// [property] Additional property parameters (optional)
-  Future<void> stopResource(String key, {Map<String, String>? property}) async {
+  Future<void> stopResource(String key,
+      {Map<String, Object?>? property}) async {
+    Map<String, Object?> mergedProperties =
+        _mergeWithGlobalProperties(property);
     Map<String, dynamic> map = {};
     map["key"] = key;
-    map["property"] = property;
+    map["property"] = mergedProperties;
     await channel.invokeMethod(methodRumStopResource, map);
   }
 
@@ -213,15 +268,18 @@ class FTRUMManager {
   /// [responseHeader] Response header parameters
   /// [responseBody] Response content
   /// [resourceStatus] Response status code
+  /// [resourceType] Resource type, such as native, image, media, font, css, js
   Future<void> addResource(
       {required String key,
       required String url,
       required String httpMethod,
-      required Map<String, dynamic> requestHeader,
-      Map<String, dynamic>? responseHeader,
+      required Map<String, Object?> requestHeader,
+      Map<String, Object?>? responseHeader,
       String? responseBody = "",
       int? resourceStatus,
-      int? resourceSize}) async {
+      int? resourceSize,
+      String? resourceType,
+      FTRUMResourceMetrics? metrics}) async {
     Map<String, dynamic> map = {};
     map["key"] = key;
     map["url"] = url;
@@ -231,8 +289,63 @@ class FTRUMManager {
     map["responseBody"] = responseBody;
     map["resourceStatus"] = resourceStatus;
     map["resourceSize"] = resourceSize;
+    map["resourceType"] = resourceType;
+    map["metrics"] = metrics?.toMap();
     await channel.invokeMethod(methodRumAddResource, map);
   }
+
+  /// Helper method to merge global properties with local properties
+  /// [localProperties] Local properties passed to the method
+  /// Returns merged properties map with global properties included
+  Map<String, Object?> _mergeWithGlobalProperties(
+      Map<String, Object?>? localProperties) {
+    Map<String, Object?> merged =
+        Map<String, Object?>.from(FTMobileFlutter.globalProperties);
+    if (localProperties != null) {
+      merged.addAll(localProperties);
+    }
+    return merged;
+  }
+}
+
+class FTRUMResourceMetrics {
+  const FTRUMResourceMetrics({
+    this.duration,
+    this.resourceDns,
+    this.resourceTcp,
+    this.resourceSsl,
+    this.resourceTtfb,
+    this.resourceTrans,
+    this.resourceFirstByte,
+    this.requestSize,
+    this.resourceHttpProtocol,
+    this.reusedConnection,
+  });
+
+  final num? duration;
+  final num? resourceDns;
+  final num? resourceTcp;
+  final num? resourceSsl;
+  final num? resourceTtfb;
+  final num? resourceTrans;
+  final num? resourceFirstByte;
+  final num? requestSize;
+  final String? resourceHttpProtocol;
+  final bool? reusedConnection;
+
+  Map<String, Object?> toMap() => <String, Object?>{
+        'duration': duration,
+        'resource_dns': resourceDns,
+        'resource_tcp': resourceTcp,
+        'resource_ssl': resourceSsl,
+        'resource_ttfb': resourceTtfb,
+        'resource_trans': resourceTrans,
+        'resource_first_byte': resourceFirstByte,
+        'requestSize': requestSize,
+        'resourceHttpProtocol': resourceHttpProtocol,
+        'reusedConnection': reusedConnection,
+        'connectionReuse': reusedConnection,
+      };
 }
 
 /// App running state
@@ -333,4 +446,39 @@ enum FTRUMCacheDiscard {
 
   /// Discard old logs
   discardOldest
+}
+
+/// iOS crash monitoring type.
+enum IOSCrashMonitoringType {
+  machException,
+  signal,
+  cppException,
+  nsException,
+  system,
+  applicationState,
+  all,
+  highCompatibility
+}
+
+extension IOSCrashMonitoringTypeExt on IOSCrashMonitoringType {
+  int get value {
+    switch (this) {
+      case IOSCrashMonitoringType.machException:
+        return 0x01;
+      case IOSCrashMonitoringType.signal:
+        return 0x02;
+      case IOSCrashMonitoringType.cppException:
+        return 0x04;
+      case IOSCrashMonitoringType.nsException:
+        return 0x08;
+      case IOSCrashMonitoringType.system:
+        return 0x40;
+      case IOSCrashMonitoringType.applicationState:
+        return 0x80;
+      case IOSCrashMonitoringType.all:
+        return 0x01 | 0x02 | 0x04 | 0x08 | 0x40 | 0x80;
+      case IOSCrashMonitoringType.highCompatibility:
+        return (0x01 | 0x02 | 0x04 | 0x08 | 0x40 | 0x80) & ~0x01;
+    }
+  }
 }

@@ -18,15 +18,16 @@ dependencies:
   permission_handler: ^11.3.0
   webview_flutter: 4.13.0
   image_picker: ^1.1.2
+  ft_mobile_agent_flutter:
+    path: ../
+  ft_session_replay_flutter:
+    path: ../packages/ft_session_replay_flutter
 # go_router: ^15.1.1 # compatible
 # flutter_bugly: 1.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-  ft_mobile_agent_flutter:
-    path: ../
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

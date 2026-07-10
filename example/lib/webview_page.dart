@@ -38,6 +38,7 @@ class _WebViewPageState extends State<WebViewPage> {
         });
       },
     ));
+    // widget.url comes from WEB_VIEW_URL in main.dart.
     Future.delayed(Duration(milliseconds: 500))
         .then((value) => _controller.loadRequest(Uri.parse(widget.url)));
   }

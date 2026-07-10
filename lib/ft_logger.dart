@@ -1,4 +1,5 @@
 import 'const.dart';
+import 'ft_mobile_agent_flutter.dart';
 
 class FTLogger {
   static final FTLogger _singleton = FTLogger._internal();
@@ -15,13 +16,27 @@ class FTLogger {
   /// [property] Additional property parameters (optional)
   /// [isSilence]
   Future<void> logging(String content, FTLogStatus status,
-      {Map<String, String>? property, bool? isSilence}) async {
+      {Map<String, Object?>? property, bool? isSilence}) async {
+    Map<String, Object?> mergedProperties =
+        _mergeWithGlobalProperties(property);
     Map<String, dynamic> map = {};
     map["content"] = content;
     map["status"] = status.index;
     map["isSilence"] = isSilence;
-    map["property"] = property;
+    map["property"] = mergedProperties;
     await channel.invokeMethod(methodLogging, map);
+  }
+
+  /// Output log with a custom string status.
+  Future<void> loggingWithStatusString(String content, String status,
+      {Map<String, Object?>? property}) async {
+    Map<String, Object?> mergedProperties =
+        _mergeWithGlobalProperties(property);
+    Map<String, dynamic> map = {};
+    map["content"] = content;
+    map["status"] = status;
+    map["property"] = mergedProperties;
+    await channel.invokeMethod(methodLoggingWithStatusString, map);
   }
 
   /// Configure log output configuration
@@ -51,6 +66,19 @@ class FTLogger {
     map["printCustomLogToConsole"] = printCustomLogToConsole;
     map["globalContext"] = globalContext;
     await channel.invokeMethod(methodLogConfig, map);
+  }
+
+  /// Helper method to merge global properties with local properties
+  /// [localProperties] Local properties passed to the method
+  /// Returns merged properties map with global properties included
+  Map<String, Object?> _mergeWithGlobalProperties(
+      Map<String, Object?>? localProperties) {
+    Map<String, Object?> merged =
+        Map<String, Object?>.from(FTMobileFlutter.globalProperties);
+    if (localProperties != null) {
+      merged.addAll(localProperties);
+    }
+    return merged;
   }
 }
 

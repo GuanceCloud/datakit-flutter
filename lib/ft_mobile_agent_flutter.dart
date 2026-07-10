@@ -3,14 +3,89 @@ import 'dart:io';
 import 'package:ft_mobile_agent_flutter/version.dart';
 
 import 'const.dart';
+import 'ft_http_override_config.dart';
 
 export 'ft_http_client.dart';
 export 'ft_logger.dart';
+export 'ft_rum_long_task_observer.dart';
 export 'ft_route_observer.dart';
 export 'ft_rum.dart';
 export 'ft_tracing.dart';
 
+typedef FTRemoteConfigListener = void Function(FTRemoteConfigResult result);
+
+class FTRemoteConfigResult {
+  FTRemoteConfigResult({
+    required this.triggerType,
+    required this.success,
+    required this.platform,
+    required this.timestamp,
+    this.rawJson,
+    this.errorCode,
+    this.errorMessage,
+    this.appliedOverrideRuleIds,
+  });
+
+  final String triggerType;
+  final bool success;
+  final String platform;
+  final int timestamp;
+  final String? rawJson;
+  final Object? errorCode;
+  final String? errorMessage;
+  final List<String>? appliedOverrideRuleIds;
+
+  factory FTRemoteConfigResult.fromMap(Map<dynamic, dynamic> map) {
+    final ids = map['appliedOverrideRuleIds'];
+    return FTRemoteConfigResult(
+      triggerType: map['triggerType']?.toString() ?? '',
+      success: map['success'] == true,
+      platform: map['platform']?.toString() ?? '',
+      timestamp: (map['timestamp'] as num?)?.toInt() ?? 0,
+      rawJson: map['rawJson']?.toString(),
+      errorCode: map['errorCode'],
+      errorMessage: map['errorMessage']?.toString(),
+      appliedOverrideRuleIds:
+          ids is List ? ids.map((e) => e.toString()).toList() : null,
+    );
+  }
+
+  Map<String, dynamic> toMap() => <String, dynamic>{
+        'triggerType': triggerType,
+        'success': success,
+        'platform': platform,
+        'timestamp': timestamp,
+        if (rawJson != null) 'rawJson': rawJson,
+        if (errorCode != null) 'errorCode': errorCode,
+        if (errorMessage != null) 'errorMessage': errorMessage,
+        if (appliedOverrideRuleIds != null)
+          'appliedOverrideRuleIds': appliedOverrideRuleIds,
+      };
+}
+
 class FTMobileFlutter {
+  /// Thread-safe global properties dictionary that will be automatically merged
+  /// with properties passed to RUM and Logger methods
+  static final Map<String, Object?> _globalProperties = <String, Object?>{
+    'sdk_bridge_info': '{"flutter":"$packageVersion"}',
+  };
+
+  /// Thread-safe access to global properties
+  static Map<String, Object?> get globalProperties =>
+      Map.unmodifiable(_globalProperties);
+
+  /// Append bridge context properties that will be automatically merged with all RUM and Logger calls
+  /// [properties] Map of key-value pairs to be added as bridge context properties
+  static void appendBridgeContext(Map<String, Object?> properties) {
+    _globalProperties.addAll(properties);
+  }
+
+  /// Get a copy of current bridge context properties
+  /// Returns an unmodifiable copy of the bridge context properties map
+  static Map<String, Object?> getBridgeContext() {
+    return Map.unmodifiable(_globalProperties);
+  }
+
   /// Configuration
   /// [serverUrl] datakit access URL address, example: http://10.0.0.1:9529, default port 9529. deprecated
   /// [datakitUrl] datakit access URL address, example: http://10.0.0.1:9529, default port 9529. Choose between datakit and dataway configuration
@@ -24,8 +99,17 @@ class FTMobileFlutter {
   /// [globalContext] SDK global attributes
   /// [dataModifier] Data modifier, modify individual fields {key:value}, after setting SDK will replace original value with set value based on key
   /// [lineDataModifier] Data modifier, modify single data {"measurement":measurement,"data":{key:value}}, after setting SDK will replace original value with set value based on key
+  /// [enableLimitWithCacheSize] Android only. Enable total cache size limit. Prefer this over [enableLimitWithDbSize].
+  /// [cacheLimit] Android only. Total cache size limit in bytes. Prefer this over [dbCacheLimit].
+  /// [cacheDiscard] Android only. Cache discard strategy. Prefer this over [dbCacheDiscard].
+  /// [enableFileDataStore] Android only. Enable file-backed cache storage.
+  /// [needTransformOldCache] Android only. Migrate old SQLite cache data when enabling FileStore.
+  /// [fileDataStoreShadow] Android only. Mirror SQLite cache writes to FileStore while keeping SQLite as read path.
+  /// [enableDataFilter] Whether to enable SDK-side DataKit-compatible data filtering. Default is enabled by native SDKs.
+  /// [dataFilters] Local DataKit-compatible filter rules grouped by category, currently supports `logging` and `rum`.
   /// [iOSGroupIdentifiers]
   /// [dataSyncRetryCount] Android only
+  /// [customHttpOverrides] Custom HttpOverrides object, used when enabling HTTP tracing
   ///
   static Future<void> sdkConfig(
       {@Deprecated('using datakitUrl instead') String? serverUrl,
@@ -39,6 +123,7 @@ class FTMobileFlutter {
       bool? enableAccessAndroidID,
       int? dataSyncRetryCount,
       bool? autoSync,
+      HttpOverrides? customHttpOverrides,
       SyncPageSize? syncPageSize,
       int? customSyncPageSize,
       int? syncSleepTime,
@@ -46,12 +131,21 @@ class FTMobileFlutter {
       bool? enableLimitWithDbSize,
       int? dbCacheLimit,
       FTDBCacheDiscard? dbCacheDiscard,
+      bool? enableLimitWithCacheSize,
+      int? cacheLimit,
+      FTCacheDiscard? cacheDiscard,
+      bool? enableFileDataStore,
+      bool? needTransformOldCache,
+      bool? fileDataStoreShadow,
       bool? enableDataIntegerCompatible,
       Map<String, String>? globalContext,
       Map<String, Object>? dataModifier,
       Map<String, Map<String, Object>>? lineDataModifier,
+      bool? enableDataFilter,
+      Map<String, List<String>>? dataFilters,
       bool? enableRemoteConfiguration,
       int? remoteConfigMiniUpdateInterval,
+      List<Map<String, Object?>>? remoteConfigOverrideRules,
       List<String>? iOSGroupIdentifiers}) async {
     Map<String, dynamic> map = {};
     map["datakitUrl"] = serverUrl;
@@ -81,19 +175,75 @@ class FTMobileFlutter {
     map["enableLimitWithDbSize"] = enableLimitWithDbSize;
     map["dbCacheLimit"] = dbCacheLimit;
     map["dbCacheDiscard"] = dbCacheDiscard?.index;
+    map["enableLimitWithCacheSize"] = enableLimitWithCacheSize;
+    map["cacheLimit"] = cacheLimit;
+    map["cacheDiscard"] = cacheDiscard?.index;
+    map["enableFileDataStore"] = enableFileDataStore;
+    map["needTransformOldCache"] = needTransformOldCache;
+    map["fileDataStoreShadow"] = fileDataStoreShadow;
     if (Platform.isAndroid) {
       map["dataSyncRetryCount"] = dataSyncRetryCount;
       map["enableAccessAndroidID"] = enableAccessAndroidID;
     }
     map["dataModifier"] = dataModifier;
     map["lineDataModifier"] = lineDataModifier;
+    map["enableDataFilter"] = enableDataFilter;
+    map["dataFilters"] = dataFilters;
     map["enableRemoteConfiguration"] = enableRemoteConfiguration;
     map["remoteConfigMiniUpdateInterval"] = remoteConfigMiniUpdateInterval;
+    map["remoteConfigOverrideRules"] = remoteConfigOverrideRules;
     map["pkgInfo"] = packageVersion;
+
+    // set custom HttpOverrides for HTTP tracing if provided
+    FTHttpOverrideConfig.global.customHttpOverrides = customHttpOverrides;
     await channel.invokeMethod(methodConfig, map);
     if (Platform.isAndroid) {
       _configChannel();
     }
+  }
+
+  /// Dynamically set the Datakit upload URL after SDK initialization.
+  static Future<void> setDatakitURL(String datakitUrl) async {
+    return await channel.invokeMethod(
+        methodSetDatakitUrl, <String, dynamic>{'datakitUrl': datakitUrl});
+  }
+
+  /// Dynamically set the Dataway upload URL and client token after SDK initialization.
+  static Future<void> setDatawayURL(String datawayUrl, String cliToken) async {
+    return await channel.invokeMethod(methodSetDatawayUrl,
+        <String, dynamic>{'datawayUrl': datawayUrl, 'cliToken': cliToken});
+  }
+
+  /// Update remote configuration with the SDK configured minimum interval.
+  static Future<FTRemoteConfigResult> updateRemoteConfig() async {
+    final Map<dynamic, dynamic> data =
+        await channel.invokeMethod(methodUpdateRemoteConfig);
+    return FTRemoteConfigResult.fromMap(data);
+  }
+
+  /// Update remote configuration with a custom minimum interval.
+  static Future<FTRemoteConfigResult> updateRemoteConfigWithMiniUpdateInterval(
+      int interval,
+      {List<Map<String, Object?>>? remoteConfigOverrideRules}) async {
+    final Map<dynamic, dynamic> data = await channel.invokeMethod(
+        methodUpdateRemoteConfigWithMiniUpdateInterval, <String, dynamic>{
+      'interval': interval,
+      'remoteConfigOverrideRules': remoteConfigOverrideRules,
+    });
+    return FTRemoteConfigResult.fromMap(data);
+  }
+
+  static final List<FTRemoteConfigListener> _remoteConfigListeners =
+      <FTRemoteConfigListener>[];
+
+  /// Listen for automatic remote configuration updates triggered by native SDK.
+  static void addRemoteConfigListener(FTRemoteConfigListener listener) {
+    _remoteConfigListeners.add(listener);
+    _configChannel();
+  }
+
+  static void removeRemoteConfigListener(FTRemoteConfigListener listener) {
+    _remoteConfigListeners.remove(listener);
   }
 
   /// Bind user
@@ -163,6 +313,7 @@ class FTMobileFlutter {
       void Function(String level, String tag, String message) handler) async {
     if (!Platform.isAndroid) return null;
     FTMobileFlutter.innerLogHandler = handler;
+    _configChannel();
     return await channel.invokeMethod(methodSetInnerLogHandler);
   }
 
@@ -182,14 +333,14 @@ class FTMobileFlutter {
   /// Dynamically set RUM global tags
   static Future<void> appendRUMGlobalContext(
       Map<String, String> globalContext) async {
-    Map<String, dynamic> map = {};
+    Map<String, Object> map = {};
     map["globalContext"] = globalContext;
     return await channel.invokeMethod(methodAppendRUMGlobalContext, map);
   }
 
   /// Dynamically set log global tags
   static Future<void> appendLogGlobalContext(
-      Map<String, dynamic> globalContext) async {
+      Map<String, Object> globalContext) async {
     Map<String, dynamic> map = {};
     map["globalContext"] = globalContext;
     return await channel.invokeMethod(methodAppendLogGlobalContext, map);
@@ -197,7 +348,18 @@ class FTMobileFlutter {
 
   /// Clear cache
   static Future<void> clearAllData() async {
-    return await channel.invokeMethod(methodAppendLogGlobalContext);
+    return await channel.invokeMethod(methodClearAllData);
+  }
+
+  /// ShutDown SDK
+  static Future<void> shutDown() async {
+    return await channel.invokeMethod(methodShutDown);
+  }
+
+  /// Set custom HttpOverrides
+  /// [httpOverrides] Custom HttpOverrides object, if null, will use default FTHttpOverrides()
+  static void setCustomHttpOverrides(HttpOverrides? httpOverrides) {
+    FTHttpOverrideConfig.global.customHttpOverrides = httpOverrides;
   }
 
   static _configChannel() {
@@ -210,6 +372,15 @@ class FTMobileFlutter {
           String tag = args["tag"] ?? "";
           String message = args["message"] ?? "";
           FTMobileFlutter.innerLogHandler?.call(level, tag, message);
+          break;
+        case methodRemoteConfigCallback:
+          if (args is Map) {
+            final result = FTRemoteConfigResult.fromMap(args);
+            for (final listener
+                in List<FTRemoteConfigListener>.from(_remoteConfigListeners)) {
+              listener(result);
+            }
+          }
           break;
         default:
           print('no method handler for method ${call.method}');
@@ -230,6 +401,15 @@ enum EnvType { prod, gray, pre, common, local }
 /// [medium] 10 items
 /// [large] 50 items
 enum SyncPageSize { mini, medium, large }
+
+/// Cache discard method.
+enum FTCacheDiscard {
+  /// Discard new data.
+  discard,
+
+  /// Discard oldest cached data.
+  discardOldest
+}
 
 /// DB discard method
 enum FTDBCacheDiscard {

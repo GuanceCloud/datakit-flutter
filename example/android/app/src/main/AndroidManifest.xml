@@ -5,7 +5,10 @@
          In most cases you can leave this as-is, but you if you want to provide
          additional functionality it is fine to subclass or reimplement
          FlutterApplication and put your custom class here. -->
+    <!-- Demo-only permissions for image picking and device info examples. -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- Demo-only cleartext support for local DataKit HTTP endpoints. -->
     <application
         android:name=".CustomApplication"
         android:networkSecurityConfig="@xml/network_security_config"

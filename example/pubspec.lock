@@ -137,12 +137,19 @@ packages:
     source: sdk
     version: "0.0.0"
   ft_mobile_agent_flutter:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       path: ".."
       relative: true
     source: path
-    version: "0.5.7-dev.3"
+    version: "0.5.7-pre.4"
+  ft_session_replay_flutter:
+    dependency: "direct main"
+    description:
+      path: "../packages/ft_session_replay_flutter"
+      relative: true
+    source: path
+    version: "0.1.0-pre.1"
   http:
     dependency: "direct main"
     description:
@@ -223,6 +230,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.2.1+1"
+  json_annotation:
+    dependency: transitive
+    description:
+      name: json_annotation
+      sha256: "1ce844379ca14835a50d2f019a3099f419082cfdd231cd86a142af94dd5c6bb1"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "4.9.0"
   leak_tracker:
     dependency: transitive
     description:

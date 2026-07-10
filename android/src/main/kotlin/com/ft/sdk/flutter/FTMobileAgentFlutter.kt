@@ -1,22 +1,24 @@
 package com.ft.sdk.flutter
 
+import android.app.Activity
 import android.app.Application
 import android.os.Handler
 import android.os.Looper
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
+import com.ft.sdk.CacheDiscard
 import com.ft.sdk.DBCacheDiscard
 import com.ft.sdk.DataModifier
 import com.ft.sdk.DetectFrequency
 import com.ft.sdk.FTLogger
 import com.ft.sdk.FTLoggerConfig
 import com.ft.sdk.FTRUMConfig
+import com.ft.sdk.FTRemoteConfigManager
 import com.ft.sdk.FTRUMGlobalManager
 import com.ft.sdk.FTSDKConfig
 import com.ft.sdk.FTSdk
 import com.ft.sdk.FTTraceConfig
 import com.ft.sdk.FTTraceManager
-import com.ft.sdk.InnerClassProxy
 import com.ft.sdk.LineDataModifier
 import com.ft.sdk.LogCacheDiscard
 import com.ft.sdk.RUMCacheDiscard
@@ -25,6 +27,7 @@ import com.ft.sdk.TraceType
 import com.ft.sdk.garble.bean.AppState
 import com.ft.sdk.garble.bean.ErrorType
 import com.ft.sdk.garble.bean.NetStatusBean
+import com.ft.sdk.garble.bean.RemoteConfigBean
 import com.ft.sdk.garble.bean.ResourceParams
 import com.ft.sdk.garble.bean.Status
 import com.ft.sdk.garble.bean.UserData
@@ -35,6 +38,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import org.json.JSONObject
 
 /** AgentPlugin */
 class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware {
@@ -45,22 +49,27 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
     private lateinit var channel: MethodChannel
 
     private lateinit var application: Application
+    private var activity: Activity? = null
     private var viewGroup: ViewGroup? = null
 
     private var handler: Handler? = null
+    private var remoteConfigurationEnabled = false
+    private var remoteConfigMiniUpdateInterval = 12 * 60 * 60
+    private var remoteConfigOverrideRules: List<Map<String, Any?>>? = null
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "ft_mobile_agent_flutter")
+        val mainHandler = Handler(Looper.getMainLooper())
         channel.setMethodCallHandler(this)
         application = flutterPluginBinding.applicationContext as Application
-        handler = Handler(Looper.getMainLooper())
+        handler = mainHandler
 //        setChancelDebug(true)
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         try {
-            val activity = binding.activity
-            val temp = activity.window.decorView.rootView
+            activity = binding.activity
+            val temp = activity?.window?.decorView?.rootView
             if (temp is ViewGroup) {
                 viewGroup = temp
             }
@@ -70,12 +79,17 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
     }
 
     override fun onDetachedFromActivity() {
+        activity = null
+        viewGroup = null
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+        onAttachedToActivity(binding)
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
+        activity = null
+        viewGroup = null
     }
 
     // This static function is optional and equivalent to onAttachedToEngine. It supports the old
@@ -91,6 +105,11 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
         const val LOG_TAG = "${Constants.LOG_TAG_PREFIX}FTMobileAgentFlutter"
         const val METHOD_CONFIG = "ftConfig"
         const val METHOD_FLUSH_SYNC_DATA = "ftFlushSyncData"
+        const val METHOD_SET_DATAKIT_URL = "ftSetDatakitUrl"
+        const val METHOD_SET_DATAWAY_URL = "ftSetDatawayUrl"
+        const val METHOD_UPDATE_REMOTE_CONFIG = "ftUpdateRemoteConfig"
+        const val METHOD_UPDATE_REMOTE_CONFIG_WITH_MINI_UPDATE_INTERVAL = "ftUpdateRemoteConfigWithMiniUpdateInterval"
+        const val METHOD_REMOTE_CONFIG_CALLBACK = "ftRemoteConfigCallback"
 
         const val METHOD_BIND_USER = "ftBindUser"
         const val METHOD_UNBIND_USER = "ftUnBindUser"
@@ -100,9 +119,11 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
         const val METHOD_APPEND_RUM_GLOBAL_CONTEXT = "ftAppendRUMGlobalContext"
         const val METHOD_APPEND_LOG_GLOBAL_CONTEXT = "ftAppendLogGlobalContext"
         const val METHOD_CLEAR_ALL_DATA = "ftClearAllData"
+        const val METHOD_SHUT_DOWN = "ftShutDown"
 
         const val METHOD_LOG_CONFIG = "ftLogConfig"
         const val METHOD_LOGGING = "ftLogging"
+        const val METHOD_LOGGING_WITH_STATUS_STRING = "ftLoggingWithStatusString"
 
         const val METHOD_RUM_CONFIG = "ftRumConfig"
         const val METHOD_RUM_START_ACTION = "ftRumStartAction"
@@ -111,6 +132,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
         const val METHOD_RUM_START_VIEW = "ftRumStartView"
         const val METHOD_RUM_STOP_VIEW = "ftRumStopView"
         const val METHOD_RUM_ADD_ERROR = "ftRumAddError"
+        const val METHOD_RUM_ADD_LONG_TASK = "ftRumAddLongTask"
         const val METHOD_RUM_START_RESOURCE = "ftRumStartResource"
         const val METHOD_RUM_STOP_RESOURCE = "ftRumStopResource"
         const val METHOD_RUM_ADD_RESOURCE = "ftRumAddResource"
@@ -138,13 +160,21 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
         const val KEY_ENABLE_LIMIT_WITH_DB_SIZE = "enableLimitWithDbSize"
         const val KEY_DB_CACHE_LIMIT = "dbCacheLimit"
         const val KEY_DB_CACHE_DISCARD = "dbCacheDiscard"
+        const val KEY_ENABLE_LIMIT_WITH_CACHE_SIZE = "enableLimitWithCacheSize"
+        const val KEY_CACHE_LIMIT = "cacheLimit"
+        const val KEY_CACHE_DISCARD = "cacheDiscard"
+        const val KEY_ENABLE_FILE_DATA_STORE = "enableFileDataStore"
+        const val KEY_NEED_TRANSFORM_OLD_CACHE = "needTransformOldCache"
+        const val KEY_FILE_DATA_STORE_SHADOW = "fileDataStoreShadow"
         const val KEY_DATA_MODIFIER = "dataModifier"
         const val KEY_LINE_DATA_MODIFIER = "lineDataModifier"
+        const val KEY_ENABLE_DATA_FILTER = "enableDataFilter"
+        const val KEY_DATA_FILTERS = "dataFilters"
         const val KEY_ENABLE_REMOTE_CONFIGURATION = "enableRemoteConfiguration"
         const val KEY_REMOTE_CONFIG_MINI_UPDATE_INTERVAL = "remoteConfigMiniUpdateInterval"
+        const val KEY_REMOTE_CONFIG_OVERRIDE_RULES = "remoteConfigOverrideRules"
         const val KEY_ENABLE_TRACE_WEBVIEW = "enableTraceWebView"
         const val KEY_ALLOW_WEBVIEW_HOST = "allowWebViewHost"
-        const val KEY_PKG_INFO = "pkgInfo"
 
         const val KEY_SAMPLE_RATE = "sampleRate"
         const val KEY_TRACE_TYPE = "traceType"
@@ -166,6 +196,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
         const val KEY_DETECT_FREQUENCY = "detectFrequency"
         const val KEY_RUM_CACHE_DISCARD = "rumCacheDiscard"
         const val KEY_RUM_CACHE_LIMIT_COUNT = "rumCacheLimitCount"
+        const val KEY_ENABLE_RESOURCE_HOST_IP = "enableResourceHostIP"
 
         const val KEY_LOG_TYPE = "logType"
         const val KEY_ENABLE_CUSTOM_LOG = "enableCustomLog"
@@ -213,17 +244,32 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 val dbCacheDiscard: DBCacheDiscard =
                     DBCacheDiscard.values()[call.argument<Number>(KEY_DB_CACHE_DISCARD)?.toInt()
                         ?: DBCacheDiscard.DISCARD.ordinal]
+                val enableLimitWithCacheSize: Boolean? =
+                    call.argument<Boolean>(KEY_ENABLE_LIMIT_WITH_CACHE_SIZE)
+                val cacheLimit: Number? = call.argument<Number>(KEY_CACHE_LIMIT)
+                val cacheDiscard: CacheDiscard? =
+                    call.argument<Number>(KEY_CACHE_DISCARD)?.let {
+                        CacheDiscard.values()[it.toInt()]
+                    }
+                val enableFileDataStore: Boolean? =
+                    call.argument<Boolean>(KEY_ENABLE_FILE_DATA_STORE)
+                val needTransformOldCache: Boolean? =
+                    call.argument<Boolean>(KEY_NEED_TRANSFORM_OLD_CACHE)
+                val fileDataStoreShadow: Boolean? =
+                    call.argument<Boolean>(KEY_FILE_DATA_STORE_SHADOW)
 
                 val dataModifier: Map<String, Any>? = call.argument(KEY_DATA_MODIFIER)
                 val lineDataModifier: Map<String, Map<String, Any>>? =
                     call.argument(KEY_LINE_DATA_MODIFIER)
+                val enableDataFilter: Boolean? = call.argument<Boolean>(KEY_ENABLE_DATA_FILTER)
+                val dataFilters: Map<String, List<String>>? = call.argument(KEY_DATA_FILTERS)
                 val enableRemoteConfiguration: Boolean? = call.argument<Boolean>(
                     KEY_ENABLE_REMOTE_CONFIGURATION
                 )
                 val remoteConfigMiniUpdateInterval: Number? = call.argument<Number>(
                     KEY_REMOTE_CONFIG_MINI_UPDATE_INTERVAL
                 )
-                val pkgInfo: String? = call.argument<String?>(KEY_PKG_INFO)
+                remoteConfigOverrideRules = call.argument(KEY_REMOTE_CONFIG_OVERRIDE_RULES)
 
                 val sdkConfig =
                     if (datakitUrl != null) FTSDKConfig.builder(datakitUrl) else FTSDKConfig.builder(
@@ -281,13 +327,39 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                     }
                 }
 
-                if (enableLimitWithDbSize != null) {
+                if (enableLimitWithDbSize == true) {
                     if (dbCacheLimit != null) {
                         sdkConfig.enableLimitWithDbSize(dbCacheLimit.toLong())
                     } else {
                         sdkConfig.enableLimitWithDbSize()
                     }
                 }
+
+                if (enableLimitWithCacheSize == true) {
+                    val sizeLimit = cacheLimit ?: dbCacheLimit
+                    if (sizeLimit != null) {
+                        sdkConfig.enableLimitWithCacheSize(sizeLimit.toLong())
+                    } else {
+                        sdkConfig.enableLimitWithCacheSize()
+                    }
+                }
+
+                if (cacheDiscard != null) {
+                    sdkConfig.setCacheDiscard(cacheDiscard)
+                }
+
+                if (enableFileDataStore != null) {
+                    sdkConfig.setUseFileDataStore(enableFileDataStore)
+                }
+
+                if (needTransformOldCache != null) {
+                    sdkConfig.setNeedTransformOldCache(needTransformOldCache)
+                }
+
+                if (fileDataStoreShadow != null) {
+                    sdkConfig.setFileDataStoreShadow(fileDataStoreShadow)
+                }
+
                 if (dataModifier != null) {
                     sdkConfig.setDataModifier(object : DataModifier {
                         override fun modify(key: String, value: Any?): Any? {
@@ -311,17 +383,42 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                     })
                 }
 
+                if (enableDataFilter != null) {
+                    sdkConfig.setEnableDataFilter(enableDataFilter)
+                }
+
+                if (dataFilters != null) {
+                    val filters = HashMap<String, Array<String>>()
+                    dataFilters.forEach { (category, rules) ->
+                        filters[category] = rules.toTypedArray()
+                    }
+                    sdkConfig.setDataFilters(filters)
+                }
+
                 if (enableRemoteConfiguration != null) {
                     sdkConfig.setRemoteConfiguration(enableRemoteConfiguration)
                 }
+                remoteConfigurationEnabled = sdkConfig.isRemoteConfiguration
 
                 if (remoteConfigMiniUpdateInterval != null) {
                     sdkConfig.setRemoteConfigMiniUpdateInterval(remoteConfigMiniUpdateInterval.toInt())
+                    this.remoteConfigMiniUpdateInterval = remoteConfigMiniUpdateInterval.toInt()
+                } else {
+                    this.remoteConfigMiniUpdateInterval = sdkConfig.remoteConfigMiniUpdateInterval
                 }
 
-                if (pkgInfo != null) {
-                    InnerClassProxy.addPkgInfo(sdkConfig, "flutter", pkgInfo)
+                if (remoteConfigurationEnabled) {
+                    sdkConfig.setRemoteConfigurationCallBack(object : FTRemoteConfigManager.FetchResult() {
+                        override fun onConfigSuccessFetched(configBean: RemoteConfigBean, jsonConfig: String): RemoteConfigBean? {
+                            return applyRemoteConfigOverrideRules(configBean, jsonConfig, remoteConfigOverrideRules).first
+                        }
+
+                        override fun onResult(success: Boolean) {
+                            emitRemoteConfigResult(createRemoteConfigResult("auto", success, null, null, null, null))
+                        }
+                    })
                 }
+
                 FTSdk.install(sdkConfig)
 //                LogUtils.d(LOG_TAG, Gson().toJson(sdkConfig))
                 if (tester != null) {
@@ -340,6 +437,33 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
             METHOD_FLUSH_SYNC_DATA -> {
                 FTSdk.flushSyncData()
                 result.success(null)
+            }
+
+            METHOD_SET_DATAKIT_URL -> {
+                val datakitUrl: String? = call.argument<String>(KEY_DATAKIT_URL)
+                if (!datakitUrl.isNullOrEmpty()) {
+                    FTSdk.setDatakitUrl(datakitUrl)
+                }
+                result.success(null)
+            }
+
+            METHOD_SET_DATAWAY_URL -> {
+                val datawayUrl: String? = call.argument<String>(KEY_DATAWAY_URL)
+                val cliToken: String? = call.argument<String>(KEY_CLI_TOKEN)
+                if (!datawayUrl.isNullOrEmpty() && !cliToken.isNullOrEmpty()) {
+                    FTSdk.setDatawayUrl(datawayUrl, cliToken)
+                }
+                result.success(null)
+            }
+
+            METHOD_UPDATE_REMOTE_CONFIG -> {
+                updateRemoteConfig(remoteConfigMiniUpdateInterval, remoteConfigOverrideRules, result)
+            }
+
+            METHOD_UPDATE_REMOTE_CONFIG_WITH_MINI_UPDATE_INTERVAL -> {
+                val interval: Number? = call.argument<Number>("interval")
+                val rules: List<Map<String, Any?>>? = call.argument(KEY_REMOTE_CONFIG_OVERRIDE_RULES)
+                updateRemoteConfig(interval?.toInt() ?: remoteConfigMiniUpdateInterval, rules ?: remoteConfigOverrideRules, result)
             }
 
             METHOD_RUM_CONFIG -> {
@@ -375,6 +499,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 val allowWebViewHost: List<String>? = call.argument<List<String>>(
                     KEY_ALLOW_WEBVIEW_HOST
                 )
+                val enableResourceHostIP: Boolean? = call.argument<Boolean>(KEY_ENABLE_RESOURCE_HOST_IP)
 
 
                 val rumConfig = FTRUMConfig().setRumAppId(rumAppId)
@@ -456,6 +581,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                     rumConfig.setAllowWebViewHost(arr)
                 }
 
+                if (enableResourceHostIP != null) {
+                    rumConfig.setEnableResourceHostIP(enableResourceHostIP)
+                }
+
                 FTSdk.initRUMWithConfig(rumConfig)
 
                 if (tester != null) {
@@ -476,8 +605,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
             METHOD_RUM_ADD_ACTION -> {
                 val actionName: String? = call.argument<String>("actionName")
                 val actionType: String? = call.argument<String>("actionType")
-                val mapProperty: Map<String, Any>? = call.argument("property")
-                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                val mapProperty: Map<String, Any?>? = call.argument("property")
+                val property: HashMap<String, Any?>? = mapProperty?.let { HashMap(mapProperty) }
                 FTRUMGlobalManager.get().addAction(actionName, actionType, property)
                 result.success(null)
             }
@@ -485,8 +614,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
             METHOD_RUM_START_ACTION -> {
                 val actionName: String? = call.argument<String>("actionName")
                 val actionType: String? = call.argument<String>("actionType")
-                val mapProperty: Map<String, Any>? = call.argument("property")
-                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                val mapProperty: Map<String, Any?>? = call.argument("property")
+                val property: HashMap<String, Any?>? = mapProperty?.let { HashMap(mapProperty) }
                 FTRUMGlobalManager.get().startAction(actionName, actionType, property)
                 result.success(null)
             }
@@ -500,15 +629,15 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
 
             METHOD_RUM_START_VIEW -> {
                 val viewName: String? = call.argument<String>("viewName")
-                val mapProperty: Map<String, Any>? = call.argument("property")
-                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                val mapProperty: Map<String, Any?>? = call.argument("property")
+                val property: HashMap<String, Any?>? = mapProperty?.let { HashMap(mapProperty) }
                 FTRUMGlobalManager.get().startView(viewName, property)
                 result.success(null)
             }
 
             METHOD_RUM_STOP_VIEW -> {
-                val mapProperty: Map<String, Any>? = call.argument("property")
-                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                val mapProperty: Map<String, Any?>? = call.argument("property")
+                val property: HashMap<String, Any?>? = mapProperty?.let { HashMap(mapProperty) }
                 FTRUMGlobalManager.get().stopView(property)
                 result.success(null)
             }
@@ -518,8 +647,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 val message: String? = call.argument<String>("message")
                 val state: Int? = call.argument<Int>("appState")
                 var errorType: String? = call.argument<String>("errorType")
-                val mapProperty: Map<String, Any>? = call.argument("property")
-                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                val mapProperty: Map<String, Any?>? = call.argument("property")
+                val property: HashMap<String, Any?>? = mapProperty?.let { HashMap(mapProperty) }
 
                 val appState: AppState = AppState.values()[state ?: AppState.UNKNOWN.ordinal]
                 if (errorType.isNullOrEmpty()) {
@@ -530,18 +659,29 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
 
             }
 
-            METHOD_RUM_START_RESOURCE -> {
-                val key: String? = call.argument<String>("key")
+            METHOD_RUM_ADD_LONG_TASK -> {
+                val stack: String = call.argument<String>("stack") ?: ""
+                val duration: Number? = call.argument<Number>("duration")
                 val mapProperty: Map<String, Any>? = call.argument("property")
                 val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                if (duration != null) {
+                    FTRUMGlobalManager.get().addLongTask(stack, duration.toLong(), property)
+                }
+                result.success(null)
+            }
+
+            METHOD_RUM_START_RESOURCE -> {
+                val key: String? = call.argument<String>("key")
+                val mapProperty: Map<String, Any?>? = call.argument("property")
+                val property: HashMap<String, Any?>? = mapProperty?.let { HashMap(mapProperty) }
                 FTRUMGlobalManager.get().startResource(key, property)
                 result.success(null)
             }
 
             METHOD_RUM_STOP_RESOURCE -> {
                 val key: String? = call.argument<String>("key")
-                val mapProperty: Map<String, Any>? = call.argument("property")
-                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                val mapProperty: Map<String, Any?>? = call.argument("property")
+                val property: HashMap<String, Any?>? = mapProperty?.let { HashMap(mapProperty) }
                 FTRUMGlobalManager.get().stopResource(key, property)
                 result.success(null)
 
@@ -550,10 +690,10 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
             METHOD_RUM_ADD_RESOURCE -> {
                 val key: String? = call.argument<String>("key")
                 val method: String? = call.argument<String>("resourceMethod")
-                val requestHeader: Map<String, Any>? =
-                    call.argument<Map<String, Any>>("requestHeader")
-                val responseHeader: Map<String, Any>? =
-                    call.argument<Map<String, Any>>("responseHeader")
+                val requestHeader: Map<String, Any?>? =
+                    call.argument<Map<String, Any?>>("requestHeader")
+                val responseHeader: Map<String, Any?>? =
+                    call.argument<Map<String, Any?>>("responseHeader")
                 val responseBody: String? = call.argument<String>("responseBody")
 //                val responseConnection: String? = call.argument<String>("responseConnection")
 //                val responseContentType: String? = call.argument<String>("responseContentType")
@@ -562,6 +702,8 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 val resourceStatus: Int? = call.argument<Int>("resourceStatus")
                 val resourceSize: Number? = call.argument<Number>("resourceSize")
                 val url: String? = call.argument<String>("url")
+                val metrics: Map<String, Any?>? =
+                    call.argument<Map<String, Any?>>("metrics")
 //                val fetchStartTime: Long? = call.argument<Long>("fetchStartTime")
 //                val tcpStartTime: Long? = call.argument<Long>("tcpStartTime")
 //                val tcpEndTime: Long? = call.argument<Long>("tcpEndTime")
@@ -587,6 +729,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
 
                 if (resourceSize != null) {
                     params.responseContentLength = resourceSize.toLong()
+                    netStatusBean.responseBodySize = resourceSize.toLong()
                 }
 
                 val responseContentType =
@@ -602,6 +745,21 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 params.responseContentType = responseContentType ?: ""
                 params.responseContentEncoding = responseContentEncoding ?: ""
                 params.url = url ?: ""
+                val resourceHttpProtocol = metrics?.get("resourceHttpProtocol")?.toString()
+                if (!resourceHttpProtocol.isNullOrEmpty()) {
+                    params.resourceProtocol = resourceHttpProtocol
+                }
+                val requestSize = metrics?.get("requestSize") as? Number
+                if (requestSize != null) {
+                    val requestHeaderSize = requestHeader?.let { getHeadersByteSize(it) } ?: 0L
+                    netStatusBean.requestBodySize =
+                        maxOf(0L, requestSize.toLong() - requestHeaderSize)
+                }
+                val connectionReuse =
+                    parseBoolean(metrics?.get("connectionReuse") ?: metrics?.get("reusedConnection"))
+                if (connectionReuse != null) {
+                    netStatusBean.connectionReuse = connectionReuse
+                }
 //                netStatusBean.fetchStartTime = fetchStartTime!!
 //                netStatusBean.tcpStartTime = tcpStartTime!!
 //                netStatusBean.tcpEndTime = tcpEndTime!!
@@ -611,6 +769,7 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
 //                netStatusBean.responseEndTime = responseEndTime!!
 //                netStatusBean.sslStartTime = sslStartTime!!
 //                netStatusBean.sslEndTime = sslEndTime!!
+                // Intentionally avoid mergeBridgeContext here to preserve the existing stopResource payload contract.
                 FTRUMGlobalManager.get().addResource(key, params, netStatusBean)
                 result.success(null)
             }
@@ -690,14 +849,23 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 val status: Status =
                     Status.values()[call.argument<Int>("status") ?: Status.INFO.ordinal]
                 val isSilence: Boolean? = call.argument<Boolean>("isSilence")
-                val mapProperty: Map<String, Any>? = call.argument("property")
-                val property: HashMap<String, Any>? = mapProperty?.let { HashMap(mapProperty) }
+                val mapProperty: Map<String, Any?>? = call.argument("property")
+                val property: HashMap<String, Any?>? = mapProperty?.let { HashMap(mapProperty) }
 
                 if (isSilence != null) {
                     FTLogger.getInstance().logBackground(content, status, property, isSilence)
                 } else {
                     FTLogger.getInstance().logBackground(content, status, property)
                 }
+                result.success(null)
+            }
+
+            METHOD_LOGGING_WITH_STATUS_STRING -> {
+                val content: String = call.argument<String>("content") ?: ""
+                val status: String = call.argument<String>("status") ?: ""
+                val mapProperty: Map<String, Any?>? = call.argument("property")
+                val property: HashMap<String, Any?>? = mapProperty?.let { HashMap(mapProperty) }
+                FTLogger.getInstance().logBackground(content, status, property)
                 result.success(null)
             }
 
@@ -848,13 +1016,142 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
                 result.success(null)
             }
 
+            METHOD_SHUT_DOWN -> {
+                FTSdk.shutDown()
+                result.success(null)
+            }
+
             else -> {
                 result.notImplemented()
             }
         }
     }
 
-    private fun getHashMap(header: Map<String, Any>): HashMap<String, List<String>> {
+    private fun updateRemoteConfig(interval: Int, rules: List<Map<String, Any?>>?, result: MethodChannel.Result) {
+        if (!remoteConfigurationEnabled) {
+            result.success(createRemoteConfigResult("manual", false, null, null, "remote_configuration_disabled", "Remote configuration is not enabled"))
+            return
+        }
+
+        var rawJson: String? = null
+        var appliedRuleIds: List<String>? = null
+        FTSdk.updateRemoteConfig(interval, object : FTRemoteConfigManager.FetchResult() {
+            override fun onConfigSuccessFetched(configBean: RemoteConfigBean, jsonConfig: String): RemoteConfigBean? {
+                val overrideResult = applyRemoteConfigOverrideRules(configBean, jsonConfig, rules)
+                rawJson = overrideResult.first.toJsonString()
+                appliedRuleIds = overrideResult.second
+                return overrideResult.first
+            }
+
+            override fun onResult(success: Boolean) {
+                result.success(createRemoteConfigResult("manual", success, rawJson, appliedRuleIds, null, null))
+            }
+        })
+    }
+
+    private fun emitRemoteConfigResult(payload: Map<String, Any?>) {
+        handler?.post {
+            channel.invokeMethod(METHOD_REMOTE_CONFIG_CALLBACK, payload)
+        }
+    }
+
+    private fun createRemoteConfigResult(
+        triggerType: String,
+        success: Boolean,
+        rawJson: String?,
+        appliedRuleIds: List<String>?,
+        errorCode: String?,
+        errorMessage: String?
+    ): Map<String, Any?> {
+        val payload = hashMapOf<String, Any?>(
+            "triggerType" to triggerType,
+            "success" to success,
+            "platform" to "android",
+            "timestamp" to System.currentTimeMillis()
+        )
+        if (rawJson != null) payload["rawJson"] = rawJson
+        if (!appliedRuleIds.isNullOrEmpty()) payload["appliedOverrideRuleIds"] = appliedRuleIds
+        if (errorCode != null) payload["errorCode"] = errorCode
+        if (errorMessage != null) payload["errorMessage"] = errorMessage
+        return payload
+    }
+
+    private fun applyRemoteConfigOverrideRules(
+        configBean: RemoteConfigBean,
+        jsonConfig: String?,
+        rules: List<Map<String, Any?>>?
+    ): Pair<RemoteConfigBean, List<String>> {
+        if (jsonConfig.isNullOrEmpty() || rules.isNullOrEmpty()) {
+            return Pair(configBean, emptyList())
+        }
+        val appliedIds = mutableListOf<String>()
+        val jsonObject = try {
+            JSONObject(jsonConfig)
+        } catch (e: Exception) {
+            return Pair(configBean, emptyList())
+        }
+
+        rules.forEach { rule ->
+            val enabled = rule["enabled"] as? Boolean ?: true
+            if (!enabled) return@forEach
+            val match = rule["match"] as? Map<*, *> ?: return@forEach
+            val customKeys = match["customKeys"] as? Map<*, *> ?: return@forEach
+            if (!matchesCustomKeys(jsonObject, customKeys)) return@forEach
+            val override = rule["override"] as? Map<*, *> ?: return@forEach
+            applyRemoteConfigOverride(configBean, override)
+            (rule["id"] as? String)?.let { appliedIds.add(it) }
+        }
+        return Pair(configBean, appliedIds)
+    }
+
+    private fun matchesCustomKeys(jsonObject: JSONObject, customKeys: Map<*, *>): Boolean {
+        customKeys.forEach { (key, expected) ->
+            val keyString = key?.toString() ?: return false
+            if (!jsonObject.has(keyString)) return false
+            val actual = jsonObject.opt(keyString)?.toString() ?: return false
+            if (expected is Map<*, *>) {
+                val contains = expected["contains"]?.toString() ?: return false
+                if (!actual.contains(contains)) return false
+            } else if (actual != expected?.toString()) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun applyRemoteConfigOverride(configBean: RemoteConfigBean, override: Map<*, *>) {
+        (override["env"] as? String)?.let { configBean.setEnv(it) }
+        (override["serviceName"] as? String)?.let { configBean.setServiceName(it) }
+        (override["autoSync"] as? Boolean)?.let { configBean.setAutoSync(it) }
+        (override["compressIntakeRequests"] as? Boolean)?.let { configBean.setCompressIntakeRequests(it) }
+        (override["syncPageSize"] as? Number)?.let { configBean.setSyncPageSize(it.toInt()) }
+        (override["syncSleepTime"] as? Number)?.let { configBean.setSyncSleepTime(it.toInt()) }
+        (override["rumSampleRate"] as? Number)?.let { configBean.setRumSampleRate(it.toFloat()) }
+        (override["rumSessionOnErrorSampleRate"] as? Number)?.let { configBean.setRumSessionOnErrorSampleRate(it.toFloat()) }
+        (override["rumEnableTraceUserAction"] as? Boolean)?.let { configBean.setRumEnableTraceUserAction(it) }
+        (override["rumEnableTraceUserView"] as? Boolean)?.let { configBean.setRumEnableTraceUserView(it) }
+        (override["rumEnableTraceUserResource"] as? Boolean)?.let { configBean.setRumEnableTraceUserResource(it) }
+        (override["rumEnableResourceHostIP"] as? Boolean)?.let { configBean.setRumEnableResourceHostIP(it) }
+        (override["rumEnableTrackAppUIBlock"] as? Boolean)?.let { configBean.setRumEnableTrackAppUIBlock(it) }
+        (override["rumBlockDurationMs"] as? Number)?.let { configBean.setRumBlockDurationMs(it.toLong()) }
+        (override["rumEnableTrackAppCrash"] as? Boolean)?.let { configBean.setRumEnableTrackAppCrash(it) }
+        (override["rumEnableTrackAppANR"] as? Boolean)?.let { configBean.setRumEnableTrackAppANR(it) }
+        (override["rumEnableTraceWebView"] as? Boolean)?.let { configBean.setRumEnableTraceWebView(it) }
+        (override["rumAllowWebViewHost"] as? List<*>)?.let { list ->
+            configBean.setRumAllowWebViewHost(list.map { it.toString() }.toTypedArray())
+        }
+        (override["traceSampleRate"] as? Number)?.let { configBean.setTraceSampleRate(it.toFloat()) }
+        (override["traceEnableAutoTrace"] as? Boolean)?.let { configBean.setTraceEnableAutoTrace(it) }
+        (override["traceType"] as? String)?.let { configBean.setTraceType(it) }
+        (override["logSampleRate"] as? Number)?.let { configBean.setLogSampleRate(it.toFloat()) }
+        (override["logLevelFilters"] as? List<*>)?.let { list ->
+            configBean.setLogLevelFilters(list.map { it.toString() }.toTypedArray())
+        }
+        (override["logEnableCustomLog"] as? Boolean)?.let { configBean.setLogEnableCustomLog(it) }
+        (override["logEnableConsoleLog"] as? Boolean)?.let { configBean.setLogEnableConsoleLog(it) }
+    }
+
+    private fun getHashMap(header: Map<String, Any?>): HashMap<String, List<String>> {
         val hashMap = hashMapOf<String, List<String>>()
         header.forEach { it ->
             if (it.value is String) {
@@ -864,6 +1161,33 @@ class FTMobileAgentFlutter : FlutterPlugin, MethodChannel.MethodCallHandler, Act
             }
         }
         return hashMap
+    }
+
+    private fun getHeadersByteSize(header: Map<String, Any?>): Long {
+        if (header.isEmpty()) return 0
+
+        var size = 0L
+        header.forEach { entry ->
+            val value = when (val item = entry.value) {
+                is List<*> -> item.joinToString(", ") { it.toString() }
+                null -> ""
+                else -> item.toString()
+            }
+            size += entry.key.length.toLong()
+            size += 2
+            size += value.length.toLong()
+            size += 2
+        }
+        return size
+    }
+
+    private fun parseBoolean(value: Any?): Boolean? {
+        return when (value) {
+            is Boolean -> value
+            is Number -> value.toInt() != 0
+            is String -> value.equals("true", ignoreCase = true)
+            else -> null
+        }
     }
 
 

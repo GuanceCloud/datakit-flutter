@@ -25,10 +25,11 @@ enum Constants {
         internal static let dbCacheDiscard = "dbCacheDiscard"
         internal static let dataModifier = "dataModifier"
         internal static let lineDataModifier = "lineDataModifier"
+        internal static let enableDataFilter = "enableDataFilter"
+        internal static let dataFilters = "dataFilters"
         internal static let groupIdentifiers = "groupIdentifiers"
         internal static let enableLimitWithDbSize = "enableLimitWithDbSize"
         internal static let dbCacheLimit = "dbCacheLimit"
-        internal static let pkgInfo = "pkgInfo"
         internal static let globalContext = "globalContext"
         internal static let enableRemoteConfiguration = "enableRemoteConfiguration"
         internal static let remoteConfigMiniUpdateInterval = "remoteConfigMiniUpdateInterval"
@@ -39,6 +40,7 @@ enum Constants {
         internal static let sessionOnErrorSampleRate = "sessionOnErrorSampleRate"
         internal static let enableUserAction = "enableUserAction"
         internal static let enableUserView = "enableUserView"
+        internal static let enableNativeSwiftUIUserView = "enableNativeSwiftUIUserView"
         internal static let enableUserViewInFragment = "enableUserViewInFragment"
         internal static let enableUserResource = "enableUserResource"
         internal static let enableTrackNativeAppANR = "enableTrackNativeAppANR"
@@ -73,8 +75,6 @@ enum Constants {
 
     
 }
-
-
 
 
 

@@ -4,8 +4,18 @@ import FTMobileSDK
 
 public class SwiftAgentPlugin: NSObject, FlutterPlugin {
 
+    private var channel: FlutterMethodChannel?
+    private var remoteConfigurationEnabled = false
+    private var remoteConfigMiniUpdateInterval = 12 * 60 * 60
+    private var remoteConfigOverrideRules: [[String: Any]]?
+
     static let METHOD_CONFIG = "ftConfig"
     static let METHOD_FLUSH_SYNC_DATA = "ftFlushSyncData"
+    static let METHOD_SET_DATAKIT_URL = "ftSetDatakitUrl"
+    static let METHOD_SET_DATAWAY_URL = "ftSetDatawayUrl"
+    static let METHOD_UPDATE_REMOTE_CONFIG = "ftUpdateRemoteConfig"
+    static let METHOD_UPDATE_REMOTE_CONFIG_WITH_MINI_UPDATE_INTERVAL = "ftUpdateRemoteConfigWithMiniUpdateInterval"
+    static let METHOD_REMOTE_CONFIG_CALLBACK = "ftRemoteConfigCallback"
 
     static let METHOD_BIND_USER = "ftBindUser"
     static let METHOD_UNBIND_USER = "ftUnBindUser"
@@ -16,9 +26,11 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     static let METHOD_APPEND_LOG_GLOBAL_CONTEXT = "ftAppendLogGlobalContext"
     
     static let METHOD_CLEAR_ALL_DATA = "ftClearAllData"
+    static let METHOD_SHUT_DOWN = "ftShutDown"
 
     static let METHOD_LOG_CONFIG = "ftLogConfig"
     static let METHOD_LOGGING = "ftLogging"
+    static let METHOD_LOGGING_WITH_STATUS_STRING = "ftLoggingWithStatusString"
 
     static let METHOD_RUM_CONFIG = "ftRumConfig"
     static let METHOD_RUM_START_ACTION = "ftRumStartAction"
@@ -27,6 +39,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     static let METHOD_RUM_START_VIEW = "ftRumStartView"
     static let METHOD_RUM_STOP_VIEW = "ftRumStopView"
     static let METHOD_RUM_ADD_ERROR = "ftRumAddError"
+    static let METHOD_RUM_ADD_LONG_TASK = "ftRumAddLongTask"
     static let METHOD_RUM_START_RESOURCE = "ftRumStartResource"
     static let METHOD_RUM_ADD_RESOURCE = "ftRumAddResource"
     static let METHOD_RUM_STOP_RESOURCE = "ftRumStopResource"
@@ -38,6 +51,7 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "ft_mobile_agent_flutter", binaryMessenger: registrar.messenger())
         let instance = SwiftAgentPlugin()
+        instance.channel = channel
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
 
@@ -131,6 +145,14 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                     }
                 }
             }
+
+            if let enableDataFilter = context["enableDataFilter"] as? Bool {
+                config.enableDataFilter = enableDataFilter
+            }
+
+            if let dataFilters = context["dataFilters"] as? [String: [String]] {
+                config.dataFilters = dataFilters
+            }
             
             if let enableRemoteConfiguration = context["enableRemoteConfiguration"] as? Bool{
                 config.remoteConfiguration = enableRemoteConfiguration
@@ -139,20 +161,42 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             if let remoteConfigMiniUpdateInterval = context["remoteConfigMiniUpdateInterval"] as? Int{
                 config.remoteConfigMiniUpdateInterval = Int32(remoteConfigMiniUpdateInterval)
             }
-
-            if let pkgInfo = context["pkgInfo"] as? String {
-                config.addPkgInfo("flutter", value: pkgInfo)
+            remoteConfigurationEnabled = config.remoteConfiguration
+            remoteConfigMiniUpdateInterval = Int(config.remoteConfigMiniUpdateInterval)
+            remoteConfigOverrideRules = context["remoteConfigOverrideRules"] as? [[String: Any]]
+            if config.remoteConfiguration {
+                config.remoteConfigFetchCompletionBlock = { [weak self] success, error, model, content in
+                    guard let self = self else { return model }
+                    let result = self.applyRemoteConfigOverrideRules(model: model, content: content, rules: self.remoteConfigOverrideRules)
+                    self.emitRemoteConfigResult(self.remoteConfigResult(triggerType: "auto", success: success, content: content, error: error, appliedRuleIds: result.appliedRuleIds))
+                    return result.model
+                }
             }
-
             FTMobileAgent.start(withConfigOptions: config)
 #if FT_SDK_TESTING
             result(test("validateBase:",context,config))
-            return
-#endif
+#else
             result(nil)
+#endif
         case SwiftAgentPlugin.METHOD_FLUSH_SYNC_DATA:
             FTMobileAgent.sharedInstance().flushSyncData()
             result(nil)
+        case SwiftAgentPlugin.METHOD_SET_DATAKIT_URL:
+            if let datakitUrl = context["datakitUrl"] as? String {
+                FTMobileAgent.setDatakitURL(datakitUrl)
+            }
+            result(nil)
+        case SwiftAgentPlugin.METHOD_SET_DATAWAY_URL:
+            if let datawayUrl = context["datawayUrl"] as? String, let cliToken = context["cliToken"] as? String {
+                FTMobileAgent.setDatawayURL(datawayUrl, clientToken: cliToken)
+            }
+            result(nil)
+        case SwiftAgentPlugin.METHOD_UPDATE_REMOTE_CONFIG:
+            updateRemoteConfig(interval: remoteConfigMiniUpdateInterval, rules: remoteConfigOverrideRules, result: result)
+        case SwiftAgentPlugin.METHOD_UPDATE_REMOTE_CONFIG_WITH_MINI_UPDATE_INTERVAL:
+            let interval = context["interval"] as? Int ?? remoteConfigMiniUpdateInterval
+            let rules = context["remoteConfigOverrideRules"] as? [[String: Any]] ?? remoteConfigOverrideRules
+            updateRemoteConfig(interval: interval, rules: rules, result: result)
         case SwiftAgentPlugin.METHOD_BIND_USER:
             if let userId = context["userId"] as? String {
                 let userName = context["userName"] as? String
@@ -189,6 +233,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         case SwiftAgentPlugin.METHOD_CLEAR_ALL_DATA:
             FTMobileAgent.clearAllData()
             result(nil)
+        case SwiftAgentPlugin.METHOD_SHUT_DOWN:
+            FTMobileAgent.shutDown()
+            result(nil)
         case SwiftAgentPlugin.METHOD_LOG_CONFIG:
 
             let logConfig = FTLoggerConfig()
@@ -222,9 +269,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             FTMobileAgent.sharedInstance().startLogger(withConfigOptions: logConfig)
 #if FT_SDK_TESTING
             result(test("validateLog:",context,logConfig))
-            return
-#endif
+#else
             result(nil)
+#endif
         case SwiftAgentPlugin.METHOD_LOGGING:
             if let content = context["content"] as? String {
                 let status = context["status"] as? NSNumber ?? NSNumber(value: 0)
@@ -232,6 +279,13 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 FTMobileAgent.sharedInstance().logging(content, status: FTLogStatus.init(rawValue: status.intValue)!,property: property)
             }
             result(nil)
+        case SwiftAgentPlugin.METHOD_LOGGING_WITH_STATUS_STRING:
+            if let content = context["content"] as? String, let status = context["status"] as? String {
+                let property = context["property"] as? Dictionary<String, Any> ?? nil
+                FTLogger.shared().log(content, status: status, property: property)
+            }
+            result(nil)
+
         case SwiftAgentPlugin.METHOD_TRACE_CONFIG:
             let traceConfig = FTTraceConfig()
             if let sampleRate = context["sampleRate"] as? NSNumber {
@@ -249,9 +303,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             FTMobileAgent.sharedInstance().startTrace(withConfigOptions: traceConfig)
 #if FT_SDK_TESTING
             result(test("validateTrace:",context,traceConfig))
-            return
-#endif
+#else
             result(nil)
+#endif
         case SwiftAgentPlugin.METHOD_GET_TRACE_HEADER:
             let urlStr = context["url"] as! String
             let key = context["key"] as? String
@@ -278,6 +332,10 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 }
                 if let enableUserView = context["enableUserView"] as? Bool {
                     rumConfig.enableTraceUserView = enableUserView
+                }
+                if let enableNativeSwiftUIUserView = context["enableNativeSwiftUIUserView"] as? Bool,
+                   enableNativeSwiftUIUserView {
+                    rumConfig.swiftUIViewTrackingHandler = FTDefaultSwiftUIViewTrackingHandler()
                 }
                 if let enableUserResource = context["enableUserResource"] as? Bool {
                     rumConfig.enableTraceUserResource = enableUserResource
@@ -324,12 +382,20 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 if let allowWebViewHost = context["allowWebViewHost"] as? Array<String> {
                     rumConfig.allowWebViewHost = allowWebViewHost
                 }
+                if let enableResourceHostIP = context["enableResourceHostIP"] as? Bool {
+                    rumConfig.enableResourceHostIP = enableResourceHostIP
+                }
+                if let iosCrashMonitoringType = context["iosCrashMonitoringType"] as? NSNumber {
+                    rumConfig.crashMonitoring = FTCrashMonitorType(rawValue: iosCrashMonitoringType.uintValue)
+                }
 
                 FTMobileAgent.sharedInstance().startRum(withConfigOptions: rumConfig)
 #if FT_SDK_TESTING
                 result(test("validateRUM:",context,rumConfig))
-                return
+#else
+                result(nil)
 #endif
+                return
             }
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_START_ACTION:
@@ -372,6 +438,12 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
             
             FTExternalDataManager.shared().addError(withType: errorType, message: message, stack: stack,property: property)
             result(nil)
+        case SwiftAgentPlugin.METHOD_RUM_ADD_LONG_TASK:
+            let stack = context["stack"] as? String ?? ""
+            let duration = context["duration"] as? NSNumber ?? 0
+            let property = context["property"] as? Dictionary<String, Any> ?? nil
+            FTExternalDataManager.shared().addLongTask(withStack: stack, duration: duration, property: property)
+            result(nil)
         case SwiftAgentPlugin.METHOD_RUM_START_RESOURCE:
             let key = context["key"] as! String
             let property = context["property"] as? Dictionary<String, Any> ?? nil
@@ -388,6 +460,9 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 content.url = url
                 content.httpMethod = resourceMethod
                 content.requestHeader = requestHeader
+                if let resourceType = context["resourceType"] as? String {
+                    content.resourceType = resourceType
+                }
                 if let responseHeader = context["responseHeader"] as? Dictionary<String, Any> {
                     content.responseHeader = responseHeader
                 }
@@ -397,12 +472,30 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
                 if let resourceStatus = context["resourceStatus"] as? NSNumber {
                     content.httpStatusCode = resourceStatus.intValue
                 }
-                let metrics = FTResourceMetricsModel.init()
+                var metrics: FTResourceMetricsModel? = nil
+                if let metricsContext = context["metrics"] as? Dictionary<String, Any>, !metricsContext.isEmpty {
+                    metrics = FTResourceMetricsModel.init()
+                    if let duration = metricsContext["duration"] as? NSNumber { metrics?.duration = duration }
+                    if let dns = metricsContext["resource_dns"] as? NSNumber { metrics?.resource_dns = dns }
+                    if let tcp = metricsContext["resource_tcp"] as? NSNumber { metrics?.resource_tcp = tcp }
+                    if let ssl = metricsContext["resource_ssl"] as? NSNumber { metrics?.resource_ssl = ssl }
+                    if let ttfb = metricsContext["resource_ttfb"] as? NSNumber { metrics?.resource_ttfb = ttfb }
+                    if let trans = metricsContext["resource_trans"] as? NSNumber { metrics?.resource_trans = trans }
+                    if let firstByte = metricsContext["resource_first_byte"] as? NSNumber { metrics?.resource_first_byte = firstByte }
+                    if let requestSize = metricsContext["requestSize"] as? NSNumber { metrics?.requestSize = requestSize }
+                    if let resourceHttpProtocol = metricsContext["resourceHttpProtocol"] as? String { metrics?.resourceHttpProtocol = resourceHttpProtocol }
+                    if let reusedConnection = metricsContext["reusedConnection"] as? Bool {
+                        metrics?.reusedConnection = reusedConnection
+                    } else if let connectionReuse = metricsContext["connectionReuse"] as? Bool {
+                        metrics?.reusedConnection = connectionReuse
+                    }
+                }
                 if let resourceSize = context["resourceSize"] as? NSNumber {
-                    metrics.responseSize = resourceSize
+                    if metrics == nil { metrics = FTResourceMetricsModel.init() }
+                    metrics?.responseSize = resourceSize
                 }
 
-                FTExternalDataManager.shared().addResource(withKey: key, metrics: nil, content: content)
+                FTExternalDataManager.shared().addResource(withKey: key, metrics: metrics, content: content)
             }
             result(nil)
         case SwiftAgentPlugin.METHOD_RUM_STOP_RESOURCE:
@@ -413,6 +506,108 @@ public class SwiftAgentPlugin: NSObject, FlutterPlugin {
         default:
             result(FlutterMethodNotImplemented)
         }
+    }
+
+
+    private func updateRemoteConfig(interval: Int, rules: [[String: Any]]?, result: @escaping FlutterResult) {
+        if !remoteConfigurationEnabled {
+            result(remoteConfigResult(triggerType: "manual", success: false, content: nil, errorCode: "remote_configuration_disabled", errorMessage: "Remote configuration is not enabled", appliedRuleIds: nil))
+            return
+        }
+        FTMobileAgent.updateRemoteConfig(withMiniUpdateInterval: interval) { [weak self] success, error, model, content in
+            guard let self = self else { return model }
+            let overrideResult = self.applyRemoteConfigOverrideRules(model: model, content: content, rules: rules)
+            result(self.remoteConfigResult(triggerType: "manual", success: success, content: content, error: error, appliedRuleIds: overrideResult.appliedRuleIds))
+            return overrideResult.model
+        }
+    }
+
+    private func emitRemoteConfigResult(_ payload: [String: Any]) {
+        DispatchQueue.main.async { [weak self] in
+            self?.channel?.invokeMethod(SwiftAgentPlugin.METHOD_REMOTE_CONFIG_CALLBACK, arguments: payload)
+        }
+    }
+
+    private func remoteConfigResult(triggerType: String, success: Bool, content: [String: Any]?, error: Error?, appliedRuleIds: [String]?) -> [String: Any] {
+        return remoteConfigResult(triggerType: triggerType, success: success, content: content, errorCode: (error as NSError?)?.code.description, errorMessage: error?.localizedDescription, appliedRuleIds: appliedRuleIds)
+    }
+
+    private func remoteConfigResult(triggerType: String, success: Bool, content: [String: Any]?, errorCode: String?, errorMessage: String?, appliedRuleIds: [String]?) -> [String: Any] {
+        var payload: [String: Any] = [
+            "triggerType": triggerType,
+            "success": success,
+            "platform": "ios",
+            "timestamp": Int(Date().timeIntervalSince1970 * 1000)
+        ]
+        if let content = content,
+           let data = try? JSONSerialization.data(withJSONObject: content, options: []),
+           let json = String(data: data, encoding: .utf8) {
+            payload["rawJson"] = json
+        }
+        if let appliedRuleIds = appliedRuleIds, !appliedRuleIds.isEmpty {
+            payload["appliedOverrideRuleIds"] = appliedRuleIds
+        }
+        if let errorCode = errorCode { payload["errorCode"] = errorCode }
+        if let errorMessage = errorMessage { payload["errorMessage"] = errorMessage }
+        return payload
+    }
+
+    private func applyRemoteConfigOverrideRules(model: FTRemoteConfigModel?, content: [String: Any]?, rules: [[String: Any]]?) -> (model: FTRemoteConfigModel?, appliedRuleIds: [String]) {
+        guard let model = model, let content = content, let rules = rules, !rules.isEmpty else {
+            return (model, [])
+        }
+        var appliedIds: [String] = []
+        for rule in rules {
+            let enabled = rule["enabled"] as? Bool ?? true
+            if !enabled { continue }
+            guard let match = rule["match"] as? [String: Any],
+                  let customKeys = match["customKeys"] as? [String: Any],
+                  matchesCustomKeys(content: content, customKeys: customKeys),
+                  let override = rule["override"] as? [String: Any] else { continue }
+            applyRemoteConfigOverride(model: model, override: override)
+            if let id = rule["id"] as? String { appliedIds.append(id) }
+        }
+        return (model, appliedIds)
+    }
+
+    private func matchesCustomKeys(content: [String: Any], customKeys: [String: Any]) -> Bool {
+        for (key, expected) in customKeys {
+            guard let actualValue = content[key] else { return false }
+            let actual = "\(actualValue)"
+            if let expectedMap = expected as? [String: Any], let contains = expectedMap["contains"] {
+                if !actual.contains("\(contains)") { return false }
+            } else if actual != "\(expected)" {
+                return false
+            }
+        }
+        return true
+    }
+
+    private func applyRemoteConfigOverride(model: FTRemoteConfigModel, override: [String: Any]) {
+        if let value = override["env"] as? String { model.env = value }
+        if let value = override["serviceName"] as? String { model.serviceName = value }
+        if let value = override["autoSync"] as? Bool { model.autoSync = NSNumber(value: value) }
+        if let value = override["compressIntakeRequests"] as? Bool { model.compressIntakeRequests = NSNumber(value: value) }
+        if let value = override["syncPageSize"] as? NSNumber { model.syncPageSize = value }
+        if let value = override["syncSleepTime"] as? NSNumber { model.syncSleepTime = value }
+        if let value = override["rumSampleRate"] as? NSNumber { model.rumSampleRate = value }
+        if let value = override["rumSessionOnErrorSampleRate"] as? NSNumber { model.rumSessionOnErrorSampleRate = value }
+        if let value = override["rumEnableTraceUserAction"] as? Bool { model.rumEnableTraceUserAction = NSNumber(value: value) }
+        if let value = override["rumEnableTraceUserView"] as? Bool { model.rumEnableTraceUserView = NSNumber(value: value) }
+        if let value = override["rumEnableTraceUserResource"] as? Bool { model.rumEnableTraceUserResource = NSNumber(value: value) }
+        if let value = override["rumEnableResourceHostIP"] as? Bool { model.rumEnableResourceHostIP = NSNumber(value: value) }
+        if let value = override["rumEnableTrackAppUIBlock"] as? Bool { model.rumEnableTrackAppUIBlock = NSNumber(value: value) }
+        if let value = override["rumBlockDurationMs"] as? NSNumber { model.rumBlockDurationMs = value }
+        if let value = override["rumEnableTrackAppCrash"] as? Bool { model.rumEnableTrackAppCrash = NSNumber(value: value) }
+        if let value = override["rumEnableTrackAppANR"] as? Bool { model.rumEnableTrackAppANR = NSNumber(value: value) }
+        if let value = override["rumEnableTraceWebView"] as? Bool { model.rumEnableTraceWebView = NSNumber(value: value) }
+        if let value = override["rumAllowWebViewHost"] as? [String] { model.rumAllowWebViewHost = value }
+        if let value = override["traceSampleRate"] as? NSNumber { model.traceSampleRate = value }
+        if let value = override["traceEnableAutoTrace"] as? Bool { model.traceEnableAutoTrace = NSNumber(value: value) }
+        if let value = override["traceType"] as? String { model.traceType = value }
+        if let value = override["logSampleRate"] as? NSNumber { model.logSampleRate = value }
+        if let value = override["logLevelFilters"] as? [String] { model.logLevelFilters = value }
+        if let value = override["logEnableCustomLog"] as? Bool { model.logEnableCustomLog = NSNumber(value: value) }
     }
 #if FT_SDK_TESTING
     func test(_ selectorName:String,_ context:[String:Any],_ config:Any)->Bool{

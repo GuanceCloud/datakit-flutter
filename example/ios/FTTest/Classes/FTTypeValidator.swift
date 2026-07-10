@@ -60,6 +60,8 @@ extension ConfigValidator{
             return stringA == stringB
         }else if let arrayA = a as? NSArray, let arrayB = b as? NSArray {
             return arrayA == arrayB
+        }else if let dictA = a as? NSDictionary, let dictB = b as? NSDictionary {
+            return dictA == dictB
         }else if let dictA = a as? Dictionary<String,String>, let dictB = b as? Dictionary<String,String> {
             return dictA == dictB
         }
@@ -93,7 +95,6 @@ extension FTMobileConfig:ConfigValidator {
         return [Constants.Base.dataModifier,
                 Constants.Base.lineDataModifier,
                 Constants.Base.syncPageSize,
-                Constants.Base.pkgInfo,
                 Constants.Base.cliToken,
                 Constants.Base.datawayUrl]
     }
@@ -101,8 +102,6 @@ extension FTMobileConfig:ConfigValidator {
         switch key{
         case Constants.Base.dataModifier,Constants.Base.lineDataModifier:
             return true
-        case Constants.Base.pkgInfo:
-            return value as! String == self.pkgInfo()["flutter"] as! String
         case Constants.Base.syncPageSize:
             if let customSyncPageSize = context[Constants.Base.customSyncPageSize] as? Int {
                 return self.syncPageSize == customSyncPageSize
@@ -160,6 +159,9 @@ extension FTRumConfig:ConfigValidator{
     }
     @objc var enableUserView:Bool{
         return enableTraceUserView
+    }
+    @objc var enableNativeSwiftUIUserView:Bool{
+        return swiftUIViewTrackingHandler != nil
     }
     @objc var detectFrequency:Int{
         return Int(monitorFrequency.rawValue)
@@ -256,6 +258,8 @@ extension NSNumber {
                 (value as? NSNumber)?.isStoredAsInt == true
             case is Dictionary<String, String>.Type:
                 validate = value is [String: String]
+            case is Dictionary<String, [String]>.Type:
+                validate = value is [String: [String]]
             case is [String:Any].Type:
                 validate = value is [String: Any]
             case is [Any].Type:
@@ -270,14 +274,14 @@ extension NSNumber {
                 result[key] = "Type (\(expectedType)) is \(validate)"
             }
         }
+        let res = config.configurationIsCorrect(context)
         if #available(iOS 14.0, *) {
-            let res = config.configurationIsCorrect(context)
             let str = res.count==0 ? "successful!":"failed with parameter:\(res)."
             let verificationStr = result.count>0 ? "----\nParameter type verification result :\n \(result)\n":""
             let unsetStr = empty.count == 0 ? "" : "----\n Unset parameters :\n \(empty)"
             logger.info("[TEST] \(type) Config \(str)\n\(verificationStr)\(unsetStr)")
-            return res.count == 0
         }
+        return res.count == 0
     }
     
     @objc static func validateRUM(_ param:[String: Any])->NSNumber{
@@ -289,6 +293,7 @@ extension NSNumber {
             Constants.RUM.sessionOnErrorSampleRate:Double.self,
             Constants.RUM.enableUserAction:Bool.self,
             Constants.RUM.enableUserView:Bool.self,
+            Constants.RUM.enableNativeSwiftUIUserView:Bool.self,
             Constants.RUM.enableUserResource:Bool.self,
             Constants.RUM.enableTrackNativeAppANR:Bool.self,
             Constants.RUM.enableTrackNativeCrash:Bool.self,
@@ -351,7 +356,8 @@ extension NSNumber {
             Constants.Base.dbCacheLimit:Int.self,
             Constants.Base.dataModifier:[String:Any].self,
             Constants.Base.lineDataModifier:[String:Any].self,
-            Constants.Base.pkgInfo:String.self,
+            Constants.Base.enableDataFilter:Bool.self,
+            Constants.Base.dataFilters:Dictionary<String, [String]>.self,
             Constants.Base.globalContext:Dictionary<String, String>.self,
         ]
         return NSNumber(booleanLiteral:validateAll(context, rules: rules, type: "SDK",config:config))

@@ -8,3 +8,6 @@ build/
 coverage/
 
 **/.symlinks/
+
+/docs/
+AGENTS.md

@@ -1,0 +1,110 @@
+PODS:
+  - Flutter (1.0.0)
+  - ft_mobile_agent_flutter (0.0.2):
+    - Flutter
+    - FTMobileSDK (= 1.6.5)
+  - ft_session_replay_flutter (0.1.0):
+    - Flutter
+    - FTMobileSDK (= 1.6.5)
+    - FTMobileSDK/FTSessionReplay (= 1.6.5)
+  - FTMobileSDK (1.6.5):
+    - FTMobileSDK/FTMobileAgent (= 1.6.5)
+  - FTMobileSDK/Extension (1.6.5):
+    - FTMobileSDK/FTSDKCore/FTRUM
+    - FTMobileSDK/FTSDKCore/Logger
+    - FTMobileSDK/FTSDKCore/URLSessionAutoInstrumentation
+  - FTMobileSDK/FTMobileAgent (1.6.5):
+    - FTMobileSDK/FTSDKCore
+  - FTMobileSDK/FTSDKCore (1.6.5):
+    - FTMobileSDK/FTSDKCore/BaseUtils (= 1.6.5)
+    - FTMobileSDK/FTSDKCore/DataManager (= 1.6.5)
+    - FTMobileSDK/FTSDKCore/FTRUM (= 1.6.5)
+    - FTMobileSDK/FTSDKCore/FTWKWebView (= 1.6.5)
+    - FTMobileSDK/FTSDKCore/Logger (= 1.6.5)
+    - FTMobileSDK/FTSDKCore/Protocol (= 1.6.5)
+    - FTMobileSDK/FTSDKCore/RemoteConfig (= 1.6.5)
+    - FTMobileSDK/FTSDKCore/URLSessionAutoInstrumentation (= 1.6.5)
+  - FTMobileSDK/FTSDKCore/BaseUtils (1.6.5):
+    - FTMobileSDK/FTSDKCore/BaseUtils/Base (= 1.6.5)
+    - FTMobileSDK/FTSDKCore/BaseUtils/Swizzle (= 1.6.5)
+    - FTMobileSDK/FTSDKCore/BaseUtils/Thread (= 1.6.5)
+  - FTMobileSDK/FTSDKCore/BaseUtils/Base (1.6.5):
+    - FTMobileSDK/FTSDKCore/BaseUtils/Thread
+  - FTMobileSDK/FTSDKCore/BaseUtils/Swizzle (1.6.5):
+    - FTMobileSDK/FTSDKCore/BaseUtils/Base
+  - FTMobileSDK/FTSDKCore/BaseUtils/Thread (1.6.5)
+  - FTMobileSDK/FTSDKCore/DataManager (1.6.5):
+    - FTMobileSDK/FTSDKCore/BaseUtils/Base
+    - FTMobileSDK/FTSDKCore/BaseUtils/Thread
+    - FTMobileSDK/FTSDKCore/Protocol
+  - FTMobileSDK/FTSDKCore/FTRUM (1.6.5):
+    - FTMobileSDK/FTSDKCore/BaseUtils/Base
+    - FTMobileSDK/FTSDKCore/Protocol
+  - FTMobileSDK/FTSDKCore/FTWKWebView (1.6.5):
+    - FTMobileSDK/FTSDKCore/BaseUtils/Swizzle
+    - FTMobileSDK/FTSDKCore/Protocol
+  - FTMobileSDK/FTSDKCore/Logger (1.6.5):
+    - FTMobileSDK/FTSDKCore/BaseUtils/Base
+    - FTMobileSDK/FTSDKCore/Protocol
+  - FTMobileSDK/FTSDKCore/Protocol (1.6.5)
+  - FTMobileSDK/FTSDKCore/RemoteConfig (1.6.5):
+    - FTMobileSDK/FTSDKCore/DataManager
+  - FTMobileSDK/FTSDKCore/URLSessionAutoInstrumentation (1.6.5):
+    - FTMobileSDK/FTSDKCore/BaseUtils/Swizzle
+    - FTMobileSDK/FTSDKCore/Protocol
+  - FTMobileSDK/FTSessionReplay (1.6.5):
+    - FTMobileSDK/FTSDKCore
+  - FTTest (0.0.1):
+    - Flutter
+    - FTMobileSDK
+  - image_picker_ios (0.0.1):
+    - Flutter
+  - permission_handler_apple (9.3.0):
+    - Flutter
+  - webview_flutter_wkwebview (0.0.1):
+    - Flutter
+    - FlutterMacOS
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - ft_mobile_agent_flutter (from `.symlinks/plugins/ft_mobile_agent_flutter/ios`)
+  - ft_session_replay_flutter (from `.symlinks/plugins/ft_session_replay_flutter/ios`)
+  - FTMobileSDK/Extension
+  - FTTest (from `FTTest`)
+  - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
+  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - webview_flutter_wkwebview (from `.symlinks/plugins/webview_flutter_wkwebview/darwin`)
+
+SPEC REPOS:
+  trunk:
+    - FTMobileSDK
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  ft_mobile_agent_flutter:
+    :path: ".symlinks/plugins/ft_mobile_agent_flutter/ios"
+  ft_session_replay_flutter:
+    :path: ".symlinks/plugins/ft_session_replay_flutter/ios"
+  FTTest:
+    :path: FTTest
+  image_picker_ios:
+    :path: ".symlinks/plugins/image_picker_ios/ios"
+  permission_handler_apple:
+    :path: ".symlinks/plugins/permission_handler_apple/ios"
+  webview_flutter_wkwebview:
+    :path: ".symlinks/plugins/webview_flutter_wkwebview/darwin"
+
+SPEC CHECKSUMS:
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  ft_mobile_agent_flutter: bf0a14c3c03c63d2d3eb74f8f2979b5757cce277
+  ft_session_replay_flutter: 58c3897448401d21e006888bdc710bb4d6eeeb0f
+  FTMobileSDK: 21891e8d0d5c3aa49c8a3363c934a87a479a3106
+  FTTest: d8dfaa200c889aa028866f1e7595ebc39e8e505f
+  image_picker_ios: 7fe1ff8e34c1790d6fff70a32484959f563a928a
+  permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
+  webview_flutter_wkwebview: 1821ceac936eba6f7984d89a9f3bcb4dea99ebb2
+
+PODFILE CHECKSUM: d3bb1419c73e5cc84ce3f45a7ea4be424d455823
+
+COCOAPODS: 1.16.2
