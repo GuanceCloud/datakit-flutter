@@ -27,7 +27,22 @@
 #define FT_FLUTTER_SR_REMOTE_CONFIG_AVAILABLE 0
 #endif
 
-#if __has_include(<FTMobileSDK/FTCoreDirectory.h>) && __has_include(<FTMobileSDK/FTDirectory.h>) && __has_include(<FTMobileSDK/FTFeature.h>) && __has_include(<FTMobileSDK/FTFeatureDataStore.h>) && __has_include(<FTMobileSDK/FTFeatureDirectories.h>) && __has_include(<FTMobileSDK/FTFeatureScope.h>) && __has_include(<FTMobileSDK/FTFeatureStorage.h>) && __has_include(<FTMobileSDK/FTFeatureUpload.h>) && __has_include(<FTMobileSDK/FTFileWriter.h>) && __has_include(<FTMobileSDK/FTPerformancePreset.h>) && __has_include(<FTMobileSDK/FTPerformancePresetOverride.h>) && __has_include(<FTMobileSDK/FTPresetProperty.h>) && __has_include(<FTMobileSDK/FTResourcesFeature.h>) && __has_include(<FTMobileSDK/FTResourcesWriter.h>) && __has_include(<FTMobileSDK/FTSRRecord.h>) && __has_include(<FTMobileSDK/FTTLV.h>)
+#if __has_include(<FTMobileSDK/FTCoreDirectory.h>) && \
+    __has_include(<FTMobileSDK/FTDirectory.h>) && \
+    __has_include(<FTMobileSDK/FTFeature.h>) && \
+    __has_include(<FTMobileSDK/FTFeatureDataStore.h>) && \
+    __has_include(<FTMobileSDK/FTFeatureDirectories.h>) && \
+    __has_include(<FTMobileSDK/FTFeatureScope.h>) && \
+    __has_include(<FTMobileSDK/FTFeatureStorage.h>) && \
+    __has_include(<FTMobileSDK/FTFeatureUpload.h>) && \
+    __has_include(<FTMobileSDK/FTFileWriter.h>) && \
+    __has_include(<FTMobileSDK/FTPerformancePreset.h>) && \
+    __has_include(<FTMobileSDK/FTPerformancePresetOverride.h>) && \
+    __has_include(<FTMobileSDK/FTPresetProperty.h>) && \
+    __has_include(<FTMobileSDK/FTResourcesFeature.h>) && \
+    __has_include(<FTMobileSDK/FTResourcesWriter.h>) && \
+    __has_include(<FTMobileSDK/FTSRRecord.h>) && \
+    __has_include(<FTMobileSDK/FTTLV.h>)
 #import <FTMobileSDK/FTCoreDirectory.h>
 #import <FTMobileSDK/FTDirectory.h>
 #import <FTMobileSDK/FTFeature.h>
@@ -44,6 +59,39 @@
 #import <FTMobileSDK/FTResourcesWriter.h>
 #import <FTMobileSDK/FTSRRecord.h>
 #import <FTMobileSDK/FTTLV.h>
+#define FT_FLUTTER_SR_WRITER_AVAILABLE 1
+#elif __has_include(<FTMobileSDK/FTSessionReplay/Storage/FTCoreDirectory.h>) && \
+      __has_include(<FTMobileSDK/FTSessionReplay/Storage/FTDirectory.h>) && \
+      __has_include(<FTMobileSDK/FTSessionReplay/FTFeature.h>) && \
+      __has_include(<FTMobileSDK/FTSessionReplay/DataStore/FTFeatureDataStore.h>) && \
+      __has_include(<FTMobileSDK/FTSessionReplay/Storage/FTFeatureDirectories.h>) && \
+      __has_include(<FTMobileSDK/FTSessionReplay/Storage/FTFeatureScope.h>) && \
+      __has_include(<FTMobileSDK/FTSessionReplay/Storage/FTFeatureStorage.h>) && \
+      __has_include(<FTMobileSDK/FTSessionReplay/Upload/FTFeatureUpload.h>) && \
+      __has_include(<FTMobileSDK/FTSessionReplay/Storage/Writer/FTFileWriter.h>) && \
+      __has_include(<FTMobileSDK/FTSessionReplay/FTPerformancePreset.h>) && \
+      __has_include(<FTMobileSDK/FTSessionReplay/FTPerformancePresetOverride.h>) && \
+      __has_include(<FTMobileSDK/FTSDKCore/BaseUtils/Base/FTPresetProperty.h>) && \
+      __has_include(<FTMobileSDK/FTSessionReplay/FTResourcesFeature.h>) && \
+      __has_include(<FTMobileSDK/FTSessionReplay/Storage/Writer/FTResourcesWriter.h>) && \
+      __has_include(<FTMobileSDK/FTSessionReplay/Recorder/SRWireframe/FTSRRecord.h>) && \
+      __has_include(<FTMobileSDK/FTSessionReplay/TLV/FTTLV.h>)
+#import <FTMobileSDK/FTSessionReplay/Storage/FTCoreDirectory.h>
+#import <FTMobileSDK/FTSessionReplay/Storage/FTDirectory.h>
+#import <FTMobileSDK/FTSessionReplay/FTFeature.h>
+#import <FTMobileSDK/FTSessionReplay/DataStore/FTFeatureDataStore.h>
+#import <FTMobileSDK/FTSessionReplay/Storage/FTFeatureDirectories.h>
+#import <FTMobileSDK/FTSessionReplay/Storage/FTFeatureScope.h>
+#import <FTMobileSDK/FTSessionReplay/Storage/FTFeatureStorage.h>
+#import <FTMobileSDK/FTSessionReplay/Upload/FTFeatureUpload.h>
+#import <FTMobileSDK/FTSessionReplay/Storage/Writer/FTFileWriter.h>
+#import <FTMobileSDK/FTSessionReplay/FTPerformancePreset.h>
+#import <FTMobileSDK/FTSessionReplay/FTPerformancePresetOverride.h>
+#import <FTMobileSDK/FTSDKCore/BaseUtils/Base/FTPresetProperty.h>
+#import <FTMobileSDK/FTSessionReplay/FTResourcesFeature.h>
+#import <FTMobileSDK/FTSessionReplay/Storage/Writer/FTResourcesWriter.h>
+#import <FTMobileSDK/FTSessionReplay/Recorder/SRWireframe/FTSRRecord.h>
+#import <FTMobileSDK/FTSessionReplay/TLV/FTTLV.h>
 #define FT_FLUTTER_SR_WRITER_AVAILABLE 1
 #else
 #define FT_FLUTTER_SR_WRITER_AVAILABLE 0

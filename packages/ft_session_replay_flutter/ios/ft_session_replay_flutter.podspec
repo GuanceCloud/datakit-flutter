@@ -18,6 +18,9 @@ Flutter Session Replay plugin for Guance mobile SDK.
   s.dependency 'FTMobileSDK/FTSessionReplay', '1.6.5'
   s.ios.deployment_target = '12.0'
 
-  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
+  s.pod_target_xcconfig = {
+    'DEFINES_MODULE' => 'YES',
+    'HEADER_SEARCH_PATHS' => '$(inherited) "${PODS_ROOT}/FTMobileSDK" "${PODS_ROOT}/Headers/Public/FTMobileSDK"'
+  }
   s.swift_version = '5.0'
 end
