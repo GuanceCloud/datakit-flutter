@@ -1,5 +1,7 @@
 # ft_session_replay_flutter
-
+## 0.1.1-pre.1
+* Fixed iOS Session Replay segment and image-resource writes with FTMobileSDK 1.6.5, preventing sessions from showing a replay marker without playable data.
+---
 ## 0.1.0
 * Added `FTSessionReplayManager().setConfig(FTSessionReplayConfig(...))` and `SessionReplayCapture` for Flutter Session Replay collection.
 * Added Session Replay privacy configuration fields: `touchPrivacy`, `textAndInputPrivacy`, and `imagePrivacy`.
